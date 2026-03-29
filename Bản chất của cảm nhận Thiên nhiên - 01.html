@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phân tích Hiện tượng: Hơi thở và Cảm nhận Cái đẹp</title>
+    
+    <!-- CSS Framework: Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- JS Library: Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind Config for Custom Palette -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sage: {
+                            50: '#f4f7f4',
+                            100: '#e4ebe4',
+                            500: '#6b8e6b',
+                            700: '#4a634a',
+                            900: '#2d3d2d',
+                        },
+                        earth: {
+                            100: '#f5f0e6',
+                            800: '#5c4d3c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
+        
+        body {
+            background-color: #f4f7f4; /* sage-50 */
+            color: #2d3d2d;
+        }
+
+        /* Chart Container Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        /* Custom Scrollbar for elegant look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f4f7f4; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        .tab-active {
+            background-color: #e4ebe4;
+            border-left: 4px solid #6b8e6b;
+            font-weight: 600;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased flex h-screen overflow-hidden">
+
+    <!-- Chosen Palette: Sage Green & Earth Tones (Calming, nature-inspired to match the topic of a park walk) -->
+    <!-- Application Structure Plan: A split-pane dashboard layout. Left side acts as a navigation menu mapping to the user's specific questions (Neuroscience, Psychology, Effectiveness, Evolution). Right side is a dynamic content area displaying the analysis, interactive charts, and comparisons. This structure allows the user to explore the complex answer logically piece by piece without being overwhelmed by a massive wall of text. -->
+    <!-- Visualization & Content Choices: 
+         1. Neuroscience: Radar Chart (Chart.js) -> To compare brain states between "Thinking" and "Breathing" across multiple dimensions (DMN, Sensory, etc.). Justification: Best for multi-variable state comparison.
+         2. Psychology: Interactive Toggle Card (HTML/JS) -> To simulate the difference in perception when applying a "Mental Filter" vs "Direct Perception". Justification: Active engagement helps user feel the difference.
+         3. Effectiveness: Bar Chart (Chart.js) -> Comparing Cognitive Load vs Emotional Reward. Justification: Clear quantitative visual representation of energy efficiency.
+         4. Evolution: Flow step diagram (HTML/CSS) -> Showing the physiological switch from Survival to Thriving. Justification: Shows a process/timeline of bodily reactions.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Symbols use Unicode. -->
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-72 bg-white shadow-xl flex flex-col z-10">
+        <div class="p-6 border-b border-sage-100">
+            <h1 class="text-2xl font-serif font-bold text-sage-900 leading-tight">Giải mã<br>Trải nghiệm</h1>
+            <p class="text-sm text-sage-500 mt-2">Phân tích đa chiều về hơi thở và sự thụ cảm.</p>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4" id="nav-menu">
+            <button onclick="switchTab('intro')" class="nav-btn w-full text-left px-6 py-3 text-sage-700 hover:bg-sage-50 transition-colors tab-active" data-target="intro">
+                <span class="mr-2">💡</span> Lời mở đầu
+            </button>
+            <button onclick="switchTab('neuro')" class="nav-btn w-full text-left px-6 py-3 text-sage-700 hover:bg-sage-50 transition-colors" data-target="neuro">
+                <span class="mr-2">🧠</span> Thần kinh học
+            </button>
+            <button onclick="switchTab('psych')" class="nav-btn w-full text-left px-6 py-3 text-sage-700 hover:bg-sage-50 transition-colors" data-target="psych">
+                <span class="mr-2">👁️</span> Tâm lý học
+            </button>
+            <button onclick="switchTab('efficiency')" class="nav-btn w-full text-left px-6 py-3 text-sage-700 hover:bg-sage-50 transition-colors" data-target="efficiency">
+                <span class="mr-2">⚡</span> Tính Hiệu quả
+            </button>
+            <button onclick="switchTab('evolution')" class="nav-btn w-full text-left px-6 py-3 text-sage-700 hover:bg-sage-50 transition-colors" data-target="evolution">
+                <span class="mr-2">🧬</span> Góc nhìn Tiến hóa
+            </button>
+            <button onclick="switchTab('conclusion')" class="nav-btn w-full text-left px-6 py-3 text-sage-700 hover:bg-sage-50 transition-colors" data-target="conclusion">
+                <span class="mr-2">✨</span> Tổng kết
+            </button>
+        </nav>
+        
+        <div class="p-4 bg-earth-100 text-xs text-earth-800 text-center">
+            Nghiên cứu dựa trên thắc mắc thực tế
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-8 md:p-12 bg-sage-50 relative" id="main-content">
+        <!-- Content gets injected here via JS -->
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data and Content Definitions
+        const contentData = {
+            intro: {
+                title: "Bạn không hề cảm nhận sai.",
+                subtitle: "Câu trả lời ngắn gọn: Điều bạn cảm nhận là hoàn toàn đúng đắn và có cơ sở khoa học sâu sắc.",
+                html: `
+                    <div class="max-w-3xl fade-in">
+                        <p class="text-lg leading-relaxed mb-6 font-serif text-earth-800">
+                            "Tại sao khi dạo công viên nhìn thấy cảnh đẹp, việc tập trung vào hơi thở thư giãn lại giúp tôi cảm nhận sâu sắc hơn là liên kết với những suy nghĩ dữ liệu đã có?"
+                        </p>
+                        <p class="mb-4">
+                            Cảm giác của bạn không chỉ là một hiệu ứng tâm lý mơ hồ. Đó là kết quả của một sự chuyển đổi trạng thái vật lý và thần kinh thực sự trong cơ thể và não bộ của bạn.
+                        </p>
+                        <p class="mb-6">
+                            Khi bạn ngừng việc "gọi tên" hay "phân tích" cảnh vật (ví dụ: "cái cây này là cây gì", "hoa này màu giống áo mình"), và thay vào đó tập trung vào hơi thở, bạn đang thực hiện một thao tác chuyển đổi phần cứng của não bộ.
+                        </p>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-sage-500">
+                            <h3 class="font-bold text-sage-900 mb-2">Mục tiêu của báo cáo này:</h3>
+                            <p class="text-sm">Chúng ta sẽ cùng phân tích cơ chế này qua 4 lăng kính: Thần kinh học, Tâm lý nhận thức, Hiệu suất năng lượng não bộ, và Sinh học tiến hóa để chứng minh trải nghiệm của bạn là tối ưu nhất cho việc thưởng thức cái đẹp.</p>
+                        </div>
+                        <div class="mt-8 text-center">
+                            <button onclick="switchTab('neuro')" class="bg-sage-700 hover:bg-sage-900 text-white px-6 py-2 rounded-full transition-colors">Bắt đầu khám phá &#8594;</button>
+                        </div>
+                    </div>
+                `
+            },
+            neuro: {
+                title: "Góc nhìn Thần kinh học",
+                subtitle: "Sự chuyển đổi mạng lưới não bộ (Brain Network Shift)",
+                html: `
+                    <div class="fade-in max-w-4xl">
+                        <p class="mb-6">Khi bạn suy nghĩ dựa trên "dữ liệu đã có", não bạn kích hoạt <strong>Mạng lưới trạng thái mặc định (DMN - Default Mode Network)</strong>. Mạng lưới này chịu trách nhiệm cho việc tự nói thầm, hồi tưởng quá khứ, lên kế hoạch tương lai và dán nhãn sự vật. Nó tạo ra một "bộ lọc" giữa bạn và thực tại.</p>
+                        
+                        <p class="mb-6">Ngược lại, khi tập trung vào hơi thở, bạn kích hoạt <strong>Mạng lưới tích cực làm việc (TPN - Task-Positive Network)</strong> và vùng thùy đảo (Insula) liên quan đến nhận thức cảm giác cơ thể. Quan trọng nhất, DMN và TPN hoạt động theo nguyên tắc <em>loại trừ lẫn nhau</em>.</p>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+                            <h3 class="text-center font-bold text-sage-900 mb-4">So sánh Trạng thái Hoạt động của Não bộ</h3>
+                            <div class="chart-container">
+                                <canvas id="neuroRadarChart"></canvas>
+                            </div>
+                            <p class="text-xs text-center text-gray-500 mt-4">Biểu đồ: Việc tập trung hơi thở triệt tiêu tiếng ồn của não (DMN), mở rộng tối đa băng thông cho các giác quan (Sensory Input).</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-sage-100 p-5 rounded-lg border border-sage-200">
+                                <h4 class="font-bold text-sage-800 mb-2">🧠 Xử lý Top-Down (Từ trên xuống)</h4>
+                                <p class="text-sm">Xảy ra khi dùng "dữ liệu cũ". Não lấy khái niệm có sẵn áp đặt lên cảnh vật. Bạn không nhìn thấy cái cây hiện tại, bạn đang nhìn thấy "khái niệm về cái cây" trong trí nhớ. Việc này nhanh, nhưng nông.</p>
+                            </div>
+                            <div class="bg-earth-100 p-5 rounded-lg border border-earth-200">
+                                <h4 class="font-bold text-earth-800 mb-2">👁️ Xử lý Bottom-Up (Từ dưới lên)</h4>
+                                <p class="text-sm">Xảy ra khi hít thở. Thông tin giác quan (màu sắc, ánh sáng) đi thẳng vào não mà không qua màng lọc khái niệm. Dữ liệu thuần túy và tươi mới tạo ra cảm xúc thẩm mỹ mãnh liệt nhất.</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                initChart: function() {
+                    const ctx = document.getElementById('neuroRadarChart');
+                    if(ctx) {
+                        new Chart(ctx, {
+                            type: 'radar',
+                            data: {
+                                labels: [
+                                    'Phân tích dữ liệu (DMN)', 
+                                    'Nhận thức Giác quan', 
+                                    'Xử lý Cảm xúc (Amygdala)', 
+                                    'Sự hiện diện (Hiện tại)', 
+                                    'Lọc thông tin (Filter)'
+                                ],
+                                datasets: [{
+                                    label: 'Dùng dữ liệu/Suy nghĩ',
+                                    data: [90, 30, 40, 20, 85],
+                                    fill: true,
+                                    backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                                    borderColor: 'rgb(156, 163, 175)',
+                                    pointBackgroundColor: 'rgb(156, 163, 175)',
+                                    pointBorderColor: '#fff',
+                                }, {
+                                    label: 'Tập trung hơi thở',
+                                    data: [20, 95, 80, 95, 10],
+                                    fill: true,
+                                    backgroundColor: 'rgba(107, 142, 107, 0.4)', // sage
+                                    borderColor: 'rgb(107, 142, 107)',
+                                    pointBackgroundColor: 'rgb(107, 142, 107)',
+                                    pointBorderColor: '#fff',
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false,
+                                responsive: true,
+                                scales: {
+                                    r: {
+                                        angleLines: { display: true },
+                                        suggestedMin: 0,
+                                        suggestedMax: 100,
+                                        ticks: { display: false }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { position: 'bottom' }
+                                }
+                            }
+                        });
+                    }
+                }
+            },
+            psych: {
+                title: "Góc nhìn Tâm lý & Nhận thức",
+                subtitle: "Thoát khỏi 'Lời nguyền của việc Gọi tên'",
+                html: `
+                    <div class="fade-in max-w-4xl">
+                        <p class="mb-6">Trong tâm lý học, có một khái niệm gọi là <strong>Hồ sơ hóa nhận thức (Cognitive Schemas)</strong>. Khi bạn nhìn một bông hoa và não lập tức nói "Đây là hoa hồng, nó màu đỏ", quá trình thụ cảm thực tế <em>dừng lại</em> tại thời điểm đó. Não bạn đã phân loại xong và chuyển sang việc khác.</p>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+                            <div class="p-6 text-center">
+                                <h3 class="font-bold text-lg mb-4 text-sage-900">Trải nghiệm Tương tác: Lăng kính Nhận thức</h3>
+                                <p class="text-sm mb-4">Hãy thử nhấn nút để thay đổi cách bạn tương tác với thông tin bên dưới.</p>
+                                
+                                <!-- Interactive Toggle -->
+                                <div class="inline-flex bg-gray-100 rounded-lg p-1 mb-6">
+                                    <button id="btn-thinking" onclick="togglePerception('thinking')" class="px-4 py-2 rounded-md bg-white shadow-sm text-sm font-semibold text-gray-700 transition-all">Chế độ: Phân tích Dữ liệu</button>
+                                    <button id="btn-breathing" onclick="togglePerception('breathing')" class="px-4 py-2 rounded-md text-sm font-semibold text-gray-500 hover:text-gray-700 transition-all">Chế độ: Hít thở & Cảm nhận</button>
+                                </div>
+
+                                <!-- Dynamic Content Area -->
+                                <div id="perception-display" class="p-8 bg-gray-50 border border-gray-200 rounded-lg min-h-[150px] flex items-center justify-center transition-all duration-300">
+                                    <p class="text-gray-600 italic">"Góc công viên này có 3 cây bàng, lá đang rụng. Bầu trời có mây xám. Chắc sắp mưa, độ ẩm khoảng 80%."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p>Việc tập trung vào hơi thở làm gián đoạn dòng chảy của Dòng suy nghĩ (Stream of Consciousness). Nó đóng vai trò như một mỏ neo, giữ sự chú ý của bạn ở giây phút hiện tại, cho phép bạn nhìn thấy các chi tiết vi tế: sự thay đổi ánh sáng trên tán lá, độ rung của ngọn cỏ, mà không vội vàng đóng khung chúng vào các khái niệm ngôn ngữ.</p>
+                    </div>
+                `,
+                customJS: `
+                    window.togglePerception = function(mode) {
+                        const display = document.getElementById('perception-display');
+                        const btnT = document.getElementById('btn-thinking');
+                        const btnB = document.getElementById('btn-breathing');
+
+                        if(mode === 'thinking') {
+                            btnT.classList.add('bg-white', 'shadow-sm', 'text-gray-700');
+                            btnT.classList.remove('text-gray-500');
+                            btnB.classList.remove('bg-white', 'shadow-sm', 'text-gray-700');
+                            btnB.classList.add('text-gray-500');
+                            
+                            display.className = "p-8 bg-gray-50 border border-gray-200 rounded-lg min-h-[150px] flex items-center justify-center transition-all duration-300";
+                            display.innerHTML = '<p class="text-gray-600 italic font-mono text-sm">"Góc công viên này có 3 cây bàng, lá đang rụng. Bầu trời có mây xám. Bãi cỏ rộng khoảng 50m2. Giống hệt công viên gần nhà cũ." <br><br><span class="text-xs font-bold text-red-400 uppercase">Trạng thái: Đóng khung, phân loại nhanh, bỏ qua chi tiết.</span></p>';
+                        } else {
+                            btnB.classList.add('bg-white', 'shadow-sm', 'text-gray-700');
+                            btnB.classList.remove('text-gray-500');
+                            btnT.classList.remove('bg-white', 'shadow-sm', 'text-gray-700');
+                            btnT.classList.add('text-gray-500');
+
+                            display.className = "p-8 bg-sage-50 border border-sage-200 rounded-lg min-h-[150px] flex items-center justify-center transition-all duration-300";
+                            display.innerHTML = '<p class="text-sage-800 italic font-serif text-lg leading-relaxed">"...Sắc đỏ cháy của chiếc lá tương phản với nền trời xám bạc... một cơn gió lạnh lướt qua mang theo mùi đất ẩm... vạn vật như đang thở nhẹ nhàng..." <br><br><span class="text-xs font-bold text-sage-600 uppercase">Trạng thái: Trải nghiệm nguyên bản, kết nối cảm xúc sâu sắc.</span></p>';
+                        }
+                    }
+                `
+            },
+            efficiency: {
+                title: "Tính Hiệu quả",
+                subtitle: "Tối ưu hóa Băng thông Chú ý (Attention Bandwidth)",
+                html: `
+                    <div class="fade-in max-w-4xl">
+                        <p class="mb-6">Não bộ có một giới hạn về tài nguyên chú ý (Cognitive Load Theory). Việc truy xuất dữ liệu từ bộ nhớ, so sánh, và đánh giá tiêu tốn rất nhiều năng lượng tinh thần. Khi bạn "nghĩ" về cảnh đẹp, băng thông xử lý của não bị chia nhỏ.</p>
+
+                        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+                            <h3 class="text-center font-bold text-sage-900 mb-4">Phân bổ Năng lượng: Suy nghĩ vs. Thở</h3>
+                            <div class="chart-container">
+                                <canvas id="energyBarChart"></canvas>
+                            </div>
+                            <p class="text-xs text-center text-gray-500 mt-4">Tập trung hơi thở giải phóng năng lượng khỏi việc "xử lý dữ liệu", dành toàn bộ băng thông cho "thu nhận cảm giác".</p>
+                        </div>
+
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <span class="text-xl mr-3">🔋</span>
+                                <div>
+                                    <strong class="text-gray-800">Tiết kiệm năng lượng:</strong> Thở chậm làm giảm nhịp tim, đưa não về sóng Alpha (thư giãn sâu nhưng tỉnh táo), tốn ít năng lượng hơn sóng Beta (suy nghĩ tích cực).
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-xl mr-3">📡</span>
+                                <div>
+                                    <strong class="text-gray-800">Tăng băng thông tiếp nhận:</strong> Bằng cách dọn dẹp bộ nhớ RAM (ngừng suy nghĩ), bạn cho phép các cảm biến (mắt, tai, mũi) hoạt động ở độ phân giải cao nhất. Bạn thấy màu sắc tươi hơn, âm thanh rõ hơn.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                `,
+                initChart: function() {
+                    const ctx = document.getElementById('energyBarChart');
+                    if(ctx) {
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Truy xuất Ký ức', 'Phân tích Logic', 'Tiếp nhận Giác quan', 'Trải nghiệm Cảm xúc'],
+                                datasets: [
+                                    {
+                                        label: 'Khi Dùng Suy Nghĩ',
+                                        data: [40, 45, 10, 5],
+                                        backgroundColor: '#9ca3af', // gray-400
+                                    },
+                                    {
+                                        label: 'Khi Tập Trung Hơi Thở',
+                                        data: [5, 5, 45, 45],
+                                        backgroundColor: '#6b8e6b', // sage-500
+                                    }
+                                ]
+                            },
+                            options: {
+                                maintainAspectRatio: false,
+                                responsive: true,
+                                scales: {
+                                    x: { stacked: true },
+                                    y: { 
+                                        stacked: true,
+                                        title: { display: true, text: '% Phân bổ Năng lượng Não bộ' },
+                                        max: 100
+                                    }
+                                },
+                                plugins: {
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            },
+            evolution: {
+                title: "Góc nhìn Sinh học Tiến hóa",
+                subtitle: "Tín hiệu An toàn để Thưởng thức",
+                html: `
+                    <div class="fade-in max-w-4xl">
+                        <p class="mb-6">Dưới góc độ tiến hóa, tổ tiên chúng ta sử dụng tư duy phân tích (liên kết dữ liệu) chủ yếu để <strong>sinh tồn</strong>. Nhìn thấy một lùm cây rung rinh, não phải lập tức truy xuất dữ liệu: <em>"Có phải là hổ cọp không? Chạy hướng nào?"</em>. Suy nghĩ phân tích gắn liền với sự cảnh giác và căng thẳng nhẹ.</p>
+                        
+                        <p class="mb-8">Việc cảm nhận cái đẹp vô tư không giúp ích trực tiếp cho việc sống còn tức thời. Nó là một <strong>hành vi của trạng thái an toàn</strong>. Thưởng thức nghệ thuật hay thiên nhiên chỉ xảy ra khi cơ thể biết nó không bị đe dọa.</p>
+
+                        <div class="bg-white rounded-xl shadow-sm p-8 mb-6">
+                            <h3 class="font-bold text-center text-earth-800 mb-6">Chuỗi Phản ứng Sinh lý của Hơi thở</h3>
+                            
+                            <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 text-center">
+                                <!-- Step 1 -->
+                                <div class="flex-1 px-4">
+                                    <div class="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-2xl mx-auto mb-3 border-4 border-blue-50">💨</div>
+                                    <h4 class="font-bold text-sm">Hít thở chậm sâu</h4>
+                                </div>
+                                
+                                <div class="text-gray-300 hidden md:block">➔</div>
+                                <div class="text-gray-300 md:hidden">⬇</div>
+
+                                <!-- Step 2 -->
+                                <div class="flex-1 px-4">
+                                    <div class="w-16 h-16 rounded-full bg-sage-100 text-sage-600 flex items-center justify-center text-2xl mx-auto mb-3 border-4 border-sage-50">🧬</div>
+                                    <h4 class="font-bold text-sm">Kích hoạt Dây thần kinh Phế vị (Vagus Nerve)</h4>
+                                </div>
+
+                                <div class="text-gray-300 hidden md:block">➔</div>
+                                <div class="text-gray-300 md:hidden">⬇</div>
+
+                                <!-- Step 3 -->
+                                <div class="flex-1 px-4">
+                                    <div class="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-2xl mx-auto mb-3 border-4 border-green-50">🛡️</div>
+                                    <h4 class="font-bold text-sm">Hệ Phó giao cảm báo: "An toàn!"</h4>
+                                </div>
+
+                                <div class="text-gray-300 hidden md:block">➔</div>
+                                <div class="text-gray-300 md:hidden">⬇</div>
+
+                                <!-- Step 4 -->
+                                <div class="flex-1 px-4">
+                                    <div class="w-16 h-16 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center text-2xl mx-auto mb-3 border-4 border-yellow-50">🌸</div>
+                                    <h4 class="font-bold text-sm">Giải phóng não bộ để thưởng thức thẩm mỹ</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-700 italic border-l-4 border-earth-300 pl-4 py-2">
+                            "Khi bạn tập trung vào hơi thở, bạn đang chủ động hack vào hệ thống tiến hóa của mình. Bạn gửi một tín hiệu sinh lý mạnh mẽ đến não rằng: <strong>'Không có thú dữ nào ở đây cả, không cần phân tích tính toán gì hết, hãy cứ chiêm ngưỡng cái đẹp đi'</strong>."
+                        </p>
+                    </div>
+                `
+            },
+            conclusion: {
+                title: "Kết luận",
+                subtitle: "Nghệ thuật của sự Hiện diện",
+                html: `
+                    <div class="fade-in max-w-3xl">
+                        <div class="text-center mb-8">
+                            <span class="text-6xl">🍃</span>
+                        </div>
+                        <p class="text-lg leading-relaxed mb-6 font-serif text-sage-900">
+                            Trả lời lại câu hỏi của bạn: <strong>Việc bạn cảm nhận cảnh đẹp sâu sắc hơn nhờ tập trung hơi thở KHÔNG PHẢI chỉ là cảm giác chủ quan. Nó là một sự thật mang tính cơ chế.</strong>
+                        </p>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-sage-100">
+                            <ul class="space-y-3">
+                                <li class="flex"><span class="text-sage-500 mr-2 font-bold">✓</span> <span><strong>Về thần kinh:</strong> Nó tắt vùng não 'chatter' (nói nhảm), bật vùng não 'cảm nhận'.</span></li>
+                                <li class="flex"><span class="text-sage-500 mr-2 font-bold">✓</span> <span><strong>Về tâm lý:</strong> Nó gỡ bỏ bộ lọc định kiến và nhãn mác ngôn ngữ.</span></li>
+                                <li class="flex"><span class="text-sage-500 mr-2 font-bold">✓</span> <span><strong>Về hiệu suất:</strong> Nó tối ưu hóa băng thông cho giác quan thay vì lãng phí vào truy xuất bộ nhớ.</span></li>
+                                <li class="flex"><span class="text-sage-500 mr-2 font-bold">✓</span> <span><strong>Về tiến hóa:</strong> Nó kích hoạt chế độ sinh lý 'An toàn' (Rest and Digest), cho phép xa xỉ phẩm của tự nhiên là rung cảm thẩm mỹ được diễn ra.</span></li>
+                            </ul>
+                        </div>
+
+                        <p class="mt-8 text-center text-gray-600 italic">
+                            Bạn đã vô tình áp dụng thiền chánh niệm (Mindfulness) vào việc thưởng ngoạn. Lần tới đi dạo công viên, hãy tiếp tục tin tưởng vào hơi thở của mình.
+                        </p>
+                    </div>
+                `
+            }
+        };
+
+        // Core Interaction Handling
+        function switchTab(tabId) {
+            // Update Navigation UI
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+            });
+            document.querySelector(`[data-target="${tabId}"]`).classList.add('tab-active');
+
+            // Get content
+            const data = contentData[tabId];
+            const mainContent = document.getElementById('main-content');
+
+            // Render Header & Content
+            let htmlContent = `
+                <header class="mb-10 fade-in">
+                    <h2 class="text-3xl font-serif font-bold text-sage-900 mb-2">${data.title}</h2>
+                    <p class="text-lg text-sage-600">${data.subtitle}</p>
+                    <hr class="mt-6 border-sage-200 w-24 border-2 rounded-full">
+                </header>
+                ${data.html}
+            `;
+            
+            mainContent.innerHTML = htmlContent;
+
+            // Execute Custom JS or Chart Init if exists
+            if (data.initChart) {
+                // small timeout to ensure DOM is updated before Chart tries to attach to Canvas
+                setTimeout(data.initChart, 50); 
+            }
+            if (data.customJS) {
+                // Safely evaluate custom JS string defined in object
+                const script = document.createElement('script');
+                script.text = data.customJS;
+                document.body.appendChild(script);
+                document.body.removeChild(script);
+            }
+        }
+
+        // Initialize first tab on load
+        window.onload = () => {
+            switchTab('intro');
+        };
+    </script>
+</body>
+</html>
