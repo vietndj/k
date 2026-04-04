@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải Mã Ma Trận Bản Năng | Tư Duy Bio-Hacker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Base & Typography */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #e5e5e5;
+            overflow-x: hidden;
+        }
+        .font-mono-custom { font-family: 'Space Mono', monospace; }
+        
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Thẻ kính (Glassmorphism) */
+        .glass-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- CSS ABSTRACT ART MINH HỌA --- */
+
+        /* Art 0: Matrix Hero Background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 255, 128, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 255, 128, 0.05) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+        }
+
+        /* Art 1: Neural Chain (Cái bẫy Hebbian) */
+        .art-neuron {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .core {
+            width: 40px; height: 40px;
+            background: #ff3366;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #ff3366;
+            animation: pulse-core 2s infinite alternate;
+        }
+        .pathway {
+            position: absolute;
+            width: 100%; height: 100%;
+            border: 2px dashed rgba(255, 51, 102, 0.5);
+            border-radius: 50%;
+            animation: spin 8s linear infinite;
+        }
+        .pathway:nth-child(2) { width: 140%; height: 140%; animation-direction: reverse; border-color: rgba(255, 51, 102, 0.2); }
+        .chain-link {
+            position: absolute; width: 100%; height: 10px;
+            background: linear-gradient(90deg, transparent, #ff3366, transparent);
+            opacity: 0.7;
+        }
+        @keyframes pulse-core { 0% { transform: scale(0.8); } 100% { transform: scale(1.2); box-shadow: 0 0 50px #ff3366; } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Art 2: The Observer Eye (Quan sát ý tưởng) */
+        .art-observer {
+            position: relative;
+            width: 220px; height: 220px;
+        }
+        .eye-shape {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 180px; height: 180px;
+            border-radius: 80% 0;
+            border: 3px solid #00ffcc;
+            box-shadow: inset 0 0 20px rgba(0, 255, 204, 0.2), 0 0 20px rgba(0, 255, 204, 0.2);
+            overflow: hidden;
+        }
+        .pupil-calm {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px; height: 60px;
+            background: radial-gradient(circle, #00ffcc, #006655);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+            animation: breathe-eye 4s ease-in-out infinite;
+        }
+        @keyframes breathe-eye { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(0.7); } }
+
+        /* Art 3: The Suppressed Spring (Ép nén ý chí) */
+        .art-spring {
+            position: relative;
+            width: 200px; height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        .spring-coil {
+            width: 150px; height: 15px;
+            background: #ffaa00;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.6);
+            animation: compress-explode 3s cubic-bezier(.25,.1,.25,1) infinite;
+        }
+        .spring-coil:nth-child(even) { width: 130px; background: #ff4400; }
+        @keyframes compress-explode {
+            0% { transform: scaleY(1) translateY(0); opacity: 0.5; }
+            40% { transform: scaleY(0.2) translateY(30px); opacity: 1; filter: brightness(1.5); }
+            45% { transform: scaleY(1.8) translateY(-20px); filter: brightness(2); }
+            50%, 100% { transform: scaleY(1) translateY(0); opacity: 0.5; }
+        }
+
+        /* Art 4: Zen & Somatic Energy (Thiền & Vận động) */
+        .art-dual {
+            position: relative;
+            width: 220px; height: 220px;
+            display: flex;
+        }
+        .zen-wave {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: 2px solid #3388ff;
+            border-radius: 50%;
+            animation: ripple 3s infinite;
+        }
+        .zen-wave:nth-child(2) { animation-delay: 1s; }
+        .kinetic-spike {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px; height: 80px;
+            background: #ffcc00;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: electric-jolt 0.5s infinite alternate;
+        }
+        @keyframes ripple { 0% { transform: scale(0.1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        @keyframes electric-jolt { 0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); filter: drop-shadow(0 0 10px #ffcc00); } 100% { transform: translate(-50%, -50%) scale(1.2) rotate(15deg); filter: drop-shadow(0 0 30px #ff0000); } }
+
+        /* Custom Highlight Utilities */
+        .text-glow-green { text-shadow: 0 0 15px rgba(0, 255, 128, 0.6); }
+        .text-glow-red { text-shadow: 0 0 15px rgba(255, 51, 102, 0.6); }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal-500 selection:text-white relative">
+
+    <!-- Grid Background -->
+    <div class="fixed inset-0 bg-grid -z-10"></div>
+
+    <!-- Header / Hero Section -->
+    <header class="relative min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20 pb-10">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/50 to-[#050505] -z-10"></div>
+        <div class="inline-block px-4 py-1.5 mb-6 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-400 font-mono-custom text-sm uppercase tracking-widest reveal">
+            Khởi động mã nguồn nhận thức
+        </div>
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 reveal" style="transition-delay: 100ms;">
+            Vượt Qua <br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 text-glow-green">Ma Trận Bản Năng</span>
+        </h1>
+        <p class="max-w-3xl text-lg md:text-xl text-gray-400 leading-relaxed mb-10 reveal" style="transition-delay: 200ms;">
+            Những câu hỏi của bạn cho thấy bạn đã vượt qua ranh giới của một "nạn nhân" bị bản năng thao túng. Bạn đang bước vào tư duy của một <strong class="text-white">Bio-Hacker</strong> – bạn đã nhìn thấy bức tường của ma trận và đang đi tìm công cụ để bẻ khóa nó.
+        </p>
+        <a href="#quy-trinh" class="group relative px-8 py-4 font-mono-custom font-bold text-black bg-cyan-400 rounded-sm overflow-hidden reveal" style="transition-delay: 300ms;">
+            <div class="absolute inset-0 w-full h-full bg-white/30 transform -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+            Bắt đầu Giải phẫu hệ thống
+            <i data-lucide="arrow-down" class="inline-block ml-2 w-5 h-5 animate-bounce"></i>
+        </a>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-6 py-20 space-y-32" id="quy-trinh">
+
+        <!-- SECTION 1: CÂU HỎI 1 -->
+        <section class="flex flex-col lg:flex-row items-center gap-12 reveal">
+            <div class="lg:w-1/2 space-y-6 order-2 lg:order-1">
+                <div class="text-rose-500 font-mono-custom text-sm font-bold tracking-widest uppercase">Câu hỏi 1</div>
+                <h2 class="text-2xl md:text-3xl font-bold leading-tight">
+                    "Có phải <span class="text-rose-400">bắt buộc</span> làm theo cơ chế thì não mới giải phóng mình?"
+                </h2>
+                <div class="glass-card p-6 rounded-2xl space-y-4">
+                    <p class="text-xl font-semibold text-rose-400">TRẢ LỜI: KHÔNG. Đó là một CÁI BẪY CHẾT NGƯỜI.</p>
+                    <p class="text-gray-300 leading-relaxed">
+                        Việc thỏa mãn cơn nghiện chỉ mang lại sự "giải thoát giả tạo" chốc lát, nhưng lại đúc thêm gông cùm cho bạn vào ngày mai.
+                    </p>
+                    
+                    <div class="border-l-4 border-rose-500 pl-4 my-4">
+                        <h4 class="font-bold text-white mb-2">Sự thật Khoa học (Định luật Hebbian)</h4>
+                        <p class="text-gray-400 text-sm">
+                            "Các nơ-ron cùng phát xung thì sẽ liên kết chặt với nhau". Khi não ép bạn làm một việc (xem phim, cào vết thương) và bạn LÀM THEO, não lập tức "đổ bê tông" đường cao tốc thần kinh đó. Lần sau, cơn thèm sẽ ập đến nhanh hơn, mãnh liệt hơn. Bạn đang tự nâng cấp sợi xích trói mình.
+                        </p>
+                    </div>
+
+                    <div class="border-l-4 border-teal-500 pl-4 my-4">
+                        <h4 class="font-bold text-white mb-2">Cơ chế giải phóng: Lướt sóng thèm khát (Urge Surfing)</h4>
+                        <p class="text-gray-400 text-sm">
+                            Mọi cơn bứt rứt đều như một con sóng. Nếu bạn KHÔNG làm theo, bộ não sẽ tự động kích hoạt cơ chế <strong>Tái hấp thu (Reuptake)</strong> để dọn dẹp hóa chất dư thừa vì quá tốn năng lượng. Thường chỉ sau <strong>15-20 phút</strong>, cơn bứt rứt TỰ ĐỘNG TAN BIẾN.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-800/50 rounded-lg p-4 text-sm text-gray-300">
+                        <i data-lucide="info" class="inline-block w-4 h-4 mr-1 text-teal-400"></i>
+                        <strong>Ví dụ Vết muỗi đốt:</strong> Não tiết Histamin ép bạn gãi. Nếu gãi, xước da, độc tố lan ra, ngứa gấp 5 lần. Nếu nghiến răng KHÔNG GÃI, 15 phút sau nốt muỗi xẹp và hết ngứa hoàn toàn.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CSS Art 1 -->
+            <div class="lg:w-1/2 flex justify-center order-1 lg:order-2">
+                <div class="art-neuron">
+                    <div class="pathway"></div>
+                    <div class="pathway"></div>
+                    <div class="chain-link" style="transform: rotate(45deg);"></div>
+                    <div class="chain-link" style="transform: rotate(-45deg);"></div>
+                    <div class="core"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: CÂU HỎI 2 -->
+        <section class="flex flex-col lg:flex-row items-center gap-12 reveal">
+            <!-- CSS Art 2 -->
+            <div class="lg:w-1/2 flex justify-center">
+                <div class="art-observer">
+                    <div class="eye-shape">
+                        <div class="pupil-calm"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:w-1/2 space-y-6">
+                <div class="text-teal-400 font-mono-custom text-sm font-bold tracking-widest uppercase">Câu hỏi 2</div>
+                <h2 class="text-2xl md:text-3xl font-bold leading-tight">
+                    "Cách thoát là <span class="text-teal-400">tránh tiếp xúc (quy tắc 3s)</span> và quan sát ý tưởng ngay lập tức?"
+                </h2>
+                <div class="glass-card p-6 rounded-2xl space-y-4">
+                    <p class="text-xl font-semibold text-teal-400">TRẢ LỜI: ĐÚNG CHÍNH XÁC 100%.</p>
+                    <p class="text-gray-300 leading-relaxed">
+                        Đây là combo "Phòng ngự tuyến đầu" vĩ đại nhất của tâm lý học hành vi.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-gray-800/40 p-4 rounded-xl border border-gray-700/50">
+                            <i data-lucide="zap-off" class="text-yellow-400 mb-2"></i>
+                            <h4 class="font-bold text-white text-sm mb-2">Quy tắc 3 giây</h4>
+                            <p class="text-gray-400 text-xs">
+                                Phản xạ sinh lý tới Hạch hạnh nhân chỉ mất vài chục ms. Nhưng để não bắt đầu "Mô phỏng" và xả Dopamine ồ ạt, nó cần >3 giây. Chớp mắt và quay đi trong 3s đầu là bạn đã <strong>rút phích cắm</strong> trước khi cỗ máy khởi động.
+                            </p>
+                        </div>
+                        <div class="bg-gray-800/40 p-4 rounded-xl border border-gray-700/50">
+                            <i data-lucide="eye" class="text-cyan-400 mb-2"></i>
+                            <h4 class="font-bold text-white text-sm mb-2">Siêu nhận thức</h4>
+                            <p class="text-gray-400 text-xs">
+                                Khi lỡ nhìn, tự nhủ: "À, Dopamine lại bơm rồi". Theo ĐH UCLA, việc "gọi tên" cảm xúc lập tức rút máu khỏi Vùng não thú đẩy ngược lên Vỏ não trước trán (Lý trí). <strong>Quái vật bản năng rất sợ ánh sáng của nhận thức.</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: CÂU HỎI 3 -->
+        <section class="flex flex-col lg:flex-row items-center gap-12 reveal">
+            <div class="lg:w-1/2 space-y-6 order-2 lg:order-1">
+                <div class="text-amber-500 font-mono-custom text-sm font-bold tracking-widest uppercase">Câu hỏi 3</div>
+                <h2 class="text-2xl md:text-3xl font-bold leading-tight">
+                    "Dùng Ý chí không thể thắng được, càng <span class="text-amber-500">đè nén</span> nó càng mạnh lên?"
+                </h2>
+                <div class="glass-card p-6 rounded-2xl space-y-4">
+                    <p class="text-xl font-semibold text-amber-500">TRẢ LỜI: HOÀN TOÀN ĐÚNG.</p>
+                    <p class="text-gray-300 leading-relaxed">
+                        Dùng ý chí để chống lại bản năng là "Lấy trứng chọi đá".
+                    </p>
+                    
+                    <div class="border-l-4 border-amber-500 pl-4 my-4">
+                        <h4 class="font-bold text-white mb-2">Hiệu ứng Gấu trắng (Ironic Process Theory)</h4>
+                        <p class="text-gray-400 text-sm">
+                            Thí nghiệm: "Tuyệt đối KHÔNG nghĩ đến con gấu trắng". Kết quả 100% đều nghĩ đến nó. Để đảm bảo lệnh "Không nghĩ", não phải liên tục chạy ngầm từ khóa đó! Việc gồng mình lẩm bẩm "Phải nhịn" vô tình lại đang <strong>tưới máu</strong> cho vùng não chứa hình ảnh đó. Lực dội ngược y như việc ép một chiếc lò xo.
+                        </p>
+                    </div>
+
+                    <div class="border-l-4 border-red-500 pl-4 my-4">
+                        <h4 class="font-bold text-white mb-2">Sự cạn kiệt ý chí (Ego Depletion)</h4>
+                        <p class="text-gray-400 text-sm">
+                            Ý chí tiêu tốn Glucose. Sáng mạnh, nhưng đêm khuya khi bạn mệt, thanh ý chí cạn kiệt. Trong khi đó, con thú bản năng chạy bằng nguồn điện tự động vẫn thức. Lúc này bạn sẽ sụp đổ.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CSS Art 3 -->
+            <div class="lg:w-1/2 flex justify-center order-1 lg:order-2">
+                <div class="art-spring">
+                    <div class="spring-coil"></div>
+                    <div class="spring-coil"></div>
+                    <div class="spring-coil"></div>
+                    <div class="spring-coil"></div>
+                    <div class="spring-coil"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: CÂU HỎI 4 -->
+        <section class="flex flex-col lg:flex-row items-center gap-12 reveal">
+            <!-- CSS Art 4 -->
+            <div class="lg:w-1/2 flex justify-center">
+                <div class="art-dual">
+                    <div class="zen-wave"></div>
+                    <div class="zen-wave"></div>
+                    <div class="kinetic-spike"></div>
+                </div>
+            </div>
+
+            <div class="lg:w-1/2 space-y-6">
+                <div class="text-blue-400 font-mono-custom text-sm font-bold tracking-widest uppercase">Câu hỏi 4</div>
+                <h2 class="text-2xl md:text-3xl font-bold leading-tight">
+                    "Cách duy nhất để thoát khỏi cưỡng chế có phải là <span class="text-blue-400">Thiền</span> không?"
+                </h2>
+                <div class="glass-card p-6 rounded-2xl space-y-4">
+                    <p class="text-xl font-semibold text-blue-400">TRẢ LỜI: KHÔNG PHẢI DUY NHẤT, NHƯNG LÀ CỐT LÕI.</p>
+                    <p class="text-gray-300 leading-relaxed text-sm">
+                        Thiền là bài tập cử tạ cho não. Nó làm Vỏ não trước trán (Lý trí) dày lên và Hạch hạnh nhân teo nhỏ lại. Tuy nhiên, khoa học hành vi trang bị thêm 2 vũ khí bổ trợ cực mạnh:
+                    </p>
+                    
+                    <ul class="space-y-4 mt-4">
+                        <li class="flex items-start gap-3">
+                            <div class="p-2 bg-blue-500/20 rounded-lg text-blue-400"><i data-lucide="waves"></i></div>
+                            <div>
+                                <strong class="text-white block">1. Thiền Lướt Sóng</strong>
+                                <span class="text-gray-400 text-sm">Quan sát cơn thèm khát như đối tượng vật lý, không đánh giá, không đè nén. 15 phút sau nó tự bỏ đi.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="p-2 bg-purple-500/20 rounded-lg text-purple-400"><i data-lucide="shield"></i></div>
+                            <div>
+                                <strong class="text-white block">2. Thiết kế Môi trường (Choice Architecture)</strong>
+                                <span class="text-gray-400 text-sm">Bậc thầy không dùng ý chí, họ dọn sạch cám dỗ. Xóa app, chặn web đen, không mang điện thoại vào phòng ngủ.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="p-2 bg-yellow-500/20 rounded-lg text-yellow-400"><i data-lucide="activity"></i></div>
+                            <div>
+                                <strong class="text-white block">3. Đánh tráo Động năng (Somatic Reset)</strong>
+                                <span class="text-gray-400 text-sm">Nếu lỡ sập bẫy và rạo rực phát điên: Hít đất 30-50 cái, chạy thục mạng hoặc tắm nước lạnh. Cơ thể xả Endorphin, rút máu dồn vào cơ bắp, hệ thần kinh bị "sốc vật lý" và tiêu thụ sạch hóa chất ứ đọng.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONCLUSION / SUMMARY FLOW -->
+        <section class="pt-10 border-t border-gray-800 reveal">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold font-mono-custom text-cyan-400 mb-4">TÓM LẠI: QUY TRÌNH CHIẾN THẮNG</h2>
+                <p class="text-gray-400">Chuỗi hành động "Hack não" từ nay của bạn sẽ là:</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 relative">
+                <!-- Line connect (Desktop) -->
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-cyan-500 to-teal-500 -z-10 transform -translate-y-1/2 opacity-30"></div>
+
+                <!-- Step 1 -->
+                <div class="glass-card p-6 rounded-2xl w-full md:w-1/4 text-center relative">
+                    <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-[#050505] -mt-10">
+                        <i data-lucide="trash-2" class="text-white"></i>
+                    </div>
+                    <h4 class="font-bold text-white mb-2">1. Né Bẫy</h4>
+                    <p class="text-xs text-gray-400">Dọn sạch môi trường, cắt đứt nguồn kích thích.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="glass-card p-6 rounded-2xl w-full md:w-1/4 text-center relative">
+                    <div class="w-12 h-12 bg-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-[#050505] -mt-10">
+                        <i data-lucide="eye-off" class="text-white"></i>
+                    </div>
+                    <h4 class="font-bold text-white mb-2">2. Cắt Cầu Dao</h4>
+                    <p class="text-xs text-gray-400">Chớp mắt và quay đi ngay trong 3 giây đầu tiên.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="glass-card p-6 rounded-2xl w-full md:w-1/4 text-center relative">
+                    <div class="w-12 h-12 bg-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-[#050505] -mt-10">
+                        <i data-lucide="brain" class="text-white"></i>
+                    </div>
+                    <h4 class="font-bold text-white mb-2">3. Chuyển Hóa Não</h4>
+                    <p class="text-xs text-gray-400">Nhận diện, gọi tên cảm xúc để đánh thức lý trí.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="glass-card p-6 rounded-2xl w-full md:w-1/4 text-center relative">
+                    <div class="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-[#050505] -mt-10">
+                        <i data-lucide="power" class="text-white"></i>
+                    </div>
+                    <h4 class="font-bold text-white mb-2">4. Xử Lý Triệt Để</h4>
+                    <p class="text-xs text-gray-400">Thiền lướt sóng (15 phút) HOẶC Vận động mạnh để Reset vật lý.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-10 text-gray-600 text-sm mt-20 border-t border-gray-900">
+        <p>Hệ thống đã được lập trình lại. Chúc bạn làm chủ cuộc đời.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Khởi tạo Lucide Icons
+        lucide.createIcons();
+
+        // Scroll Reveal Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                const elementVisible = 100;
+                
+                reveals.forEach(reveal => {
+                    const elementTop = reveal.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveal.classList.add('active');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll(); // Trigger on load
+        });
+    </script>
+</body>
+</html>
