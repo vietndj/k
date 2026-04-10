@@ -3,273 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Public Repository | Kho Lưu Trữ</title>
+    <title>Landing Feed | Kho Lưu Trữ</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f5f5f7;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #000; /* Nền đen giúp tập trung vào feed như Reels */
+            margin: 0;
+            overflow: hidden; /* Chặn cuộn body, chỉ cuộn feed container */
         }
 
-        .glass-header {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        /* 1. Thiết lập vùng cuộn Feed (Scroll Snap) */
+        .feed-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .feed-container::-webkit-scrollbar {
+            display: none; /* Ẩn thanh cuộn cho giống app mobile */
         }
 
-        .apple-card {
-            background: #ffffff;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .apple-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .abstract-cover {
-            height: 180px;
+        /* Mỗi post cao đúng 1 màn hình và bắt buộc khựng lại */
+        .feed-item {
+            height: 100vh;
             width: 100%;
+            scroll-snap-align: start;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
         }
 
-        .abstract-cover::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 100%);
-        }
-
-        /* Style cho nút Dev Tool ở góc */
-        #dev-tools {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 999;
-        }
-        .dev-btn {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
+        /* 2. Style cho thẻ hiển thị nội dung (Card) */
+        .feed-card {
+            width: 100%;
+            max-width: 800px;
+            height: 85vh; /* Card cao 85% màn hình để có viền hở trên dưới */
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
-            align-items: center;
+            flex-col;
+            overflow: hidden;
+            position: relative;
+            margin: 0 16px;
+        }
+
+        /* 3. Vùng chứa nội dung bài viết gốc & Hiệu ứng mờ (Fade out) */
+        .post-content-wrapper {
+            padding: 2rem;
+            height: 100%;
+            overflow-y: hidden; /* Cắt bớt nội dung bị thừa */
+            position: relative;
+        }
+
+        /* Gradient làm mờ nội dung ở nửa dưới (Mô phỏng "lấy 1 nửa độ dài") */
+        .content-fade-mask {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40vh; /* Độ cao của vùng mờ dần */
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 90%);
+            z-index: 10;
+            display: flex;
+            align-items: flex-end;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            backdrop-filter: blur(10px);
-            transition: transform 0.2s;
+            padding-bottom: 2rem;
         }
-        .dev-btn:hover {
-            transform: scale(1.05);
+
+        /* Nút Tool góc */
+        #dev-tools { position: fixed; bottom: 20px; right: 20px; z-index: 999; }
+        .dev-btn {
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+            color: white; border-radius: 50%; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1);
         }
+        .dev-btn:hover { transform: scale(1.05); }
     </style>
 </head>
-<body class="text-gray-900 antialiased min-h-screen flex flex-col">
+<body>
 
-    <header class="glass-header sticky top-0 z-50 px-6 py-4">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 id="repo-title" class="text-xl font-semibold tracking-tight text-gray-900">Tên Repository</h1>
-                <p class="text-xs text-gray-500 mt-0.5">vietndj.github.io</p>
-            </div>
-            <div id="status-indicator" class="flex items-center text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">
-                <span class="relative flex h-2 w-2 mr-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                </span>
-                Đang đồng bộ...
-            </div>
+    <div id="feed-container" class="feed-container">
+        <div id="initial-loader" class="feed-item bg-gray-900 flex-col text-white">
+            <svg class="animate-spin h-10 w-10 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <p class="font-medium">Đang tải luồng bài viết...</p>
         </div>
-    </header>
-
-    <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-12">
-        <div class="mb-10 text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-gray-900 mb-4">Các bài viết mới nhất</h2>
-            <p class="text-gray-500 max-w-2xl mx-auto text-lg">Danh sách nội dung được cập nhật tự động trực tiếp từ GitHub Repository mà không cần qua Server.</p>
-        </div>
-
-        <div id="post-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="apple-card animate-pulse">
-                <div class="h-[180px] bg-gray-200"></div>
-                <div class="p-5">
-                    <div class="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
-                    <div class="h-3 bg-gray-200 rounded w-1/2"></div>
-                </div>
-            </div>
-        </div>
-    </main>
+    </div>
 
     <div id="dev-tools">
-        <button onclick="promptForToken()" class="dev-btn" title="Cài đặt Token GitHub" id="token-btn">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        <button onclick="promptForToken()" class="dev-btn" id="token-btn">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
         </button>
     </div>
 
-    <footer class="border-t border-gray-200 mt-12 py-8 bg-white">
-        <div class="max-w-5xl mx-auto px-6 text-center text-sm text-gray-500">
-            &copy; <span id="current-year"></span> Hệ thống Personal CMS bởi vietndj.
-        </div>
-    </footer>
-
     <script>
-        // 1. CẤU HÌNH HỆ THỐNG CHUẨN
         const CONFIG = {
             owner: 'vietndj',
-            repo: 'k', // Đã sửa thành repo 'k' của bạn
+            repo: 'k',
             ignoredFiles: ['index.html', 'fix-url.html', '404.html']
         };
 
-        document.getElementById('repo-title').textContent = CONFIG.repo;
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-
-        // 2. QUẢN LÝ TOKEN TEST
         const TOKEN_KEY = 'vietndj_dev_pat';
-        
-        // Kiểm tra xem có token đang lưu không để đổi màu nút
-        if(localStorage.getItem(TOKEN_KEY)) {
-            document.getElementById('token-btn').style.background = '#34c759'; // Màu xanh Apple
-        }
+        if(localStorage.getItem(TOKEN_KEY)) document.getElementById('token-btn').style.background = '#34c759';
 
         function promptForToken() {
             const currentToken = localStorage.getItem(TOKEN_KEY) || '';
-            const action = prompt(
-                "=== DEV TOOLS ===\n" +
-                "Nhập GitHub PAT để test (Lưu ở LocalStorage trình duyệt này).\n" +
-                "Để xóa Token hiện tại, hãy xóa trắng ô bên dưới và ấn OK:", 
-                currentToken
-            );
-
+            const action = prompt("Nhập GitHub PAT để test:\nĐể xóa, hãy xóa trắng ô bên dưới và ấn OK:", currentToken);
             if (action !== null) {
-                if (action.trim() === '') {
-                    localStorage.removeItem(TOKEN_KEY);
-                    alert("Đã xóa Token. Đang tải lại bằng quyền Public...");
-                } else {
-                    localStorage.setItem(TOKEN_KEY, action.trim());
-                    alert("Đã lưu Token! Đang tải lại trang...");
-                }
+                if (action.trim() === '') localStorage.removeItem(TOKEN_KEY);
+                else localStorage.setItem(TOKEN_KEY, action.trim());
                 location.reload();
             }
         }
 
-        // 3. CSS ABSTRACT GENERATOR
-        function generateAbstractCSS(seedString) {
-            const palettes = [
-                ['#ff9a9e', '#fecfef', '#fbc2eb'], ['#84fab0', '#8fd3f4', '#a1c4fd'], 
-                ['#fccb90', '#d57eeb', '#a18cd1'], ['#e0c3fc', '#8ec5fc', '#c2e9fb'], 
-                ['#4facfe', '#00f2fe', '#4facfe'], ['#fa709a', '#fee140', '#fa709a']
-            ];
-            let hash = 0;
-            for (let i = 0; i < seedString.length; i++) hash = seedString.charCodeAt(i) + ((hash << 5) - hash);
-            hash = Math.abs(hash);
-            const palette = palettes[hash % palettes.length];
-            const angle = hash % 360;
-            return `background: linear-gradient(${angle}deg, ${palette[0]} 0%, ${palette[1]} 50%, ${palette[2]} 100%);`;
-        }
-
         function formatTitle(filename) {
             try {
-                let decodedName = decodeURIComponent(filename.replace(/\.html$/, ''));
-                let readableName = decodedName.replace(/-/g, ' ');
-                return readableName.charAt(0).toUpperCase() + readableName.slice(1);
-            } catch (e) {
-                return filename; 
-            }
+                let decoded = decodeURIComponent(filename.replace(/\.html$/, ''));
+                let readable = decoded.replace(/-/g, ' ');
+                return readable.charAt(0).toUpperCase() + readable.slice(1);
+            } catch (e) { return filename; }
         }
 
-        // 4. GỌI API & RENDER (Self-Healing)
-        async function fetchAndRenderPosts() {
-            const grid = document.getElementById('post-grid');
-            const status = document.getElementById('status-indicator');
-            
+        // Tạo Intersection Observer để LAZY LOAD nội dung file html
+        // Chỉ fetch file raw khi người dùng cuộn tới bài đó
+        const observerOptions = {
+            root: document.getElementById('feed-container'),
+            rootMargin: '0px',
+            threshold: 0.1 // Kích hoạt khi 10% thẻ hiện ra
+        };
+
+        const postObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const card = entry.target;
+                    const downloadUrl = card.dataset.downloadUrl;
+                    const isLoaded = card.dataset.loaded;
+
+                    if (downloadUrl && isLoaded === 'false') {
+                        loadRawContent(card, downloadUrl);
+                        card.dataset.loaded = 'true'; // Đánh dấu đã load để không gọi lại
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Hàm tải file raw HTML, parse và nhét vào card
+        async function loadRawContent(cardElement, downloadUrl) {
+            const contentContainer = cardElement.querySelector('.raw-content-inject');
             try {
-                // Xây dựng URL chuẩn (Có cả owner và repo)
-                const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents?t=${Date.now()}`;
+                const response = await fetch(downloadUrl);
+                if (!response.ok) throw new Error("Fetch content failed");
+                const htmlText = await response.text();
+
+                // Dùng DOMParser để bóc tách an toàn
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
                 
-                // Chuẩn bị Header linh hoạt
-                const fetchOptions = {
-                    method: 'GET',
-                    headers: {}
-                };
+                // Lấy phần body (hoặc thẻ main nếu bạn dùng main trong bài viết)
+                const mainContent = doc.querySelector('main') || doc.body;
 
-                // Chỉ gắn Token nếu bạn đã nhập qua nút Dev Tools
-                const savedToken = localStorage.getItem(TOKEN_KEY);
-                if (savedToken) {
-                    fetchOptions.headers['Authorization'] = `Bearer ${savedToken}`;
-                }
+                // Xóa các thẻ script để đảm bảo an toàn, không chạy mã JS lạ
+                const scripts = mainContent.querySelectorAll('script');
+                scripts.forEach(s => s.remove());
 
-                const response = await fetch(apiUrl, fetchOptions);
-                
-                if (!response.ok) {
-                    const errorMsg = await response.json();
-                    throw new Error(`Mã lỗi: ${response.status}. ${errorMsg.message || ''}`);
-                }
-
-                const data = await response.json();
-
-                const posts = data.filter(item => 
-                    item.type === 'file' && 
-                    item.name.endsWith('.html') && 
-                    !CONFIG.ignoredFiles.includes(item.name)
-                );
-
-                if (posts.length === 0) {
-                    grid.innerHTML = `
-                        <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300">
-                            <p class="text-gray-500">Chưa có bài viết nào (.html) trong Repo '${CONFIG.repo}'.</p>
-                        </div>`;
-                } else {
-                    grid.innerHTML = '';
-                    posts.reverse().forEach(post => {
-                        const title = formatTitle(post.name);
-                        const abstractCSS = generateAbstractCSS(post.name);
-                        const postUrl = encodeURIComponent(post.name); 
-
-                        const card = document.createElement('a');
-                        card.href = `./${postUrl}`;
-                        card.className = 'apple-card group block cursor-pointer';
-                        
-                        card.innerHTML = `
-                            <div class="abstract-cover" style="${abstractCSS}">
-                                <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 10px 10px;"></div>
-                            </div>
-                            <div class="p-6">
-                                <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">${title}</h3>
-                                <p class="text-xs text-gray-400 font-medium tracking-wide uppercase">Size: ${(post.size / 1024).toFixed(1)} KB</p>
-                            </div>
-                        `;
-                        grid.appendChild(card);
-                    });
-                }
-
-                status.innerHTML = `<span class="h-2 w-2 rounded-full bg-green-500 mr-2"></span> Đã đồng bộ`;
-                status.className = 'flex items-center text-xs font-medium text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full';
+                // Inject nội dung vào feed
+                contentContainer.innerHTML = mainContent.innerHTML;
 
             } catch (error) {
-                console.error("Lỗi khi fetch API:", error);
-                grid.innerHTML = `
-                    <div class="col-span-full p-6 bg-red-50 text-red-600 rounded-xl text-center border border-red-100">
-                        <svg class="w-8 h-8 mx-auto mb-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        <p class="font-medium">Không thể kết nối API.</p>
-                        <p class="text-sm mt-1 opacity-80">${error.message}</p>
-                    </div>`;
-                status.innerHTML = `<span class="h-2 w-2 rounded-full bg-red-500 mr-2"></span> Lỗi kết nối`;
+                console.error("Lỗi parse bài viết:", error);
+                contentContainer.innerHTML = `<p class="text-red-500">Không thể tải nội dung bài viết này.</p>`;
             }
         }
 
-        document.addEventListener('DOMContentLoaded', fetchAndRenderPosts);
+        // Hàm chính: Lấy danh sách file và tạo các Khối Feed (Khung rỗng)
+        async function fetchAndRenderFeed() {
+            const container = document.getElementById('feed-container');
+            
+            try {
+                const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents?t=${Date.now()}`;
+                const fetchOptions = { method: 'GET', headers: {} };
+                const savedToken = localStorage.getItem(TOKEN_KEY);
+                if (savedToken) fetchOptions.headers['Authorization'] = `Bearer ${savedToken}`;
+
+                const response = await fetch(apiUrl, fetchOptions);
+                if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+                const data = await response.json();
+
+                const posts = data.filter(item => item.type === 'file' && item.name.endsWith('.html') && !CONFIG.ignoredFiles.includes(item.name));
+                
+                document.getElementById('initial-loader').style.display = 'none';
+
+                if (posts.length === 0) {
+                    container.innerHTML = `<div class="feed-item text-white">Chưa có bài viết nào.</div>`;
+                    return;
+                }
+
+                posts.reverse().forEach((post, index) => {
+                    const title = formatTitle(post.name);
+                    const postUrl = encodeURIComponent(post.name);
+                    
+                    // Khởi tạo khung Card (Sẽ load ruột sau bằng Lazy Load)
+                    const feedItem = document.createElement('div');
+                    feedItem.className = 'feed-item';
+                    
+                    // download_url là đường dẫn trực tiếp đến file raw của GitHub
+                    feedItem.dataset.downloadUrl = post.download_url;
+                    feedItem.dataset.loaded = 'false';
+
+                    feedItem.innerHTML = `
+                        <div class="feed-card">
+                            <div class="px-8 py-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center z-20 relative">
+                                <h2 class="text-xl font-bold text-gray-900 truncate pr-4">${title}</h2>
+                                <a href="./${postUrl}" target="_blank" class="shrink-0 bg-black text-white text-sm px-4 py-2 rounded-full font-medium hover:bg-gray-800 transition">
+                                    Đọc trọn bộ
+                                </a>
+                            </div>
+
+                            <div class="post-content-wrapper">
+                                <div class="raw-content-inject prose prose-lg max-w-none text-gray-700">
+                                    <div class="animate-pulse flex space-x-4 mt-4">
+                                        <div class="flex-1 space-y-4 py-1">
+                                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                                            <div class="space-y-2">
+                                                <div class="h-4 bg-gray-200 rounded"></div>
+                                                <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="content-fade-mask">
+                                    <a href="./${postUrl}" class="text-blue-600 font-semibold hover:underline flex items-center bg-white px-6 py-2 rounded-full shadow-md">
+                                        Tiếp tục đọc <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(feedItem);
+                    // Bắt đầu quan sát thẻ này, nếu cuộn tới thì kích hoạt loadRawContent
+                    postObserver.observe(feedItem);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div class="feed-item flex-col text-red-500 bg-gray-900"><p>Lỗi: ${error.message}</p></div>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAndRenderFeed);
     </script>
 </body>
 </html>
