@@ -24,9 +24,7 @@
             -ms-overflow-style: none; 
             scrollbar-width: none; 
         }
-        .feed-container::-webkit-scrollbar {
-            display: none; 
-        }
+        .feed-container::-webkit-scrollbar { display: none; }
 
         .feed-item {
             height: 100vh;
@@ -45,11 +43,8 @@
             background: #ffffff;
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            
-            /* SỬA LỖI Ở ĐÂY: Dùng flex-direction: column chuẩn CSS */
             display: flex;
             flex-direction: column; 
-            
             overflow: hidden;
             position: relative;
             margin: 0 16px;
@@ -57,7 +52,7 @@
 
         .post-content-wrapper {
             padding: 2.5rem;
-            flex-grow: 1; /* Cho phép nội dung chiếm toàn bộ không gian còn lại dưới header */
+            flex-grow: 1; 
             overflow-y: hidden; 
             position: relative;
             background-color: #ffffff;
@@ -86,11 +81,11 @@
         }
         .dev-btn:hover { transform: scale(1.05); }
 
-        /* Sửa lỗi tràn ảnh trong nội dung bài viết */
         .raw-content-inject img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
+            margin: 1rem auto;
         }
     </style>
 </head>
@@ -139,7 +134,7 @@
 
         const observerOptions = {
             root: document.getElementById('feed-container'),
-            rootMargin: '100px 0px', // Load trước khi cuộn tới 100px để mượt hơn
+            rootMargin: '100px 0px', 
             threshold: 0.1
         };
 
@@ -158,31 +153,36 @@
             });
         }, observerOptions);
 
+        // ==========================================
+        // ĐÃ FIX LỖI CORS Ở HÀM NÀY
+        // ==========================================
         async function loadRawContent(cardElement, downloadUrl) {
             const contentContainer = cardElement.querySelector('.raw-content-inject');
             try {
-                const fetchOptions = { method: 'GET', headers: {} };
-                const savedToken = localStorage.getItem(TOKEN_KEY);
-                if (savedToken) fetchOptions.headers['Authorization'] = `Bearer ${savedToken}`;
-
-                const response = await fetch(downloadUrl, fetchOptions);
-                if (!response.ok) throw new Error("Fetch content failed");
+                // TUYỆT ĐỐI KHÔNG truyền thêm Header Authorization vào đây để tránh CORS preflight block.
+                // Fetch sẽ gọi thuần túy GET.
+                const response = await fetch(downloadUrl);
+                
+                if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
                 const htmlText = await response.text();
 
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
                 
-                // Ưu tiên lấy thẻ main, nếu không có thì lấy toàn bộ body
                 const mainContent = doc.querySelector('main') || doc.body;
-
-                // Xóa script và style cũ của bài viết để không phá layout Feed
+                
+                // Xóa các tag gây nhiễu layout
                 mainContent.querySelectorAll('script, style, link[rel="stylesheet"]').forEach(el => el.remove());
 
                 contentContainer.innerHTML = mainContent.innerHTML;
 
             } catch (error) {
                 console.error("Lỗi parse bài viết:", error);
-                contentContainer.innerHTML = `<p class="text-red-500">Không thể tải nội dung bài viết này.</p>`;
+                contentContainer.innerHTML = `
+                    <div class="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
+                        <p class="font-semibold">Không thể tải nội dung bài viết này.</p>
+                        <p class="text-sm mt-1 opacity-80">${error.message}</p>
+                    </div>`;
             }
         }
 
@@ -191,6 +191,8 @@
             
             try {
                 const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents?t=${Date.now()}`;
+                
+                // Header Authorization CHỈ ĐƯỢC DÙNG khi gọi api.github.com
                 const fetchOptions = { method: 'GET', headers: {} };
                 const savedToken = localStorage.getItem(TOKEN_KEY);
                 if (savedToken) fetchOptions.headers['Authorization'] = `Bearer ${savedToken}`;
@@ -255,7 +257,7 @@
 
             } catch (error) {
                 console.error(error);
-                container.innerHTML = `<div class="feed-item flex-col text-red-500 bg-gray-900"><p>Lỗi: ${error.message}</p></div>`;
+                container.innerHTML = `<div class="feed-item flex-col text-red-500 bg-gray-900"><p>Lỗi kết nối Repository: ${error.message}</p></div>`;
             }
         }
 
