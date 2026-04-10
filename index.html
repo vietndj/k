@@ -6,17 +6,48 @@
     <title>Landing Feed | Kho Lưu Trữ</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    typography: {
+                        DEFAULT: {
+                            css: {
+                                color: '#242424', // Xám than giảm mỏi mắt (không dùng đen tuyền)
+                                fontFamily: 'Lora, serif',
+                                fontSize: '1.125rem', // ~18px
+                                lineHeight: '1.8',
+                                h1: { fontFamily: 'Inter, sans-serif', fontWeight: '800', color: '#111827', letterSpacing: '-0.02em' },
+                                h2: { fontFamily: 'Inter, sans-serif', fontWeight: '700', color: '#111827', letterSpacing: '-0.02em', marginTop: '2em' },
+                                h3: { fontFamily: 'Inter, sans-serif', fontWeight: '600', color: '#111827' },
+                                h4: { fontFamily: 'Inter, sans-serif', fontWeight: '600', color: '#111827' },
+                                a: { color: '#1a8917', textDecoration: 'none', borderBottom: '1px solid #1a8917', fontWeight: '500' }, // Xanh Medium
+                                'a:hover': { color: '#115c0e', borderBottomColor: '#115c0e' },
+                                blockquote: { fontStyle: 'italic', borderLeftWidth: '3px', borderLeftColor: '#111827', color: '#6b7280', quotes: 'none' },
+                                code: { color: '#ef4444', backgroundColor: '#fee2e2', padding: '0.2rem 0.4rem', borderRadius: '0.25rem', fontWeight: '400' },
+                                'code::before': { content: '""' },
+                                'code::after': { content: '""' },
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background-color: #000; 
             margin: 0;
             overflow: hidden; 
         }
 
-        /* Container cuộn dọc chính của Feed */
         .feed-container {
             height: 100vh;
             overflow-y: scroll;
@@ -37,13 +68,14 @@
             position: relative;
         }
 
+        /* THẺ CARD MỞ RỘNG TỪ 800PX LÊN 1000PX */
         .feed-card {
             width: 100%;
-            max-width: 800px;
-            height: 85vh; 
+            max-width: 1000px;
+            height: 90vh; 
             background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(255, 255, 255, 0.15);
             display: flex;
             flex-direction: column; 
             overflow: hidden;
@@ -51,77 +83,99 @@
             margin: 0 16px;
         }
 
-        /* Vùng chứa nội dung (Bình thường ẩn nội dung thừa) */
         .post-content-wrapper {
-            padding: 2.5rem;
             flex-grow: 1; 
-            overflow-y: hidden; /* Mặc định khóa cuộn */
+            overflow-y: hidden;
+            overflow-x: hidden;
             position: relative;
             background-color: #ffffff;
             scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Căn giữa cột chữ */
         }
 
-        /* Khi mở rộng, cho phép cuộn nội dung bên trong */
-        .post-content-wrapper.is-expanded {
-            overflow-y: auto;
-        }
-        /* Custom thanh cuộn nhỏ cho vùng nội dung mở rộng */
-        .post-content-wrapper.is-expanded::-webkit-scrollbar {
-            width: 6px;
-        }
+        .post-content-wrapper.is-expanded { overflow-y: auto; }
+        .post-content-wrapper.is-expanded::-webkit-scrollbar { width: 6px; }
         .post-content-wrapper.is-expanded::-webkit-scrollbar-thumb {
-            background-color: #e2e8f0;
+            background-color: #cbd5e1;
             border-radius: 10px;
         }
 
-        /* FIX LỖI 1: Ép mọi thành phần nhúng từ HTML gốc không được phá layout */
-        .raw-content-inject {
-            position: relative;
-            z-index: 1;
-            word-wrap: break-word;
+        /* GIỚI HẠN VÙNG CHỮ Ở TỈ LỆ VÀNG 720PX */
+        .prose-container {
+            width: 100%;
+            max-width: 720px;
+            padding: 2.5rem 1.5rem 6rem 1.5rem;
+            margin: 0 auto;
         }
+
+        /* 
+           BẢO VỆ DOM KỶ LUẬT THÉP (NUCLEAR CSS)
+           Ép mọi phần tử nhúng vào phải ngoan ngoãn nằm tĩnh 
+        */
         .raw-content-inject * {
-            max-width: 100% !important; /* Không cho phép phần tử rộng hơn thẻ cha */
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            position: static !important; /* TRỊ DỨT ĐIỂM BÓNG ĐEN LƠ LỬNG */
+            float: none !important;
+            transform: none !important;
+            clip-path: none !important;
         }
-        /* Vô hiệu hóa các thẻ định vị tuyệt đối (thủ phạm gây hình khối đen lơ lửng) */
-        .raw-content-inject [style*="position: absolute"],
-        .raw-content-inject [style*="position: fixed"],
-        .raw-content-inject [style*="position:absolute"],
-        .raw-content-inject [style*="position:fixed"] {
-            position: static !important;
-            display: none !important; 
-        }
+        
         .raw-content-inject img, 
-        .raw-content-inject svg, 
         .raw-content-inject video {
             height: auto !important;
-            max-height: 60vh; /* Ngăn ảnh/SVG quá to */
+            max-height: 70vh !important;
             border-radius: 8px;
-            margin: 1rem auto;
-            display: block;
+            margin: 2rem auto !important;
+            display: block !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
+        /* Ẩn các khối div rỗng vô tri do Notion/Webflow sinh ra */
+        .raw-content-inject div:empty { display: none !important; }
 
         .content-fade-mask {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             height: 40vh; 
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 90%);
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 60%, rgba(255,255,255,1) 100%);
             z-index: 10;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 2rem;
+            padding-bottom: 2.5rem;
             transition: opacity 0.3s ease;
+        }
+
+        /* Nút Đọc tiếp chuẩn Medium */
+        .read-more-btn {
+            background-color: #1a8917;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 14px 0 rgba(26, 137, 23, 0.39);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        .read-more-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 137, 23, 0.23);
         }
 
         #dev-tools { position: fixed; bottom: 20px; right: 20px; z-index: 999; }
         .dev-btn {
-            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
             color: white; border-radius: 50%; width: 44px; height: 44px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.2);
         }
         .dev-btn:hover { transform: scale(1.05); }
     </style>
@@ -129,9 +183,9 @@
 <body>
 
     <div id="feed-container" class="feed-container">
-        <div id="initial-loader" class="feed-item bg-gray-900 flex-col text-white">
-            <svg class="animate-spin h-10 w-10 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <p class="font-medium">Đang tải luồng bài viết...</p>
+        <div id="initial-loader" class="feed-item flex-col text-gray-400">
+            <svg class="animate-spin h-10 w-10 text-gray-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <p class="font-medium font-['Inter']">Đang đồng bộ không gian đọc...</p>
         </div>
     </div>
 
@@ -153,7 +207,7 @@
 
         function promptForToken() {
             const currentToken = localStorage.getItem(TOKEN_KEY) || '';
-            const action = prompt("Nhập GitHub PAT để test:\nĐể xóa, hãy xóa trắng ô bên dưới và ấn OK:", currentToken);
+            const action = prompt("Nhập GitHub PAT để test (Để trống để xoá):", currentToken);
             if (action !== null) {
                 if (action.trim() === '') localStorage.removeItem(TOKEN_KEY);
                 else localStorage.setItem(TOKEN_KEY, action.trim());
@@ -166,17 +220,13 @@
                 let decoded = decodeURIComponent(filename.replace(/\.html$/, ''));
                 let readable = decoded.replace(/-/g, ' ');
                 return readable.charAt(0).toUpperCase() + readable.slice(1);
-            } catch (e) { return filename; }
+            } catch (e) { return filename.replace(/\.html$/, ''); }
         }
 
-        // Logic mở rộng bài viết để đọc inline
         function expandContent(btnElement) {
             const wrapper = btnElement.closest('.post-content-wrapper');
             const mask = wrapper.querySelector('.content-fade-mask');
-            
-            // Xóa lớp mờ
             mask.style.display = 'none';
-            // Thêm class để cho phép cuộn dọc
             wrapper.classList.add('is-expanded');
         }
 
@@ -201,28 +251,69 @@
             });
         }, observerOptions);
 
+        /**
+         * HÀM PARSE HTML SIÊU THÔNG MINH - SÁT THỦ DIỆT RÁC
+         */
         async function loadRawContent(cardElement, downloadUrl) {
             const contentContainer = cardElement.querySelector('.raw-content-inject');
             try {
+                // TUYỆT ĐỐI KHÔNG DÙNG HEADER AUTHORIZATION ĐỂ TRÁNH CORS PREFLIGHT
                 const response = await fetch(downloadUrl);
-                if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+                if (!response.ok) throw new Error(`Lỗi tải file: HTTP ${response.status}`);
                 const htmlText = await response.text();
 
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
                 
-                const mainContent = doc.querySelector('main') || doc.body;
-                
-                mainContent.querySelectorAll('script, style, link[rel="stylesheet"]').forEach(el => el.remove());
+                // Fallback thông minh: Cố lấy thẻ chứa nội dung chính, nếu không có thì lấy body
+                let mainContent = 
+                    doc.querySelector('article') || 
+                    doc.querySelector('main') || 
+                    doc.querySelector('.notion-page-content') || 
+                    doc.querySelector('.markdown-body') || 
+                    doc.body;
+
+                // ---------------------------------------------------------
+                // BƯỚC 1: SÁT THỦ DOM - Xoá sạch thẻ rác và layout nguy hiểm
+                // (Chính SVG, Canvas và Iframe sinh ra các khối đen khổng lồ)
+                // ---------------------------------------------------------
+                const tagsToKill = ['script', 'style', 'link', 'meta', 'iframe', 'svg', 'canvas', 'noscript', 'nav', 'header', 'footer', 'aside'];
+                tagsToKill.forEach(tag => {
+                    mainContent.querySelectorAll(tag).forEach(el => el.remove());
+                });
+
+                // ---------------------------------------------------------
+                // BƯỚC 2: TẨY RỬA THUỘC TÍNH (Sanitization)
+                // Lột sạch CSS inline và class gốc để ép văn bản theo chuẩn Typography của ta
+                // (Chữa dứt điểm bệnh nền tối, chữ chìm)
+                // ---------------------------------------------------------
+                mainContent.querySelectorAll('*').forEach(el => {
+                    el.removeAttribute('style'); // Xoá inline CSS
+                    el.removeAttribute('class'); // Xoá class của tool gốc
+                    el.removeAttribute('id');
+                    el.removeAttribute('bgcolor');
+                    el.removeAttribute('color');
+                    
+                    // Ép link mở tab mới an toàn
+                    if (el.tagName === 'A') {
+                        el.setAttribute('target', '_blank');
+                        el.setAttribute('rel', 'noopener noreferrer');
+                    }
+                });
+
+                // Xoá các đoạn văn/div rỗng (sinh ra do tool export)
+                mainContent.querySelectorAll('div, p, span').forEach(el => {
+                    if (el.innerHTML.trim() === '') el.remove();
+                });
 
                 contentContainer.innerHTML = mainContent.innerHTML;
 
             } catch (error) {
                 console.error("Lỗi parse bài viết:", error);
                 contentContainer.innerHTML = `
-                    <div class="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
-                        <p class="font-semibold">Không thể tải nội dung bài viết này.</p>
-                        <p class="text-sm mt-1 opacity-80">${error.message}</p>
+                    <div class="p-6 bg-red-50 text-red-600 rounded-xl border border-red-100 font-sans mx-auto mt-6">
+                        <p class="font-bold text-lg mb-1">Không thể hiển thị bài viết này</p>
+                        <p class="text-sm opacity-80">${error.message}</p>
                     </div>`;
             }
         }
@@ -231,6 +322,7 @@
             const container = document.getElementById('feed-container');
             
             try {
+                // Phá cache API
                 const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents?t=${Date.now()}`;
                 
                 const fetchOptions = { method: 'GET', headers: {} };
@@ -246,13 +338,14 @@
                 document.getElementById('initial-loader').style.display = 'none';
 
                 if (posts.length === 0) {
-                    container.innerHTML = `<div class="feed-item text-white">Chưa có bài viết nào.</div>`;
+                    container.innerHTML = `<div class="feed-item text-white font-['Inter']">Chưa có bài viết nào.</div>`;
                     return;
                 }
 
                 posts.reverse().forEach((post) => {
                     const title = formatTitle(post.name);
-                    const postUrl = encodeURIComponent(post.name);
+                    let postUrl = '';
+                    try { postUrl = encodeURIComponent(post.name); } catch(e) { postUrl = post.name; }
                     
                     const feedItem = document.createElement('div');
                     feedItem.className = 'feed-item';
@@ -261,30 +354,31 @@
 
                     feedItem.innerHTML = `
                         <div class="feed-card">
-                            <div class="px-8 py-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center z-20 shrink-0">
-                                <h2 class="text-xl font-bold text-gray-900 truncate pr-4">${title}</h2>
-                                <a href="./${postUrl}" target="_blank" class="shrink-0 bg-black text-white text-sm px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition">
-                                    Đọc trọn bộ
+                            <div class="px-8 py-5 border-b border-gray-100 bg-white/95 backdrop-blur flex justify-between items-center z-20 shrink-0 sticky top-0">
+                                <h2 class="text-xl font-bold text-gray-900 truncate pr-6 font-['Inter'] tracking-tight">${title}</h2>
+                                <a href="./${postUrl}" target="_blank" class="shrink-0 text-gray-500 hover:text-black font-semibold text-sm transition font-['Inter']">
+                                    Mở toàn màn hình ↗
                                 </a>
                             </div>
 
                             <div class="post-content-wrapper">
-                                <div class="raw-content-inject prose prose-slate prose-lg max-w-none w-full">
-                                    <div class="animate-pulse flex space-x-4">
-                                        <div class="flex-1 space-y-4 py-1">
-                                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-                                            <div class="space-y-3">
-                                                <div class="h-4 bg-gray-200 rounded"></div>
-                                                <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-                                                <div class="h-4 bg-gray-200 rounded w-4/6"></div>
+                                <div class="prose-container">
+                                    <div class="raw-content-inject prose max-w-none w-full">
+                                        <div class="animate-pulse space-y-6 mt-4">
+                                            <div class="h-6 bg-gray-100 rounded w-3/4"></div>
+                                            <div class="space-y-4">
+                                                <div class="h-4 bg-gray-100 rounded w-full"></div>
+                                                <div class="h-4 bg-gray-100 rounded w-full"></div>
+                                                <div class="h-4 bg-gray-100 rounded w-5/6"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="content-fade-mask">
-                                    <button onclick="expandContent(this)" class="text-blue-600 font-semibold flex items-center bg-white px-6 py-2.5 rounded-full shadow-lg border border-gray-100 hover:bg-gray-50 transition">
-                                        Tiếp tục đọc bài này <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <button onclick="expandContent(this)" class="read-more-btn">
+                                        Đọc tiếp bài này 
+                                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                                     </button>
                                 </div>
                             </div>
@@ -297,7 +391,7 @@
 
             } catch (error) {
                 console.error(error);
-                container.innerHTML = `<div class="feed-item flex-col text-red-500 bg-gray-900"><p>Lỗi kết nối Repository: ${error.message}</p></div>`;
+                container.innerHTML = `<div class="feed-item flex-col text-red-400 bg-gray-900 font-['Inter']"><p class="text-xl font-bold mb-2">Lỗi kết nối Repository</p><p class="text-sm opacity-80">${error.message}</p></div>`;
             }
         }
 
