@@ -16,6 +16,7 @@
             overflow: hidden; 
         }
 
+        /* Container cuộn dọc chính của Feed */
         .feed-container {
             height: 100vh;
             overflow-y: scroll;
@@ -50,12 +51,54 @@
             margin: 0 16px;
         }
 
+        /* Vùng chứa nội dung (Bình thường ẩn nội dung thừa) */
         .post-content-wrapper {
             padding: 2.5rem;
             flex-grow: 1; 
-            overflow-y: hidden; 
+            overflow-y: hidden; /* Mặc định khóa cuộn */
             position: relative;
             background-color: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        /* Khi mở rộng, cho phép cuộn nội dung bên trong */
+        .post-content-wrapper.is-expanded {
+            overflow-y: auto;
+        }
+        /* Custom thanh cuộn nhỏ cho vùng nội dung mở rộng */
+        .post-content-wrapper.is-expanded::-webkit-scrollbar {
+            width: 6px;
+        }
+        .post-content-wrapper.is-expanded::-webkit-scrollbar-thumb {
+            background-color: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        /* FIX LỖI 1: Ép mọi thành phần nhúng từ HTML gốc không được phá layout */
+        .raw-content-inject {
+            position: relative;
+            z-index: 1;
+            word-wrap: break-word;
+        }
+        .raw-content-inject * {
+            max-width: 100% !important; /* Không cho phép phần tử rộng hơn thẻ cha */
+        }
+        /* Vô hiệu hóa các thẻ định vị tuyệt đối (thủ phạm gây hình khối đen lơ lửng) */
+        .raw-content-inject [style*="position: absolute"],
+        .raw-content-inject [style*="position: fixed"],
+        .raw-content-inject [style*="position:absolute"],
+        .raw-content-inject [style*="position:fixed"] {
+            position: static !important;
+            display: none !important; 
+        }
+        .raw-content-inject img, 
+        .raw-content-inject svg, 
+        .raw-content-inject video {
+            height: auto !important;
+            max-height: 60vh; /* Ngăn ảnh/SVG quá to */
+            border-radius: 8px;
+            margin: 1rem auto;
+            display: block;
         }
 
         .content-fade-mask {
@@ -70,6 +113,7 @@
             align-items: flex-end;
             justify-content: center;
             padding-bottom: 2rem;
+            transition: opacity 0.3s ease;
         }
 
         #dev-tools { position: fixed; bottom: 20px; right: 20px; z-index: 999; }
@@ -80,13 +124,6 @@
             cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1);
         }
         .dev-btn:hover { transform: scale(1.05); }
-
-        .raw-content-inject img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin: 1rem auto;
-        }
     </style>
 </head>
 <body>
@@ -132,6 +169,17 @@
             } catch (e) { return filename; }
         }
 
+        // Logic mở rộng bài viết để đọc inline
+        function expandContent(btnElement) {
+            const wrapper = btnElement.closest('.post-content-wrapper');
+            const mask = wrapper.querySelector('.content-fade-mask');
+            
+            // Xóa lớp mờ
+            mask.style.display = 'none';
+            // Thêm class để cho phép cuộn dọc
+            wrapper.classList.add('is-expanded');
+        }
+
         const observerOptions = {
             root: document.getElementById('feed-container'),
             rootMargin: '100px 0px', 
@@ -153,16 +201,10 @@
             });
         }, observerOptions);
 
-        // ==========================================
-        // ĐÃ FIX LỖI CORS Ở HÀM NÀY
-        // ==========================================
         async function loadRawContent(cardElement, downloadUrl) {
             const contentContainer = cardElement.querySelector('.raw-content-inject');
             try {
-                // TUYỆT ĐỐI KHÔNG truyền thêm Header Authorization vào đây để tránh CORS preflight block.
-                // Fetch sẽ gọi thuần túy GET.
                 const response = await fetch(downloadUrl);
-                
                 if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
                 const htmlText = await response.text();
 
@@ -171,7 +213,6 @@
                 
                 const mainContent = doc.querySelector('main') || doc.body;
                 
-                // Xóa các tag gây nhiễu layout
                 mainContent.querySelectorAll('script, style, link[rel="stylesheet"]').forEach(el => el.remove());
 
                 contentContainer.innerHTML = mainContent.innerHTML;
@@ -192,7 +233,6 @@
             try {
                 const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents?t=${Date.now()}`;
                 
-                // Header Authorization CHỈ ĐƯỢC DÙNG khi gọi api.github.com
                 const fetchOptions = { method: 'GET', headers: {} };
                 const savedToken = localStorage.getItem(TOKEN_KEY);
                 if (savedToken) fetchOptions.headers['Authorization'] = `Bearer ${savedToken}`;
@@ -243,9 +283,9 @@
                                 </div>
                                 
                                 <div class="content-fade-mask">
-                                    <a href="./${postUrl}" class="text-blue-600 font-semibold hover:underline flex items-center bg-white px-6 py-2.5 rounded-full shadow-lg border border-gray-100">
+                                    <button onclick="expandContent(this)" class="text-blue-600 font-semibold flex items-center bg-white px-6 py-2.5 rounded-full shadow-lg border border-gray-100 hover:bg-gray-50 transition">
                                         Tiếp tục đọc bài này <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
