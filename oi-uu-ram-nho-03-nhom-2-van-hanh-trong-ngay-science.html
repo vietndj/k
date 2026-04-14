@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tối ưu ram nhớ 03 - nhóm 2 vận hành trong ngày</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            purple: '#8B5CF6',
+                            blue: '#3B82F6',
+                            green: '#10B981',
+                            orange: '#F97316',
+                            red: '#EF4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            line-height: 1.6;
+        }
+
+        /* CSS Abstract Art Styles */
+        .art-container {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Art 1: Focus (Purple) */
+        .art-1 {
+            background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
+        }
+        .art-1-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-ring 4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        .art-1-circle:nth-child(1) { width: 100px; height: 100px; animation-delay: 0s; border-width: 4px; border-color: rgba(255,255,255,0.5); }
+        .art-1-circle:nth-child(2) { width: 200px; height: 200px; animation-delay: 0.5s; }
+        .art-1-circle:nth-child(3) { width: 300px; height: 300px; animation-delay: 1s; }
+        .art-1-circle:nth-child(4) { width: 400px; height: 400px; animation-delay: 1.5s; }
+        .art-1-center {
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 40px; height: 40px; background: white; border-radius: 50%;
+            box-shadow: 0 0 40px 10px rgba(255,255,255,0.8);
+        }
+
+        /* Art 2: Fluid Reset (Blue) */
+        .art-2 {
+            background: linear-gradient(120deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        .blob {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            animation: blob-float 10s ease-in-out infinite alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 200px; height: 200px; border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; animation-delay: 0s; }
+        .blob-2 { top: 40%; right: -20%; width: 250px; height: 250px; border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%; animation-delay: -2s; background: rgba(255, 255, 255, 0.1);}
+        .blob-3 { bottom: -20%; left: 20%; width: 180px; height: 180px; border-radius: 30% 70% 50% 50% / 50% 40% 60% 50%; animation-delay: -4s; background: rgba(255, 255, 255, 0.2);}
+        
+        /* Art 3: Gut-Brain Axis (Green) */
+        .art-3 {
+            background: #064e3b;
+        }
+        .grid-line {
+            position: absolute;
+            background: rgba(16, 185, 129, 0.2);
+        }
+        .gl-h { width: 100%; height: 1px; }
+        .gl-v { width: 1px; height: 100%; }
+        .node {
+            position: absolute;
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, rgba(16,185,129,0.8) 0%, rgba(6,78,59,0) 70%);
+            animation: node-pulse 3s infinite alternate;
+        }
+        .node-1 { top: 20%; left: 20%; }
+        .node-2 { bottom: 20%; right: 20%; animation-delay: -1.5s; background: radial-gradient(circle, rgba(52,211,153,0.8) 0%, rgba(6,78,59,0) 70%);}
+        .connection {
+            position: absolute;
+            top: 50%; left: 30%; width: 40%; height: 2px;
+            background: linear-gradient(90deg, rgba(16,185,129,0) 0%, #10b981 50%, rgba(16,185,129,0) 100%);
+            transform: rotate(45deg);
+        }
+
+        /* Art 4: Afternoon Slump (Orange) */
+        .art-4 {
+            background: linear-gradient(to bottom, #7c2d12 0%, #f97316 100%);
+        }
+        .sun-eclipse {
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 180px; height: 180px;
+            background: #fef08a;
+            border-radius: 50%;
+            box-shadow: 0 0 60px 20px rgba(253, 224, 71, 0.4);
+            overflow: hidden;
+        }
+        .black-hole {
+            position: absolute;
+            top: 30%; left: 30%;
+            width: 180px; height: 180px;
+            background: #431407;
+            border-radius: 50%;
+            animation: eclipse-move 8s infinite alternate ease-in-out;
+        }
+        .horizon {
+            position: absolute;
+            bottom: 0; width: 100%; height: 30%;
+            background: linear-gradient(to top, #431407 0%, transparent 100%);
+        }
+
+        /* Art 5: Shutdown (Red/Black) */
+        .art-5 {
+            background: #171717;
+        }
+        .block-red {
+            position: absolute;
+            background: #ef4444;
+            transform: skew(-20deg);
+            animation: slide-block 4s cubic-bezier(0.77, 0, 0.175, 1) infinite alternate;
+        }
+        .b1 { top: 0; left: -20%; width: 60%; height: 100%; transform-origin: left; }
+        .b2 { bottom: 10%; right: -10%; width: 40%; height: 20%; background: #991b1b; animation-delay: -1s;}
+        .b3 { top: 20%; right: 10%; width: 5px; height: 60%; background: white; transform: skew(0deg); opacity: 0.5;}
+
+        @keyframes pulse-ring {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+        }
+        @keyframes blob-float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(30px, 50px) rotate(45deg); }
+        }
+        @keyframes node-pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+        @keyframes eclipse-move {
+            0% { top: -20%; left: -20%; }
+            100% { top: 40%; left: 40%; }
+        }
+        @keyframes slide-block {
+            0% { transform: skew(-20deg) translateX(-50px); }
+            100% { transform: skew(-20deg) translateX(20px); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Hero Section -->
+    <header class="bg-white border-b border-gray-200 pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-blue-50 opacity-50 blur-3xl"></div>
+        <div class="max-w-4xl mx-auto relative z-10 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold tracking-wider mb-4 uppercase">Hiệu suất tối đa</span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-8">
+                Tối ưu ram nhớ 03 - nhóm 2 vận hành trong ngày
+            </h1>
+            <div class="text-lg md:text-xl text-gray-600 font-medium text-left bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm leading-relaxed">
+                <p class="mb-4">Đi thẳng vào vấn đề nhé. Bản chất của <strong class="text-gray-900">Nhóm 2 (Vận hành trong ngày)</strong> nằm ở nguyên lý: <strong class="text-blue-600 underline decoration-blue-300 decoration-2 underline-offset-4">Tuyệt đối không để RAM chạy từ 100% về 0% rồi mới sạc.</strong></p>
+                
+                <p class="mb-4">Cơ thể con người không phải bình ắc quy xả một mạch đến tối. Nó chạy theo biểu đồ hình sin. Nếu để RAM cạn kiệt, ý chí sập nguồn, "con vượn" tiến hóa sẽ tự động lao ra chiếm quyền (gây cáu bẳn, bứt rứt, thèm PMO hoặc cãi vã). Bạn phải <strong class="text-gray-900">"sạc nhồi" (Micro-resets)</strong> liên tục bằng vật lý.</p>
+                
+                <p>Dưới đây là 20 ví dụ thực chiến ráp thẳng vào công việc và routine hàng ngày của bạn, chia làm 5 danh mục. Mỗi cái đều có đính kèm "Mã nguồn khoa học" để não logic của bạn tự thấy hợp lý mà làm theo, không cần gồng ép ý chí.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
+
+        <!-- Danh mục 1 -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-2 lg:order-1">
+                <div class="inline-flex items-center space-x-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-lg font-bold mb-6">
+                    <span class="text-xl">🟣</span>
+                    <span>DANH MỤC 1</span>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">TỐI ƯU CỬA SỔ TẬP TRUNG (Ultradian Hacks)</h2>
+                <p class="text-gray-600 text-lg mb-8 italic border-l-4 border-purple-400 pl-4">Mục đích: Khai thác tối đa lúc não đang khỏe, nhưng phải phanh lại ngay trước khi Vỏ não cạn kiệt nhiên liệu.</p>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Hard-stop ở phút 90:</h3>
+                        <p class="text-gray-700 mb-3">Dù đang phân tích một biểu đồ chứng khoán cực hay, đồng hồ báo 90 phút là <strong>bắt buộc buông chuột đứng lên 5 phút.</strong></p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-purple-700">Khoa học:</span> Não bộ chạy theo chu kỳ BRAC (Basic Rest-Activity Cycle) 90-120 phút. Sang phút thứ 91, lượng Glucose cục bộ ở Vỏ não trước trán cạn sạch. Ép làm tiếp bạn sẽ sinh ra quyết định ngớ ngẩn (như FOMO đặt lệnh sai) và đốt cháy sạch RAM dự trữ của buổi chiều.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Đưa việc khó nhất vào "Giờ Vàng":</h3>
+                        <p class="text-gray-700 mb-3">Phân tích giao dịch, ra quyết định tài chính BẮT BUỘC để vào 2-3 tiếng đầu buổi sáng.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-purple-700">Khoa học:</span> Sáng là lúc Cortisol tự nhiên (sự tỉnh táo) và Dopamine (động lực) ở đỉnh cao nhất. Đừng lấy băng thông xịn này đi check mail, lướt tin tức hay làm việc vặt.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Gom rác vi mô (Task Batching):</h3>
+                        <p class="text-gray-700 mb-3">Đọc tin tức, check mail, trả lời tin nhắn... hãy dồn vào làm đúng 1 lần (VD: 30p trước lúc nghỉ trưa).</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-purple-700">Khoa học:</span> Xóa bỏ Tàn dư Nhận thức (Attention Residue). Mỗi lần bạn liếc qua điện thoại rồi quay lại nhìn Chart, não mất tới 23 phút và 20% băng thông để tải lại bối cảnh cũ. Nhảy việc liên tục là cách làm lag hệ điều hành nhanh nhất.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Hiệu ứng "Rút cạn não" (Brain Drain):</h3>
+                        <p class="text-gray-700 mb-3">Khi cần tư duy sâu, nhét điện thoại vào hộc bàn kéo lại, hoặc để sang phòng khác.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-purple-700">Khoa học:</span> ĐH Texas chứng minh: Điện thoại để ngửa trên bàn (dù tắt màn hình) vẫn âm thầm ngốn 10-15% RAM. Vì não luôn phải chạy ngầm một mã lệnh ức chế: "Đừng cầm nó lên". Khuất tầm mắt là xóa hẳn mã lệnh này.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Luân phiên Đứng - Ngồi:</h3>
+                        <p class="text-gray-700 mb-3">Nếu làm việc bế tắc, cạn ý tưởng, hãy kê máy tính lên cao và đứng làm việc khoảng 15-20 phút.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-purple-700">Khoa học:</span> Kích hoạt Phản xạ Tiền đình (Vestibular system). Khi đứng, cơ thể phải bơm máu ngược lên não để giữ thăng bằng chống lại trọng lực, tự động ép cuống não xả một liều Adrenaline nhẹ giúp bạn tỉnh táo nảy số tức thì.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 lg:order-2 h-full min-h-[400px]">
+                <div class="art-container art-1 sticky top-24">
+                    <div class="art-1-circle"></div>
+                    <div class="art-1-circle"></div>
+                    <div class="art-1-circle"></div>
+                    <div class="art-1-circle"></div>
+                    <div class="art-1-center"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Danh mục 2 -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-1 lg:order-1 h-full min-h-[400px]">
+                <div class="art-container art-2 sticky top-24">
+                    <div class="blob blob-1"></div>
+                    <div class="blob blob-2"></div>
+                    <div class="blob blob-3"></div>
+                </div>
+            </div>
+            <div class="order-2 lg:order-2">
+                <div class="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-bold mb-6">
+                    <span class="text-xl">🔵</span>
+                    <span>DANH MỤC 2</span>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">TRẠM SẠC NHANH VẬT LÝ (Micro-Resets 1-5 phút)</h2>
+                <p class="text-gray-600 text-lg mb-8 italic border-l-4 border-blue-400 pl-4">Mục đích: Xả rác ngay tại bàn làm việc. Đây là những nút bấm vật lý để dập tắt stress ngay khi nó mới nhen nhóm.</p>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Luật 20-20-20 cho Mắt:</h3>
+                        <p class="text-gray-700 mb-3">20 phút nhìn màn hình -> Nhìn ra xa 6 mét -> Trong 20 giây.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-blue-700">Khoa học:</span> Khi nhìn gần 40cm, "Cơ thể mi" trong mắt bị co cứng. Sự co cứng này gửi tín hiệu lên não là "đang săn mồi/chiến đấu". Nhìn xa 20s giúp tháo gông cơ mắt, lập tức ngắt báo động căng thẳng giả tạo.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Tiếng thở hắt Sinh lý (Physiological Sigh):</h3>
+                        <p class="text-gray-700 mb-3">Lúc thị trường biến động, nhịp tim đập nhanh -> <strong>Hít 2 hơi liên tiếp bằng mũi (làm căng lồng ngực) -> Thở hắt ra bằng miệng thật dài.</strong> Làm 3 lần.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-blue-700">Khoa học (Huberman Lab):</span> Cú hít nhồi thứ 2 ép các phế nang (túi phổi) bị xẹp bung mở ra, nhịp thở hắt dài tống sạch khí CO2 (thủ phạm hóa học gây bồn chồn) ra ngoài. Nút vật lý hạ nhịp tim nhanh nhất cơ thể.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Dòng chảy Quang học (Optic Flow):</h3>
+                        <p class="text-gray-700 mb-3">Thấy ngợp/căng thẳng, bước ra hành lang đi dạo, mắt nhìn hướng thẳng về phía trước để cảnh vật tự động lướt qua 2 bên khóe mắt.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-blue-700">Khoa học:</span> Chuyển động tiến lên kết hợp hình ảnh trôi qua võng mạc ngang sẽ trực tiếp "tắt tiếng" Hạch hạnh nhân (cơ quan gây lo âu). Trị liệu tâm lý chấn thương (EMDR) dùng nguyên lý này.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Rửa mặt bằng nước lạnh toát:</h3>
+                        <p class="text-gray-700 mb-3">Buồn ngủ, chán nản lờ đờ -> Hất nước lạnh vào mặt (đặc biệt khu vực dưới mắt và mũi).</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-blue-700">Khoa học:</span> Kích hoạt Phản xạ lặn của động vật có vú (Mammalian Dive Reflex). Dây thần kinh số 5 báo với não bạn đang rớt xuống nước. Nhịp tim lập tức chậm lại nhưng máu dội thẳng lên não bộ để sinh tồn. Reset não cực mạnh.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Khoảng đệm Vô thức (Idle Time):</h3>
+                        <p class="text-gray-700 mb-3">Đi vệ sinh hoặc đi lấy nước -> TUYỆT ĐỐI ĐI TAY KHÔNG. Cấm cầm điện thoại.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-blue-700">Khoa học:</span> Đồi hải mã (Hippocampus) BẮT BUỘC cần các khoảng nhàn rỗi không có dữ liệu đầu vào để chắp nối kiến thức và lưu vào ổ cứng (bộ nhớ dài hạn). Nhét điện thoại vào lúc này là bạn ghi đè rác lên kiến thức vừa học.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Danh mục 3 -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-2 lg:order-1">
+                <div class="inline-flex items-center space-x-2 bg-green-100 text-green-800 px-4 py-2 rounded-lg font-bold mb-6">
+                    <span class="text-xl">🟢</span>
+                    <span>DANH MỤC 3</span>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">HACK TRỤC NÃO - RUỘT (Bảo dưỡng Giữa ngày)</h2>
+                <p class="text-gray-600 text-lg mb-8 italic border-l-4 border-green-400 pl-4">Mục đích: Giữ cho năng lượng tiêu hóa không cướp oxy của Vỏ não.</p>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Luật cấm màn hình khi nhai:</h3>
+                        <p class="text-gray-700 mb-3">Trưa ăn cơm, cấm vừa nhai vừa nhìn điện thoại. Mắt lướt nhìn bao quát 180 độ không gian.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-green-700">Khoa học:</span> Mắt nhìn hẹp = Săn mồi = Khóa cơ hoành, máu tụ ở não, ruột ngừng co bóp. Mắt nhìn rộng = An toàn = Hệ phó giao cảm bơm máu về dạ dày tiêu cơm. Ăn sai cách sinh ra "Food coma" (căng da bụng chùng da mắt).
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Đi bộ 10 phút sau ăn:</h3>
+                        <p class="text-gray-700 mb-3">Ăn xong không ngồi ịch xuống hay nằm ngay. Đi dạo nhẹ nhàng 10 phút.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-green-700">Khoa học:</span> Co bóp cơ bắp chân sẽ hút thẳng lượng đường (Glucose) từ thức ăn vào cơ bắp thay vì dội vào máu. Nó làm phẳng "Đỉnh đường huyết", dập tắt hiện tượng sụp đường lờ đờ đầu giờ chiều.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Báo thức "Tử thần" 20 phút:</h3>
+                        <p class="text-gray-700 mb-3">Ngủ trưa căn đúng đồng hồ 20-25 phút (tính cả thời gian nhắm mắt). Chuông reo dậy ngay lập tức.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-green-700">Khoa học:</span> Dưới 25 phút, não ở Sóng Theta, hệ thống sẽ dọn sạch rác Adenosine (chất gây buồn ngủ). Vượt mốc này bạn rớt vào Sóng Delta (ngủ sâu). Dậy lúc này cơ thể đang bị làm liệt cơ, dẫn đến "Quán tính giấc ngủ" lờ đờ rũ rượi cả buổi chiều.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Thiền NSDR (Nghỉ sâu không ngủ):</h3>
+                        <p class="text-gray-700 mb-3">Nếu trưa nhắm mắt mà não cứ nhảy số không ngủ được -> Kệ nó, cấm cáu gắt (tốn RAM). Nằm ngửa, rớt lưỡi, nghe 1 đoạn Body Scan 15 phút.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-green-700">Khoa học:</span> NSDR khôi phục lượng Dopamine ở vùng Thể vân (Striatum) tương đương một giấc ngủ thật. Dù thức, Pin vẫn sạc được 80%.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Khởi động mềm (Warm boot):</h3>
+                        <p class="text-gray-700 mb-3">Vừa mở mắt dậy trưa lờ đờ, TUYỆT ĐỐI không vớ điện thoại. Ngồi thả vai, rớt lưỡi thở 3 phút.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-green-700">Khoa học:</span> Để sóng não chuyển mượt từ Theta -> Alpha -> Beta. Mở màn hình điện thoại ngay lập tức dội sốc Dopamine khiến phần cứng chưa khởi động xong đã bị lag và cháy RAM.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 lg:order-2 h-full min-h-[400px]">
+                <div class="art-container art-3 sticky top-24">
+                    <div class="grid-line gl-h" style="top: 20%;"></div>
+                    <div class="grid-line gl-h" style="top: 40%;"></div>
+                    <div class="grid-line gl-h" style="top: 60%;"></div>
+                    <div class="grid-line gl-h" style="top: 80%;"></div>
+                    <div class="grid-line gl-v" style="left: 20%;"></div>
+                    <div class="grid-line gl-v" style="left: 40%;"></div>
+                    <div class="grid-line gl-v" style="left: 60%;"></div>
+                    <div class="grid-line gl-v" style="left: 80%;"></div>
+                    <div class="node node-1"></div>
+                    <div class="node node-2"></div>
+                    <div class="connection"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Danh mục 4 -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-1 lg:order-1 h-full min-h-[400px]">
+                <div class="art-container art-4 sticky top-24">
+                    <div class="sun-eclipse">
+                        <div class="black-hole"></div>
+                    </div>
+                    <div class="horizon"></div>
+                </div>
+            </div>
+            <div class="order-2 lg:order-2">
+                <div class="inline-flex items-center space-x-2 bg-orange-100 text-orange-800 px-4 py-2 rounded-lg font-bold mb-6">
+                    <span class="text-xl">🟠</span>
+                    <span>DANH MỤC 4</span>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">VƯỢT HỐ ĐEN XẾ CHIỀU (Khủng hoảng 3-4h)</h2>
+                <p class="text-gray-600 text-lg mb-8 italic border-l-4 border-orange-400 pl-4">Mục đích: Lách qua điểm chết của nhịp sinh học. Đây là lúc con vượn rất hay gào thét đòi Dopamine rẻ tiền.</p>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Tắm ánh sáng tự nhiên (Photon Charge):</h3>
+                        <p class="text-gray-700 mb-3">Khoảng 3-4h chiều ngáp liên tục. Bước ra ban công/cửa sổ nhìn lên bầu trời sáng (không nhìn mặt trời) 3-5 phút.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-orange-700">Khoa học:</span> Uể oải lúc này do nhịp sinh học hạ thân nhiệt tự nhiên. Tế bào Melanopsin ở võng mạc bắt được ánh sáng trời, lập tức gửi lệnh cho Tuyến tùng hãm phanh Melatonin (hormone ru ngủ). Đánh thức bạn tự nhiên mà không cần Bò Húc.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Lệnh cấm Cafein sau 2h chiều:</h3>
+                        <p class="text-gray-700 mb-3">Dù mệt cũng không uống.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-orange-700">Khoa học:</span> Cafein bán rã (Half-life) mất 6-8 tiếng. Nó không tạo ra năng lượng, nó chỉ "đeo mặt nạ" block thụ thể mệt mỏi. Uống chiều thì tối não bạn thức chong chong, mất ngủ sâu -> Sáng hôm sau sập nguồn -> Vòng lặp PMO kích hoạt do não cần xả stress.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Hạ cấp công việc (Low-friction Tasks):</h3>
+                        <p class="text-gray-700 mb-3">Từ 4h chiều RAM đã cạn, cấm ép não ra quyết định tài chính. Hãy chuyển sang: Dọn bàn, sắp xếp folder máy tính, lên Plan cho ngày mai, trả lời email lặt vặt.</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-orange-700">Khoa học:</span> Phân bổ công việc khớp với điện năng hệ thống. Làm việc chân tay/ít tư duy giúp Vỏ não được nghỉ ngơi mà giữ được đà làm việc (momentum), không sinh ra cảm giác chán nản.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Danh mục 5 -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-2 lg:order-1">
+                <div class="inline-flex items-center space-x-2 bg-red-100 text-red-800 px-4 py-2 rounded-lg font-bold mb-6">
+                    <span class="text-xl">🔴</span>
+                    <span>DANH MỤC 5</span>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">NGHI THỨC CHUYỂN GIAO (Ngăn rò rỉ RAM)</h2>
+                <p class="text-gray-600 text-lg mb-8 italic border-l-4 border-red-400 pl-4">Mục đích: Đóng băng bối cảnh cũ. Nếu mang rác công việc về nhà, tối bạn sẽ kiệt sức và mất kiểm soát hành vi.</p>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Gắn Note "Bước tiếp theo":</h3>
+                        <p class="text-gray-700 mb-3">Đang phân tích Chart dở mà phải đi họp/đi ăn. Ghi ra giấy ngay lập tức: "Tí quay lại sẽ phân tích tiếp đường MA50 của mã X".</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-red-700">Khoa học:</span> Đóng Vòng lặp Zeigarnik. Giải phóng cho não không phải gồng mình chạy ngầm để ghi nhớ trạng thái công việc trong lúc bạn đi nghỉ.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Nghi thức Đóng máy (Shutdown Ritual):</h3>
+                        <p class="text-gray-700 mb-3">Cuối ngày, lưu file, gập laptop cái "Rụp". Vươn vai dài và nhẩm thầm: "Xong việc!".</p>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 border border-gray-200">
+                            <span class="font-bold text-red-700">Khoa học:</span> Tạo ra 1 mỏ neo vật lý báo cáo cho não bò sát: Nhiệm vụ đi săn (kiếm tiền) trong ngày đã đóng lại. Ngắt cầu dao bơm Cortisol, chặn đứng tình trạng Rumination (cãi vã ảo trong đầu) vào buổi tối.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 lg:order-2 h-full min-h-[400px]">
+                <div class="art-container art-5 sticky top-24">
+                    <div class="block-red b1"></div>
+                    <div class="block-red b2"></div>
+                    <div class="block-red b3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Outro -->
+        <section class="max-w-4xl mx-auto bg-gray-900 text-white rounded-2xl p-8 md:p-12 text-center shadow-xl">
+            <p class="text-xl md:text-2xl font-medium leading-relaxed">
+                Bạn không cần học thuộc 20 gạch đầu dòng này. Hãy xem nó như một "Bảng táp-lô trên ô tô". Lúc nào thấy nhức mắt -> Xài nút số 6. Thấy nhịp tim đập nhanh -> Bấm nút số 7. Thấy 4h chiều lờ đờ -> Bấm nút 16. Mọi thứ là cơ chế tự động vật lý!
+            </p>
+        </section>
+
+        <!-- Khối Flashcard -->
+        <section class="pt-16 border-t border-gray-200">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4"><i class="fa-solid fa-layer-group text-blue-600 mr-2"></i>Flashcard Ôn Tập Nhanh</h2>
+                <p class="text-gray-600">25 câu hỏi chốt lõi kèm đáp án để bạn ghi nhớ hệ thống ngay lập tức.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Flashcards will be generated here directly in HTML as requested (hiện thị luôn ko cần tương tác) -->
+                
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">1. Bản chất của Nhóm 2 là gì?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Tuyệt đối không để RAM chạy từ 100% về 0% rồi mới sạc. Phải "sạc nhồi" liên tục.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">2. Hậu quả khi RAM cạn kiệt?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Ý chí sập nguồn, "con vượn" chiếm quyền gây cáu bẳn, bứt rứt, thèm PMO hoặc cãi vã.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">3. Mục đích Tối ưu cửa sổ tập trung?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Khai thác tối đa lúc não khỏe, phanh lại ngay trước khi Vỏ não cạn kiệt nhiên liệu.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">4. Luật Hard-stop ở phút 90?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Đồng hồ báo 90 phút là bắt buộc buông chuột đứng lên 5 phút để não phục hồi Glucose.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">5. Vì sao sáng là "Giờ Vàng"?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Sáng là lúc Cortisol tự nhiên (tỉnh táo) và Dopamine (động lực) ở đỉnh cao nhất.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">6. Gom rác vi mô là làm gì?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Dồn các việc như đọc tin tức, check mail, tin nhắn... vào làm đúng 1 lần.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">7. Tác hại của Nhảy việc liên tục?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Sinh ra Tàn dư Nhận thức. Não mất 23 phút & 20% băng thông để tải lại bối cảnh cũ.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">8. Tại sao cất điện thoại khi tư duy?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Điện thoại để ngửa trên bàn vẫn ngốn 10-15% RAM vì não chạy ngầm lệnh ức chế.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">9. Lợi ích khi đứng làm việc 15p?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Kích hoạt Phản xạ Tiền đình, ép cuống não xả Adrenaline giúp tỉnh táo tức thì.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">10. Trạm sạc nhanh vật lý là gì?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Xả rác tại bàn. Nút bấm vật lý dập tắt stress ngay khi mới nhen nhóm (1-5 phút).</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">11. Chi tiết Luật 20-20-20?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">20 phút nhìn màn hình -> Nhìn ra xa 6 mét -> Trong 20 giây để tháo gông cơ mắt.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">12. Tiếng thở hắt sinh lý thực hiện sao?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Hít 2 hơi liên tiếp bằng mũi, thở hắt ra bằng miệng thật dài. Làm 3 lần hạ nhịp tim.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">13. Dòng chảy quang học (Optic Flow)?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Đi dạo mắt nhìn thẳng, cảnh vật lướt qua 2 bên khóe mắt giúp tắt tiếng Hạch hạnh nhân.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">14. Rửa mặt nước lạnh có tác dụng gì?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Kích hoạt Phản xạ lặn, nhịp tim chậm lại, máu dội thẳng lên não để sinh tồn, reset mạnh.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">15. Tại sao cần Khoảng đệm Vô thức?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Đồi hải mã cần lúc không có dữ liệu đầu vào để chắp nối kiến thức lưu vào bộ nhớ dài hạn.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">16. Hậu quả vừa ăn vừa nhìn điện thoại?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Mắt nhìn hẹp = Săn mồi = Khóa cơ hoành, sinh ra "Food coma" (căng da bụng chùng da mắt).</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">17. Đi bộ 10 phút sau ăn để làm gì?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Hút lượng đường vào cơ bắp, làm phẳng "Đỉnh đường huyết", chống lờ đờ đầu chiều.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">18. Tại sao ngủ trưa chỉ 20-25 phút?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Để dọn rác ở Sóng Theta. Vượt mốc này rớt vào Sóng Delta gây liệt cơ, lờ đờ rũ rượi.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">19. Thiền NSDR dành cho ai?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Cho người không ngủ trưa được. Giúp khôi phục Dopamine tương đương giấc ngủ thật (sạc 80%).</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">20. Khởi động mềm (Warm boot) lúc dậy?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Tuyệt đối ko vớ điện thoại, ngồi thở 3 phút để sóng não chuyển mượt Theta->Alpha->Beta.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">21. Tắm ánh sáng (Photon Charge) lúc 3-4h?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Nhìn trời sáng 3-5p báo Tuyến tùng hãm phanh Melatonin, giúp tỉnh táo tự nhiên.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">22. Tại sao cấm Cafein sau 2h chiều?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Bán rã 6-8 tiếng. Nó block thụ thể mệt mỏi, làm tối mất ngủ sâu, sáng hsau sập nguồn.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">23. Hạ cấp công việc lúc 4h chiều?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">RAM cạn nên chuyển sang việc ít tư duy: dọn bàn, lên plan để Vỏ não nghỉ ngơi.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">24. Gắn Note "Bước tiếp theo" ích lợi gì?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Đóng Vòng lặp Zeigarnik, giải phóng não khỏi việc gồng mình chạy ngầm ghi nhớ.</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">25. Tác dụng của Nghi thức Đóng máy?</div>
+                    <div class="p-4 text-gray-600 text-sm flex-grow">Gập laptop cái rụp, nhẩm "Xong việc". Ngắt cầu dao Cortisol, chặn cãi vã ảo vào buổi tối.</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer theo yêu cầu -->
+    <footer style="height: 128px;" class="bg-gray-900 text-white w-full flex items-center justify-center border-t-4 border-blue-500 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 w-full flex flex-col md:flex-row items-center justify-between h-full">
+            
+            <!-- Thông tin Text -->
+            <div class="text-sm md:text-xs lg:text-sm text-gray-300 max-w-3xl pr-4 text-center md:text-left line-clamp-3">
+                <span class="font-semibold text-white block mb-1">Các kênh hiện tại .</span>
+                Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+            </div>
+
+            <!-- Social Links -->
+            <div class="flex items-center space-x-6 mt-3 md:mt-0">
+                <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-red-500 transition-colors transform hover:scale-110">
+                    <i class="fa-brands fa-youtube text-2xl"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors transform hover:scale-110">
+                    <i class="fa-brands fa-tiktok text-2xl"></i>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-500 transition-colors transform hover:scale-110">
+                    <i class="fa-brands fa-facebook text-2xl"></i>
+                </a>
+            </div>
+
+        </div>
+    </footer>
+
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
