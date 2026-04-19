@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo Khoa học: Hiệu Ứng Zeigarnik & Quản trị Nhận thức</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: #0B1120;
+            color: #E2E8F0;
+            line-height: 1.7;
+        }
+        
+        /* Typography overrides for heavy text */
+        p { margin-bottom: 1.25rem; text-align: justify; }
+        
+        /* Chart Container Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 380px; }
+        }
+
+        /* Glassmorphism Cards */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- CSS ABSTRACT ART --- */
+        /* Art 1: Open Loop (Sự dang dở) */
+        .css-art-loop {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            border: 15px solid transparent;
+            border-top-color: #EC4899;
+            border-right-color: #8B5CF6;
+            border-bottom-color: #3B82F6;
+            animation: spin 8s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Art 2: Memory Fragmentation (Phân mảnh bộ nhớ) */
+        .css-art-fragment {
+            width: 120px; height: 120px;
+            position: relative;
+            margin: 0 auto 20px auto;
+        }
+        .fragment-box {
+            position: absolute; width: 40px; height: 40px;
+            background: linear-gradient(45deg, #10B981, #3B82F6);
+            opacity: 0.8;
+        }
+        .fb-1 { top: 10px; left: 10px; transform: rotate(15deg); }
+        .fb-2 { top: 50px; left: 40px; transform: rotate(-20deg); background: linear-gradient(45deg, #EC4899, #F59E0B); }
+        .fb-3 { top: 20px; left: 60px; transform: rotate(45deg); background: linear-gradient(45deg, #8B5CF6, #EC4899); }
+        .fb-4 { top: 70px; left: 10px; transform: rotate(-5deg); }
+
+        /* Art 3: Data Overload (Quá tải) */
+        .css-art-overload {
+            width: 100%; height: 80px;
+            display: flex; gap: 4px; align-items: flex-end;
+            justify-content: center; margin-bottom: 20px;
+        }
+        .bar { width: 12px; background-color: #EF4444; animation: pulse-height 1.5s ease-in-out infinite alternate; }
+        .bar:nth-child(even) { background-color: #F59E0B; animation-delay: 0.5s; }
+        .bar:nth-child(3n) { background-color: #EC4899; animation-delay: 1s; }
+        @keyframes pulse-height { 0% { height: 20px; } 100% { height: 80px; } }
+
+        /* Art 4: Alignment/Meditation (Sự tĩnh tại) */
+        .css-art-meditation {
+            width: 120px; height: 120px; margin: 0 auto 20px auto;
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .circle-core { width: 40px; height: 40px; background: #10B981; border-radius: 50%; z-index: 10; box-shadow: 0 0 20px #10B981;}
+        .circle-ripple {
+            position: absolute; width: 100px; height: 100px;
+            border: 2px solid #10B981; border-radius: 50%; opacity: 0;
+            animation: ripple 3s ease-out infinite;
+        }
+        .circle-ripple:nth-child(2) { animation-delay: 1.5s; }
+        @keyframes ripple { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        /* Footer styling constraints */
+        .custom-footer {
+            height: 128px;
+            background: #020617;
+            border-top: 1px solid #1E293B;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 pt-24 pb-20 px-6 border-b border-blue-800">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-pink-500 mb-8 uppercase tracking-tight">
+                Gánh Nặng Của Sự Dang Dở
+            </h1>
+            <p class="text-xl md:text-2xl text-blue-200 font-light max-w-4xl mx-auto leading-relaxed">
+                Nghiên cứu chuyên sâu về hiệu ứng Zeigarnik: Giải thích logic, cơ chế thần kinh học vật lý và cách các "ý định chưa hoàn thành" bí mật rút cạn năng lượng bộ não của bạn.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 mt-16 space-y-24 pb-20">
+
+        <!-- Section 1: Khoa học và Logic -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-4 glass-panel p-8 rounded-2xl flex flex-col items-center justify-center text-center">
+                <div class="css-art-loop"></div>
+                <h3 class="text-2xl font-bold text-pink-400 mb-4">"Vòng Lặp Mở" (Open Loop)</h3>
+                <p class="text-slate-300 text-sm">
+                    Nghệ thuật trừu tượng mô phỏng một vòng tròn không khép kín. Năng lượng nhận thức liên tục xoay vòng rò rỉ ra ngoài qua khe hở của sự dang dở, không thể đi đến trạng thái tĩnh.
+                </p>
+            </div>
+            <div class="lg:col-span-8 glass-panel p-8 rounded-2xl">
+                <h2 class="text-3xl font-bold text-cyan-400 mb-6 border-b border-slate-700 pb-4">1. Bản Chất Khoa Học & Bằng Chứng Vật Lý</h2>
+                <div class="prose prose-invert max-w-none text-slate-300">
+                    <p>
+                        <strong>Logic cơ bản:</strong> Mỗi khi một tab trình duyệt được mở ra để "đọc sau", mỗi bộ phim được thêm vào "Watchlist", mỗi e-book được tải xuống thiết bị, chúng hoàn toàn không hề biến mất khỏi tâm trí. Bạn không cảm thấy chúng tồn tại vì chúng không nằm ở Trí nhớ dài hạn (Long-term Memory) – nơi lưu trữ thông tin thụ động. Thay vào đó, chúng bị kẹt tại <strong>Trí nhớ làm việc (Working Memory)</strong> và <strong>Vỏ não trước trán (Prefrontal Cortex)</strong>, tạo thành một danh sách dài các "ý định chưa được hoàn thành".
+                    </p>
+                    <p>
+                        <strong>Cơ chế thần kinh:</strong> Sự thật là não bộ chúng ta được lập trình để ưu tiên sự hoàn thiện. Khi một ý định được khởi tạo (ví dụ: bấm "Save for later"), Vỏ não trước trán thiết lập một mục tiêu. Nếu mục tiêu này chưa được đánh dấu là "Done", hệ thống lưới hoạt hóa (Reticular Activating System - RAS) sẽ liên tục giữ cho thông tin này ở trạng thái "nóng". Đồng thời, <strong>Hạch hạnh nhân (Amygdala)</strong> – trung tâm cảnh báo của não – diễn dịch những công việc chưa hoàn thành này như những mối đe dọa vi mô tiềm tàng đối với sự sinh tồn, từ đó tiết ra lượng nhỏ hormone căng thẳng Cortisol để liên tục "nhắc nhở" hệ thống.
+                    </p>
+                    <p>
+                        <strong>Bằng chứng vật lý (fMRI):</strong> Các nghiên cứu sử dụng máy quét cộng hưởng từ chức năng (fMRI) đã chỉ ra bằng chứng vật lý rõ ràng: Khi đối tượng thử nghiệm có nhiều nhiệm vụ bị gián đoạn, mức độ tiêu thụ Glucose và Oxy tại thùy trán cao hơn đáng kể ngay cả khi họ đang ở trạng thái nghỉ ngơi. Điều này có nghĩa là, về mặt vật lý học, bộ não của bạn đang <em>đốt cháy năng lượng thực tế</em> (calo) để duy trì sự tồn tại của danh sách "đọc sau" đó, khiến cấu trúc vật lý của nơ-ron luôn ở trạng thái kích thích điện từ nhẹ.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Tiêu thụ bộ nhớ -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div class="glass-panel p-8 rounded-2xl order-2 lg:order-1">
+                <h2 class="text-3xl font-bold text-emerald-400 mb-6 border-b border-slate-700 pb-4">2. Cơ Chế Chiếm Dụng "RAM" Của Não Bộ</h2>
+                <p>
+                    Hãy tưởng tượng Trí nhớ làm việc của bạn như bộ nhớ RAM của máy tính, với dung lượng vô cùng hạn hẹp (theo định luật Miller, con người chỉ giữ được khoảng 7±2 mảnh thông tin cùng lúc).
+                </p>
+                <p>
+                    <strong>Trước khi bị chiếm dụng:</strong> Không gian nhận thức (Cognitive Space) hoàn toàn trống trải. Khi bạn tập trung vào một công việc, 100% băng thông được hướng vào đó. Việc ra quyết định diễn ra sắc bén, tư duy logic liền mạch, trạng thái Flow (dòng chảy) dễ dàng được kích hoạt.
+                </p>
+                <p>
+                    <strong>Sau khi bị chiếm dụng:</strong> Mỗi tab, mỗi cuốn sách tải về tạo ra một "background process" (tiến trình chạy ngầm). Dù bạn đang làm việc khác, một phần RAM (khoảng 2-5% cho mỗi ý định) bị khóa lại để duy trì vòng lặp. Hệ quả:
+                </p>
+                <ul class="list-disc pl-6 space-y-2 text-slate-300">
+                    <li>Dung lượng tổng thể giảm sút nghiêm trọng.</li>
+                    <li>Hiện tượng "Tràn bộ đệm" (Buffer Overflow) gây ra Brain Fog (sương mù não).</li>
+                    <li>Sự mệt mỏi quyết định (Decision Fatigue) đến nhanh hơn vì CPU của não phải liên tục phân bổ lại tài nguyên giữa việc đang làm và các tiến trình chạy ngầm.</li>
+                </ul>
+            </div>
+            <div class="glass-panel p-8 rounded-2xl order-1 lg:order-2 flex flex-col items-center">
+                <div class="css-art-fragment">
+                    <div class="fragment-box fb-1"></div>
+                    <div class="fragment-box fb-2"></div>
+                    <div class="fragment-box fb-3"></div>
+                    <div class="fragment-box fb-4"></div>
+                </div>
+                <h3 class="text-xl font-bold text-slate-200 mb-6 text-center">So Sánh Băng Thông Nhận Thức</h3>
+                <div class="chart-container w-full">
+                    <canvas id="ramChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 5 Ví dụ -->
+        <section>
+            <h2 class="text-3xl font-bold text-purple-400 mb-2 text-center">3. Năm "Ký Sinh Trùng" Chiếm Dụng Bộ Nhớ Phổ Biến</h2>
+            <p class="text-center text-slate-400 mb-10 max-w-3xl mx-auto">Phân tích chi tiết vào các vật thể kỹ thuật số và thói quen hàng ngày, cách chúng chuyển hóa thành gánh nặng tâm lý như thế nào dựa trên thuyết Zeigarnik.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Ex 1 -->
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-blue-500">
+                    <div class="text-3xl mb-3">📑</div>
+                    <h3 class="font-bold text-xl mb-3 text-blue-300">1. Tab Trình Duyệt "Sẽ Đọc Lại"</h3>
+                    <p class="text-sm">
+                        <strong>Ví dụ:</strong> Bạn đang làm việc, thấy một bài viết dài về "Cách tối ưu hóa công việc", bạn mở nó sang tab mới để chiều đọc. 3 ngày sau, nó vẫn ở đó.
+                    </p>
+                    <p class="text-sm mt-2">
+                        <strong>Giải thích cơ chế:</strong> Về mặt vật lý, trình duyệt lưu tab đó trong RAM máy tính. Về mặt thần kinh, não bạn ghi nhận một "món nợ tri thức". Mỗi lần bạn lướt qua icon tab đó, mắt truyền tín hiệu về não, kích hoạt lại vòng lặp hứa hẹn, tiêu tốn năng lượng để đưa ra quyết định "đọc bây giờ hay lờ đi tiếp", lặp đi lặp lại hàng chục lần một ngày.
+                    </p>
+                </div>
+
+                <!-- Ex 2 -->
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-red-500">
+                    <div class="text-3xl mb-3">🎬</div>
+                    <h3 class="font-bold text-xl mb-3 text-red-300">2. Danh Sách Watchlist Phim Ảnh</h3>
+                    <p class="text-sm">
+                        <strong>Ví dụ:</strong> Kéo danh sách Netflix, bạn đưa 20 bộ phim tài liệu, phim đoạt giải Oscar vào My List để "xem nâng cao kiến thức".
+                    </p>
+                    <p class="text-sm mt-2">
+                        <strong>Giải thích cơ chế:</strong> Danh sách này không biến mất. Nó chuyển hóa thành <em>Áp lực kỳ vọng bản thân</em>. Khi mệt mỏi, bạn có xu hướng chọn phim giải trí cũ (như Friends). Việc bỏ qua Watchlist tạo ra sự mâu thuẫn nhận thức (Cognitive Dissonance), khiến việc giải trí lẽ ra phải thư giãn lại đi kèm với một chút tội lỗi ngầm (phantom guilt) ẩn sâu trong vô thức.
+                    </p>
+                </div>
+
+                <!-- Ex 3 -->
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-emerald-500">
+                    <div class="text-3xl mb-3">📚</div>
+                    <h3 class="font-bold text-xl mb-3 text-emerald-300">3. Ổ Cứng Chứa Khóa Học & E-book</h3>
+                    <p class="text-sm">
+                        <strong>Ví dụ:</strong> Bạn xin được link Google Drive chứa 500GB tài liệu học Marketing, vội vàng bấm tải xuống toàn bộ nhưng chưa từng mở ra xem.
+                    </p>
+                    <p class="text-sm mt-2">
+                        <strong>Giải thích cơ chế:</strong> Hành động "tải xuống" kích hoạt dopamine ảo (phần thưởng vì tưởng rằng mình đã sở hữu tri thức). Nhưng Zeigarnik effect làm phần còn lại: Sự tồn tại vật lý của file dung lượng lớn trên máy nhắc nhở não bộ về một dự án khổng lồ chưa hoàn thành. Nó làm tê liệt hành động, vì bộ não tính toán rằng năng lượng để hoàn thành 500GB là quá lớn.
+                    </p>
+                </div>
+
+                <!-- Ex 4 -->
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-yellow-500">
+                    <div class="text-3xl mb-3">💬</div>
+                    <h3 class="font-bold text-xl mb-3 text-yellow-300">4. Tin Nhắn Đánh Dấu "Chưa Đọc"</h3>
+                    <p class="text-sm">
+                        <strong>Ví dụ:</strong> Sếp hoặc bạn bè nhắn tin hỏi một vấn đề cần suy nghĩ. Bạn đọc lướt, vuốt để đánh dấu "Unread" để tối về trả lời cho cẩn thận.
+                    </p>
+                    <p class="text-sm mt-2">
+                        <strong>Giải thích cơ chế:</strong> Chấm đỏ (Notification badge) là một tác nhân kích thích thị giác cực mạnh thiết kế riêng để hack hạch hạnh nhân. Ý định trả lời tin nhắn trở thành một "quả bom hẹn giờ" trong tâm trí. Càng để lâu, lãi suất cảm xúc càng tăng, bạn càng cảm thấy ngại và áp lực lớn hơn so với việc phản hồi ngay lập tức.
+                    </p>
+                </div>
+
+                <!-- Ex 5 -->
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-pink-500 md:col-span-2 lg:col-span-1">
+                    <div class="text-3xl mb-3">🏋️‍♀️</div>
+                    <h3 class="font-bold text-xl mb-3 text-pink-300">5. Kế Hoạch Tập Thể Dục "Ngày Mai"</h3>
+                    <p class="text-sm">
+                        <strong>Ví dụ:</strong> Bạn mua giày chạy bộ, để ngay cửa ra vào với ý định "Sáng mai sẽ dậy sớm chạy". Sáng hôm sau bạn tắt báo thức ngủ tiếp.
+                    </p>
+                    <p class="text-sm mt-2">
+                        <strong>Giải thích cơ chế:</strong> Đôi giày ở cửa là "bằng chứng vật lý" đập vào mắt mỗi ngày. Việc liên tục lên lịch rồi phá vỡ lịch trình tạo ra một chuỗi các vòng lặp Zeigarnik gãy vỡ. Việc tiêu tốn năng lượng không nằm ở việc chạy, mà nằm ở việc <em>đấu tranh tư tưởng</em> mỗi sáng. Nó bào mòn ý chí (Willpower) – vốn là một nguồn tài nguyên hữu hạn trong não bộ theo các nghiên cứu về Ego Depletion.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 4: Nhận biết hệ thống quá tải -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div class="lg:col-span-5 glass-panel p-8 rounded-2xl">
+                <div class="css-art-overload">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+                <h3 class="text-xl font-bold text-slate-200 mb-6 text-center">Phân Tích Cường Độ Triệu Chứng</h3>
+                <div class="chart-container">
+                    <canvas id="symptomChart"></canvas>
+                </div>
+            </div>
+            <div class="lg:col-span-7 glass-panel p-8 rounded-2xl">
+                <h2 class="text-3xl font-bold text-orange-400 mb-6 border-b border-slate-700 pb-4">4. Làm Sao Biết Hệ Thống Đang Bị Quá Tải?</h2>
+                <p>Vì các danh sách này vô hình trong tâm trí, bạn phải quan sát các <strong>đứt gãy ở đầu ra (Output failures)</strong> của hệ thống nhận thức. Dưới đây là các chỉ báo khoa học:</p>
+                
+                <div class="space-y-6 mt-6">
+                    <div>
+                        <h4 class="font-bold text-orange-300 text-lg flex items-center gap-2"><span>⚠️</span> 1. Kháng cự với sự im lặng</h4>
+                        <p class="text-sm text-slate-300">Khi bạn cố gắng ngồi yên không làm gì (hoặc khi lên giường đi ngủ), thay vì cảm thấy bình yên, một làn sóng lo âu và hàng loạt suy nghĩ ngẫu nhiên về các công việc dang dở ập đến. Đây là lúc vỏ não trước trán mất quyền kiểm soát và để lộ ra các tiến trình chạy ngầm.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-orange-300 text-lg flex items-center gap-2"><span>⚠️</span> 2. Suy giảm trí nhớ ngắn hạn cục bộ</h4>
+                        <p class="text-sm text-slate-300">Bạn bước vào một căn phòng và quên mất mình định lấy gì. Hoặc vừa đọc xong một đoạn văn bản nhưng không đọng lại chữ nào. Lý do: RAM đã đầy bởi các vòng lặp mở, không còn không gian để mã hóa thông tin mới vào bộ nhớ (Encoding failure).</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-orange-300 text-lg flex items-center gap-2"><span>⚠️</span> 3. Tê liệt phân tích (Analysis Paralysis)</h4>
+                        <p class="text-sm text-slate-300">Đối mặt với 50 tab trình duyệt, thay vì chọn 1 để đọc, não bạn từ chối ra quyết định, và bạn mở một tab mới hoàn toàn vô nghĩa (như lướt mạng xã hội). Càng có nhiều lựa chọn dang dở, khả năng bắt tay vào hành động càng thấp.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Thiền & Giải pháp -->
+        <section class="glass-panel p-10 rounded-3xl border-t-4 border-emerald-500">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-emerald-400 mb-6 border-b border-slate-700 pb-4">5. Giải Pháp: Thiền Định & Thanh Lọc Hệ Thống</h2>
+                    <p>
+                        Thiền (đặc biệt là Thiền Chánh Niệm - Vipassana / Mindfulness) có làm các danh sách này biến mất không? Câu trả lời là: <strong>Không trực tiếp xóa bỏ chúng, nhưng nó phơi bày toàn bộ mã nguồn để bạn xử lý.</strong>
+                    </p>
+                    <p>
+                        <strong>Thí nghiệm thần kinh học:</strong> Khi một người nhắm mắt và tập trung vào hơi thở, máy quét fMRI cho thấy sự kích hoạt mạnh mẽ của <em>Mạng lưới Chế độ Mặc định (Default Mode Network - DMN)</em>. Lúc này, những tiếng ồn tĩnh (vòng lặp Zeigarnik) mà ngày thường bị áp đảo bởi hoạt động ngoại cảnh sẽ nổi lên bề mặt ý thức.
+                    </p>
+                    <p>
+                        <strong>Vai trò của Thiền là Nhận Diện (Awareness):</strong> Thiền giúp bạn ngồi đó, nhìn thấy một suy nghĩ hiện lên: <em>"Mình chưa xem xong bộ phim hôm qua"</em>. Thay vì phản ứng bằng cách chèn ép suy nghĩ đó xuống, thiền dạy bạn gắn nhãn nó là một "ý định ngẫu nhiên", từ đó ngắt kết nối giữa ý định đó với Hạch hạnh nhân (cắt đứt phản ứng căng thẳng).
+                    </p>
+                    <h3 class="text-xl font-bold text-cyan-300 mt-8 mb-4">Cơ Chế Vật Lý Để Giải Quyết Triệt Để: Cụ Thể Hóa Dữ Liệu</h3>
+                    <p class="text-sm text-slate-300">
+                        Não bộ không phân biệt được việc "bạn đã hoàn thành công việc" và "bạn đã có một kế hoạch đáng tin cậy để hoàn thành nó". Việc viết toàn bộ các suy nghĩ ngổn ngang ra một tờ giấy (Brain Dump) hoặc một công cụ quản lý vật lý bên ngoài (như Notion, sổ tay) sẽ đánh lừa Vỏ não trước trán rằng: "Công việc này đã được hệ thống bên ngoài lưu trữ, không cần tốn RAM duy trì nó nữa". Ngay lúc hành động ghi chép diễn ra, hiệu ứng Zeigarnik bị vô hiệu hóa đối với mục tiêu đó.
+                    </p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="css-art-meditation">
+                        <div class="circle-ripple"></div>
+                        <div class="circle-ripple"></div>
+                        <div class="circle-core"></div>
+                    </div>
+                    
+                    <!-- HTML/CSS Flowchart in place of Mermaid -->
+                    <div class="w-full bg-slate-800/80 p-6 rounded-xl border border-slate-600 mt-6 shadow-2xl">
+                        <h4 class="text-center font-bold text-emerald-300 mb-6 uppercase tracking-wider">Lưu Đồ Cắt Đứt Vòng Lặp Zeigarnik</h4>
+                        
+                        <div class="flex flex-col items-center text-sm space-y-4 font-medium text-slate-800">
+                            <!-- Step 1 -->
+                            <div class="bg-cyan-200 px-6 py-3 rounded-lg w-4/5 text-center shadow-lg transform transition hover:scale-105">
+                                Xuất hiện Ý định dang dở (Tab, ý tưởng, nợ nần)
+                            </div>
+                            
+                            <!-- Arrow -->
+                            <div class="text-slate-400">⬇️</div>
+                            
+                            <!-- Step 2 -->
+                            <div class="bg-yellow-200 px-6 py-3 rounded-lg w-3/4 text-center shadow-lg">
+                                Xả Dữ Liệu (Brain Dump): Viết hết ra giấy/App
+                            </div>
+                            
+                            <!-- Arrow -->
+                            <div class="text-slate-400">⬇️</div>
+                            
+                            <!-- Decision -->
+                            <div class="bg-purple-200 px-6 py-3 rounded-lg w-full text-center shadow-lg font-bold border-2 border-purple-400">
+                                Sàng Lọc (Quyết Định Dứt Khoát)
+                            </div>
+                            
+                            <!-- Branches -->
+                            <div class="flex w-full justify-between gap-2 mt-2">
+                                <div class="flex flex-col items-center w-1/3">
+                                    <div class="text-slate-400 mb-2">↙️</div>
+                                    <div class="bg-emerald-300 px-2 py-4 rounded-lg text-center h-full w-full shadow-lg">
+                                        <strong>LÀM NGAY</strong><br><span class="text-xs font-normal">Nếu tốn < 2 phút</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center w-1/3">
+                                    <div class="text-slate-400 mb-2">⬇️</div>
+                                    <div class="bg-blue-300 px-2 py-4 rounded-lg text-center h-full w-full shadow-lg">
+                                        <strong>LÊN LỊCH</strong><br><span class="text-xs font-normal">Đưa vào Calendar có ngày giờ cụ thể</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center w-1/3">
+                                    <div class="text-slate-400 mb-2">↘️</div>
+                                    <div class="bg-pink-300 px-2 py-4 rounded-lg text-center h-full w-full shadow-lg text-red-900">
+                                        <strong>XÓA BỎ</strong><br><span class="text-xs font-normal">Chấp nhận vĩnh viễn không làm (Đóng tab)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: 25 Flashcards -->
+        <section class="pt-10">
+            <h2 class="text-3xl font-bold text-center text-blue-400 mb-10">Hệ Thống 25 Flashcard Ôn Tập Nhanh (No Interaction)</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- Flashcards Array -->
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-blue-500 shadow-md">
+                    <p class="font-bold text-blue-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">1. Ai là người phát hiện ra hiệu ứng Zeigarnik?</p>
+                    <p class="text-xs text-slate-300">Nhà tâm lý học người Nga Bluma Zeigarnik vào năm 1927.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-pink-500 shadow-md">
+                    <p class="font-bold text-pink-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">2. Định nghĩa cốt lõi của hiệu ứng này là gì?</p>
+                    <p class="text-xs text-slate-300">Con người nhớ những nhiệm vụ bị gián đoạn/dang dở tốt hơn những nhiệm vụ đã hoàn thành.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-emerald-500 shadow-md">
+                    <p class="font-bold text-emerald-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">3. Vị trí lưu trữ các "ý định" này trong não?</p>
+                    <p class="text-xs text-slate-300">Nằm kẹt tại Trí nhớ làm việc (Working Memory) thuộc Vỏ não trước trán.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-yellow-500 shadow-md">
+                    <p class="font-bold text-yellow-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">4. Vòng lặp mở (Open Loop) là gì?</p>
+                    <p class="text-xs text-slate-300">Một tiến trình nhận thức bắt đầu nhưng chưa kết thúc, liên tục chạy ngầm đòi hỏi tài nguyên.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-purple-500 shadow-md">
+                    <p class="font-bold text-purple-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">5. Hạch hạnh nhân (Amygdala) đóng vai trò gì ở đây?</p>
+                    <p class="text-xs text-slate-300">Coi nhiệm vụ dang dở là mối đe dọa, tiết ra cortisol gây căng thẳng vi mô.</p>
+                </div>
+
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-blue-500 shadow-md">
+                    <p class="font-bold text-blue-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">6. Bằng chứng fMRI cho thấy điều gì?</p>
+                    <p class="text-xs text-slate-300">Thùy trán tiêu thụ nhiều năng lượng (glucose) hơn khi có công việc gián đoạn.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-pink-500 shadow-md">
+                    <p class="font-bold text-pink-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">7. Tại sao dung lượng Working Memory bị ảnh hưởng?</p>
+                    <p class="text-xs text-slate-300">Mỗi vòng lặp chiếm % nhất định, làm hẹp băng thông dành cho công việc hiện tại.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-emerald-500 shadow-md">
+                    <p class="font-bold text-emerald-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">8. Mệt mỏi quyết định xuất phát từ đâu?</p>
+                    <p class="text-xs text-slate-300">Do não liên tục phải tái phân bổ tài nguyên giữa việc đang làm và các tiến trình chạy ngầm.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-yellow-500 shadow-md">
+                    <p class="font-bold text-yellow-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">9. Sương mù não (Brain Fog) là hậu quả của việc gì?</p>
+                    <p class="text-xs text-slate-300">Hiện tượng "tràn bộ đệm" khi có quá nhiều ý định tồn đọng cùng lúc.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-purple-500 shadow-md">
+                    <p class="font-bold text-purple-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">10. Việc mở Tab trình duyệt gây hại thế nào?</p>
+                    <p class="text-xs text-slate-300">Tạo món nợ tri thức, tiêu tốn năng lượng ra quyết định đọc hay không mỗi khi nhìn thấy.</p>
+                </div>
+
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-blue-500 shadow-md">
+                    <p class="font-bold text-blue-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">11. Tại sao Watchlist tạo ra Mâu thuẫn nhận thức?</p>
+                    <p class="text-xs text-slate-300">Tạo áp lực kỳ vọng bản thân, khiến việc giải trí bằng thứ khác đi kèm cảm giác tội lỗi ngầm.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-pink-500 shadow-md">
+                    <p class="font-bold text-pink-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">12. Hiệu ứng ảo của việc tải E-book mà không đọc?</p>
+                    <p class="text-xs text-slate-300">Tiết ra dopamine ảo tưởng hoàn thành, nhưng để lại gánh nặng dự án khổng lồ chưa xong.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-emerald-500 shadow-md">
+                    <p class="font-bold text-emerald-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">13. Càng để tin nhắn chưa đọc lâu thì sao?</p>
+                    <p class="text-xs text-slate-300">Tạo "lãi suất cảm xúc", áp lực tâm lý tăng tỷ lệ thuận với thời gian trì hoãn.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-yellow-500 shadow-md">
+                    <p class="font-bold text-yellow-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">14. Dự định tập thể dục dang dở bào mòn điều gì?</p>
+                    <p class="text-xs text-slate-300">Bào mòn Ý chí (Willpower) do sự đấu tranh tư tưởng lặp đi lặp lại.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-purple-500 shadow-md">
+                    <p class="font-bold text-purple-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">15. Biểu hiện "kháng cự sự im lặng" là gì?</p>
+                    <p class="text-xs text-slate-300">Lo âu, suy nghĩ ập đến khi cố gắng nghỉ ngơi do vỏ não giảm kiểm soát.</p>
+                </div>
+
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-blue-500 shadow-md">
+                    <p class="font-bold text-blue-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">16. Suy giảm trí nhớ ngắn hạn cục bộ do đâu?</p>
+                    <p class="text-xs text-slate-300">RAM đã đầy, lỗi mã hóa (Encoding failure) khiến thông tin mới không thể lọt vào.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-pink-500 shadow-md">
+                    <p class="font-bold text-pink-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">17. Tê liệt phân tích xảy ra khi nào?</p>
+                    <p class="text-xs text-slate-300">Khi số lượng lựa chọn (như tab) quá lớn, não từ chối ra quyết định.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-emerald-500 shadow-md">
+                    <p class="font-bold text-emerald-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">18. Thiền tác động thế nào đến Zeigarnik?</p>
+                    <p class="text-xs text-slate-300">Không trực tiếp xóa bỏ, mà kích hoạt Mạng lưới DMN để ý thức nhận diện các vòng lặp ẩn.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-yellow-500 shadow-md">
+                    <p class="font-bold text-yellow-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">19. Sự Nhận Diện trong thiền có ích lợi gì?</p>
+                    <p class="text-xs text-slate-300">Gắn nhãn suy nghĩ, ngắt kết nối với hạch hạnh nhân, giảm phản ứng căng thẳng.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-purple-500 shadow-md">
+                    <p class="font-bold text-purple-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">20. Việc cụ thể hóa dữ liệu (Brain Dump) có tác dụng gì?</p>
+                    <p class="text-xs text-slate-300">Chuyển thông tin từ RAM não bộ ra hệ thống lưu trữ vật lý bên ngoài.</p>
+                </div>
+
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-blue-500 shadow-md">
+                    <p class="font-bold text-blue-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">21. Não phản ứng sao khi ý định được ghi ra lịch?</p>
+                    <p class="text-xs text-slate-300">Đánh lừa Vỏ não trước trán rằng hệ thống đã kiểm soát, ngưng tốn RAM duy trì ý định.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-pink-500 shadow-md">
+                    <p class="font-bold text-pink-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">22. Quy tắc 2 phút trong sàng lọc là gì?</p>
+                    <p class="text-xs text-slate-300">Nếu vòng lặp tốn dưới 2 phút để xử lý, hãy hành động ngay lập tức.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-emerald-500 shadow-md">
+                    <p class="font-bold text-emerald-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">23. "Lên lịch" khác gì "Sẽ làm sau"?</p>
+                    <p class="text-xs text-slate-300">Lên lịch gắn liền với dữ kiện thời gian vật lý cụ thể, vô hiệu hóa hiệu ứng Zeigarnik.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-yellow-500 shadow-md">
+                    <p class="font-bold text-yellow-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">24. Lựa chọn "Xóa bỏ" đòi hỏi điều gì?</p>
+                    <p class="text-xs text-slate-300">Sự chấp nhận và buông bỏ kỳ vọng, đóng hẳn tab hoặc xóa hẳn danh sách.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-t-2 border-purple-500 shadow-md">
+                    <p class="font-bold text-purple-300 mb-2 text-sm leading-tight border-b border-slate-700 pb-2">25. Tóm lược thông điệp về Zeigarnik?</p>
+                    <p class="text-xs text-slate-300">Hệ thống não không quên. Nhiệm vụ của ý thức là phải đóng các vòng lặp một cách vật lý.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Requested Fixed Size Footer -->
+    <footer class="custom-footer text-slate-400">
+        <div class="text-center px-4 max-w-4xl mb-3">
+            <p class="font-medium text-slate-300 mb-1">Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+        </div>
+        <div class="flex gap-6 items-center">
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="hover:text-red-500 transition-colors flex items-center gap-2">
+                <span class="text-xl">📺</span> YouTube
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="hover:text-cyan-400 transition-colors flex items-center gap-2">
+                <span class="text-xl">🎵</span> TikTok
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="hover:text-blue-500 transition-colors flex items-center gap-2">
+                <span class="text-xl">📘</span> Facebook Page
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        function wrapLabel(label, maxLength) {
+            if (label.length <= maxLength) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                if ((currentLine + word).length > maxLength) {
+                    if (currentLine.trim() !== '') lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            }
+            if (currentLine.trim() !== '') lines.push(currentLine.trim());
+            return lines;
+        }
+
+        const tooltipCallbackConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) return label.join(' ');
+                    return label;
+                }
+            }
+        };
+
+        Chart.defaults.color = '#94A3B8';
+        Chart.defaults.font.family = "'Inter', 'Segoe UI', sans-serif";
+
+        const ramLabelsRaw = ['Công việc tập trung hiện tại', 'Xử lý sinh lý học (Thở, nhịp tim)', 'Rò rỉ năng lượng do Zeigarnik Effect (Tiến trình ngầm)'];
+        const ramLabels = ramLabelsRaw.map(l => wrapLabel(l, 16));
+
+        const ctxRam = document.getElementById('ramChart').getContext('2d');
+        new Chart(ctxRam, {
+            type: 'pie',
+            data: {
+                labels: ramLabels,
+                datasets: [{
+                    data: [25, 20, 55],
+                    backgroundColor: ['#10B981', '#3B82F6', '#EC4899'],
+                    borderColor: '#1E293B',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#E2E8F0', padding: 15, font: {size: 11} } },
+                    tooltip: tooltipCallbackConfig
+                }
+            }
+        });
+
+        const symptomLabelsRaw = ['Tần suất Sương mù não', 'Tốc độ cạn kiệt ý chí', 'Rối loạn giấc ngủ đầu hôm', 'Cảm giác tội lỗi vô cớ', 'Thời gian duy trì trạng thái Flow'];
+        const symptomLabels = symptomLabelsRaw.map(l => wrapLabel(l, 16));
+
+        const ctxSymptom = document.getElementById('symptomChart').getContext('2d');
+        new Chart(ctxSymptom, {
+            type: 'bar',
+            data: {
+                labels: symptomLabels,
+                datasets: [{
+                    label: 'Khi để các Vòng lặp mở tự do',
+                    data: [85, 90, 75, 80, 15],
+                    backgroundColor: 'rgba(236, 72, 153, 0.7)',
+                    borderColor: '#EC4899',
+                    borderWidth: 1
+                }, {
+                    label: 'Sau khi ghi chép & đóng vòng lặp',
+                    data: [20, 30, 25, 10, 85],
+                    backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                    borderColor: '#10B981',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#94A3B8' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94A3B8', maxRotation: 45, minRotation: 45, font: {size: 10} }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top', labels: { color: '#E2E8F0', font: {size: 11} } },
+                    tooltip: tooltipCallbackConfig
+                }
+            }
+        });
+    </script>
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
