@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến Trúc Thông Tin: Khoa Học Giảm Mỡ & Tăng Cơ</title>
+    <style>
+        :root {
+            --bg-color: #0f172a; /* Slate 900 */
+            --surface-color: #1e293b; /* Slate 800 */
+            --surface-alt: #334155; /* Slate 700 */
+            --text-primary: #f8fafc; /* Slate 50 */
+            --text-secondary: #94a3b8; /* Slate 400 */
+            --accent: #38bdf8; /* Sky 400 */
+            --accent-glow: rgba(56, 189, 248, 0.2);
+            --danger: #fb7185; /* Rose 400 */
+            --success: #34d399; /* Emerald 400 */
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography */
+        h1, h2, h3 { line-height: 1.2; font-weight: 700; }
+        h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; color: #fff; letter-spacing: -0.02em; }
+        h2 { font-size: 1.75rem; margin-bottom: 1.5rem; color: var(--accent); }
+        h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); font-size: 1.05rem; }
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        /* Layout */
+        .container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+        section { margin-bottom: 5rem; }
+
+        /* CSS Abstract Art Blocks */
+        .art-block {
+            width: 100%; height: 160px;
+            background: var(--surface-color);
+            border-radius: 16px; margin-bottom: 2rem;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; position: relative;
+        }
+
+        /* Art: Thesis */
+        .art-thesis .balance {
+            width: 100px; height: 100px;
+            border: 4px solid var(--accent); border-radius: 50%;
+            position: relative;
+        }
+        .art-thesis .balance::before {
+            content: ''; position: absolute; top: 50%; left: -20px; right: -20px;
+            height: 4px; background: var(--success); transform: translateY(-50%) rotate(15deg);
+        }
+
+        /* Art: Mindmap */
+        .art-mindmap .nodes {
+            display: flex; gap: 1rem;
+        }
+        .art-mindmap .node {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(45deg, var(--accent), transparent);
+            border: 2px solid var(--accent); transform: rotate(45deg);
+        }
+        .art-mindmap .node:nth-child(2) { transform: translateY(-20px) rotate(45deg); border-color: var(--success); background: linear-gradient(45deg, var(--success), transparent);}
+
+        /* Art: Functions */
+        .art-functions .gear {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 8px dashed var(--accent);
+            animation: spin 10s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Art: Dashboard */
+        .art-dashboard .shield {
+            width: 60px; height: 80px;
+            background: var(--danger);
+            clip-path: polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0 80%, 0 20%);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .art-dashboard .shield::after {
+            content: ''; width: 30px; height: 40px; background: var(--bg-color); clip-path: polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0 80%, 0 20%);
+        }
+
+        /* Sections */
+        .thesis-box {
+            background: linear-gradient(145deg, var(--surface-color), var(--bg-color));
+            padding: 2.5rem; border-radius: 20px; border: 1px solid var(--surface-alt);
+            border-left: 6px solid var(--accent);
+        }
+        .thesis-box p { color: var(--text-primary); font-size: 1.2rem; font-style: italic; margin-bottom: 0; }
+
+        /* Mindmap Grid */
+        .grid-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;
+        }
+        .card {
+            background: var(--surface-color); padding: 1.5rem; border-radius: 16px;
+            border: 1px solid var(--surface-alt); transition: transform 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px var(--accent-glow); }
+        .tag { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 6px; background: var(--surface-alt); color: var(--accent); font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: 0.05em; text-transform: uppercase; }
+
+        /* Executable Functions */
+        .func-list { list-style: none; }
+        .func-list li {
+            background: var(--surface-color); margin-bottom: 1rem; padding: 1.5rem;
+            border-radius: 12px; border-left: 4px solid var(--success);
+            display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .func-list strong { color: var(--success); }
+
+        /* Dashboard */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        .dash-panel { background: var(--surface-color); padding: 2rem; border-radius: 16px; border: 1px solid var(--surface-alt); }
+        .dash-panel h3 { display: flex; align-items: center; gap: 0.5rem; }
+        .dash-panel.traps h3 { color: var(--danger); }
+        .dash-panel.pact h3 { color: var(--accent); }
+        .dash-list li { margin-bottom: 1.5rem; color: var(--text-secondary); border-bottom: 1px dashed var(--surface-alt); padding-bottom: 1rem;}
+        .dash-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+
+        /* Flashcards */
+        .flashcard-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;
+        }
+        .f-card {
+            background: var(--surface-color); border: 1px solid var(--surface-alt);
+            padding: 1rem 1.25rem; border-radius: 12px;
+        }
+        .f-q { font-weight: 600; color: #fff; margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.4; }
+        .f-a { color: var(--accent); font-size: 0.9rem; line-height: 1.4; }
+        .f-a::before { content: '→ '; color: var(--text-secondary); }
+
+        /* Footer */
+        footer {
+            height: 128px; background: var(--surface-color); border-top: 1px solid var(--surface-alt);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 0 1rem; gap: 1rem;
+        }
+        footer p { font-size: 0.85rem; color: var(--text-secondary); max-width: 600px; margin: 0; line-height: 1.4; }
+        .social-links { display: flex; gap: 1.5rem; }
+        .social-links a { color: var(--text-secondary); transition: color 0.2s; display: flex; align-items: center; justify-content: center;}
+        .social-links a:hover { color: var(--accent); }
+        .social-links svg { width: 24px; height: 24px; fill: currentColor; }
+
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        
+        <!-- SECTION 1: THESIS -->
+        <section>
+            <div class="art-block art-thesis">
+                <div class="balance"></div>
+            </div>
+            <h1>Kiến trúc Dữ liệu: Khoa học Giảm mỡ & Tăng cơ</h1>
+            <div class="thesis-box">
+                <span class="tag">Luận điểm Cốt lõi (Thesis)</span>
+                <p>"Giảm mỡ và tăng cơ bền vững không đến từ việc chạy theo các chế độ ăn kiêng cực đoan hay nỗi ám ảnh về thời điểm ăn uống. Nó hoàn toàn phụ thuộc vào việc tối ưu hóa tổng lượng protein nạp vào mỗi 24 giờ, quản trị thâm hụt calo vi mô và bảo vệ khối lượng cơ bắp - 'động cơ trao đổi chất' thiết yếu của cơ thể."</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MINDMAP -->
+        <section>
+            <div class="art-block art-mindmap">
+                <div class="nodes">
+                    <div class="node"></div>
+                    <div class="node"></div>
+                    <div class="node"></div>
+                </div>
+            </div>
+            <h2>10 Danh mục Cốt lõi (Mindmap)</h2>
+            <div class="grid-cards">
+                <div class="card">
+                    <span class="tag">01. Định luật Protein</span>
+                    <h3>Total > Timing</h3>
+                    <p><strong>Logic:</strong> Tổng lượng protein nạp vào trong ngày quyết định 90% kết quả, ăn mấy bữa hay lúc nào chỉ là thứ yếu.</p>
+                    <p><strong>Cơ sở:</strong> Cơ thể có bể chứa axit amin linh hoạt. Chia protein thành 3 hay 5 bữa không tạo ra chênh lệch về tổng hợp cơ bắp (Muscle Protein Synthesis) nếu đã nạp đủ 1.6-2.2g/kg.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">02. Hệ thống sinh tồn</span>
+                    <h3>Sự thích nghi trao đổi chất</h3>
+                    <p><strong>Logic:</strong> Ăn kiêng càng lâu, cơ thể càng giảm đốt calo. Chững cân (Plateau) là tất yếu.</p>
+                    <p><strong>Cơ sở:</strong> Khi thâm hụt calo, hệ thần kinh tự động giảm "NEAT" (Sinh nhiệt không tập thể dục - vd: bớt rung đùi, lười đi lại) để bảo toàn năng lượng sinh tồn. Lượng đốt giảm có thể lên tới 300-400 calo/ngày.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">03. Nền tảng trao đổi chất</span>
+                    <h3>Bảo toàn Cơ bắp là sinh mạng</h3>
+                    <p><strong>Logic:</strong> Nếu giảm cân mà để mất cơ, bạn sẽ bị béo lại nhanh hơn và tồi tệ hơn ban đầu.</p>
+                    <p><strong>Cơ sở:</strong> Hiện tượng "Collateral Fattening": Cơ bắp là mô ngốn nhiều năng lượng. Khi mất cơ do ép cân, não bộ phát ra tín hiệu đói dữ dội buộc bạn ăn bù cho đến khi lượng cơ phục hồi, nhưng đồng thời lại tích luỹ mỡ thừa khổng lồ.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">04. Giải mã Ăn kiêng</span>
+                    <h3>Ảo ảnh Ketogenic & Carnivore</h3>
+                    <p><strong>Logic:</strong> Keto/Carnivore hiệu quả vì cắt rác thực phẩm và cắt calo, không phải do phép màu Ketosis.</p>
+                    <p><strong>Cơ sở:</strong> Bằng cách cấm nạp Carb, bạn vô tình loại bỏ luôn Combo Carb+Fat (siêu ngon miệng, thao túng dopamine). Tuy nhiên tỷ lệ từ bỏ dài hạn cực cao và cân nặng thường dội ngược khi ăn Carb lại.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">05. Dinh dưỡng Vi lượng</span>
+                    <h3>Sự minh oan cho Trái cây</h3>
+                    <p><strong>Logic:</strong> Đường trong trái cây tốt. Đường tinh luyện (Added Sugar) mới phá hủy hệ thống.</p>
+                    <p><strong>Cơ sở:</strong> Trái cây có ma trận cấu trúc (chất xơ, nước) làm chậm quá trình bơm glucose vào máu, tạo độ no cơ học. Ngược lại, đường tinh luyện làm "pha loãng vi chất" (Micronutrient dilution) và kích nổ kháng insulin.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">06. Chiến lược Tâm lý</span>
+                    <h3>Hiệu ứng Diet Break</h3>
+                    <p><strong>Logic:</strong> Phải có những tuần chủ động ngừng ăn kiêng để tối ưu hóa việc giảm mỡ dài hạn.</p>
+                    <p><strong>Cơ sở:</strong> Quá trình giảm cân là cầu thang: Giảm -> Đứng -> Giảm. Đưa calo về mức duy trì (Maintenance) sau mỗi 2-4kg giúp reset hệ nội tiết và xóa bỏ mệt mỏi hệ thần kinh trung ương.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">07. Ergogenic Aids</span>
+                    <h3>Creatine: Hợp chất "Vua"</h3>
+                    <p><strong>Logic:</strong> Creatine là thực phẩm bổ sung duy nhất thực sự đáng tiền để tăng sức mạnh và nhận thức.</p>
+                    <p><strong>Cơ sở:</strong> Tăng cường kho dự trữ Phosphocreatine để tái tạo ATP. Gây hydrat hóa nội bào (kéo nước vào tế bào) tạo môi trường đồng hóa cơ, và nâng cao dự trữ năng lượng não bộ chống suy giảm nhận thức.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">08. Sinh lý học Cơ bản</span>
+                    <h3>Chấm dứt "Giảm mỡ cục bộ"</h3>
+                    <p><strong>Logic:</strong> Gập bụng không làm giảm mỡ bụng. Giảm mỡ là quy trình toàn thân.</p>
+                    <p><strong>Cơ sở:</strong> Lấy mỡ làm năng lượng (Lipolysis) được điều khiển bởi enzyme và hormone trong máu, không phân biệt khu vực. Tuy nhiên, cắt giảm "Chất béo bão hòa" (mỡ động vật) giúp giảm tỷ lệ "Mỡ nội tạng".</p>
+                </div>
+                <div class="card">
+                    <span class="tag">09. Khoa học tế bào</span>
+                    <h3>Sự thật về Autophagy</h3>
+                    <p><strong>Logic:</strong> Tự thực bào xảy ra khi thâm hụt calo hoặc khi tập tạ, không bắt buộc phải nhịn ăn (Fasting).</p>
+                    <p><strong>Cơ sở:</strong> Mọi trạng thái cạn kiệt năng lượng sinh học đều kích hoạt thuật toán dọn rác tế bào. Đẩy Fasting quá đà để ép Autophagy sẽ dẫn đến "tự thực cơ bắp" (tiêu hủy mô cơ làm năng lượng).</p>
+                </div>
+                <div class="card">
+                    <span class="tag">10. Nhiệt động học</span>
+                    <h3>Hội chứng "Hard Gainer"</h3>
+                    <p><strong>Logic:</strong> Người gầy khó tăng cân do vô thức đốt cháy sạch số calo ăn thừa, không phải do cơ địa ma thuật.</p>
+                    <p><strong>Cơ sở:</strong> Khi nạp thặng dư calo, hệ thần kinh của họ kích hoạt sự gia tăng chóng mặt chỉ số NEAT (rung đùi, đi bộ nhanh, thân nhiệt), có thể triệt tiêu đến 700 calo dư thừa mỗi ngày mà họ không hề nhận ra.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: EXECUTABLE FUNCTIONS -->
+        <section>
+            <div class="art-block art-functions">
+                <div class="gear"></div>
+            </div>
+            <h2>Hàm thực thi (Executable Functions)</h2>
+            <ul class="func-list">
+                <li>
+                    <strong>[Tham số Hệ thống] Thuật toán thiết lập Protein:</strong> 
+                    <span>Người bình thường (Bảo trì sức khỏe): <code>1.2g - 1.6g / kg</code> thể trọng mục tiêu. <br>
+                    Tối ưu Tăng Cơ / Giảm Mỡ (Recomp): <code>1.6g - 2.2g / kg</code> thể trọng mục tiêu. (Bắt đầu ở mức 1.6 với nữ).</span>
+                </li>
+                <li>
+                    <strong>[Kiểm soát rủi ro] Tốc độ tiêu hủy mỡ (Fat-loss Cap):</strong>
+                    <span>Tuyệt đối duy trì tốc độ giảm <code>0.5% - 1%</code> tổng trọng lượng cơ thể mỗi tuần. Vượt quá ngưỡng này sẽ kích hoạt thuật toán phá hủy cơ bắp và làm chậm trao đổi chất nghiêm trọng.</span>
+                </li>
+                <li>
+                    <strong>[Cấu hình Năng lượng] Quy trình nạp Creatine:</strong>
+                    <span>Loading Phase (Tùy chọn tải nhanh): <code>20-25g/ngày</code> trong 5-7 ngày. <br>
+                    Maintenance Phase (Duy trì bền vững): <code>3-5g/ngày</code> liên tục.</span>
+                </li>
+                <li>
+                    <strong>[Bảo trì Hệ thống] Workflow Diet Break (Phá chững cân):</strong>
+                    <span>Kích hoạt giao thức "Bảo trì phi YOLO" (Non-YOLO maintenance): Cứ sau mỗi <code>5 - 10 lbs (2 - 4.5 kg)</code> mỡ mất đi, bắt buộc thực hiện 1-2 tuần ăn ở mức calo duy trì (Maintenance). Gỡ bỏ thâm hụt nhưng giữ nguyên lượng thực phẩm sạch.</span>
+                </li>
+                <li>
+                    <strong>[Xử lý Lỗi] Cho tạng người Hard Gainer (Khó tăng cân):</strong>
+                    <span>Bỏ qua cảm giác no cơ học bằng cách tích hợp <code>2 bữa ăn dạng lỏng</code> (Whey protein + Calo cao) vào xen kẽ trong ngày để "vượt mặt" cơ chế tăng NEAT bù trừ của cơ thể.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- SECTION 4: DISCIPLINE DASHBOARD -->
+        <section>
+            <div class="art-block art-dashboard">
+                <div class="shield"></div>
+            </div>
+            <h2>Bảng điều khiển Kỷ luật (Discipline Dashboard)</h2>
+            <div class="dashboard-grid">
+                <!-- Traps -->
+                <div class="dash-panel traps">
+                    <h3>⚠️ Nhận diện Bẫy Hệ thống</h3>
+                    <ul class="dash-list">
+                        <li><strong>Bẫy NEAT (Năng lượng tự phát):</strong> Khi ăn kiêng, cơ thể sẽ âm thầm đánh lừa bạn bằng cách làm bạn lười vận động vô thức. Đừng tin vào cảm giác, hãy dựa vào số bước chân.</li>
+                        <li><strong>Bẫy "Collateral Fattening" (Phản ứng dội ngược mỡ):</strong> Ép cân quá gắt làm teo cơ -> Não bộ phát lệnh đói tột độ -> Ăn vô tội vạ -> Tăng lại 100% là mỡ. Rủi ro sinh học cực lớn.</li>
+                        <li><strong>Bẫy thuốc ức chế (GLP-1/Ozempic):</strong> Thuốc triệt tiêu cơn đói sinh lý. Nhưng nếu không luyện tập Kỷ luật ăn uống trong thời gian dùng thuốc, bạn sẽ mất hoàn toàn kỹ năng sinh tồn khi ngừng thuốc, dẫn đến hồi cân lập tức.</li>
+                        <li><strong>Rủi ro Định kiến Mãn kinh:</strong> Bẫy tâm lý cho rằng "mãn kinh là tất yếu béo". Khoa học chứng minh mỡ chỉ tăng trung bình 1.6kg và hoàn toàn đảo ngược được bằng kháng lực. Đừng lấy nội tiết làm lý do bỏ cuộc.</li>
+                    </ul>
+                </div>
+                <!-- Pacts -->
+                <div class="dash-panel pact">
+                    <h3>⚓ Giao kèo Kỷ luật (Odysseus Pact)</h3>
+                    <ul class="dash-list">
+                        <li><strong>Hard-stop Protein (Chốt chặn An toàn):</strong> Không cần theo dõi tỷ lệ Fat hay Carb nếu quá bận. Chỉ cần đảm bảo duy nhất 1 điều kiện cứng: <em>Chạm mốc Gram Protein yêu cầu trước khi đi ngủ</em>.</li>
+                        <li><strong>Nguyên tắc 10% (Ràng buộc Sugar):</strong> Cho phép bản thân ăn thực phẩm "Rác/Đường" để thỏa mãn não bộ, nhưng thiết lập trần giới hạn tuyệt đối: <em>Không vượt quá 10-20% tổng Calo hàng ngày.</em></li>
+                        <li><strong>Kỷ luật chu kỳ (Force-Stop):</strong> Đang giảm cân rất nhanh và phấn khích? Mặc kệ. Khi chạm mốc -5kg hoặc đủ 8 tuần, BẮT BUỘC phải chuyển về chế độ Diet Break 1 tuần. Kỷ luật bảo vệ hệ thống trước khi hệ thống sập.</li>
+                        <li><strong>Ràng buộc RIR (Reps-in-Reserve):</strong> Trong tập tạ, không tập hời hợt. Quy tắc bắt buộc: Các bài tạ nhẹ/máy phải tập đến khi cơ hoàn toàn thất bại (Failure). Tạ nặng đa khớp giữ lại 1-2 Reps dự trữ.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: FLASHCARDS -->
+        <section>
+            <h2>Flashcard 25 - Ôn tập Nhanh</h2>
+            <div class="flashcard-grid">
+                <div class="f-card"><div class="f-q">1. Yếu tố cốt lõi của việc nạp Protein?</div><div class="f-a">Tổng lượng protein trong 24 giờ, không phải số bữa ăn.</div></div>
+                <div class="f-card"><div class="f-q">2. Lượng protein tối ưu để thay đổi thể hình?</div><div class="f-a">1.6g đến 2.2g trên mỗi kg thể trọng mục tiêu.</div></div>
+                <div class="f-card"><div class="f-q">3. Vì sao cơ thể bị chững cân (Plateau)?</div><div class="f-a">Tốc độ trao đổi chất giảm và mất năng lượng NEAT.</div></div>
+                <div class="f-card"><div class="f-q">4. NEAT là gì?</div><div class="f-a">Hoạt động đốt calo không chủ đích (rung chân, đi lại).</div></div>
+                <div class="f-card"><div class="f-q">5. Tốc độ giảm cân an toàn để giữ cơ bắp?</div><div class="f-a">0.5% đến 1% trọng lượng cơ thể mỗi tuần.</div></div>
+                <div class="f-card"><div class="f-q">6. Collateral Fattening là bẫy gì?</div><div class="f-a">Mất cơ -> Bùng phát cơn đói -> Ăn bù -> Tích toàn mỡ.</div></div>
+                <div class="f-card"><div class="f-q">7. Cần chia protein thành 5-6 bữa/ngày?</div><div class="f-a">Không. Dành cho VĐV Elite. Người thường 3-4 bữa là đủ.</div></div>
+                <div class="f-card"><div class="f-q">8. Chế độ Ketogenic thần thánh do đâu?</div><div class="f-a">Loại bỏ đồ chế biến sẵn, thâm hụt calo, no do protein.</div></div>
+                <div class="f-card"><div class="f-q">9. Autophagy (Tự thực bào) chỉ nhờ nhịn ăn?</div><div class="f-a">Sai. Thâm hụt calo và Tập luyện đều kích hoạt nó.</div></div>
+                <div class="f-card"><div class="f-q">10. Hard Gainer không béo lên được vì sao?</div><div class="f-a">Hệ thần kinh tự tăng NEAT cực mạnh để đốt sạch calo thừa.</div></div>
+                <div class="f-card"><div class="f-q">11. Creatine tốt cho bộ phận nào ngoài cơ?</div><div class="f-a">Não bộ (Trí nhớ, năng lượng nhận thức).</div></div>
+                <div class="f-card"><div class="f-q">12. Giai đoạn nạp nhanh Creatine?</div><div class="f-a">20-25 gram/ngày trong vòng 5-7 ngày đầu.</div></div>
+                <div class="f-card"><div class="f-q">13. Đường trong trái cây có gây béo không?</div><div class="f-a">Không. Đi kèm chất xơ và nước tạo độ no cơ học nhanh chóng.</div></div>
+                <div class="f-card"><div class="f-q">14. Giới hạn an toàn của đường bổ sung?</div><div class="f-a">Dưới 10% tổng lượng calo nạp vào hàng ngày.</div></div>
+                <div class="f-card"><div class="f-q">15. Mãn kinh có gây mất cơ béo phì không thể đảo ngược?</div><div class="f-a">Sai. Trung bình chỉ tăng 1.6kg mỡ, hoàn toàn kiểm soát được.</div></div>
+                <div class="f-card"><div class="f-q">16. Chế độ ăn cho hội chứng PCOS?</div><div class="f-a">Giống tiểu đường Type 2: Ưu tiên giảm mỡ, cắt carb (~130g/ngày).</div></div>
+                <div class="f-card"><div class="f-q">17. Khi nào nên áp dụng Diet Break?</div><div class="f-a">Sau mỗi 4-8 tuần hoặc giảm được 2-4.5 kg.</div></div>
+                <div class="f-card"><div class="f-q">18. Ưu điểm của chế độ Carnivore?</div><div class="f-a">Tự động ngắt nạp thức ăn siêu chế biến của phương Tây.</div></div>
+                <div class="f-card"><div class="f-q">19. Mất bao lâu ngưng tập thì cơ bắt đầu teo?</div><div class="f-a">Khoảng 2 đến 3 tuần mới bắt đầu suy giảm.</div></div>
+                <div class="f-card"><div class="f-q">20. Gập bụng có giảm mỡ bụng?</div><div class="f-a">Không. Mỡ huy động qua hormone toàn thân.</div></div>
+                <div class="f-card"><div class="f-q">21. Tập tạ bắt buộc phải tới ngưỡng Failure?</div><div class="f-a">Không, bài tạ nặng nên chừa lại 1-2 reps (RIR) cho an toàn.</div></div>
+                <div class="f-card"><div class="f-q">22. Muscle Memory (Trí nhớ cơ bắp) có thật?</div><div class="f-a">Có. Nhân tế bào cơ và dây thần kinh vẫn ghi nhớ.</div></div>
+                <div class="f-card"><div class="f-q">23. Vì sao ngưng thuốc GLP-1 dễ tăng cân?</div><div class="f-a">Thiếu kỹ năng kiểm soát cơn đói khi cơ chế nội tiết phục hồi.</div></div>
+                <div class="f-card"><div class="f-q">24. Tăng NEAT đốt được thêm bao nhiêu calo?</div><div class="f-a">Trung bình 200-300 calo, cá biệt lên tới 700 calo/ngày.</div></div>
+                <div class="f-card"><div class="f-q">25. Phụ nữ nên bắt đầu nạp protein từ mức nào?</div><div class="f-a">Bắt đầu từ mức 1.6 gram / kg thể trọng.</div></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+        <div class="social-links">
+            <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+        </div>
+    </footer>
+
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
