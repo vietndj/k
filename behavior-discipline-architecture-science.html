@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavior & Discipline Architecture</title>
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --bg-color: #fcfcfc;
+            --text-main: #111111;
+            --text-muted: #555555;
+            --border-color: #e0e0e0;
+            --accent: #000000;
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+            --space-xl: 6rem;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        /* Typography Hierarchy */
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: var(--space-md);
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--space-lg);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: var(--space-xs);
+            display: inline-block;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin-bottom: var(--space-sm);
+        }
+
+        /* CSS Abstract Art Classes */
+        .art-container {
+            width: 100%;
+            height: 120px;
+            margin-bottom: var(--space-md);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #fff;
+        }
+
+        /* Art 1: Thesis - Geometric Intersection */
+        .art-thesis::before {
+            content: "";
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            top: 20px;
+            left: 10%;
+        }
+        .art-thesis::after {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 2px;
+            background: var(--accent);
+            top: 60px;
+            left: 10%;
+            transform: rotate(-15deg);
+        }
+
+        /* Art 2: Mindmap - Network Nodes */
+        .art-mindmap {
+            background-image: 
+                radial-gradient(circle at 20% 50%, var(--accent) 4px, transparent 5px),
+                radial-gradient(circle at 50% 30%, var(--accent) 4px, transparent 5px),
+                radial-gradient(circle at 80% 70%, var(--accent) 4px, transparent 5px),
+                linear-gradient(to right, transparent 20%, var(--border-color) 20%, var(--border-color) 80%, transparent 80%),
+                linear-gradient(to bottom, transparent 30%, var(--border-color) 30%, var(--border-color) 70%, transparent 70%);
+            background-size: 100% 100%;
+        }
+
+        /* Art 3: Executable - Stepped Progress */
+        .art-executable {
+            display: flex;
+            align-items: flex-end;
+            padding: var(--space-sm);
+            gap: 10px;
+        }
+        .art-executable div {
+            flex: 1;
+            background: var(--border-color);
+        }
+        .art-executable div:nth-child(1) { height: 20%; }
+        .art-executable div:nth-child(2) { height: 40%; }
+        .art-executable div:nth-child(3) { height: 60%; background: var(--accent); }
+        .art-executable div:nth-child(4) { height: 80%; }
+
+        /* Art 4: Dashboard - Hard Stops / Boundary */
+        .art-dashboard::before {
+            content: "";
+            position: absolute;
+            inset: 20px;
+            border: 4px dashed var(--accent);
+        }
+        .art-dashboard::after {
+            content: "";
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Sections */
+        section {
+            padding: var(--space-xl) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Thesis Block */
+        .thesis-statement {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+            max-width: 900px;
+            border-left: 4px solid var(--accent);
+            padding-left: var(--space-md);
+        }
+
+        /* Mindmap Grid */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            padding: var(--space-md);
+            background: #ffffff;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+
+        .card-logic {
+            margin-bottom: var(--space-sm);
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .card-reasoning {
+            font-size: 0.95rem;
+            border-top: 1px dashed var(--border-color);
+            padding-top: var(--space-sm);
+        }
+
+        /* Bullet Lists for Workflows */
+        .workflow-list {
+            list-style: none;
+            max-width: 800px;
+        }
+
+        .workflow-list li {
+            position: relative;
+            padding-left: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .workflow-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .workflow-list strong {
+            color: var(--text-main);
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        /* Dashboard Constraints */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+        }
+
+        .trap-box {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            padding: var(--space-md);
+        }
+
+        .pact-box {
+            background: var(--text-main);
+            color: #fff;
+            padding: var(--space-md);
+        }
+
+        .pact-box h3, .pact-box p {
+            color: #fff;
+        }
+
+        .pact-box p { opacity: 0.8; }
+
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Flashcards Section */
+        .flashcard-columns {
+            column-count: 3;
+            column-gap: var(--space-md);
+        }
+
+        @media (max-width: 1024px) { .flashcard-columns { column-count: 2; } }
+        @media (max-width: 600px) { .flashcard-columns { column-count: 1; } }
+
+        .flashcard {
+            break-inside: avoid;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            padding: var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+
+        .flashcard .q {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: var(--space-xs);
+            font-size: 0.95rem;
+        }
+
+        .flashcard .a {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Footer Constraints */
+        footer {
+            height: 128px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 var(--space-md);
+        }
+
+        .footer-content {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            max-width: 600px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            color: var(--accent);
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-links a:hover {
+            opacity: 0.6;
+        }
+
+        .social-links svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--space-sm);
+            }
+            .footer-text { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. THESIS -->
+    <section class="container" id="thesis">
+        <div class="art-container art-thesis" aria-hidden="true"></div>
+        <h1>1. Luận điểm Cốt lõi</h1>
+        <p class="thesis-statement">
+            Hành vi con người quyết định kết quả của mọi tình huống. Khả năng làm chủ bản thân (Authority), năng lực quan sát (Observation) và giao tiếp hướng đích (Communication) là đòn bẩy tối thượng để định hình lại căn tính, kiểm soát tâm trí "động vật có vú" và thao túng cục diện thực tế.
+        </p>
+    </section>
+
+    <!-- 2. MINDMAP -->
+    <section class="container" id="mindmap">
+        <div class="art-container art-mindmap" aria-hidden="true"></div>
+        <h2>2. Mindmap: 10 Nguyên lý Cốt lõi</h2>
+        <div class="grid-cards">
+            
+            <div class="card">
+                <span class="card-tag">Nguyên lý 01</span>
+                <h3>Tam Giác Quyền Lực (Authority Triangle)</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Quyền lực không đến từ hệ thống phân cấp, mà được tổng hợp từ: Sự tự tin, Kỷ luật, Tố chất lãnh đạo, Lòng biết ơn và Sự tận hưởng.</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Cuộc sống "sau camera" rỉ ra ngoài qua ngôn ngữ cơ thể. Não bộ đối phương đánh hơi được sự giả tạo nếu 5 yếu tố cốt lõi (Môi trường, Thời gian, Ngoại hình, Xã hội, Tài chính) của bạn đang sụp đổ. Bạn không thể "fake" quyền lực.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 02</span>
+                <h3>Tốc Độ Giới Hạn Của Sự Thoải Mái</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Người nắm giữ quyền lực cao nhất trong phòng luôn di chuyển chậm hơn những người khác.</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Về mặt tiến hóa, sự sợ hãi kích hoạt hệ thần kinh giao cảm làm cơ thể di chuyển nhanh và giật cục. Việc cố tình chuyển động chậm đánh lừa não "động vật" của đối phương rằng bạn không có mối đe dọa, thiết lập hào quang thống trị tự nhiên.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 03</span>
+                <h3>Giải Mã Bằng Nhịp Nháy Mắt</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Thay đổi trong tốc độ nháy mắt là thước đo chân thực nhất của sự chú ý và mức độ căng thẳng.</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Nháy mắt không do ý thức kiểm soát. Nháy mắt chậm lại chạm mức 0 = Trạng thái tập trung săn mồi (Prey Focus). Nháy mắt nhanh đột biến = Hệ thần kinh tự chủ đang bị quá tải do căng thẳng hoặc cố tình dối trá.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 04</span>
+                <h3>6 Nhu Cầu Giao Tiếp Ẩn Giấu</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Con người luôn tiết lộ 1 trong 6 nhu cầu khi nói về mình: Tầm quan trọng, Sự chấp nhận, Sự đồng tình, Trí tuệ, Thương hại, hoặc Quyền lực.</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Bản chất con người là sinh vật nghiện Neurotransmitter. Khi bạn giao tiếp trúng "nhu cầu" của họ, bạn đang kích hoạt việc giải phóng ồ ạt Dopamine và Serotonin, tạo ra sự liên kết không thể cưỡng lại.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 05</span>
+                <h3>Kỹ Thuật Moi Thông Tin (Elicitation)</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Đừng đặt câu hỏi. Hãy sử dụng những câu trần thuật mang tính suy đoán để lấy thông tin nhạy cảm.</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Câu hỏi trực diện kích hoạt hạch hạnh nhân (Amygdala) dựng hàng rào phòng vệ. Một câu trần thuật sai kích hoạt bản ngã (Ego) khao khát "sửa chữa hồ sơ", khiến đối tượng tự nguyện nói ra sự thật một cách vô thức.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 06</span>
+                <h3>Mô Hình Thuyết Phục PCP</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Perception (Nhận thức) thay đổi -> Context (Ngữ cảnh) thay đổi -> Permission (Sự cho phép hành động) được mở ra.</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Lợi dụng cơ chế "Bất đồng nhận thức" (Cognitive Dissonance). Bằng cách khiến mục tiêu tự đồng ý với một danh tính mới qua các câu hỏi nhỏ, não bộ của họ sẽ tự ép hành vi phải khớp với danh tính đó để tránh xung đột nội tâm.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 07</span>
+                <h3>Hệ Quy Chiếu Thao Túng F.A.T.E</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> 4 nút bấm điều khiển mọi sinh vật có vú: Focus, Authority, Tribe, Emotion.</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Ràng buộc tiến hóa định tuyến não bộ phản ứng vô điều kiện với: Sự mới lạ để sinh tồn (Focus), Tuân phục con đầu đàn (Authority), Tìm kiếm sự an toàn trong tập thể (Tribe), và ra quyết định bằng Hệ viền cảm xúc (Emotion).</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 08</span>
+                <h3>Kỷ Luật Như Một Cỗ Máy Thời Gian</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Kỷ luật đơn giản là ưu tiên nhu cầu của "Bản thân ở tương lai" thay vì nuông chiều "Bản thân hiện tại".</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Não bộ chỉ hành động vì Dopamine. Chìa khóa là biến Kỷ luật thành nguồn cấp Dopamine bằng cách liên tục thiết lập các hành động nhỏ để "Bạn của hiện tại" nhìn lại "Bạn của quá khứ" với sự biết ơn tột độ.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 09</span>
+                <h3>Công Thức Tẩy Não F.E.A.R</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Focus, Emotion, Agitation (Kích động môi trường), Repetition (Lặp lại).</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Não chạy "kịch bản tự động" trong những môi trường quen thuộc (Habituation Filter). Việc xáo trộn vật lý (Agitation) đập tan kịch bản cũ, đưa não về trạng thái sơ khai, mở đường ép buộc thói quen mới thông qua lặp lại.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-tag">Nguyên lý 10</span>
+                <h3>Bẫy Đám Đông MXH (Bystander & Fractionation)</h3>
+                <p class="card-logic"><strong>Logic cốt lõi:</strong> Ứng dụng không nêu rõ vấn đề giải quyết là ứng dụng đang bán sự "gây mê" (anesthesia) cho nỗi cô đơn.</p>
+                <p class="card-reasoning"><strong>Lý giải chuyên sâu:</strong> Não người chỉ xử lý được bộ lạc nhỏ. Khi bị ném vào đám đông ảo khổng lồ, não quá tải và xóa sổ sự đồng cảm (Bystander Effect). Đồng thời, thuật toán kéo cảm xúc Lên/Xuống liên tục (Fractionation) để tối đa hóa tính dễ bị ám thị nhằm bán quảng cáo.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 3. EXECUTABLE FUNCTIONS -->
+    <section class="container" id="executable">
+        <div class="art-container art-executable" aria-hidden="true">
+            <div></div><div></div><div></div><div></div>
+        </div>
+        <h2>3. Hàm Thực Thi (Executable Functions)</h2>
+        <ul class="workflow-list">
+            <li>
+                <strong>Giả lập Chuyển động Dưới nước (The Underwater Drill)</strong>
+                <p>Quy trình: Trong 1 tuần, hãy điều chỉnh toàn bộ cử động cơ thể, nhịp thở và tốc độ nói như thể bạn đang đứng dưới đáy hồ bơi. Đây là cách nhanh nhất để reset hệ thần kinh, tạo ra cảm giác Comfort vững chắc và phát ra tín hiệu Authority mà không cần dùng lời nói.</p>
+            </li>
+            <li>
+                <strong>Kịch bản Moi Thông tin (Elicitation Workflow)</strong>
+                <p>Công thức: Không đặt câu hỏi nhạy cảm. Hãy dùng câu trần thuật: <i>"Tôi cá là..." (I bet...)</i> hoặc <i>"Có vẻ như..." (So...)</i> kèm theo một suy đoán cố ý sai hoặc phóng đại. Đối tượng sẽ tự động kích hoạt cơ chế "Correct the record" để đính chính và cung cấp toàn bộ thông tin nội bộ cho bạn.</p>
+            </li>
+            <li>
+                <strong>Chiến thuật Cầu Vàng (The Golden Bridge) trong Xung đột</strong>
+                <p>Quy trình giải vây: Khi đối phương dùng F.O.G (Sợ hãi, Nghĩa vụ, Tội lỗi) để tấn công bạn -> Dừng hình hoàn toàn trong 5 giây (The Long Pause) -> Lên tiếng nhẹ nhàng: <i>"Có thể bạn không cố ý, nhưng nghe có vẻ như bạn đang muốn làm tôi cảm thấy có lỗi."</i> Phá vỡ ý đồ thao túng mà vẫn giữ thể diện cho đối phương.</p>
+            </li>
+            <li>
+                <strong>Hack Màng lọc Quen thuộc (Habituation Filter Defeat) trong Email</strong>
+                <p>Tham số kỹ thuật: Không sử dụng template. Viết tiêu đề email bằng chữ viết thường hoàn toàn, ngắn gọn. Đi thẳng vào vấn đề không cần rào đón. Não bộ mặc định bỏ qua những thứ "trông giống một màn chào hàng chuyên nghiệp".</p>
+            </li>
+            <li>
+                <strong>Xáo trộn Môi trường (Environment Agitation)</strong>
+                <p>Quy trình: Nếu muốn bỏ một thói quen xấu hoặc thiết lập thói quen mới -> Phải đổi mới hoàn toàn không gian vật lý (Sơn lại tường, đổi vị trí giường, thay đổi tủ quần áo). Việc thay đổi tín hiệu thị giác ngăn không cho não kích hoạt "kịch bản thói quen cũ".</p>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 4. DISCIPLINE DASHBOARD -->
+    <section class="container" id="dashboard">
+        <div class="art-container art-dashboard" aria-hidden="true"></div>
+        <h2>4. Bảng điều khiển Kỷ luật (Discipline Dashboard)</h2>
+        
+        <div class="dashboard-grid">
+            <!-- Traps -->
+            <div class="trap-column">
+                <h3>Nhận diện Bẫy Hệ thống</h3>
+                <div class="trap-box" style="margin-bottom: 1rem;">
+                    <strong>Bẫy "Ảo giác Kỹ năng" (Skill Illusion)</strong>
+                    <p>Cạm bẫy: Tìm kiếm những đoạn kịch bản (script) chốt sale hay giao tiếp có sẵn để che lấp đi sự thiếu tự tin cốt lõi. Học thuộc checklist không biến bạn thành phi công. Sự thiếu Comfort sẽ rỉ ra ngoài và phá vỡ thỏa thuận.</p>
+                </div>
+                <div class="trap-box" style="margin-bottom: 1rem;">
+                    <strong>Bẫy Phân mảnh Cảm xúc (Fractionation Trap)</strong>
+                    <p>Cạm bẫy: Cuộn Tiktok/Reels liên tục. Các đoạn video buồn vui xen kẽ liên hồi được thiết kế chuyên biệt để đưa não vào trạng thái thôi miên, làm tăng độ dễ bị ám thị lên gấp 10 lần trước khi đập một quảng cáo mua hàng vào mặt bạn.</p>
+                </div>
+                <div class="trap-box">
+                    <strong>Bẫy Sản phẩm Vô định (The Anesthesia Trap)</strong>
+                    <p>Cạm bẫy: Cài đặt các ứng dụng công nghệ/MXH không tuyên bố giải quyết vấn đề gì cụ thể (như tính năng AR, mạng ảo). Chúng đang khai thác trực tiếp vào dịch bệnh cô đơn, cung cấp sự gây tê để bạn trốn tránh thực tại.</p>
+                </div>
+            </div>
+
+            <!-- Odysseus Pacts -->
+            <div class="pact-column">
+                <h3>Ràng buộc Odysseus (Hard-stops)</h3>
+                <div class="pact-box" style="margin-bottom: 1rem;">
+                    <strong>Giao kèo 1: Kết nối Hình ảnh (Future Self Anchor)</strong>
+                    <p>Thực thi: Tải app lão hóa khuôn mặt, biến bản thân thành phiên bản 95 tuổi. In ra và dán tại những nơi bạn hay đưa ra quyết định sai lầm (Tủ lạnh, màn hình máy tính). Tạo ra mối quan hệ vật lý trực tiếp với sinh vật có vú mang tên "Bạn của tương lai".</p>
+                </div>
+                <div class="pact-box" style="margin-bottom: 1rem;">
+                    <strong>Giao kèo 2: Đứt gãy Dopamine (Dopamine Hard-lock)</strong>
+                    <p>Thực thi: Không tự quản lý thời gian trên điện thoại. Cài đặt giới hạn Screen Time tuyệt đối cho mạng xã hội và giao mật khẩu cho vợ/chồng hoặc người đáng tin cậy. Cắt đứt hoàn toàn quyền can thiệp của bạn khi ý chí yếu đuối nhất.</p>
+                </div>
+                <div class="pact-box">
+                    <strong>Giao kèo 3: Phục vụ Tương lai (The Butler Protocol)</strong>
+                    <p>Thực thi: Mỗi tối, chuẩn bị sẵn mọi thứ (quần áo, máy pha cà phê, tài liệu) y như một người quản gia đang phục vụ cho "chủ nhân ngày mai". Không phải là kỷ luật, đó là thiết lập hệ sinh thái để thói quen tự động diễn ra.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. FLASHCARDS -->
+    <section class="container" id="flashcards">
+        <h2>5. 25 Flashcards Ôn Tập (Truy Xuất Nhanh)</h2>
+        <div class="flashcard-columns">
+            <div class="flashcard"><div class="q">Q: Yếu tố nào quyết định mọi thành bại?</div><div class="a">A: Làm chủ bản thân (Authority), Quan sát tinh tế, Giao tiếp hướng đích.</div></div>
+            <div class="flashcard"><div class="q">Q: 5 nền tảng cốt lõi của Authority?</div><div class="a">A: Tự tin, Kỷ luật, Lãnh đạo, Biết ơn, Tận hưởng (Enjoyment).</div></div>
+            <div class="flashcard"><div class="q">Q: 5 khía cạnh đời sống phản ánh Authority?</div><div class="a">A: Môi trường, Thời gian, Ngoại hình, Đời sống Xã hội, Tài chính.</div></div>
+            <div class="flashcard"><div class="q">Q: Chìa khóa vật lý để thể hiện Comfort?</div><div class="a">A: Chủ động di chuyển và nói chuyện chậm lại (như đang ở dưới nước).</div></div>
+            <div class="flashcard"><div class="q">Q: Tốc độ nháy mắt (Blink rate) báo hiệu gì?</div><div class="a">A: Chậm = Tập trung săn mồi/Lắng nghe. Nhanh = Căng thẳng/Dối trá.</div></div>
+            <div class="flashcard"><div class="q">Q: 5 chữ C trong quan sát hành vi?</div><div class="a">A: Change (Sự thay đổi), Context (Ngữ cảnh), Clusters (Cụm hành vi), Culture (Văn hóa), Checklist (Danh sách đối chiếu).</div></div>
+            <div class="flashcard"><div class="q">Q: 6 nhu cầu tâm lý ẩn trong giao tiếp?</div><div class="a">A: Tầm quan trọng, Chấp nhận, Đồng tình, Trí tuệ, Thương hại, Quyền lực.</div></div>
+            <div class="flashcard"><div class="q">Q: Elicitation (Moi thông tin) là kỹ thuật gì?</div><div class="a">A: Dùng câu trần thuật thay vì câu hỏi để não bộ không kích hoạt phòng vệ.</div></div>
+            <div class="flashcard"><div class="q">Q: Cách tốt nhất để Moi thông tin nhạy cảm?</div><div class="a">A: Kích hoạt bản ngã bằng cách đưa ra thông tin sai để họ "Sửa chữa hồ sơ" (Correct the record).</div></div>
+            <div class="flashcard"><div class="q">Q: Mô hình thuyết phục tà giáo PCP?</div><div class="a">A: Perception (Thay đổi nhận thức) -> Context (Đổi ngữ cảnh) -> Permission (Cho phép hành vi mới).</div></div>
+            <div class="flashcard"><div class="q">Q: Động lực thao túng động vật có vú (F.A.T.E)?</div><div class="a">A: Focus (Mới lạ), Authority (Quyền lực), Tribe (Bộ lạc), Emotion (Cảm xúc).</div></div>
+            <div class="flashcard"><div class="q">Q: Xây "Cầu vàng" (Golden Bridge) là gì?</div><div class="a">A: Mở đường lui danh dự cho đối thủ trong tranh luận để họ không phản kháng cực đoan.</div></div>
+            <div class="flashcard"><div class="q">Q: Cách vô hiệu hóa kẻ thao túng F.O.G?</div><div class="a">A: Gọi tên sự thao túng một cách nhẹ nhàng: "Có vẻ bạn đang muốn tôi thấy có lỗi".</div></div>
+            <div class="flashcard"><div class="q">Q: Bản chất thực sự của Kỷ luật?</div><div class="a">A: Ưu tiên nhu cầu của Bản thân Tương lai lên trên Bản thân Hiện tại.</div></div>
+            <div class="flashcard"><div class="q">Q: Làm sao để Kỷ luật tự tạo ra Dopamine?</div><div class="a">A: Nhìn lại hành động quá khứ với lòng biết ơn (Ví dụ: tìm thấy tiền trong áo khoác cũ).</div></div>
+            <div class="flashcard"><div class="q">Q: Công thức Tẩy não F.E.A.R?</div><div class="a">A: Focus, Emotion, Agitation (Kích động môi trường), Repetition (Lặp lại).</div></div>
+            <div class="flashcard"><div class="q">Q: Tại sao phải "Agitation" môi trường?</div><div class="a">A: Phá vỡ kịch bản tự động của não để ép nó thiết lập thói quen mới.</div></div>
+            <div class="flashcard"><div class="q">Q: Sự nguy hiểm của SP không nêu rõ vấn đề?</div><div class="a">A: Chúng trục lợi sự cô đơn, cung cấp chất gây tê liệt cảm xúc.</div></div>
+            <div class="flashcard"><div class="q">Q: Cạm bẫy "Fractionation" trên MXH?</div><div class="a">A: Đẩy cảm xúc lên xuống liên tục để tăng độ dễ bị ám thị trước khi hiện Quảng cáo.</div></div>
+            <div class="flashcard"><div class="q">Q: Hiệu ứng Bàng quan (Bystander Effect)?</div><div class="a">A: Não bộ quá tải khi quy mô "bộ lạc" quá lớn, làm biến mất sự đồng cảm tự nhiên.</div></div>
+            <div class="flashcard"><div class="q">Q: Khác biệt giữa Thói quen và Kỷ luật?</div><div class="a">A: Bạn sống bằng thói quen. Kỷ luật chỉ là giọt xúc tác ngắn hạn ở điểm bắt đầu.</div></div>
+            <div class="flashcard"><div class="q">Q: Cách xử lý khi bị ép buộc trong giao tiếp?</div><div class="a">A: Dừng lại. Im lặng và nhìn thẳng. Khoảng lặng tước đi sức mạnh vũ khí của họ.</div></div>
+            <div class="flashcard"><div class="q">Q: Cách đánh bại Habituation Filter trong email?</div><div class="a">A: Không dùng template, tiêu đề viết thường, đi thẳng vào vấn đề cốt lõi.</div></div>
+            <div class="flashcard"><div class="q">Q: Khác biệt não bộ: Người tự tin vs Tự ti?</div><div class="a">A: Cùng nghe "tiếng nói tiêu cực", người tự tin coi đó là giả tưởng, người tự ti coi đó là sự thật.</div></div>
+            <div class="flashcard"><div class="q">Q: Bí quyết để an trú ở hiện tại?</div><div class="a">A: Delusionally Self-forgiving - Bao dung và tha thứ cho bản thân một cách mù quáng để quên đi quá khứ.</div></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-text">
+                Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+            </div>
+            <div class="social-links">
+                <a href="https://youtube.com/@vietndonline" target="_blank" aria-label="YouTube">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" aria-label="TikTok">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
