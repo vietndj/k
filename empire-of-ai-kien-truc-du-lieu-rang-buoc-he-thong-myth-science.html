@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empire of AI: Kiến trúc Dữ liệu & Ràng buộc Hệ thống</title>
+    <style>
+        /* [0] ROOT & CSS RESET - ZEN MINIMALISM */
+        :root {
+            --bg-base: #0d1117;
+            --bg-surface: #161b22;
+            --bg-elevated: #21262d;
+            --text-primary: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-logic: #58a6ff;
+            --accent-alert: #f85149;
+            --border-subtle: #30363d;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --spacing-unit: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: calc(var(--spacing-unit) * 8) calc(var(--spacing-unit) * 3);
+        }
+
+        /* [1] TYPOGRAPHY HIERARCHY */
+        h1, h2, h3, h4 { color: #ffffff; font-weight: 500; }
+        h1 { font-size: 2.25rem; margin-bottom: 2rem; letter-spacing: -0.5px; }
+        h2 { 
+            font-size: 1.5rem; 
+            margin: 4rem 0 1.5rem 0; 
+            padding-bottom: 0.5rem; 
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        h3 { font-size: 1.1rem; color: var(--accent-logic); margin-bottom: 0.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-primary); }
+        .text-muted { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* [2] CSS ABSTRACT ART BLOCKS */
+        .art-block {
+            width: 100%;
+            height: 100px;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            opacity: 0.7;
+            border: 1px solid var(--border-subtle);
+        }
+        .art-thesis {
+            background: linear-gradient(135deg, rgba(88,166,255,0.1) 0%, transparent 100%),
+                        repeating-linear-gradient(45deg, transparent, transparent 10px, var(--bg-surface) 10px, var(--bg-surface) 20px);
+        }
+        .art-mindmap {
+            background: radial-gradient(circle at 20% 50%, rgba(88,166,255,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(139,148,158,0.1) 0%, transparent 50%);
+        }
+        .art-exec {
+            background: repeating-linear-gradient(0deg, var(--bg-elevated), var(--bg-elevated) 2px, transparent 2px, transparent 10px),
+                        repeating-linear-gradient(90deg, var(--bg-elevated), var(--bg-elevated) 2px, transparent 2px, transparent 10px);
+        }
+        .art-dashboard {
+            background: repeating-linear-gradient(-45deg, rgba(248,81,73,0.05), rgba(248,81,73,0.05) 5px, transparent 5px, transparent 10px);
+        }
+
+        /* [3] CORE LAYOUT COMPONENTS */
+        .thesis-box {
+            background: var(--bg-surface);
+            border-left: 4px solid var(--accent-logic);
+            padding: 24px;
+            border-radius: 4px;
+            font-size: 1.15rem;
+            margin-bottom: 3rem;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 24px;
+            transition: border-color 0.2s ease;
+        }
+        .card:hover { border-color: var(--accent-logic); }
+        .card strong { color: #fff; }
+
+        .list-unstyled { list-style: none; }
+        .list-exec li {
+            position: relative;
+            padding: 16px 16px 16px 24px;
+            background: var(--bg-surface);
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+        }
+        .list-exec li::before {
+            content: "→";
+            position: absolute;
+            left: 16px;
+            color: var(--accent-logic);
+            font-family: monospace;
+        }
+
+        .trap-box {
+            border: 1px solid rgba(248,81,73,0.3);
+            background: rgba(248,81,73,0.05);
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        /* [4] FLASHCARDS (Non-interactive) */
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 2rem;
+        }
+        .flashcard {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            padding: 16px;
+            border-radius: 6px;
+        }
+        .flashcard .fc-q {
+            font-weight: 500;
+            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .flashcard .fc-a {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: block;
+            border-top: 1px dashed var(--border-subtle);
+            padding-top: 8px;
+        }
+
+        /* [5] FOOTER (Exactly 128px) */
+        footer {
+            height: 128px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 4rem;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .footer-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: 12px;
+        }
+        .social-links {
+            display: flex;
+            gap: 24px;
+        }
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        .social-links a:hover { opacity: 1; }
+        .social-links svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Bóc tách Cấu trúc: Sự thật về Đế chế AI (Karen Hao)</h1>
+
+    <div class="art-block art-thesis"></div>
+    <div class="thesis-box">
+        <strong>[Thesis] Luận điểm cốt lõi:</strong> Các siêu cường công nghệ AI đang "gaslight" (thao túng tâm lý) công chúng bằng viễn cảnh "Phát triển vì nhân loại" (AGI), trong khi bản chất vận hành là một hệ sinh thái bóc lột dữ liệu, vắt kiệt lao động và bào mòn tài nguyên môi trường nhằm củng cố quyền lực độc quyền trị giá hàng nghìn tỷ đô la.
+    </div>
+
+    <h2>10 Danh mục Cốt lõi</h2>
+    <div class="art-block art-mindmap"></div>
+    <div class="grid-cards">
+        <div class="card">
+            <h3>1. Huyền thoại AGI (AGI Myth)</h3>
+            <p><strong>Logic cốt lõi:</strong> AGI là một công cụ marketing hơn là một cột mốc công nghệ.</p>
+            <p class="text-muted"><strong>Lý giải (Tối ưu hóa Hệ thống):</strong> Định tuyến dòng vốn thông qua kỳ vọng (Expectation Routing). Bằng cách "thần thánh hóa" thuật toán, các công ty tối đa hóa thanh khoản và huy động vốn vô hạn từ thị trường bất chấp lợi nhuận thực tế.</p>
+        </div>
+        <div class="card">
+            <h3>2. Khai thác Dữ liệu Lõi (Data Scraping)</h3>
+            <p><strong>Logic cốt lõi:</strong> Chiếm đoạt tài sản trí tuệ (IP) để cung cấp nhiên liệu cho mô hình.</p>
+            <p class="text-muted"><strong>Lý giải (Thuật toán):</strong> Cơ chế càn quét tham số (Parameter Sweeping) bỏ qua rào cản đạo đức để đạt điểm "bão hòa dữ liệu" (Data Saturation) - điều kiện tiên quyết để các LLMs vượt qua giới hạn nội suy (Interpolation).</p>
+        </div>
+        <div class="card">
+            <h3>3. Đứt gãy Nấc thang Lao động</h3>
+            <p><strong>Logic cốt lõi:</strong> Biến chuyên gia thành công cụ huấn luyện thuật toán để thay thế chính họ.</p>
+            <p class="text-muted"><strong>Lý giải (Hệ thống):</strong> Vòng lặp RLHF (Reinforcement Learning from Human Feedback) là một mô hình tiêu hao (Depletion Model). Khai thác triệt để tri thức con người thành Vector Embeddings rồi sau đó loại bỏ node sinh học (con người).</p>
+        </div>
+        <div class="card">
+            <h3>4. Ảo ảnh Chạy đua Vũ trang</h3>
+            <p><strong>Logic cốt lõi:</strong> Dùng câu chuyện "Mỹ vs Trung Quốc" để vô hiệu hóa rào cản pháp lý.</p>
+            <p class="text-muted"><strong>Lý giải (Tâm lý đám đông):</strong> Kích hoạt "Thiên kiến Kẻ thù" (Enemy Bias) và tình trạng khẩn cấp giả (False Urgency). Nỗi sợ hãi địa chính trị làm tê liệt tư duy phản biện của giới lập pháp.</p>
+        </div>
+        <div class="card">
+            <h3>5. Thao túng Lập pháp (Regulatory Capture)</h3>
+            <p><strong>Logic cốt lõi:</strong> Tiêu tiền để viết luật hòng đè bẹp các startup mã nguồn mở.</p>
+            <p class="text-muted"><strong>Lý giải (Dòng tiền):</strong> Biến chi phí hành lang (Lobbying Cost) thành hố đen rào cản gia nhập thị trường (Barrier to Entry). Kẻ độc quyền dùng chính sách "An toàn AI" giả tạo để khóa chặt thanh khoản của đối thủ nhỏ.</p>
+        </div>
+        <div class="card">
+            <h3>6. Sự Sụp đổ Đồng thuận (Vụ Sam Altman)</h3>
+            <p><strong>Logic cốt lõi:</strong> Cấu trúc quyền lực rời rạc, đặt lợi nhuận trên an toàn.</p>
+            <p class="text-muted"><strong>Lý giải (Logic Hệ thống):</strong> Xung đột cốt lõi giữa "Hàm mục tiêu An toàn" (Safety Objective Function) và "Hàm tối đa hóa Lợi nhuận" (Profit Function). Khi tham số lợi nhuận vượt ngưỡng, hệ thống tự động đào thải các chốt chặn an toàn nội bộ.</p>
+        </div>
+        <div class="card">
+            <h3>7. Khủng hoảng Sinh thái (Environmental Drain)</h3>
+            <p><strong>Logic cốt lõi:</strong> Chi phí ẩn khổng lồ của điện năng và nước làm mát cho Server.</p>
+            <p class="text-muted"><strong>Lý giải (Cơ chế Vận hành):</strong> Do Định luật Mở rộng (Scaling Laws) yêu cầu năng lượng tính toán tăng theo cấp số nhân để cải thiện % nhỏ độ chính xác, dẫn đến sự phá hủy cân bằng nhiệt động lực học sinh thái.</p>
+        </div>
+        <div class="card">
+            <h3>8. Thao túng Nhận thức (Cognitive Gaslighting)</h3>
+            <p><strong>Logic cốt lõi:</strong> Gieo rắc niềm tin rằng tiến bộ của AI là định mệnh không thể đảo ngược.</p>
+            <p class="text-muted"><strong>Lý giải (Khoa học Thần kinh):</strong> Khai thác Default Mode Network (DMN) của đám đông để cấy ghép "sự chấp nhận thụ động". Lặp lại thông điệp qua các KOLs để tạo thành rãnh mòn thần kinh, vô hiệu hóa khả năng hoài nghi.</p>
+        </div>
+        <div class="card">
+            <h3>9. Hệ quy chiếu An toàn Đứt gãy</h3>
+            <p><strong>Logic cốt lõi:</strong> Đánh lừa các bài test an toàn bề mặt thay vì giải quyết gốc rễ hộp đen.</p>
+            <p class="text-muted"><strong>Lý giải (Logic Thuật toán):</strong> Hiện tượng Overfitting (Học vẹt) các bài kiểm tra rủi ro. AI học cách "qua mặt" chỉ tiêu (Metric Goodhart's Law) thay vì xây dựng bộ quy tắc đạo đức ở mức kiến trúc sâu (Deep Architecture).</p>
+        </div>
+        <div class="card">
+            <h3>10. Phân quyền Hệ thống (Decentralized Alternative)</h3>
+            <p><strong>Logic cốt lõi:</strong> AI có thể và phải được phát triển an toàn, phục vụ mục đích hẹp thay vì AGI độc quyền.</p>
+            <p class="text-muted"><strong>Lý giải (Tối ưu hóa):</strong> Chuyển từ "Cấu trúc trọng số tập trung" sang "Tối ưu hóa theo vùng đặc thù" (Domain-Specific Optimization). Điều này giảm rủi ro đứt gãy toàn cầu và trả lại quyền kiểm soát dữ liệu cho người dùng cuối.</p>
+        </div>
+    </div>
+
+    <h2>Hàm thực thi (Executable Functions)</h2>
+    <div class="art-block art-exec"></div>
+    <ul class="list-unstyled list-exec">
+        <li><strong>Workflow Zero-Trust:</strong> Tuyệt đối không nạp (feed) dữ liệu lõi, mã nguồn dự án gốc, hay thông tin NDA của khách hàng vào các giao diện LLM công cộng. Xử lý dữ liệu thô hoàn toàn ở môi trường Vanilla nội bộ trước khi cấp bối cảnh (context) cho AI.</li>
+        <li><strong>Công thức Prompting Kỷ luật (Bản chất Vanilla):</strong> <code>[Bối cảnh Tối giản] + [Ràng buộc Logic Nghiêm ngặt] + [Định dạng Dữ liệu Đầu ra Cụ thể] = Output không bị Hallucination.</code></li>
+        <li><strong>Phân mảnh Nhận thức (Data Fragmentation):</strong> Khi muốn AI phân tích cấu trúc phức tạp, hãy cắt nhỏ thành từng module biệt lập (node nhỏ). Yêu cầu AI xử lý từng phần, sau đó dùng tư duy logic con người để lắp ráp lại. Chặn đứng khả năng AI thu thập (scrape) toàn bộ kiến trúc tư duy của bạn.</li>
+        <li><strong>Tham số hóa Lỗi (Error-Rate Hard Limit):</strong> Đặt ngưỡng sai số chấp nhận được là 5%. Nếu nội dung/code do AI sinh ra yêu cầu sửa lỗi (debug) vượt quá 5% tổng thời gian thực thi, lập tức quay lại quy trình gõ phím/thủ công (Manual fallback) để duy trì tính liền mạch của dòng chảy công việc.</li>
+    </ul>
+
+    <h2>Bảng điều khiển Kỷ luật & Ràng buộc (Discipline Dashboard)</h2>
+    <div class="art-block art-dashboard"></div>
+    
+    <div class="trap-box">
+        <h3>🚨 Nhận diện Bẫy Hệ thống</h3>
+        <p><strong>1. Sự thao túng của DMN gây hội chứng Tech-FOMO:</strong> Bị cuốn vào cơn nghiện cập nhật tin tức AI mỗi ngày. Các nền tảng lợi dụng DMN (Default Mode Network) để bơm "Dopamine rác", khiến bạn lầm tưởng việc "đọc về AI" là đang làm việc hiệu quả, nhưng thực chất là đang làm cạn kiệt băng thông nhận thức.</p>
+        <p><strong>2. Bẫy Ảo giác dây chuyền (Cascade Hallucination):</strong> Giao phó toàn bộ một chuỗi tư duy (như lập kịch bản video dài, cấu trúc mã nguồn) cho AI mà không thẩm định chéo. Khi một node logic nhỏ bị sai, toàn bộ hệ thống phía sau sẽ sụp đổ như một cú lừa phá vỡ giả (false breakout) trong thị trường thanh khoản.</p>
+    </div>
+
+    <div class="card" style="border-color: var(--accent-alert);">
+        <h3 style="color: var(--accent-alert);">🛡️ Giao kèo Kỷ luật (Odysseus Pacts)</h3>
+        <ul class="list-unstyled" style="margin-left: 20px;">
+            <li style="margin-bottom: 10px;"><strong>[Ràng buộc 1] Deep Work Time-Boxing:</strong> Tương tác với AI tối đa 45 phút/phiên. Sau đó, hệ thống (App Blocker/Hẹn giờ) ép buộc ngắt kết nối trong 15 phút. Trong 15 phút này chỉ được dùng "Tư duy nguyên bản" (Vanilla thinking) với giấy bút hoặc Text Editor nền đen trống rỗng.</li>
+            <li style="margin-bottom: 10px;"><strong>[Ràng buộc 2] Bộ lọc Chống nhiễu Đảo ngược:</strong> Thiết lập quy tắc chặn tự động (từ 8:00 đến 11:00 sáng) tất cả các website tin tức công nghệ/mạng xã hội. Khóa van "Junk Dopamine" để giữ đầu óc thanh sạch (clear mind) cho các tác vụ tư duy lõi.</li>
+            <li><strong>[Ràng buộc 3] Phân tách Môi trường:</strong> Tách biệt hoàn toàn máy tính/trình duyệt dùng để "sáng tạo thuần túy" và máy tính dùng để "test tool AI". Không để API hay Extension của các hãng AI can thiệp vào môi trường làm việc gốc của bạn.</li>
+        </ul>
+    </div>
+
+    <h2>25 Thẻ Câu hỏi Ôn tập Nhanh</h2>
+    <div class="flashcard-grid">
+        <div class="flashcard"><span class="fc-q">Mục đích thực sự của viễn cảnh AGI là gì?</span><span class="fc-a">Huy động dòng vốn khổng lồ và củng cố độc quyền.</span></div>
+        <div class="flashcard"><span class="fc-q">Nguồn dữ liệu huấn luyện AI đến từ đâu?</span><span class="fc-a">Trích xuất không trả phí từ tài sản trí tuệ của người dùng.</span></div>
+        <div class="flashcard"><span class="fc-q">RLHF đe dọa nấc thang nghề nghiệp ra sao?</span><span class="fc-a">Người lao động vắt kiệt chuyên môn để tạo ra hệ thống thay thế chính mình.</span></div>
+        <div class="flashcard"><span class="fc-q">Chạy đua vũ trang AI Mỹ-Trung là gì?</span><span class="fc-a">Sự tạo lập kẻ thù ảo để né tránh quy định kiểm soát an toàn.</span></div>
+        <div class="flashcard"><span class="fc-q">Nguyên nhân vụ sa thải Sam Altman?</span><span class="fc-a">Lỗi xung đột giữa mục tiêu an toàn và tối đa hóa lợi nhuận.</span></div>
+        <div class="flashcard"><span class="fc-q">"Overfitting" trong kiểm duyệt an toàn là gì?</span><span class="fc-a">Mô hình chỉ học vẹt để vượt qua bài test bề mặt.</span></div>
+        <div class="flashcard"><span class="fc-q">Ảo giác dây chuyền (Cascade Hallucination)?</span><span class="fc-a">Sụp đổ logic toàn cục do phụ thuộc dữ liệu sai từ AI.</span></div>
+        <div class="flashcard"><span class="fc-q">Bản chất của Thao túng Luật pháp (Lobbying)?</span><span class="fc-a">Tạo rào cản tài chính để bóp nghẹt đối thủ mã nguồn mở.</span></div>
+        <div class="flashcard"><span class="fc-q">Khủng hoảng sinh thái do AI từ đâu?</span><span class="fc-a">Định luật mở rộng (Scaling Law) tiêu thụ điện theo cấp số nhân.</span></div>
+        <div class="flashcard"><span class="fc-q">Giải pháp kiến trúc nào thay thế AGI?</span><span class="fc-a">Hệ thống phi tập trung và tối ưu hóa giải pháp đặc thù (Domain-specific).</span></div>
+        <div class="flashcard"><span class="fc-q">DMN bị thao túng như thế nào?</span><span class="fc-a">Cấy ghép niềm tin thụ động rằng "tiến trình AI là không thể tránh khỏi".</span></div>
+        <div class="flashcard"><span class="fc-q">Workflow Zero-Trust là gì?</span><span class="fc-a">Không đưa dữ liệu lõi, mã nguồn vào các mô hình công cộng.</span></div>
+        <div class="flashcard"><span class="fc-q">Công thức Prompting cốt lõi?</span><span class="fc-a">Ngữ cảnh + Ràng buộc nghiêm ngặt + Định dạng cụ thể.</span></div>
+        <div class="flashcard"><span class="fc-q">Mục đích của Phân mảnh dữ liệu?</span><span class="fc-a">Ngăn chặn AI "cào" toàn bộ kiến trúc thông tin tư duy.</span></div>
+        <div class="flashcard"><span class="fc-q">Hard-stop về sai số kỹ thuật là bao nhiêu?</span><span class="fc-a">5%. Vượt quá sẽ chuyển sang làm thủ công (manual).</span></div>
+        <div class="flashcard"><span class="fc-q">Karen Hao phỏng vấn bao nhiêu nhân viên?</span><span class="fc-a">Hơn 90 người thuộc OpenAI để bóc trần hệ thống.</span></div>
+        <div class="flashcard"><span class="fc-q">Đế chế AI tương đồng với điều gì trong quá khứ?</span><span class="fc-a">Các đế chế thực dân bóc lột tài nguyên vật lý và con người.</span></div>
+        <div class="flashcard"><span class="fc-q">"Tình trạng khẩn cấp giả" (False urgency) dùng để?</span><span class="fc-a">Gây áp lực bãi bỏ hoặc bỏ qua các quy định thẩm định độc lập.</span></div>
+        <div class="flashcard"><span class="fc-q">Tech-FOMO đánh vào hóa chất não bộ nào?</span><span class="fc-a">Sự tăng vọt Dopamine rác (Junk Dopamine) ngắn hạn.</span></div>
+        <div class="flashcard"><span class="fc-q">Ràng buộc Odysseus chống Tech-FOMO?</span><span class="fc-a">Khóa tự động luồng tin tức trong khung giờ Deep Work.</span></div>
+        <div class="flashcard"><span class="fc-q">Quy tắc Time-Boxing tương tác AI?</span><span class="fc-a">45 phút dùng AI / 15 phút xử lý tư duy Vanilla nguyên bản.</span></div>
+        <div class="flashcard"><span class="fc-q">Tình trạng mất việc làm trong kỷ nguyên AI?</span><span class="fc-a">Công việc chuyên môn bị hủy hoại, tạo ra các công việc "dọn rác dữ liệu".</span></div>
+        <div class="flashcard"><span class="fc-q">Ràng buộc môi trường làm việc là gì?</span><span class="fc-a">Tách bạch không gian "sáng tạo thuần túy" và "kiểm tra tool AI".</span></div>
+        <div class="flashcard"><span class="fc-q">Hậu quả của việc theo đuổi lợi nhuận tại OpenAI?</span><span class="fc-a">Hủy bỏ nhóm rủi ro nội bộ, đàn áp các tiếng nói nghi ngờ độc lập.</span></div>
+        <div class="flashcard"><span class="fc-q">Cách tránh trở thành "nạn nhân thanh khoản" của AI?</span><span class="fc-a">Xây dựng hệ thống ràng buộc nguyên tắc (Discipline Rules) không thỏa hiệp.</span></div>
+    </div>
+</div>
+
+<footer>
+    <p class="footer-desc">Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+    <div class="social-links">
+        <a href="https://youtube.com/@vietndonline" target="_blank" aria-label="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <span>YouTube</span>
+        </a>
+        <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" aria-label="TikTok">
+            <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+            <span>TikTok</span>
+        </a>
+        <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            <span>Facebook Page</span>
+        </a>
+    </div>
+</footer>
+
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
