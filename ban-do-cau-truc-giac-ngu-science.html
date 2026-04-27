@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến Trúc Giấc Ngủ | Phân Tích Chuyên Sâu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b; /* zinc-950 */
+            color: #d4d4d8; /* zinc-300 */
+            line-height: 1.6;
+        }
+
+        /* Tối ưu typography */
+        h1, h2, h3, h4 {
+            color: #fafafa; /* zinc-50 */
+            letter-spacing: -0.025em;
+        }
+
+        /* --- CSS ABSTRACT ART CLASSES --- */
+        .art-container {
+            width: 100%;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #18181b; /* zinc-900 */
+            margin-bottom: 1.5rem;
+        }
+
+        /* Art: Thesis */
+        .art-thesis::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3b82f6, transparent);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+        .art-thesis::after {
+            content: "";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            width: 150px;
+            height: 2px;
+            background: #eab308;
+            transform: rotate(-15deg);
+        }
+
+        /* Art: Cards */
+        .art-card {
+            width: 100%;
+            height: 60px;
+            position: relative;
+            background: #18181b;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            border-bottom: 1px solid #27272a;
+        }
+        .art-shape-circle {
+            position: absolute;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+            top: 10px; left: 10px;
+        }
+        .art-shape-rect {
+            position: absolute;
+            width: 60px; height: 20px;
+            background: #10b981;
+            bottom: -5px; right: 20px;
+            transform: skewX(-20deg);
+            opacity: 0.5;
+        }
+
+        /* Art: Executable Functions */
+        .art-functions {
+            background: radial-gradient(circle at 50% 50%, #27272a 0%, #09090b 100%);
+        }
+        .art-functions .line {
+            position: absolute;
+            height: 100%; width: 2px;
+            background: repeating-linear-gradient(to bottom, #3f3f46 0, #3f3f46 10px, transparent 10px, transparent 20px);
+            left: 50%;
+        }
+
+        /* Art: Discipline Dashboard */
+        .art-discipline .grid-pattern {
+            width: 100%; height: 100%;
+            background-image: linear-gradient(#f43f5e 1px, transparent 1px), linear-gradient(90deg, #f43f5e 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+        }
+
+        /* Grid cho Thẻ */
+        .masonry {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Tối giản hóa đường viền */
+        .minimal-border {
+            border: 1px solid #27272a; /* zinc-800 */
+        }
+        
+        .hard-stop-bg {
+            background: repeating-linear-gradient(
+                45deg,
+                #27272a,
+                #27272a 10px,
+                #18181b 10px,
+                #18181b 20px
+            );
+        }
+    </style>
+</head>
+<body class="antialiased pb-32">
+
+    <!-- Header & Thesis -->
+    <header class="max-w-5xl mx-auto pt-24 px-6 mb-16">
+        <div class="art-container art-thesis flex items-center justify-center">
+            <div class="w-16 h-16 border-4 border-zinc-700 rotate-45"></div>
+            <div class="w-16 h-16 border-4 border-indigo-500 rounded-full -ml-8 mix-blend-screen"></div>
+        </div>
+        <div class="space-y-4">
+            <p class="text-indigo-400 font-semibold tracking-widest text-sm uppercase">Information Architecture</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-white">Bản Đồ Cấu Trúc Giấc Ngủ</h1>
+            
+            <div class="mt-8 p-6 bg-zinc-900 border-l-4 border-indigo-500 rounded-r-xl">
+                <h2 class="text-xl font-bold mb-2">[Thesis] Luận điểm cốt lõi</h2>
+                <p class="text-zinc-300 text-lg leading-relaxed">
+                    Giấc ngủ không phải là trạng thái "tắt nguồn" thụ động, mà là một hệ thống nội tiết được mã hóa gen (Chronotype) và đồng bộ nhịp sinh học chặt chẽ. Việc tối ưu hóa sự phục hồi não bộ không đến từ việc lạm dụng hóa chất an thần, mà nằm ở việc <strong>thiết lập các ràng buộc hành vi mang tính cấu trúc</strong> để thuận theo lập trình tiến hóa của cơ thể.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mindmap: 10 Danh mục cốt lõi -->
+    <section class="max-w-5xl mx-auto px-6 mb-20">
+        <h2 class="text-3xl font-bold mb-8 border-b border-zinc-800 pb-4">[Mindmap] 10 Danh Mục Cốt Lõi</h2>
+        <div class="masonry">
+            
+            <!-- Card 1 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="art-shape-circle" style="background: radial-gradient(circle, #f59e0b 0%, transparent 70%);"></div>
+                    <div class="art-shape-rect"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">01. Mã Gen Sinh Học (Chronotypes)</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Phân loại nhịp năng lượng thành 4 nhóm: Sư tử (Sáng), Gấu (Hành chính), Sói (Đêm), Cá heo (Ngủ nông/Lo âu).</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Gen PER3 quy định sự đa dạng này để phục vụ sinh tồn tiến hóa: Bộ tộc cần người thức gác vào các thời điểm khác nhau. Sự lệch pha sinh học làm rối loạn việc giải phóng Melatonin và Cortisol.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="art-shape-circle" style="background: radial-gradient(circle, #3b82f6 0%, transparent 70%); left: 80%;"></div>
+                    <div class="w-full h-1 bg-zinc-800 absolute top-1/2"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">02. Áp Lực Giấc Ngủ (Sleep Drive)</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Giống như cơn đói, ở thức càng lâu thì áp lực đòi ngủ càng lớn dựa trên lượng Adenosine tích tụ.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Khi tế bào tiêu thụ Glucose, sản phẩm phụ Adenosine được xả ra và lấp đầy các thụ thể thần kinh. Caffein có cấu trúc phân tử gần giống nên "cướp" thụ thể này, chặn cảm giác mệt chứ không xóa bỏ Adenosine.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="absolute inset-0 bg-gradient-to-r from-zinc-900 to-indigo-900/30"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">03. Nhịp Sinh Học Ánh Sáng</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Thời gian thức dậy quy định thời điểm bạn buồn ngủ vào buổi tối.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Khi ánh sáng chiếu vào mắt, tế bào Melanopsin ngắt vòi xả Melatonin và thiết lập đếm ngược đúng 14 tiếng (Phase Response Curve) để mở lại. Ngủ nướng cuối tuần làm phá vỡ toàn bộ cơ chế hẹn giờ này.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 4 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="w-16 h-16 border border-red-500/50 absolute -bottom-4 right-4 rounded-full"></div>
+                    <div class="w-8 h-8 border border-red-500 absolute bottom-2 right-8 rounded-full"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">04. Bẫy Thức Giấc 3 Giờ Sáng</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Hiện tượng sinh lý tự nhiên ở mọi người do thay đổi thân nhiệt.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Nhiệt độ cốt lõi cơ thể hạ xuống để vào giấc ngủ, nhưng từ 1-3h sáng nó buộc phải tăng lên để chống hạ thân nhiệt (hypothermia). Đứng dậy đi vệ sinh lúc này làm nhịp tim vọt quá 60 BPM, phá vỡ ngưỡng ngất lịm (unconsciousness threshold).</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 5 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="absolute w-[150%] h-[150%] bg-[conic-gradient(from_90deg,transparent,#8b5cf6,transparent)] opacity-20 -top-1/2 -left-1/4 animate-spin-slow"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">05. Chuyển Hóa Cảm Xúc (Giấc mơ)</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Giấc mơ là phòng trị liệu tâm lý hằng đêm, không phải tín hiệu ngẫu nhiên.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Bộ não mô phỏng và xử lý các kịch bản cảm xúc ban ngày (Emotional Metabolism). Ác mộng là vòng lặp bị lỗi: Nỗi sợ quá lớn khiến bạn tỉnh giấc giữa chừng, não không "tiêu hóa" xong, dẫn tới việc nhai lại ác mộng nhiều ngày.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 6 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card bg-zinc-800">
+                    <div class="w-1/2 h-full bg-zinc-900 absolute left-0 clip-triangle"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">06. Rào Cản Nhịp Tim & Dạ Dày</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Phải ngừng ăn/uống 3 tiếng trước ngủ để hạ nhịp tim.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Dạ dày làm việc đồng nghĩa máu dồn về tiêu hóa, đẩy nhịp tim lên cao. Đường (Sugar) ức chế sinh sản Melatonin. Nhịp tim trên 60 BPM = Bộ não hiểu là "Đang hoạt động sinh tồn", từ chối tắt nguồn.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 7 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-red-900/30 to-transparent"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">07. Cú Lừa Của Cồn (Alcohol Trap)</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Cồn làm an thần cực nhanh nhưng hủy hoại cấu trúc phục hồi.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Cồn triệt tiêu hoàn toàn Giấc ngủ Giai đoạn 4. Đây là lúc Hệ thống Glymphatic xịt rửa và cuốn trôi các mảng bám Protein (Amyloid). Mất Giai đoạn 4 dài hạn tương đương với việc tích tụ rác não, nguyên nhân gốc của bệnh Alzheimer.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 8 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="absolute top-1/2 left-1/4 w-2 h-2 bg-white rounded-full shadow-[10px_0_10px_white,-10px_0_10px_white]"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">08. Ảo Tưởng Melatonin</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Melatonin là Hormone báo hiệu, không phải thuốc kích ngủ.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Nạp Melatonin dạng kẹo (liều quá cao) làm nhiễu hệ thống nội tiết (tương tác chéo với thuốc trầm cảm, tránh thai). Nó gây ra tác dụng phụ là dồn ép vào REM sleep quá mạnh, tạo ra siêu ác mộng và sự kiệt quệ thần kinh.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 9 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="w-full h-full bg-[linear-gradient(45deg,transparent_49%,#52525b_49%,#52525b_51%,transparent_51%)]"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">09. Sát Nhân Apnea (Ngưng thở)</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Tắc nghẽn đường thở khiến não bị nghẹt thở siêu vi hằng đêm.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Cơ lưỡi tụt xuống cản khí quản. Não hoảng loạn gửi tín hiệu Adrenaline đánh thức cơ thể để thở, làm gián đoạn mọi chu kỳ sâu. Tỉ lệ mắc tương đương bệnh tiểu đường nhưng 80-90% không được chẩn đoán, hủy hoại tim mạch và tâm trí.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 10 -->
+            <article class="bg-zinc-900 rounded-xl minimal-border hover:border-zinc-700 transition-colors">
+                <div class="art-card">
+                    <div class="absolute inset-0 bg-gradient-to-b from-blue-500/20 to-transparent"></div>
+                    <div class="absolute bottom-0 w-full h-1 bg-blue-500"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">10. Cơ Chế Điều Hòa Nhiệt</h3>
+                    <div class="mb-4">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Logic cốt lõi</span>
+                        <p class="text-sm">Bạn không thể ngủ trong môi trường nóng.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-1">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400">Thermoregulation (Đẩy nhiệt khỏi trung tâm cơ thể) là điều kiện cần của giấc ngủ. Thò bàn chân ra khỏi chăn là một phản xạ tiến hóa vì gan bàn chân không có lông, tản nhiệt tĩnh mạch nhanh nhất.</p>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- Executable Functions -->
+    <section class="max-w-5xl mx-auto px-6 mb-20">
+        <div class="art-container art-functions relative flex items-center p-6">
+            <div class="line"></div>
+            <h2 class="text-3xl font-bold text-white z-10 bg-zinc-950 px-4 rounded-full border border-zinc-800">[Executable Functions] Hàm Thực Thi</h2>
+        </div>
+        
+        <div class="bg-zinc-900 rounded-xl p-8 minimal-border">
+            <ul class="space-y-6 text-zinc-300">
+                <li class="flex items-start">
+                    <div class="w-2 h-2 bg-indigo-500 rounded-full mt-2.5 mr-4 flex-shrink-0"></div>
+                    <div>
+                        <strong class="text-white text-lg block">Chiến thuật Nappa Latte (Hack Adenosine):</strong>
+                        <span>Uống một ly cà phê đen pha đá (để hạ nhiệt độ và uống nhanh) ngay lúc mệt lả -> Lập tức chợp mắt 25 phút. Việc chợp mắt dọn dẹp phân tử Adenosine rác, vừa đúng lúc 25 phút sau Caffein ngấm vào máu chặn các thụ thể rỗng. Đảm bảo 4 tiếng tỉnh táo cực đại.</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <div class="w-2 h-2 bg-indigo-500 rounded-full mt-2.5 mr-4 flex-shrink-0"></div>
+                    <div>
+                        <strong class="text-white text-lg block">Giao thức 4-7-8 Breathing (Hạ nhịp tim khẩn cấp):</strong>
+                        <span>Nhắm mắt, tưởng tượng số đếm. Hít vào 4 giây -> Nín thở 7 giây -> Thở ra mạnh 8 giây. Lặp lại 20 chu kỳ (dùng ngón tay đếm). <em>Thông số kỹ thuật:</em> Chặn sự can thiệp của Default Mode Network (Monkey Mind), buộc nhịp tim vật lý phải hạ xuống dưới 60 BPM để mở cổng giấc ngủ.</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <div class="w-2 h-2 bg-indigo-500 rounded-full mt-2.5 mr-4 flex-shrink-0"></div>
+                    <div>
+                        <strong class="text-white text-lg block">Quy trình Wind-Down 3x20:</strong>
+                        <span>Chia 60 phút cuối ngày: 20 phút việc lặt vặt (chuẩn bị đồ đạc) -> 20 phút vệ sinh cá nhân -> 20 phút tĩnh tâm (Đọc sách/Thiền). Tạo đường băng hạ cánh từ từ cho não bộ.</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <div class="w-2 h-2 bg-indigo-500 rounded-full mt-2.5 mr-4 flex-shrink-0"></div>
+                    <div>
+                        <strong class="text-white text-lg block">Điều chế Banana Tea (Cung cấp Magie hữu cơ):</strong>
+                        <span>Cắt 2 đầu quả chuối (giữ nguyên vỏ) -> Luộc trong nước sôi 5 phút -> Uống phần nước trước khi ngủ 30 phút. Vỏ chuối tiết ra phytosteroids và lượng Magie lớn giúp cơ bắp thư giãn tận gốc.</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <div class="w-2 h-2 bg-indigo-500 rounded-full mt-2.5 mr-4 flex-shrink-0"></div>
+                    <div>
+                        <strong class="text-white text-lg block">Công thức 15-15-15 buổi sáng:</strong>
+                        <span>Dậy cùng 1 giờ mỗi ngày. Thực thi ngay: 15 nhịp thở sâu ngoài trời + 15 ounce nước lọc (bù nước ban đêm) + 15 phút phơi nắng trực tiếp (kích hoạt Melanopsin hẹn giờ Melatonin tối nay).</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Discipline Dashboard -->
+    <section class="max-w-5xl mx-auto px-6 mb-20">
+        <div class="art-container art-discipline relative flex items-center justify-center border border-rose-900/30">
+            <div class="grid-pattern absolute"></div>
+            <h2 class="text-3xl font-bold text-rose-50 z-10">[Discipline Dashboard] Ràng Buộc & Kỷ Luật</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Trap 1 -->
+            <div class="bg-zinc-900 rounded-xl p-6 minimal-border flex flex-col justify-between">
+                <div>
+                    <h4 class="text-rose-400 font-bold mb-2 uppercase text-sm tracking-wider flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Bẫy hệ thống: Xem giờ lúc 3 AM
+                    </h4>
+                    <p class="text-sm text-zinc-400 mb-4">Khi tỉnh giấc giữa đêm, chạm điện thoại để xem giờ kích hoạt não bộ tính toán (Mental Math: "Mình chỉ còn 2 tiếng để ngủ"). Mạng DMN tạo ra thiên kiến lo âu, đẩy nhịp tim vọt lên.</p>
+                </div>
+                <div class="hard-stop-bg p-4 rounded-lg border border-zinc-700">
+                    <span class="text-white font-bold text-sm">Giao kèo (Hard-stop):</span>
+                    <p class="text-sm text-zinc-300">Che kín/lật úp mọi đồng hồ. KHÔNG ĐƯỢC RỜI GIƯỜNG để đi vệ sinh trừ khi sắp vỡ bàng quang (việc đứng dậy làm hỏng ngưỡng BPM < 60). Nằm ngửa bất động.</p>
+                </div>
+            </div>
+
+            <!-- Trap 2 -->
+            <div class="bg-zinc-900 rounded-xl p-6 minimal-border flex flex-col justify-between">
+                <div>
+                    <h4 class="text-rose-400 font-bold mb-2 uppercase text-sm tracking-wider flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Bẫy hệ thống: Xung đột Đêm khuya
+                    </h4>
+                    <p class="text-sm text-zinc-400 mb-4">Thảo luận tài chính, mối quan hệ trước giờ ngủ bơm Cortisol và Adrenaline thẳng vào máu. Phá hủy sự tin tưởng vào chiếc giường như một vùng an toàn.</p>
+                </div>
+                <div class="hard-stop-bg p-4 rounded-lg border border-zinc-700">
+                    <span class="text-white font-bold text-sm">Giao kèo (Hard-stop):</span>
+                    <p class="text-sm text-zinc-300">Lệnh cấm tuyệt đối (Odysseus Pact): Không tranh luận sau bữa tối. Mọi cuộc thảo luận khó khăn phải chuyển sang sau bữa sáng hôm sau, khi não đã tiêu hóa cảm xúc.</p>
+                </div>
+            </div>
+
+            <!-- Trap 3 -->
+            <div class="bg-zinc-900 rounded-xl p-6 minimal-border flex flex-col justify-between">
+                <div>
+                    <h4 class="text-rose-400 font-bold mb-2 uppercase text-sm tracking-wider flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Bẫy hệ thống: Nạp Caffein sáng sớm
+                    </h4>
+                    <p class="text-sm text-zinc-400 mb-4">Uống cà phê ngay khi mở mắt chặn đứng quá trình thải lọc Adenosine tự nhiên và chồng lấp lên lúc Cortisol đang cao, tạo ra cú sập năng lượng (crash) vào đầu giờ chiều.</p>
+                </div>
+                <div class="hard-stop-bg p-4 rounded-lg border border-zinc-700">
+                    <span class="text-white font-bold text-sm">Giao kèo (Hard-stop):</span>
+                    <p class="text-sm text-zinc-300">Ràng buộc 90 phút: Tuyệt đối không tiêu thụ bất kỳ chất kích thích nào trong 1.5 giờ đầu tiên thức dậy. Chỉ dùng nước lọc bù khoáng.</p>
+                </div>
+            </div>
+
+            <!-- Trap 4 -->
+            <div class="bg-zinc-900 rounded-xl p-6 minimal-border flex flex-col justify-between">
+                <div>
+                    <h4 class="text-rose-400 font-bold mb-2 uppercase text-sm tracking-wider flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Bẫy hệ thống: Rượu vang ru ngủ
+                    </h4>
+                    <p class="text-sm text-zinc-400 mb-4">Dùng cồn để giải tỏa căng thẳng trước ngủ. Có thể ngủ nhanh nhưng mất hoàn toàn Giai đoạn 4 (Deep Sleep) - giai đoạn thiết yếu để dọn dẹp Protein gây Alzheimer.</p>
+                </div>
+                <div class="hard-stop-bg p-4 rounded-lg border border-zinc-700">
+                    <span class="text-white font-bold text-sm">Giao kèo (Hard-stop):</span>
+                    <p class="text-sm text-zinc-300">Quy tắc 1:1 và 3 Giờ: Uống 1 ly nước lọc cho mỗi ly rượu. Phải dừng mọi loại thức uống/đồ ăn 3 giờ trước khi đầu chạm gối.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flashcards 25 Q&A -->
+    <section class="max-w-5xl mx-auto px-6 mb-16">
+        <h2 class="text-2xl font-bold mb-6 text-zinc-400 border-b border-zinc-800 pb-2">Flashcard Ôn Tập (25 Concept)</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            
+            <!-- Cards Array generated to 25 -->
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 1</span>
+                <p class="text-xs text-white font-semibold mb-1">Chất tích tụ làm mệt mỏi?</p>
+                <p class="text-xs text-indigo-300">Adenosine.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 2</span>
+                <p class="text-xs text-white font-semibold mb-1">Chronotype phụ thuộc gen nào?</p>
+                <p class="text-xs text-indigo-300">Gen PER3.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 3</span>
+                <p class="text-xs text-white font-semibold mb-1">4 nhóm Chronotype?</p>
+                <p class="text-xs text-indigo-300">Sư tử, Gấu, Sói, Cá heo.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 4</span>
+                <p class="text-xs text-white font-semibold mb-1">Tỉnh táo, hoãn uống cafe bao lâu?</p>
+                <p class="text-xs text-indigo-300">90 phút sau dậy.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 5</span>
+                <p class="text-xs text-white font-semibold mb-1">Tại sao thức giấc 1-3h sáng?</p>
+                <p class="text-xs text-indigo-300">Nhiệt độ cốt lõi tự tăng để chống hạ thân nhiệt.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 6</span>
+                <p class="text-xs text-white font-semibold mb-1">Ngưỡng nhịp tim để ngủ?</p>
+                <p class="text-xs text-indigo-300">Dưới 60 BPM.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 7</span>
+                <p class="text-xs text-white font-semibold mb-1">Công thức Nappa Latte?</p>
+                <p class="text-xs text-indigo-300">Cafe đen đá + Ngủ 25 phút.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 8</span>
+                <p class="text-xs text-white font-semibold mb-1">Tác dụng của nắng ban mai?</p>
+                <p class="text-xs text-indigo-300">Hẹn giờ Melatonin sau 14 tiếng.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 9</span>
+                <p class="text-xs text-white font-semibold mb-1">Giấc mơ đóng vai trò gì?</p>
+                <p class="text-xs text-indigo-300">Chuyển hóa cảm xúc.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 10</span>
+                <p class="text-xs text-white font-semibold mb-1">Tại sao ác mộng lặp lại?</p>
+                <p class="text-xs text-indigo-300">Vì tỉnh giấc, chưa xử lý xong vòng lặp.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 11</span>
+                <p class="text-xs text-white font-semibold mb-1">Tại sao cồn phá hủy não?</p>
+                <p class="text-xs text-indigo-300">Xóa bỏ Giai đoạn ngủ sâu 4.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 12</span>
+                <p class="text-xs text-white font-semibold mb-1">Hệ thống dọn rác não?</p>
+                <p class="text-xs text-indigo-300">Hệ thống Glymphatic.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 13</span>
+                <p class="text-xs text-white font-semibold mb-1">Bản chất Melatonin?</p>
+                <p class="text-xs text-indigo-300">Điều hướng sinh học, không phải thuốc ngủ.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 14</span>
+                <p class="text-xs text-white font-semibold mb-1">Rủi ro Melatonin liều cao?</p>
+                <p class="text-xs text-indigo-300">Ác mộng nặng, giảm hormone sinh sản.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 15</span>
+                <p class="text-xs text-white font-semibold mb-1">Công thức hạ nhịp tim?</p>
+                <p class="text-xs text-indigo-300">Thở 4-7-8 (Hít-Giữ-Thở).</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 16</span>
+                <p class="text-xs text-white font-semibold mb-1">Trà chuối có chất gì?</p>
+                <p class="text-xs text-indigo-300">Magie và Phytosteroids từ vỏ chuối.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 17</span>
+                <p class="text-xs text-white font-semibold mb-1">Wind-down 3x20?</p>
+                <p class="text-xs text-indigo-300">20p dọn dẹp, 20p tắm, 20p thiền.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 18</span>
+                <p class="text-xs text-white font-semibold mb-1">Kẻ sát nhân thầm lặng?</p>
+                <p class="text-xs text-indigo-300">Sleep Apnea (Hội chứng ngưng thở).</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 19</span>
+                <p class="text-xs text-white font-semibold mb-1">Luật tối thượng cho giờ giấc?</p>
+                <p class="text-xs text-indigo-300">Thức cùng một giờ mỗi ngày (cả CN).</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 20</span>
+                <p class="text-xs text-white font-semibold mb-1">Tuyệt đối tránh khi dậy 3AM?</p>
+                <p class="text-xs text-indigo-300">Xem đồng hồ (kích hoạt lo âu tính toán).</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 21</span>
+                <p class="text-xs text-white font-semibold mb-1">Tại sao không nên cãi cọ tối?</p>
+                <p class="text-xs text-indigo-300">Bơm Cortisol/Adrenaline phá nát cơn buồn ngủ.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 22</span>
+                <p class="text-xs text-white font-semibold mb-1">Tư thế ngủ tốt cho dạ dày?</p>
+                <p class="text-xs text-indigo-300">Nằm nghiêng sang trái.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 23</span>
+                <p class="text-xs text-white font-semibold mb-1">Nằm nghiêng phải bị gì?</p>
+                <p class="text-xs text-indigo-300">Trào ngược Axit dạ dày (GERD).</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 24</span>
+                <p class="text-xs text-white font-semibold mb-1">Cách làm quen phòng khách sạn?</p>
+                <p class="text-xs text-indigo-300">First-night effect: Đeo bịt mắt, máy lọc khí.</p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded minimal-border">
+                <span class="text-[10px] uppercase text-zinc-500 font-bold block">Câu 25</span>
+                <p class="text-xs text-white font-semibold mb-1">Tạo máy lạnh giường ngủ rẻ tiền?</p>
+                <p class="text-xs text-indigo-300">Chai nước đóng đá nhét vào tất, để hai bên sườn.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer cố định chiều cao 128px -->
+    <footer class="w-full bg-zinc-950 border-t border-zinc-800 fixed bottom-0 left-0" style="height: 128px; z-index: 50;">
+        <div class="max-w-5xl mx-auto h-full flex flex-col items-center justify-center px-4 text-center">
+            <p class="text-zinc-400 text-xs md:text-sm font-medium mb-4 max-w-2xl">
+                Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+            </p>
+            <div class="flex space-x-6">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="text-zinc-500 hover:text-white transition-colors" aria-label="YouTube">
+                    <!-- YouTube Icon -->
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-zinc-500 hover:text-white transition-colors" aria-label="TikTok">
+                    <!-- TikTok Icon -->
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.28 6.28 0 0 0 5 15.6a6.28 6.28 0 0 0 6.28 6.28 6.28 6.28 0 0 0 6.28-6.28V9.16a8.31 8.31 0 0 0 4.29 1.18V7.04a5.35 5.35 0 0 1-2.26-.35z"/></svg>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="text-zinc-500 hover:text-white transition-colors" aria-label="Facebook">
+                    <!-- Facebook Icon -->
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
