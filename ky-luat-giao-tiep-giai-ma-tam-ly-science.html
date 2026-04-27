@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cấu Trúc Giải Mã: Nghệ Thuật Kiểm Soát Tâm Lý Thực Chiến</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --card-bg: #18181b;
+            --card-border: #27272a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* CSS Abstract Art - Ambient Backgrounds */
+        .abstract-art-container {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #3b82f6 0%, transparent 70%); }
+        .blob-2 { bottom: 20%; right: -20%; width: 60vw; height: 60vw; background: radial-gradient(circle, #8b5cf6 0%, transparent 70%); }
+        .blob-3 { top: 40%; left: 30%; width: 40vw; height: 40vw; background: radial-gradient(circle, #10b981 0%, transparent 70%); opacity: 0.2;}
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        /* Abstract Mini Shapes for Sections */
+        .shape-mini {
+            width: 64px; height: 64px;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            background: linear-gradient(45deg, var(--accent), #8b5cf6);
+            box-shadow: 0 0 30px var(--accent-glow);
+            margin-bottom: 1.5rem;
+            animation: morph 8s infinite alternate ease-in-out;
+        }
+
+        .shape-mini.danger { background: linear-gradient(45deg, #ef4444, #f59e0b); box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
+        .shape-mini.logic { background: linear-gradient(45deg, #10b981, #3b82f6); box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+
+        @keyframes morph {
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        }
+
+        /* Layout & Typography System */
+        .glass-card {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        /* Flashcard Grid */
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .flashcard {
+            background: var(--card-bg);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Specific Footer Height Requirement */
+        footer {
+            height: 128px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--card-border);
+            background: #000;
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--accent);
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased relative">
+
+    <!-- CSS Ambient Background -->
+    <div class="abstract-art-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-6 py-20 relative z-10">
+        
+        <!-- Header / Thesis -->
+        <header class="mb-24 mt-12 text-center md:text-left max-w-4xl">
+            <div class="tag mb-4 flex items-center justify-center md:justify-start gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                Information Architecture Extract
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight">Kỷ Luật Giao Tiếp & Giải Mã Tâm Lý.</h1>
+            
+            <div class="glass-card p-8 border-l-4 border-l-blue-500 mt-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>
+                </div>
+                <h2 class="text-xs uppercase tracking-widest text-blue-400 font-bold mb-2">[Thesis] Luận điểm cốt lõi</h2>
+                <p class="text-xl md:text-2xl font-light text-zinc-300 leading-relaxed">
+                    Trong những cuộc đối thoại có độ nhiễu loạn cao, "Bình tĩnh" không phải là trạng thái cảm xúc, mà là một cơ chế phòng vệ hệ thống. Kẻ đánh mất sự tập trung vào <span class="font-bold text-white">Mục đích nguyên thủy (Purpose)</span> sẽ ngay lập tức bị thao túng bởi luật chơi và cảm xúc của đối phương. <br><span class="italic mt-2 block text-blue-300">"If you lose your cool, you lose control."</span>
+                </p>
+            </div>
+        </header>
+
+        <!-- Section 2: Mindmap 10 Core -->
+        <section class="mb-24">
+            <div class="flex items-center gap-4 mb-12">
+                <div class="shape-mini"></div>
+                <div>
+                    <h2 class="text-3xl font-bold">[Mindmap] 10 Danh mục Cốt lõi</h2>
+                    <p class="text-zinc-400">Trích xuất nguyên lý từ khoa học thần kinh & tâm lý học hành vi.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">01. Khung PLAN: (P) - Purpose</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Mỏ neo Mục đích</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Bắt buộc phải xác định "Nhiệm vụ" trước khi bước vào cuộc trò chuyện tối tăm để không bị chệch hướng khi cảm xúc leo thang.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Giải mã qua <b class="text-zinc-200">Thuyết Đa Mục Tiêu (Multiple Goals Theory)</b>: Não bộ luôn cùng lúc xử lý 3 mục tiêu (Nhiệm vụ, Bản ngã/Danh tính, Mối quan hệ). Khi đối phương tấn công, não tự động ưu tiên bảo vệ "Bản ngã", dẫn đến bỏ quên "Nhiệm vụ". Xác định P giúp ép não bộ ghi đè thuật toán ưu tiên.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">02. Khung PLAN: (L) - Listen</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Lắng nghe Triệt để</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Nghe không phải để chờ tới lượt nói, mà để thực sự thu nạp dữ liệu từ đối phương.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Giải mã qua <b class="text-zinc-200">Độ trễ Băng thông Nhận thức</b>: Tốc độ suy nghĩ nội tâm là 800-1000 từ/phút, trong khi tốc độ nói chỉ 120-150 từ/phút. Khoảng trống này sinh ra sự sao nhãng. Phải kích hoạt <b class="text-zinc-200">Ức chế Nhận thức (Cognitive Inhibition)</b> để thu hẹp băng thông, ép bản thân hiện diện tại thực tại.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">03. Khung PLAN: (A) - Ask</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Hỏi để Phá băng</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Ngừng việc giả định mình biết đối phương nghĩ gì. Hãy đặt câu hỏi để xóa bỏ sự mập mờ.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Dựa trên <b class="text-zinc-200">Độ chính xác Thấu cảm (Empathy Accuracy)</b>: Khoa học chứng minh ta chỉ đoán đúng suy nghĩ bạn đời 40%. Khi xung đột nổ ra, cái tôi (Ego) nhảy vào phòng thủ, con số này tụt xuống 15%. Câu hỏi là công cụ bypass (vượt mặt) hàng rào phòng thủ của Ego.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">04. Khung PLAN: (N) - Next Steps</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Chiến lược Hậu trạm</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Mọi cuộc đối thoại tối tăm phải kết thúc bằng một thỏa thuận hành động tiếp theo, dù nhỏ nhất.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Dịch chuyển trạng thái từ Đối kháng (Adversarial) sang Hợp tác (Cooperative). Việc xác lập "Next step" ép hệ thống thần kinh của cả hai tạo ra một cam kết tương lai, giảm thiểu rủi ro bùng nổ xung đột lặp lại (Ruminating).</p>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">05. Rủi ro Hệ thống</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Bẫy Dán nhãn (Labeling Trap)</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Việc gọi ai đó là "Kẻ ái kỷ" (Narcissist) triệt tiêu cơ hội hiểu đúng về bản chất vấn đề.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Khi ta dán nhãn, <b class="text-zinc-200">Default Mode Network (DMN)</b> trong não được kích hoạt sự <b class="text-zinc-200">Thiên kiến Xác nhận (Confirmation bias)</b>. Đây là "cú lừa phá vỡ giả" của tâm lý: Ta gán lỗi cho họ để hợp thức hóa sự yếu kém trong giao tiếp của chính mình, chấm dứt toàn bộ sự tò mò (curiosity).</p>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">06. Phân tích Dữ liệu phi ngôn ngữ</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Biến số Body Language</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Khoanh tay không có nghĩa là nói dối. Nó chỉ báo hiệu một sự thay đổi trạng thái tại khoảnh khắc đó.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Dựa trên cơ chế <b class="text-zinc-200">Phản ứng Cân bằng nội môi (Homeostasis)</b>: Khi câu hỏi tạo ra sự khó chịu tâm lý (Amydgala kích hoạt), cơ thể tự tạo ra rào chắn vật lý (khoanh tay) để tìm lại sự an toàn. Nó là la bàn chỉ ra vùng "cảm xúc cao", không phải máy phát hiện nói dối.</p>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">07. Động lực học Tương tác</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Thuyết phục vs. Thao túng</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Thuyết phục là điều hướng cùng có lợi. Thao túng là điều hướng bằng lời nói dối vì tư lợi cá nhân.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Giải mã qua <b class="text-zinc-200">Tính Kinh tế của Sự chân thật</b>: Lời nói dối yêu cầu chi phí bảo trì nhận thức khổng lồ. Việc duy trì sự chân thật tuyệt đối giúp giải phóng tài nguyên não bộ và kích hoạt hiệu ứng <b class="text-zinc-200">Halo Effect</b> (Hiệu ứng hào quang) từ gốc, xây dựng niềm tin hệ thống vững chắc.</p>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">08. Điểm mù Cấu trúc</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Hội chứng "Cái rốn vũ trụ"</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Đánh giá mọi sự kiện, hành động của người khác thông qua trải nghiệm và bộ lọc của chính mình.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Giải mã bằng <b class="text-zinc-200">Mã hóa Ký ức Chủ quan (Memory Encoding)</b>: Hai người trong cùng một căn phòng (ví dụ lúc cha mất) sẽ mã hóa không gian hoàn toàn khác nhau. Nếu thất bại trong việc ngoại suy góc nhìn (Outward reflection) mà chỉ nội suy (Self-reflection), liên kết xã hội sẽ sụp đổ.</p>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">09. Lãnh đạo Cấp bách</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Quyết định trong vùng Mù</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Lãnh đạo thực sự là khả năng giữ bình tĩnh và ra quyết định dù dữ liệu không chắc chắn (low certainty).</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Sự mơ hồ (Ambiguity) rút cạn tài nguyên não bộ và sinh ra hội chứng <b class="text-zinc-200">Tê liệt Phân tích (Analysis Paralysis)</b>. Việc từ chối chọn lựa đôi khi rủi ro hơn chọn sai. Việc "Own the decision" (Chịu trách nhiệm quyết định) là điểm neo chặn đứng vòng lặp hoảng loạn của hệ thần kinh.</p>
+                    </div>
+                </div>
+
+                <!-- Card 10 -->
+                <div class="glass-card p-6">
+                    <div class="tag mb-2">10. Tối ưu Hệ thống</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Triệt tiêu trước khi Thu nạp</h3>
+                    <div class="mb-3">
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded font-mono">Logic cốt lõi</span>
+                        <p class="text-sm text-zinc-300 mt-2">Ngừng: Cố gắng tỏ ra mình đúng, Nói "Tôi hiểu", và Cho lời khuyên không được yêu cầu.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded font-mono">Lý giải chuyên sâu</span>
+                        <p class="text-sm text-zinc-400 mt-2">Câu "Tôi hiểu cảm giác của bạn" là một phản ứng tự luyến ngầm, hạ thấp thực tại độc bản của đối tác. Đưa lời khuyên khi họ chỉ cần sự đồng hành (Sit in the mud) là vi phạm giao thức điều hòa hệ thần kinh giao cảm của người đối diện.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Executable Functions -->
+        <section class="mb-24">
+            <div class="flex items-center gap-4 mb-12">
+                <div class="shape-mini logic"></div>
+                <div>
+                    <h2 class="text-3xl font-bold">[Executable Functions] Hàm Thực Thi</h2>
+                    <p class="text-zinc-400">Các Workflow và tham số kỹ thuật áp dụng ngay lập tức.</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 border-l-4 border-l-emerald-500">
+                <ul class="space-y-6">
+                    <li class="flex items-start gap-4">
+                        <div class="mt-1 bg-emerald-500/20 text-emerald-400 p-2 rounded">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-white">Workflow Đảo ngược Tấn công (Reverse Insulation)</h4>
+                            <p class="text-zinc-400 mt-1">Khi bị mạt sát vô cớ, không tấn công ngược. Yêu cầu định lượng cụ thể lời lăng mạ.<br>
+                            <span class="text-zinc-200 bg-zinc-800 px-2 py-1 rounded mt-2 inline-block font-mono text-sm border border-zinc-700">Hàm thực thi: "Bạn vừa gọi tôi là [Từ xúc phạm]. Bạn có thể giải thích cụ thể lý do dựa trên hành động nào của tôi không?"</span></p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="mt-1 bg-emerald-500/20 text-emerald-400 p-2 rounded">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-white">Tham số "It seems like..." (Phản chiếu trạng thái)</h4>
+                            <p class="text-zinc-400 mt-1">Tuyệt đối không dùng "Tôi nghĩ..." (I think...) vì nó mang tính phòng thủ bản ngã. Chuyển sang định dạng trung lập khi bắt mạch Body Language.<br>
+                            <span class="text-zinc-200 bg-zinc-800 px-2 py-1 rounded mt-2 inline-block font-mono text-sm border border-zinc-700">Hàm thực thi: "Có vẻ như khi tôi đề cập đến X, bạn khoanh tay và đảo mắt. Tôi nhận định thế có đúng không?"</span></p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="mt-1 bg-emerald-500/20 text-emerald-400 p-2 rounded">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-white">Thuật toán Rapport Bền vững (Deep Connection)</h4>
+                            <p class="text-zinc-400 mt-1">Rapport (Sự đồng điệu) không phải là khen ngợi sáo rỗng. Nó là quá trình đo lường giá trị cốt lõi.<br>
+                            <span class="text-emerald-300 text-sm mt-1 block">Công thức: Đọc vị cảm xúc (Read the room) + Hạ cái tôi (Suspend ego) + Thực thi cam kết tương lai (Reciprocity).</span></p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="mt-1 bg-emerald-500/20 text-emerald-400 p-2 rounded">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-white">Giao thức "Ngồi Trong Bùn" (Sitting in the mud)</h4>
+                            <p class="text-zinc-400 mt-1">Khi bạn đời/đối tác bộc lộ điểm yếu hoặc sự tức giận, vô hiệu hóa hoàn toàn công cụ "Giải quyết vấn đề".<br>
+                            <span class="text-zinc-200 bg-zinc-800 px-2 py-1 rounded mt-2 inline-block font-mono text-sm border border-zinc-700">Hàm thực thi: Chỉ cung cấp giải pháp (Toolbox) KHI VÀ CHỈ KHI họ đặt tham số: "Theo anh/em thì nên làm thế nào?"</span></p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 4: Discipline Dashboard -->
+        <section class="mb-24">
+            <div class="flex items-center gap-4 mb-12">
+                <div class="shape-mini danger"></div>
+                <div>
+                    <h2 class="text-3xl font-bold">[Discipline Dashboard] Bảng Điều Khiển Kỷ Luật</h2>
+                    <p class="text-zinc-400">Ràng buộc Odysseus (Hard-stops) để chặn đứng hành vi chệch hướng.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- System Traps -->
+                <div class="glass-card p-8 border-t-4 border-t-orange-500">
+                    <h3 class="text-xl font-bold mb-6 text-orange-400 flex items-center gap-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        Nhận Diện Bẫy Hệ Thống
+                    </h3>
+                    <ul class="space-y-4 text-zinc-300">
+                        <li class="border-b border-zinc-800 pb-4">
+                            <strong class="text-white block">1. Cú lừa Amygdala Hijack (Bẫy Leo Thang):</strong>
+                            Hạch hạnh nhân (Amygdala) bắt sóng sự thù địch của đối phương và đồng bộ hóa nó. Rơi vào bẫy phân định "Ai là kẻ khốn nạn hơn trong phòng".
+                        </li>
+                        <li class="border-b border-zinc-800 pb-4">
+                            <strong class="text-white block">2. Điểm mù "Empathy Accuracy":</strong>
+                            Cái tôi sinh ra ảo giác kiểm soát rằng mình thấu hiểu đối tác 100%, dẫn đến ngắt kết nối kênh "Lắng nghe" và khởi động kênh "Phản đòn".
+                        </li>
+                        <li>
+                            <strong class="text-white block">3. Lỗ hổng Trust-Halo (Rò rỉ Niềm tin):</strong>
+                            Tin tưởng ai đó mù quáng dựa trên một ưu điểm duy nhất (Halo effect). Khi họ phản bội, hệ thống tâm lý sụp đổ diện rộng.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Odysseus Pacts -->
+                <div class="glass-card p-8 border-t-4 border-t-red-500">
+                    <h3 class="text-xl font-bold mb-6 text-red-400 flex items-center gap-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        Giao Kèo Kỷ Luật (Hard-Stops)
+                    </h3>
+                    <ul class="space-y-4 text-zinc-300 font-mono text-sm">
+                        <li class="bg-red-500/10 p-4 rounded border border-red-500/20">
+                            <strong class="text-red-300 block mb-1">Ràng buộc 01: [INITIATE PAUSE]</strong>
+                            NẾU nhịp tim tăng / NẾU bị xúc phạm trực tiếp -> Tự động KHÓA miệng trong 3 giây. Trả về câu lệnh: "Tôi đang cố hiểu lý do bạn nổi giận, hãy nói rõ hơn".
+                        </li>
+                        <li class="bg-red-500/10 p-4 rounded border border-red-500/20">
+                            <strong class="text-red-300 block mb-1">Ràng buộc 02: [MISSION LOCK]</strong>
+                            KHÔNG BAO GIỜ bước vào đối thoại nhạy cảm mà chưa gắn nhãn "Purpose" (Mục đích). Nếu đối thoại trượt khỏi Purpose, tự động dừng và EXIT.
+                        </li>
+                        <li class="bg-red-500/10 p-4 rounded border border-red-500/20">
+                            <strong class="text-red-300 block mb-1">Ràng buộc 03: [BAN "I UNDERSTAND"]</strong>
+                            XÓA vĩnh viễn cụm từ "Tôi hiểu cảm giác của bạn" khỏi từ điển giao tiếp. Thay bằng: "Nghe có vẻ chuyện này đang rất khó khăn đối với bạn."
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Micro Flashcards (25 items) -->
+        <section class="mt-32 mb-12">
+            <h2 class="text-2xl font-bold text-center mb-2">Micro Flashcards</h2>
+            <p class="text-center text-zinc-500 mb-10">25 Khái niệm nạp nhanh (Review Block)</p>
+            
+            <div class="flashcard-grid">
+                <!-- Flashcard iterations 1-25 -->
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q1</div><div class="font-bold text-sm">Khung PLAN là gì?</div><div class="text-blue-400 mt-2 text-sm">Purpose (Mục đích), Listen (Lắng nghe), Ask (Hỏi), Next steps (Bước tiếp).</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q2</div><div class="font-bold text-sm">Điều gì xảy ra khi bạn mất bình tĩnh?</div><div class="text-blue-400 mt-2 text-sm">Bạn mất quyền kiểm soát tình huống.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q3</div><div class="font-bold text-sm">Độ chính xác Thấu cảm (Empathy Accuracy) là gì?</div><div class="text-blue-400 mt-2 text-sm">Khả năng đọc đúng tâm trí người khác (Khoảng 40% với bạn đời).</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q4</div><div class="font-bold text-sm">Khi căng thẳng, Empathy Accuracy tụt xuống mức nào?</div><div class="text-blue-400 mt-2 text-sm">Tụt xuống cực thấp, khoảng 15%.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q5</div><div class="font-bold text-sm">Tại sao Dán nhãn (vd: "Ái kỷ") lại nguy hiểm?</div><div class="text-blue-400 mt-2 text-sm">Nó tạo cớ để đổ lỗi và dập tắt hoàn toàn sự tò mò tìm hiểu nguyên nhân gốc.</div></div>
+                
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q6</div><div class="font-bold text-sm">Tốc độ tư duy vs Tốc độ nói?</div><div class="text-blue-400 mt-2 text-sm">Nói: 120-150 từ/phút. Tư duy: 800-1000 từ/phút. Gây dư thừa băng thông.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q7</div><div class="font-bold text-sm">Khoanh tay trong giao tiếp nghĩa là gì?</div><div class="text-blue-400 mt-2 text-sm">Chỉ là sự thay đổi trạng thái (state change), không chắc chắn là nói dối.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q8</div><div class="font-bold text-sm">Cách đúng để chỉ ra ngôn ngữ cơ thể xấu?</div><div class="text-blue-400 mt-2 text-sm">Dùng "Có vẻ như..." (It seems like...) thay vì "Tôi nghĩ..."</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q9</div><div class="font-bold text-sm">Thuyết phục khác Thao túng ở điểm cốt tử nào?</div><div class="text-blue-400 mt-2 text-sm">Thuyết phục là lợi ích đôi bên. Thao túng dựa trên dối trá để tư lợi.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q10</div><div class="font-bold text-sm">Thuyết Đa Mục Tiêu (Multiple Goals) gồm gì?</div><div class="text-blue-400 mt-2 text-sm">Nhiệm vụ, Bản ngã (Identity), và Mối quan hệ.</div></div>
+
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q11</div><div class="font-bold text-sm">Hội chứng "Me Me" (Cái rốn vũ trụ)?</div><div class="text-blue-400 mt-2 text-sm">Lọc mọi trải nghiệm ngoại cảnh qua bản ngã và cái tôi của chính mình.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q12</div><div class="font-bold text-sm">Vì sao cấm kỵ nói câu "Tôi hiểu"?</div><div class="text-blue-400 mt-2 text-sm">Vì thực chất bạn không bao giờ sao chép được Headspace (tâm trí) người khác.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q13</div><div class="font-bold text-sm">Giao thức "Ngồi trong bùn" là làm gì?</div><div class="text-blue-400 mt-2 text-sm">Chỉ lắng nghe sự tức giận/buồn bã của họ, tuyệt đối không đưa giải pháp sửa chữa.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q14</div><div class="font-bold text-sm">Cách hack sự mạt sát của đối phương?</div><div class="text-blue-400 mt-2 text-sm">Bình tĩnh ép họ giải thích rành mạch ý nghĩa từ ngữ lăng mạ họ vừa dùng.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q15</div><div class="font-bold text-sm">Định nghĩa lãnh đạo trong khủng hoảng?</div><div class="text-blue-400 mt-2 text-sm">Sự điềm tĩnh (Calm) đối mặt với Hỗn mang (Chaos).</div></div>
+
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q16</div><div class="font-bold text-sm">Mơ hồ (Ambiguity) gây tác hại gì lên não?</div><div class="text-blue-400 mt-2 text-sm">Rút kiệt Băng thông nhận thức dẫn đến Tê liệt hành động.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q17</div><div class="font-bold text-sm">Rapport (Đồng điệu) sâu sắc sinh ra từ đâu?</div><div class="text-blue-400 mt-2 text-sm">Làm họ cảm thấy "Được thấy", "Được nghe", "Được hiểu" + Sự đáp đền.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q18</div><div class="font-bold text-sm">Rapport có phải là bắt chuyện làm quà?</div><div class="text-blue-400 mt-2 text-sm">Không, đó là việc thấu hiểu Hệ giá trị và Hiện diện cùng họ.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q19</div><div class="font-bold text-sm">Vòng tròn tin tưởng trung tâm là ai?</div><div class="text-blue-400 mt-2 text-sm">Là TỰ TIN TƯỞNG chính bản thân mình (Self-trust) trước nhất.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q20</div><div class="font-bold text-sm">Ức chế nhận thức (Cognitive inhibition) là gì?</div><div class="text-blue-400 mt-2 text-sm">Sự giới hạn dòng suy nghĩ miên man nội tại để tập trung nghe đối phương 100%.</div></div>
+
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q21</div><div class="font-bold text-sm">Khi Bản ngã (Ego) bị đe dọa, điều gì tắt?</div><div class="text-blue-400 mt-2 text-sm">Đôi tai (Khả năng Lắng nghe) sẽ tự động offline.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q22</div><div class="font-bold text-sm">3 điều cấm kỵ (Extinction) cần loại bỏ?</div><div class="text-blue-400 mt-2 text-sm">Cố chứng minh mình đúng; Nói "Tôi hiểu"; Cho lời khuyên không được yêu cầu.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q23</div><div class="font-bold text-sm">Tại sao cấm đưa lời khuyên vô cớ?</div><div class="text-blue-400 mt-2 text-sm">Vì hầu hết mọi người chỉ cần một Sounding board (tấm ván dội âm/người lắng nghe).</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q24</div><div class="font-bold text-sm">Công thức tái thiết lập niềm tin vỡ nát?</div><div class="text-blue-400 mt-2 text-sm">Chịu trách nhiệm hoàn toàn + Thời gian + Sự nhất quán tuyệt đối.</div></div>
+                <div class="flashcard"><div class="text-zinc-500 text-xs mb-1">Q25</div><div class="font-bold text-sm">Thuốc giải cho sự mơ hồ của Lãnh đạo?</div><div class="text-blue-400 mt-2 text-sm">Ra quyết định bằng dữ liệu hiện tại và hoàn toàn CHỊU TRÁCH NHIỆM về nó (Own it).</div></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer 128px -->
+    <footer class="px-6 relative z-10 w-full font-mono text-sm">
+        <div class="max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center justify-between h-full py-4 gap-4">
+            <div class="text-zinc-400 max-w-lg text-center md:text-left text-xs leading-relaxed">
+                <span class="text-white font-bold block mb-1">Cập nhật kiến thức thực chiến nhất:</span>
+                Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+            </div>
+            
+            <div class="flex gap-4 items-center">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="text-zinc-400 hover:text-red-500 transition-colors flex items-center gap-2 group">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582 6.186a2.665 2.665 0 00-1.88-1.884C17.95 3.846 12 3.846 12 3.846s-5.95 0-7.702.456a2.665 2.665 0 00-1.88 1.884C1.962 7.948 1.962 12 1.962 12s0 4.052.456 5.814a2.665 2.665 0 001.88 1.884c1.752.456 7.702.456 7.702.456s5.95 0 7.702-.456a2.665 2.665 0 001.88-1.884c.456-1.762.456-5.814.456-5.814s0-4.052-.456-5.814zm-11.75 8.65V9.164L15.342 12l-5.51 2.836z"/></svg>
+                    <span class="hidden md:inline-block text-xs group-hover:text-white">Youtube</span>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 group">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91.04.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v7.2c0 1.63-.51 3.25-1.49 4.54-1.07 1.4-2.67 2.27-4.39 2.56-1.57.26-3.21.13-4.69-.47-1.35-.55-2.48-1.53-3.26-2.73-1.01-1.54-1.35-3.48-1.02-5.26.29-1.57 1.11-2.99 2.32-4.01 1.25-1.04 2.91-1.55 4.56-1.47v4.11c-.55-.02-1.11.08-1.61.35-.44.24-.8.61-1.02 1.05-.2.39-.27.83-.22 1.26.06.49.26.96.6 1.3.36.36.87.56 1.38.56.6-.01 1.18-.28 1.58-.7.36-.38.57-.88.6-1.41V.02h4.08z"/></svg>
+                    <span class="hidden md:inline-block text-xs group-hover:text-white">TikTok</span>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="text-zinc-400 hover:text-blue-600 transition-colors flex items-center gap-2 group">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    <span class="hidden md:inline-block text-xs group-hover:text-white">Facebook</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
