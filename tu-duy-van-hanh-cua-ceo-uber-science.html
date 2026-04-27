@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến Trúc Thông Tin: Tư Duy Vận Hành Của CEO Uber</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FAFAFC;
+            --surface-color: #FFFFFF;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --text-tertiary: #888888;
+            --accent-color: #000000;
+            --border-color: #EAEAEA;
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --spacing-sm: 16px;
+            --spacing-md: 32px;
+            --spacing-lg: 64px;
+            --spacing-xl: 120px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* Typography Hierarchy */
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: var(--spacing-md); }
+        h2 { font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 600; letter-spacing: -0.02em; margin-bottom: var(--spacing-md); border-bottom: 2px solid var(--accent-color); padding-bottom: 8px; display: inline-block;}
+        h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; }
+        p { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: var(--spacing-sm); }
+        .mono { font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.05em; }
+
+        section { padding: var(--spacing-xl) 0; }
+
+        /* Abstract Art CSS */
+        .art-container {
+            width: 100%;
+            height: 180px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .art-thesis {
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, #f0f0f0 10px, #f0f0f0 11px);
+        }
+        .art-thesis::after {
+            content: ''; width: 100px; height: 100px; background: var(--accent-color); border-radius: 50%;
+            position: absolute; mix-blend-mode: multiply;
+        }
+
+        .art-mindmap {
+            background-image: radial-gradient(#d0d0d0 2px, transparent 2px);
+            background-size: 20px 20px;
+        }
+        .art-mindmap::before {
+            content: ''; width: 60%; height: 2px; background: var(--accent-color); position: absolute; transform: rotate(-15deg);
+        }
+        .art-mindmap::after {
+            content: ''; width: 40px; height: 40px; border: 4px solid var(--accent-color); position: absolute; right: 20%;
+        }
+
+        .art-workflow {
+            background: var(--surface-color);
+        }
+        .art-workflow::before {
+            content: ''; width: 200px; height: 100px; border-left: 2px solid var(--accent-color); border-bottom: 2px solid var(--accent-color); position: absolute; left: 10%; bottom: 20%;
+        }
+        .art-workflow::after {
+            content: ''; width: 100px; height: 50px; border-left: 2px dashed #999; border-bottom: 2px dashed #999; position: absolute; left: 40%; bottom: 50%;
+        }
+
+        .art-discipline {
+            background: linear-gradient(90deg, #eaeaea 50%, #ffffff 50%);
+        }
+        .art-discipline::after {
+            content: ''; width: 80px; height: 80px; background: var(--accent-color); transform: rotate(45deg);
+        }
+
+        /* 1. Thesis */
+        .thesis-block {
+            font-size: 1.5rem;
+            font-weight: 300;
+            line-height: 1.5;
+            color: var(--accent-color);
+            border-left: 4px solid var(--accent-color);
+            padding-left: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        /* 2. Mindmap Grid */
+        .grid-10 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-md);
+        }
+        .card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+            transition: transform 0.2s ease;
+        }
+        .card:hover { transform: translateY(-4px); }
+        .card-number {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+            display: block;
+        }
+        .logic { font-weight: 600; margin-bottom: 12px; color: var(--accent-color);}
+        .explanation { font-size: 0.95rem; color: var(--text-secondary); border-top: 1px dashed var(--border-color); padding-top: 12px;}
+
+        /* 3. Executable Functions */
+        .workflow-list {
+            list-style: none;
+        }
+        .workflow-item {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .workflow-icon {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            min-width: 40px;
+        }
+        .workflow-content p { font-size: 1rem; }
+
+        /* 4. Discipline Dashboard */
+        .discipline-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+        .danger-box { border: 1px solid #ffcccc; background: #fff5f5; padding: var(--spacing-md); }
+        .safe-box { border: 1px solid var(--accent-color); background: var(--surface-color); padding: var(--spacing-md); }
+        @media (max-width: 768px) { .discipline-grid { grid-template-columns: 1fr; } }
+
+        /* Flashcards */
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .fc-item {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .fc-q {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .fc-a {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            font-family: var(--font-mono);
+            background: var(--bg-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        footer {
+            height: 128px;
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 0 var(--spacing-md);
+            text-align: center;
+        }
+        .footer-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+        }
+        .social-links {
+            display: flex;
+            gap: 24px;
+        }
+        .social-links a {
+            color: var(--text-primary);
+            transition: opacity 0.2s;
+        }
+        .social-links a:hover { opacity: 0.6; }
+        .social-links svg { width: 24px; height: 24px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- HEADER -->
+        <section>
+            <p class="mono">SYSTEM ARCHITECTURE / MODULE 01</p>
+            <h1>Tư Duy Vận Hành<br>Của CEO Uber</h1>
+            <div class="art-container art-thesis"></div>
+            
+            <h2>[Thesis] Luận điểm cốt lõi</h2>
+            <div class="thesis-block">
+                Sự tăng trưởng hàm mũ (Exponential Growth) trong kỷ nguyên công nghệ đòi hỏi một cỗ máy tổ chức được dẫn dắt bởi sự minh bạch tàn nhẫn, khả năng chấp nhận thất bại tốc độ cao và "kỹ năng làm việc chăm chỉ" như một công cụ thiết lập lại hệ thần kinh để chống lại sự thỏa hiệp.
+            </div>
+        </section>
+
+        <!-- MINDMAP -->
+        <section>
+            <h2>[Mindmap] 10 Danh mục Cốt lõi</h2>
+            <div class="art-container art-mindmap"></div>
+            <div class="grid-10">
+                <div class="card">
+                    <span class="card-number">CAT_01</span>
+                    <div class="logic">Kỹ Năng Làm Việc Chăm Chỉ (Hard Work as a Skill)</div>
+                    <div class="explanation"><strong>Lý giải Thần kinh học:</strong> Chăm chỉ không phải bẩm sinh. Nó là quá trình liên tục kích hoạt bao myelin quanh tế bào thần kinh thông qua việc cưỡng ép bản thân chống lại bản năng "tiết kiệm năng lượng" của não bộ (Default Mode Network).</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_02</span>
+                    <div class="logic">Động Lực Tái Thiết Từ Sự Mất Mát</div>
+                    <div class="explanation"><strong>Lý giải Tiến hóa:</strong> Trải nghiệm mất mát nền tảng (Trauma) kích hoạt Hạch hạnh nhân (Amygdala) ghim chặt nỗi sợ. Điều này tạo ra một vòng lặp động lực sinh tồn mãnh liệt, ép cá thể liên tục xây dựng sự an toàn để ngăn chặn nguy cơ bị tước đoạt lần nữa.</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_03</span>
+                    <div class="logic">Công Ty Là Một Cỗ Máy (Company as a Machine)</div>
+                    <div class="explanation"><strong>Lý giải Hệ thống:</strong> CEO là kỹ sư thiết kế bộ máy. Thuật toán cốt lõi: Tự động hóa các vòng lặp biến thiên dự đoán được, và điều phối con người vào các khu vực đòi hỏi xử lý ngoại lệ (exceptions) phi tuyến tính.</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_04</span>
+                    <div class="logic">Đặt Cược Vào Vốn Con Người (Character Betting)</div>
+                    <div class="explanation"><strong>Lý giải Dòng tiền & Thanh khoản:</strong> Các mô hình kinh doanh có tính chu kỳ và dòng tiền hữu hạn. Nhưng năng lực và nhân cách của con người là "tài sản" có tính thanh khoản cao nhất, mang lại lãi kép (compound interest) bất chấp biến động vĩ mô.</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_05</span>
+                    <div class="logic">Đường Cong Hàm Mũ & Nghịch lý Jevons</div>
+                    <div class="explanation"><strong>Lý giải Thuật toán thị trường:</strong> Con người ước tính tương lai theo đường thẳng (tuyến tính). Nhưng khi công nghệ loại bỏ ma sát (như Uber làm giảm giá đi lại), nhu cầu thị trường không tăng cộng dồn, mà bùng nổ theo cấp số nhân (Nghịch lý Jevons).</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_06</span>
+                    <div class="logic">Văn Hóa Chấp Nhận Sự Thật Phũ Phàng</div>
+                    <div class="explanation"><strong>Lý giải Lý thuyết Trò chơi:</strong> Nếu CEO lọc thông tin tốt đẹp, nhân viên cũng sẽ báo cáo tốt đẹp. Sự minh bạch tuyệt đối phá vỡ "Cân bằng Nash" độc hại này, bắt buộc luồng dữ liệu thô (Raw Data) phải chảy trực tiếp từ đáy lên đỉnh.</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_07</span>
+                    <div class="logic">Thất Bại Vận Tốc Cao (High-Velocity Ls)</div>
+                    <div class="explanation"><strong>Lý giải Cơ chế AI Learning:</strong> Không sợ mất mát, chỉ sợ mất mạng. Thất bại nhanh cung cấp Data Points để màng lọc nhận thức của tổ chức cập nhật lại trọng số (Weights update) nhanh hơn đối thủ. Tốc độ sửa sai quyết định sự sống còn.</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_08</span>
+                    <div class="logic">Vượt Qua Chênh Lệch Nhận Thức Quyền Lực</div>
+                    <div class="explanation"><strong>Lý giải Tâm lý Đám đông:</strong> Chức danh tạo ra "nhiễu tín hiệu" (Noise). Cách duy nhất để lấy tín hiệu thực là CEO phải tạo ra các kênh giao tiếp Random (ngẫu nhiên) xuống tận tầng kỹ sư dưới cùng - những người miễn nhiễm với uy quyền.</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_09</span>
+                    <div class="logic">Liên Tục Cải Tiến (Relentless Optimization)</div>
+                    <div class="explanation"><strong>Lý giải Động học hệ thống:</strong> Một tổ chức không được nghỉ ngơi. Mọi module (thanh toán, app, vận hành) phải chạy vòng lặp tối ưu 1% mỗi ngày. Đứng yên đồng nghĩa với entropy (sự hỗn loạn) tăng lên dẫn đến suy tàn.</div>
+                </div>
+                <div class="card">
+                    <span class="card-number">CAT_10</span>
+                    <div class="logic">Sự Định Hình Của Trí Tuệ Nhân Tạo</div>
+                    <div class="explanation"><strong>Lý giải Logic Thuật toán AI:</strong> AI sẽ thay thế 70-80% việc làm. Điểm nghẽn hiện tại của LLM là độ trễ giữa quá trình Pre-training và môi trường thực. Khi AI đạt ngưỡng Real-time Learning, điểm kỳ dị (Singularity) thị trường lao động sẽ xảy ra.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXECUTABLE FUNCTIONS -->
+        <section>
+            <h2>[Executable Functions] Hàm thực thi</h2>
+            <div class="art-container art-workflow"></div>
+            <ul class="workflow-list">
+                <li class="workflow-item">
+                    <div class="workflow-icon">ƒ(1)</div>
+                    <div class="workflow-content">
+                        <h3>Workflow Xóa Nhiễu (Bypass Hierarchical Filter)</h3>
+                        <p class="mono">Params: Tần suất = 1 lần/tuần | Đối tượng = Kỹ sư/Staff cấp thấp</p>
+                        <p>Thiết lập các cuộc gọi/gặp mặt ngẫu nhiên với cấp dưới cùng. Đặt câu hỏi thô: "Hệ thống đang thối nát ở đâu?". Vô hiệu hóa lớp màng lọc làm đẹp báo cáo của Quản lý cấp trung.</p>
+                    </div>
+                </li>
+                <li class="workflow-item">
+                    <div class="workflow-icon">ƒ(2)</div>
+                    <div class="workflow-content">
+                        <h3>Công thức Xử lý Thất bại (The L-Processor)</h3>
+                        <p class="mono">Algorithm: [Recognize] -> [State It] -> [Extract Data] -> [Execute "Next"]</p>
+                        <p>Tuyệt đối không chôn vùi thất bại, cũng không mổ xẻ ám ảnh về nó. Xác nhận trận thua, công bố rõ ràng "Chúng ta thua", trích xuất bài học kỹ thuật, và nạp ngay dự án "NEXT" để triệt tiêu hội chứng tổn thương tâm lý tập thể.</p>
+                    </div>
+                </li>
+                <li class="workflow-item">
+                    <div class="workflow-icon">ƒ(3)</div>
+                    <div class="workflow-content">
+                        <h3>Thuật toán "Shots on Goal" (Tối đa hóa xác suất)</h3>
+                        <p class="mono">Logic: Probability = Velocity × Attempts</p>
+                        <p>Sử dụng sự chăm chỉ để thao túng thời gian. Nếu đối thủ bắn 1 mũi tên mất 1 ngày, bạn dùng nỗ lực để bắn 2 mũi tên/ngày. Không chỉ thu về dữ liệu phản hồi gấp đôi, mà còn đẩy xác suất trúng đích lên hàm mũ.</p>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- DISCIPLINE DASHBOARD -->
+        <section>
+            <h2>[Discipline Dashboard] Bảng Kỷ Luật & Ràng Buộc</h2>
+            <div class="art-container art-discipline"></div>
+            <div class="discipline-grid">
+                <div class="danger-box">
+                    <h3>⚠️ Nhận diện Bẫy hệ thống (System Traps)</h3>
+                    <p><strong>1. Bẫy Default Mode Network (DMN):</strong> Cơ chế não bộ tự động ngủ đông sau chiến thắng (Ví dụ Expedia cũ). Dẫn tới văn hóa "Coasting" (lướt sóng êm đềm), từ chối tái đầu tư cốt lõi mã nguồn.</p>
+                    <p><strong>2. Rủi ro Ảo giác Tuyến Tính:</strong> Đánh giá một mô hình mới (như Online Travel, Uber) dựa trên quy mô thị trường hiện tại. Không tính đến biến số giảm ma sát sẽ làm mở rộng kích thước thị trường theo hàm mũ.</p>
+                    <p><strong>3. Vỏ bọc Giá trị ảo (Weaponized Values):</strong> Dùng văn hóa "nói thẳng" (Toe-stepping) để biện minh cho hành vi công kích cá nhân, thay vì vì mục đích chung của hệ thống.</p>
+                </div>
+                <div class="safe-box">
+                    <h3>🛡️ Giao kèo Kỷ luật (Odysseus Pacts)</h3>
+                    <p><strong>1. Hard-stop Bảo vệ Vùng sinh thái:</strong> Cài đặt khung giờ cấm xâm phạm (Block-out zone) từ 18:00 - 20:00 hàng ngày dành tuyệt đối cho gia đình. Ràng buộc bù trừ: Chấp nhận xử lý emails cực độ vào 5:30 AM và 21:30 PM.</p>
+                    <p><strong>2. Kỷ luật "Do The Right Thing. Period.":</strong> Khi có xung đột giữa KPI và hệ lụy đạo đức/an toàn, rule này là nút dừng khẩn cấp (Kill-switch) tự động vô hiệu hóa KPI. Nhân sự có quyền ra quyết định không cần xin phép.</p>
+                    <p><strong>3. Ràng buộc Lộ trình Nghề nghiệp (Anti-Blinders):</strong> Cấm nhân sự vẽ lộ trình thăng tiến quá cứng nhắc. Mở rào chắn nhận thức (Blinders) để hệ thống tự do tiếp nhận nhiễu và tìm kiếm tín hiệu chuyển dịch mới từ thực tế.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FLASHCARDS -->
+        <section>
+            <h2>[Flashcards] 25 Vòng lặp Ôn tập Nhanh</h2>
+            <div class="flashcard-grid">
+                <!-- 1 to 25 -->
+                <div class="fc-item"><div class="fc-q">01. Kỹ năng quan trọng nhất trong cuộc sống?</div><div class="fc-a">Làm việc chăm chỉ (Là kỹ năng học được, không phải bẩm sinh).</div></div>
+                <div class="fc-item"><div class="fc-q">02. Yếu tố cốt lõi phân biệt VĐV ưu tú và người thường?</div><div class="fc-a">Mức độ kỷ luật và sự nỗ lực tột cùng, không chỉ là tài năng.</div></div>
+                <div class="fc-item"><div class="fc-q">03. Động lực gốc của Dara khi tái thiết sự nghiệp?</div><div class="fc-a">Sự kiện mất trắng tài sản ở Iran tạo ra hội chứng không bao giờ cảm thấy an toàn.</div></div>
+                <div class="fc-item"><div class="fc-q">04. Doanh nghiệp thực chất là gì?</div><div class="fc-a">Là một cỗ máy (machine/organism) gồm các thuật toán và con người cần được tinh chỉnh liên tục.</div></div>
+                <div class="fc-item"><div class="fc-q">05. Lời khuyên đầu tư của Herbert Allen?</div><div class="fc-a">Luôn cược vào con người. Công ty có thể sụp đổ, người vĩ đại sẽ luôn xuất sắc.</div></div>
+                <div class="fc-item"><div class="fc-q">06. Cách đối mặt với thất bại theo tư duy Barry Diller?</div><div class="fc-a">Xác nhận thua nhanh, không bịa đặt lý do, và bước ngay sang dự án tiếp theo ("Next").</div></div>
+                <div class="fc-item"><div class="fc-q">07. Điểm mù khi đánh giá tốc độ phát triển công nghệ?</div><div class="fc-a">Con người tư duy tuyến tính (đường thẳng), công nghệ phát triển theo hàm mũ (khúc côn cầu).</div></div>
+                <div class="fc-item"><div class="fc-q">08. Nghịch lý Jevons ứng dụng trong Uber?</div><div class="fc-a">Khi làm dịch vụ rẻ/tiện lợi hơn, thị trường không chỉ giữ nguyên mà mở rộng vượt xa ban đầu.</div></div>
+                <div class="fc-item"><div class="fc-q">09. Yếu tố phần cứng/hạ tầng định hình Uber?</div><div class="fc-a">Sự hội tụ của Mobile data và sự xuất hiện của iPhone.</div></div>
+                <div class="fc-item"><div class="fc-q">10. Sai lầm lớn nhất của CEO dẫn đến sụp đổ?</div><div class="fc-a">Không phải ra quyết định sai, mà là nhận được dữ liệu (data) sai từ cấp dưới.</div></div>
+                <div class="fc-item"><div class="fc-q">11. Cách CEO lấy sự thật từ bộ máy?</div><div class="fc-a">CEO phải minh bạch trước, và lập các kênh trò chuyện ngẫu nhiên với nhân viên cấp thấp nhất.</div></div>
+                <div class="fc-item"><div class="fc-q">12. Tại sao kỹ sư phần mềm là nhóm báo cáo tốt nhất?</div><div class="fc-a">Họ tôn trọng "Code" (Sự thật) hơn là quyền lực, ít khi nịnh nọt và luôn nói thẳng rủi ro.</div></div>
+                <div class="fc-item"><div class="fc-q">13. Cạm bẫy của việc tạo "Văn hóa công ty"?</div><div class="fc-a">Các giá trị sáo rỗng bị vũ khí hóa (weaponized) để tấn công cá nhân thay vì giúp ích công việc.</div></div>
+                <div class="fc-item"><div class="fc-q">14. Giá trị cốt lõi (Value) duy nhất do chính Dara viết cho Uber?</div><div class="fc-a">"Do the right thing. Period." (Làm điều đúng đắn. Chấm hết).</div></div>
+                <div class="fc-item"><div class="fc-q">15. Ý tưởng điên rồ mang lại lợi nhuận tăng trưởng cao nhất cho Uber?</div><div class="fc-a">Tích hợp chính Taxi truyền thống vào nền tảng Uber.</div></div>
+                <div class="fc-item"><div class="fc-q">16. Tỷ lệ nhân sự bị thay thế bởi AI trong 10 năm tới theo dự đoán?</div><div class="fc-a">70-80% lực lượng lao động trí óc.</div></div>
+                <div class="fc-item"><div class="fc-q">17. Tỷ lệ kỹ sư Uber đang dùng AI để lập trình?</div><div class="fc-a">90%, với 30% là siêu người dùng tạo ra hiệu suất đột phá.</div></div>
+                <div class="fc-item"><div class="fc-q">18. Điểm yếu hiện tại của AI so với con người?</div><div class="fc-a">Chưa có khả năng "Real-time Learning" (học và thay đổi hành vi ngay lập tức trong thực tế).</div></div>
+                <div class="fc-item"><div class="fc-q">19. Uber đang quản lý bao nhiêu nhân lực linh hoạt (tài xế)?</div><div class="fc-a">Khoảng 9.4 triệu người trên toàn thế giới.</div></div>
+                <div class="fc-item"><div class="fc-q">20. Tương lai của giao thông tự lái (AV)?</div><div class="fc-a">Sẽ cứu sống hàng chục ngàn người mỗi năm vì thống kê cho thấy AV an toàn hơn tài xế người.</div></div>
+                <div class="fc-item"><div class="fc-q">21. Tại sao Trợ cấp Cơ bản Toàn cầu (UBI) khó giải quyết thất nghiệp AI?</div><div class="fc-a">Bởi vì công việc không chỉ tạo ra tiền, mà còn tạo ra "Giá trị bản thân" (Self-value).</div></div>
+                <div class="fc-item"><div class="fc-q">22. Lời khuyên của Dara cho người trẻ khi đối diện AI?</div><div class="fc-a">Đừng lên kế hoạch sự nghiệp quá chi tiết. Hãy để thế giới định hình bạn, và làm việc chăm chỉ.</div></div>
+                <div class="fc-item"><div class="fc-q">23. Mục đích của việc tăng "Shots on goal" (Cú sút)?</div><div class="fc-a">Vừa lấy thêm Data/Bài học, vừa tăng xác suất trúng đích theo hệ số nhân.</div></div>
+                <div class="fc-item"><div class="fc-q">24. Trạng thái dòng tiền của Uber trước và sau khi Dara đến?</div><div class="fc-a">Từ đốt 3 tỷ USD/năm chuyển sang tạo ra dòng tiền tự do 8.5+ tỷ USD/năm.</div></div>
+                <div class="fc-item"><div class="fc-q">25. Công việc tương lai của kỹ sư phần mềm là gì?</div><div class="fc-a">Chuyển từ viết code thủ công sang vai trò "Nhạc trưởng" điều phối các Agent AI.</div></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-text">
+            <strong>Cập nhật kiến thức thực chiến nhất</strong> về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </div>
+        <div class="social-links">
+            <!-- Youtube Icon -->
+            <a href="https://youtube.com/@vietndonline" target="_blank" aria-label="YouTube">
+                <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <!-- TikTok Icon -->
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" aria-label="TikTok">
+                <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+            </a>
+            <!-- Facebook Icon -->
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" aria-label="Facebook">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+        </div>
+    </footer>
+
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
