@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến trúc Trao đổi chất & Tối ưu Não bộ | Dr. Boz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #FAF9F6;
+            --text-main: #1A1A1A;
+            --text-muted: #5A5A5A;
+            --accent: #D4AF37;
+            --accent-dark: #B5952F;
+            --surface: #FFFFFF;
+            --border: #E5E5E5;
+            --danger: #D9381E;
+            --safe: #2E8B57;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* CSS Abstract Art Blocks */
+        .art-hero {
+            height: 200px;
+            width: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(26, 26, 26, 0.05) 0%, transparent 40%),
+                linear-gradient(135deg, transparent 40%, rgba(212, 175, 55, 0.05) 40%, rgba(212, 175, 55, 0.05) 60%, transparent 60%);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .art-hero::after {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            top: -50px;
+            right: 10%;
+            opacity: 0.2;
+        }
+
+        /* 1. Thesis Section */
+        .thesis-section {
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .thesis-tag {
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--accent-dark);
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: inline-block;
+        }
+
+        .thesis-text {
+            font-size: 2.2rem;
+            font-weight: 600;
+            max-width: 900px;
+            margin: 0 auto;
+            color: var(--text-main);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 2. Mindmap Section */
+        .section-header {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent);
+            margin-top: 12px;
+        }
+
+        .section-desc {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            max-width: 600px;
+        }
+
+        .mindmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            padding-bottom: 80px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+        }
+
+        .card-art {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(212,175,55,0.1), transparent);
+            border-radius: 0 12px 0 100px;
+            z-index: 0;
+        }
+
+        .card-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: rgba(26,26,26,0.05);
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-weight: 700;
+            line-height: 1;
+            z-index: 0;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-logic, .card-rationale {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 16px;
+        }
+
+        .card-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-dark);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* 3. Executable Functions */
+        .exec-section {
+            background-color: var(--text-main);
+            color: var(--surface);
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .exec-art {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px) 0 0 / 40px 40px,
+                linear-gradient(0deg, rgba(255,255,255,0.02) 1px, transparent 1px) 0 0 / 40px 40px;
+            pointer-events: none;
+        }
+
+        .exec-section .section-header {
+            color: var(--surface);
+        }
+        
+        .exec-section .section-desc {
+            color: #A0A0A0;
+        }
+
+        .exec-list {
+            list-style: none;
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .exec-list li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 32px;
+            font-size: 1.1rem;
+        }
+
+        .exec-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .exec-list strong {
+            color: var(--surface);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* 4. Discipline Dashboard */
+        .dashboard-section {
+            padding: 100px 0;
+            background-color: var(--bg-main);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .trap-card {
+            background: #FFF0F0;
+            border-left: 4px solid var(--danger);
+            padding: 32px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+        }
+
+        .pact-card {
+            background: #F0FFF4;
+            border-left: 4px solid var(--safe);
+            padding: 32px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        
+        .pact-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(46, 139, 87, 0.05) 10px,
+                rgba(46, 139, 87, 0.05) 20px
+            );
+        }
+
+        .dash-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .thesis-text {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Flashcard Section */
+        .flashcard-section {
+            padding: 80px 0;
+            background-color: #F5F5F5;
+            border-top: 1px solid var(--border);
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .flashcard {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .fc-question {
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .fc-answer {
+            background-color: #F9F9F9;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-left: 2px solid var(--accent);
+        }
+
+        /* Footer */
+        .site-footer {
+            height: 128px;
+            background-color: var(--text-main);
+            color: var(--surface);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 24px;
+        }
+
+        .footer-text {
+            font-size: 0.85rem;
+            color: #A0A0A0;
+            max-width: 600px;
+            margin-bottom: 16px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 24px;
+        }
+
+        .social-icons a {
+            color: var(--surface);
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-icons a:hover {
+            color: var(--accent);
+        }
+
+        .social-icons svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Abstract Art -->
+    <div class="art-hero"></div>
+
+    <!-- 1. Thesis Section -->
+    <section class="thesis-section container">
+        <span class="thesis-tag">[Thesis] Luận điểm cốt lõi</span>
+        <h1 class="thesis-text">
+            Sự suy giảm nhận thức (Dementia/Alzheimer) không phải là lão hóa tự nhiên, mà là hệ quả của bộ não bị ngập ngụa trong "rác thải" tế bào do tình trạng kháng Insulin mãn tính tước đoạt khả năng dọn dẹp; giải pháp định chuẩn là lập trình lại trao đổi chất thông qua trạng thái Ketosis.
+        </h1>
+    </section>
+
+    <!-- 2. Mindmap Section -->
+    <section id="mindmap" class="container">
+        <h2 class="section-header">Bản đồ Nhận thức Cốt lõi</h2>
+        <p class="section-desc">10 nguyên lý giải mã cơ chế vận hành của Insulin, Ketone và sự phục hồi thần kinh từ cấp độ tế bào.</p>
+        
+        <div class="mindmap-grid">
+            <!-- Card 1 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">01</div>
+                <h3 class="card-title">Bản chất của Insulin</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Insulin là hormone "cách ly" (insulate) và lưu trữ. Chức năng chính không chỉ là hạ đường huyết mà là chuyển hóa năng lượng dư thừa thành mỡ và kích thích sự phát triển (growth).</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Ràng buộc tiến hóa: Cơ thể tích trữ cho nạn đói. Tuy nhiên, khi Insulin liên tục ở mức cao (thừa mứa calo), nó sẽ khóa chặt chất béo và "che giấu" quá trình sản sinh rác thải viêm nhiễm, ngăn chặn hoàn toàn cơ chế tự thực (autophagy) để dọn dẹp tế bào chết trong não.</p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">02</div>
+                <h3 class="card-title">Nghịch lý Cạn kiệt Glycogen</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Cơ thể không thể chuyển sang đốt mỡ hoặc tạo Ketone nếu kho chứa đường (glycogen) trong gan chưa được làm trống hoàn toàn.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Cơ chế dòng năng lượng: Glycogen như đường được nén chặt dưới đáy ngăn kéo. Người kháng insulin nặng phải mất đến 2 tuần cắt giảm carb mới xài hết số đường dự trữ này. Chừng nào đường còn, Insulin vẫn cao, Ketone = 0.</p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">03</div>
+                <h3 class="card-title">Ketone - Nhiên liệu Thần kinh</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Ketone là nguồn năng lượng sạch hơn, tạo ra ít rác thải phụ phẩm hơn so với Glucose khi bị đốt cháy.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Khoa học thần kinh: Não bị kháng insulin (Type 3 Diabetes) sẽ mất khả năng tiêu thụ glucose hiệu quả. Ketone vượt qua hàng rào máu-não bằng một con đường khác, cung cấp năng lượng trực tiếp, đồng thời đóng vai trò như chất chống oxy hóa nội bào tự nhiên.</p>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">04</div>
+                <h3 class="card-title">Bẫy Nhịp sinh học (Cortisol)</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Bữa ăn tối muộn làm hỏng toàn bộ chu kỳ dọn dẹp tế bào vào ban đêm.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Hệ thống nội tiết: Ăn lúc 10h tối giữ Insulin cao suốt đêm. Khi mặt trời lên, Cortisol tiết ra báo hiệu gan bơm thêm Glucose để thức dậy. Sự kết hợp giữa Insulin chưa kịp giảm và Glucose buổi sáng tạo ra dòng xoáy viêm nhiễm phá hủy nhận thức.</p>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">05</div>
+                <h3 class="card-title">Chỉ số Dr. Boz (Định lượng rác)</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Phép toán: Lấy lượng Glucose trong máu chia cho lượng Ketone trong máu.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Chiến lược tối ưu hóa: Tỷ lệ này đo lường mức độ "rác thải" đang được tạo ra so với mức độ được dọn dẹp. Tỷ lệ > 800 nghĩa là bạn đang ngập trong viêm nhiễm. Tỷ lệ < 40 (hoặc Ketone > 0.5) chứng minh cơ thể đang ở trạng thái sửa chữa tế bào sâu.</p>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">06</div>
+                <h3 class="card-title">Hệ Vi sinh vật (Butyrate)</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Hệ vi sinh vật ruột khỏe mạnh cần Butyrate để duy trì lớp màng nhầy (slime layer), không nhất thiết phải từ chất xơ thực vật.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Giải mã sinh học: Chất xơ lên men tạo Butyrate, nhưng Ketone trong máu (Beta-hydroxybutyrate) hoặc chế độ ăn siêu béo cũng cung cấp các chuỗi carbon tương tự, giúp duy trì niêm mạc ruột và sản xuất tự nhiên hormone GLP-1 (giảm thèm ăn).</p>
+                </div>
+            </div>
+
+            <!-- Card 7 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">07</div>
+                <h3 class="card-title">Hiệu ứng Tù nhân Hormone</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Sự thiếu hụt Vitamin D và suy giảm Estrogen thường không phải do cơ thể sản xuất kém, mà do chúng bị "nhốt" trong tế bào mỡ.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Cơ chế dung môi: Vitamin D và hormone sinh dục là chất hòa tan trong chất béo. Khi Insulin cao khóa chặt mỡ lại, các hormone này không thể xâm nhập vào máu. Đưa Insulin xuống thấp sẽ mở khóa mỡ, giải phóng hàng loạt hormone phục hồi hệ thống.</p>
+                </div>
+            </div>
+
+            <!-- Card 8 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">08</div>
+                <h3 class="card-title">Độ trễ Tối ưu hóa Ti thể</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Chuyển đổi sang Keto sẽ làm giảm hiệu suất thể thao ban đầu, nhưng sẽ tạo ra sức mạnh bùng nổ sau 18 tháng.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Sự thích nghi hệ thống: Ti thể (mitochondria) trong cơ bắp cần thời gian dài để xây dựng hệ thống enzyme mới nhằm oxy hóa chất béo thay vì đốt cháy glucose nhanh. Đây là bước lùi chiến thuật để mở rộng "bình xăng" năng lượng vô hạn từ mỡ.</p>
+                </div>
+            </div>
+
+            <!-- Card 9 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">09</div>
+                <h3 class="card-title">Cú sốc Nhiệt Cá mòi</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Sử dụng một thực phẩm duy nhất (Cá mòi đóng hộp ngâm dầu) trong 72 giờ để phá vỡ sự chững lại của hệ trao đổi chất.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Tâm lý học hành vi & Hóa sinh: Cá mòi cung cấp mỡ, protein hoàn hảo và ZERO carb. Việc ăn đơn điệu loại bỏ "Sự mệt mỏi do quyết định" (Decision Fatigue), cắt đứt mối liên kết giữa dopamine và đồ ăn, ép gan phải vắt kiệt glycogen để tạo Ketone.</p>
+                </div>
+            </div>
+
+            <!-- Card 10 -->
+            <div class="card">
+                <div class="card-art"></div>
+                <div class="card-number">10</div>
+                <h3 class="card-title">Chất xúc tác Methylene Blue</h3>
+                <div class="card-logic">
+                    <span class="card-label">Logic Cốt lõi</span>
+                    <p class="card-text">Sử dụng Methylene Blue liều thấp kết hợp Creatine làm "hack" năng lượng trực tiếp cho não bộ.</p>
+                </div>
+                <div class="card-rationale">
+                    <span class="card-label">Lý giải Chuyên sâu</span>
+                    <p class="card-text">Hệ truyền điện tử: Methylene Blue hoạt động như một chất mang electron trong chuỗi hô hấp của ti thể, vượt qua rào cản máu não để tăng cường sản xuất ATP (năng lượng) tại chỗ. Kết hợp với Creatine (tái chế ATP), chúng dập tắt Brain Fog lập tức.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Executable Functions -->
+    <section id="executable" class="exec-section">
+        <div class="exec-art"></div>
+        <div class="container">
+            <h2 class="section-header">Hàm Thực Thi (Executable Workflow)</h2>
+            <p class="section-desc">Bộ quy trình và tham số kỹ thuật để kích hoạt cơ chế Ketosis thần kinh áp dụng ngay lập tức.</p>
+            
+            <ul class="exec-list">
+                <li>
+                    <strong>Giới hạn Hard-Stop Carbohydrate</strong>
+                    Cắt giảm tổng lượng Carb (Total Carbs) xuống dưới <strong>20 gram/ngày</strong>. Tuyệt đối không sử dụng "Net Carbs" (trừ đi chất xơ) vì cơ địa kháng insulin nặng vẫn sẽ bị kích hoạt đường huyết.
+                </li>
+                <li>
+                    <strong>Đo lường bằng Dữ liệu máu (Data-Driven)</strong>
+                    Sử dụng máy đo Kép (Glucose + Ketone máu). Mục tiêu: Ketone máu đạt mức <strong>>= 0.5 mmol/L</strong> đi kèm với chỉ số Glucose có hai chữ số (VD: 85 mg/dL).
+                </li>
+                <li>
+                    <strong>Quy tắc chi phí Calo theo thời gian</strong>
+                    Dịch chuyển toàn bộ khẩu phần ăn có Calo về phía sáng/trưa. Công thức quy đổi: <strong>1 miếng ăn sau 6h tối = 10 miếng ăn trước 12h trưa</strong> (Về mặt sản sinh Insulin). Đóng cửa ăn uống trước 3h-4h chiều.
+                </li>
+                <li>
+                    <strong>Giao thức "Sardine Reset" (Reset bằng Cá Mòi)</strong>
+                    Nếu cơ thể kháng insulin cứng đầu (sau 1-2 tuần không xuất hiện ketone): Ăn <strong>DUY NHẤT cá mòi ngâm dầu</strong> trong 72 giờ liên tục. Ăn no đến mức thỏa mãn, không tính calo, không tính cửa sổ nhịn ăn.
+                </li>
+                <li>
+                    <strong>Công thức Bổ sung Tối ưu Não (Brain Stack)</strong>
+                    Nạp vào buổi sáng: 1 muỗng Creatine (tái chế ATP) + Methylene Blue (tối ưu dòng điện ti thể) + Exogenous Ketones (Ketone ngoại sinh dạng nước/muối để mồi gan sản xuất thêm).
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 4. Discipline Dashboard -->
+    <section id="dashboard" class="dashboard-section container">
+        <h2 class="section-header">Bảng Điều khiển Kỷ luật & Ràng buộc</h2>
+        <p class="section-desc">Nhận diện cạm bẫy phá vỡ hệ thống và thiết lập Giao kèo Odysseus (Hard-stops) để bảo vệ cấu trúc hóa sinh của bạn.</p>
+
+        <div class="dashboard-grid">
+            <!-- System Traps -->
+            <div>
+                <h3 class="dash-title">Nhận diện Bẫy Hệ thống (Traps)</h3>
+                
+                <div class="trap-card">
+                    <h4>Bẫy Giao tiếp Xã hội ban đêm</h4>
+                    <p class="card-text" style="margin-top: 8px;">Áp lực ăn tối muộn (sau 8h tối) cùng đối tác/gia đình. Rủi ro: Bơm Insulin vào lúc cơ thể chuẩn bị sửa chữa DNA, khóa tế bào rác trong não qua đêm.</p>
+                </div>
+
+                <div class="trap-card">
+                    <h4>Bẫy Cảm giác Thèm ăn Giả (Dopamine Seeking)</h4>
+                    <p class="card-text" style="margin-top: 8px;">Não bộ bị nghiện chu kỳ Glucose-Insulin sẽ phát tín hiệu "đói" giả sau mỗi 2-3 tiếng để đòi nạp carbohydrate, nhằm xoa dịu cảm xúc (Stress/Buồn chán).</p>
+                </div>
+
+                <div class="trap-card">
+                    <h4>Ảo giác Cơ bắp (The Performance Dip)</h4>
+                    <p class="card-text" style="margin-top: 8px;">Sự hoảng loạn trong 1 tháng đầu chuyển sang Keto khi thấy sức mạnh tập luyện giảm sút, dẫn đến việc nạp lại Carb làm phá vỡ toàn bộ quá trình thích nghi của ti thể.</p>
+                </div>
+            </div>
+
+            <!-- Odysseus Pacts -->
+            <div>
+                <h3 class="dash-title">Giao kèo Kỷ luật (Odysseus Pact)</h3>
+                
+                <div class="pact-card">
+                    <h4>Hard-stop: Cửa sổ Mặt Trời</h4>
+                    <p class="card-text" style="margin-top: 8px;"><strong>Luật:</strong> Miệng đóng lại vào lúc 4:00 PM. Nếu phải dự tiệc tối, chỉ uống nước lọc. Lý do: Bảo vệ trạng thái trống Insulin khi Cortisol tăng vào sáng hôm sau.</p>
+                </div>
+
+                <div class="pact-card">
+                    <h4>Hard-stop: Nút thắt Cá Mòi</h4>
+                    <p class="card-text" style="margin-top: 8px;"><strong>Luật:</strong> Khi phát hiện bản thân đang ăn vì cảm xúc (Emotional Eating), NGAY LẬP TỨC kích hoạt 30 ngày chỉ ăn cá mòi. Cắt bỏ hoàn toàn biến số ẩm thực để chữa lành tâm lý với đồ ăn.</p>
+                </div>
+
+                <div class="pact-card">
+                    <h4>Hard-stop: Tầm nhìn 18 Tháng</h4>
+                    <p class="card-text" style="margin-top: 8px;"><strong>Luật:</strong> Chấp nhận giảm tạ, giảm tốc độ chạy trong 6 tháng đầu. Không phán xét hiệu suất cơ bắp cho đến khi đạt mốc 18 tháng thích nghi Fat-adapted hoàn toàn.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Flashcards -->
+    <section id="flashcards" class="flashcard-section">
+        <div class="container">
+            <h2 class="section-header">Flashcard Ôn Tập Nhanh (25 Câu)</h2>
+            <p class="section-desc">Củng cố rãnh thần kinh của bạn. Đọc lướt để ghi nhớ các nguyên lý hóa sinh cốt lõi.</p>
+            
+            <div class="flashcard-grid">
+                <!-- 25 Flashcards generated systematically -->
+                <div class="flashcard">
+                    <div class="fc-question">1. Kẻ thù thầm lặng gây ra bệnh mãn tính & suy giảm trí nhớ là gì?</div>
+                    <div class="fc-answer">Insulin cao mãn tính (Kháng insulin).</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">2. Chức năng thật sự của Insulin ngoài hạ đường huyết?</div>
+                    <div class="fc-answer">Vận chuyển năng lượng dư thành mỡ, cách ly mỡ và kích thích phát triển (growth).</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">3. Các dấu hiệu vật lý sớm của kháng insulin?</div>
+                    <div class="fc-answer">Mỡ bụng, mụn thịt (skin tags), gai đen (cổ/nách), rụng lông ngón chân.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">4. Tại sao não bị "sương mù" hoặc sa sút trí tuệ?</div>
+                    <div class="fc-answer">Não tích tụ "rác" tế bào mà không thể tự dọn dẹp khi insulin liên tục ở mức cao.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">5. Ketone là gì?</div>
+                    <div class="fc-answer">Nhiên liệu sạch do gan tạo ra từ chất béo khi kho dự trữ đường cạn kiệt.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">6. Ưu điểm của Ketone so với Glucose cho não?</div>
+                    <div class="fc-answer">Ít tạo rác viêm nhiễm, vượt qua hàng rào máu não dễ dàng để cấp năng lượng cho tế bào kháng insulin.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">7. Hậu quả hóa sinh của việc ăn tối muộn?</div>
+                    <div class="fc-answer">Kích thích insulin kéo dài vào ban đêm, ngăn cản cơ thể dọn dẹp rác thải khi ngủ.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">8. Quy tắc giá trị Calo theo thời gian?</div>
+                    <div class="fc-answer">1 miếng ăn sau 6h tối kích hoạt lượng insulin tương đương 10 miếng ăn trước buổi trưa.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">9. Điều kiện tiên quyết để cơ thể đốt mỡ tạo Ketone?</div>
+                    <div class="fc-answer">Kho dự trữ đường (Glycogen) trong gan phải hoàn toàn cạn kiệt.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">10. Chỉ số Dr. Boz (Boz Ratio) là gì?</div>
+                    <div class="fc-answer">Lấy chỉ số Đường huyết (Glucose) chia cho chỉ số Ketone trong máu.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">11. Chỉ số Dr. Boz cao (vd: > 800) nói lên điều gì?</div>
+                    <div class="fc-answer">Cơ thể đang ngập rác viêm nhiễm, không có quá trình dọn dẹp nào đang diễn ra.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">12. Mục tiêu bắt buộc về tổng Carb mỗi ngày?</div>
+                    <div class="fc-answer">Dưới 20 gram tổng lượng Carbohydrate (Total Carbs).</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">13. Tại sao KHÔNG dùng "Net Carbs"?</div>
+                    <div class="fc-answer">Người kháng insulin sẽ bị đánh lừa bởi chất xơ và không bao giờ giảm insulin đủ thấp.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">14. Thử thách Cá Mòi (Sardine Challenge) là gì?</div>
+                    <div class="fc-answer">Chỉ ăn cá mòi ngâm dầu trong tối thiểu 3 ngày để ép cơ thể chuyển sang trạng thái Ketosis.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">15. Tại sao cá mòi lại phá vỡ điểm chững hiệu quả?</div>
+                    <div class="fc-answer">Giàu béo, protein, 0 carb, tạo no lâu và chấm dứt chứng thèm ăn theo cảm xúc.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">16. Vi sinh vật ruột lấy Butyrate từ đâu nếu không ăn chất xơ?</div>
+                    <div class="fc-answer">Từ việc phân giải thức ăn giàu béo hoặc từ chính Ketone (Beta-hydroxybutyrate) trong máu.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">17. Tại sao người béo phì thường thiếu Vitamin D nghiêm trọng?</div>
+                    <div class="fc-answer">Insulin cao khóa chặt Vitamin D (vốn tan trong dầu) bên trong các tế bào mỡ, không cho ra máu.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">18. Chức năng của Ketone ngoại sinh (Exogenous Ketones)?</div>
+                    <div class="fc-answer">Cấp năng lượng lập tức cho não và làm mồi nhử kích thích gan tự sản xuất thêm Ketone.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">19. Tại sao phụ nữ khó vào Ketosis hơn nam giới?</div>
+                    <div class="fc-answer">Cơ chế tiến hóa: Cơ thể nữ bám giữ mỡ phòng ngừa nạn đói để bảo vệ chức năng sinh sản.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">20. Creatine có lợi ích gì cho Não bộ?</div>
+                    <div class="fc-answer">Tái tạo năng lượng ATP cho tế bào thần kinh, tăng độ tập trung tập trung (đặc biệt cho ADHD).</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">21. Cách kích thích hormone no GLP-1 tự nhiên?</div>
+                    <div class="fc-answer">Đưa cơ thể vào trạng thái sinh Ketone, mức độ Butyrate sẽ tự động ức chế thèm ăn như thuốc giảm cân.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">22. Mất bao lâu để tối ưu hoàn toàn sức mạnh cơ bắp trên Keto?</div>
+                    <div class="fc-answer">Cần từ 6 đến 18 tháng để tái cấu trúc ti thể sử dụng mỡ làm nhiên liệu sức mạnh.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">23. Vì sao nhiều người bỏ cuộc ở giai đoạn đầu?</div>
+                    <div class="fc-answer">Họ không chịu đựng được giai đoạn "chuyển giao" thiếu năng lượng khi xài cạn glycogen.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">24. Methylene Blue là hack gì cho cơ thể?</div>
+                    <div class="fc-answer">Tối ưu hóa luồng điện từ ti thể, khi dùng chung Creatine sẽ dập tắt chứng sương mù não.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="fc-question">25. Quà tặng lớn nhất của sự Kỷ luật trao đổi chất?</div>
+                    <div class="fc-answer">Giữ cho nhận thức sắc bén ở độ tuổi 70 như tuổi 40, ngăn chặn hoàn toàn Parkinson/Alzheimer.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p class="footer-text">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="social-icons">
+            <a href="https://youtube.com/@vietndonline" target="_blank" aria-label="YouTube">
+                <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" aria-label="TikTok">
+                <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" aria-label="Facebook">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+        </div>
+    </footer>
+
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
