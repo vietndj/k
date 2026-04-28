@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sự Phân Tích Kỹ Lưỡng: Khi Trạng Thái Cơ Thể Quyết Định Suy Nghĩ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* CSS Abstract Arts */
+        .art-container {
+            width: 100%;
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: #ffffff;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 1. Intro Art (Awakening/Coffee) */
+        .art-intro .shape1 {
+            width: 150px; height: 150px; background: linear-gradient(135deg, #d97706, #78350f);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morph 8s ease-in-out infinite;
+            position: absolute;
+        }
+        .art-intro .shape2 {
+            width: 200px; height: 200px; background: radial-gradient(circle, rgba(251,191,36,0.4) 0%, transparent 70%);
+            position: absolute; mix-blend-mode: multiply;
+        }
+
+        /* 2. Hangry Art */
+        .art-hangry .shape1 {
+            width: 0; height: 0; border-left: 80px solid transparent; border-right: 80px solid transparent; border-bottom: 140px solid #ef4444;
+            transform: rotate(15deg); position: absolute;
+        }
+        .art-hangry .shape2 {
+            width: 120px; height: 120px; background: #991b1b; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            position: absolute; transform: translate(-30px, 20px); opacity: 0.8;
+        }
+
+        /* 3. 2PM Slump Art */
+        .art-slump .shape1 {
+            width: 300px; height: 100px; background: linear-gradient(to right, #94a3b8, #334155);
+            border-radius: 50% / 100% 100% 0 0; position: absolute; bottom: -20px;
+        }
+        .art-slump .shape2 {
+            width: 80px; height: 80px; background: #64748b; border-radius: 50%;
+            position: absolute; top: 40px; right: 80px; filter: blur(4px);
+        }
+
+        /* 4. Sickness Art */
+        .art-sick .shape1 {
+            width: 180px; height: 140px; background: #86efac; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            position: absolute; filter: blur(8px); opacity: 0.6;
+        }
+        .art-sick .shape2 {
+            width: 100px; height: 100px; background: #166534; border-radius: 50%;
+            position: absolute; transform: scaleY(0.5);
+        }
+
+        /* 5. Posture Art */
+        .art-posture .shape1 {
+            width: 40px; height: 180px; background: #6366f1; transform: skewY(-20deg); position: absolute;
+        }
+        .art-posture .shape2 {
+            width: 80px; height: 40px; background: #312e81; position: absolute; top: 40px; left: calc(50% - 20px); transform: rotate(15deg);
+        }
+
+        /* 6. Exercise Art */
+        .art-exercise .shape1 {
+            width: 250px; height: 10px; background: #10b981; position: absolute; transform: rotate(-30deg);
+            box-shadow: 0 0 20px #34d399;
+        }
+        .art-exercise .shape2 {
+            width: 180px; height: 10px; background: #059669; position: absolute; transform: rotate(-30deg) translate(20px, 40px);
+        }
+        .art-exercise .shape3 {
+            width: 50px; height: 50px; background: #fbbf24; border-radius: 50%; position: absolute; top: 30px; right: 60px;
+        }
+
+        /* 7. Sleep Paranoia Art */
+        .art-sleep .shape1 {
+            width: 200px; height: 200px; border: 4px dashed #6b7280; border-radius: 50%; position: absolute;
+            animation: spin 10s linear infinite;
+        }
+        .art-sleep .shape2 {
+            width: 100px; height: 100px; background: repeating-linear-gradient(45deg, #111827, #111827 10px, #374151 10px, #374151 20px);
+            position: absolute;
+        }
+
+        /* 8. Temperature Art */
+        .art-cold .shape1 {
+            width: 150px; height: 150px; border: 15px solid #7dd3fc; border-radius: 50%; position: absolute; opacity: 0.5;
+        }
+        .art-cold .shape2 {
+            width: 100px; height: 100px; border: 15px solid #0284c7; border-radius: 50%; position: absolute;
+        }
+        .art-cold .shape3 {
+            width: 50px; height: 50px; background: #0c4a6e; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); position: absolute;
+        }
+
+        @keyframes morph {
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            50% { border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%; }
+            100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Custom Footer specific requirements */
+        .custom-footer {
+            height: 128px;
+            background-color: #0f172a;
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-200 selection:text-indigo-900">
+
+    <!-- Header / Hero Section -->
+    <header class="bg-white shadow-sm border-b border-gray-200 pt-16 pb-12 px-6">
+        <div class="max-w-5xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">Khi Trạng Thái Cơ Thể Đánh Lừa Tư Duy: Giải Mã Hiện Tượng Của Bạn</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Khám phá bản chất sinh học thần kinh và thuyết tiến hóa đằng sau ảo giác tâm lý, bắt nguồn từ chính trải nghiệm uống cà phê buổi chiều của bạn.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-16">
+
+        <!-- Phân tích hiện tượng của người dùng -->
+        <section class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+            <div class="art-container art-intro rounded-b-none border-b border-gray-100 bg-orange-50">
+                <div class="shape1"></div>
+                <div class="shape2"></div>
+            </div>
+            <div class="p-8 md:p-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Trải Nghiệm Của Bạn: Sự Hợp Lý Hóa Của Bộ Não</h2>
+                <div class="space-y-4 text-gray-700 leading-relaxed text-lg">
+                    <p>Trải nghiệm mà bạn vừa mô tả là một ví dụ vô cùng hoàn hảo và kinh điển trong Tâm lý học sinh lý (Physiological Psychology) và Khoa học Thần kinh (Neuroscience). Hiện tượng bạn gặp phải chính xác là <strong>minh chứng cho việc trạng thái sinh lý (cơ thể) quyết định hoàn toàn luồng suy nghĩ và nhận thức (tâm trí)</strong>, chứ không phải ngược lại như chúng ta thường lầm tưởng.</p>
+                    
+                    <p>Hãy phân tích chi tiết điều gì đã xảy ra trong cơ thể bạn:</p>
+                    <ul class="list-disc pl-6 space-y-2 mt-4">
+                        <li><strong>Giai đoạn 1: Vừa ngủ dậy (Sự ỳ giấc ngủ - Sleep Inertia).</strong> Khi bạn vừa thức dậy sau giấc ngủ trưa, não bộ của bạn vẫn còn tồn đọng Adenosine (chất gây buồn ngủ) và huyết áp có thể đang ở mức thấp. Trạng thái cơ thể lúc này là "uể oải, thiếu năng lượng". Ngay lập tức, bộ não - vốn là một cỗ máy diễn dịch - cảm nhận sự thiếu hụt năng lượng này và sinh ra một ý nghĩ để hợp lý hóa cảm giác đó: <em>"Chán nản quá, ly cà phê này chắc uống cho vui chứ chẳng có tác dụng gì đâu"</em>. Sự thật là cà phê chưa kịp uống, nhưng vì cơ thể mệt, não bạn sinh ra một niềm tin bi quan để bao biện cho sự mệt mỏi đó.</li>
+                        <li><strong>Giai đoạn 2: Nạp thức ăn nhẹ và cà phê.</strong> Bữa ăn nhẹ cung cấp một lượng Glucose vào máu, nâng mức đường huyết. Quan trọng hơn, Caffeine bắt đầu ngấm qua hàng rào máu não (blood-brain barrier). Caffeine có cấu trúc phân tử giống hệt Adenosine, nó chèn vào các thụ thể Adenosine, chặn đứng tín hiệu mệt mỏi. Đồng thời, nó kích hoạt hệ thống giải phóng Dopamine (hormone của sự hưng phấn và động lực) và Adrenaline.</li>
+                        <li><strong>Giai đoạn 3: Phép màu của Sinh lý học.</strong> Khi hóa chất trong cơ thể thay đổi, cơ thể bạn chuyển từ trạng thái "tiết kiệm năng lượng" sang trạng thái "sẵn sàng hành động". Lúc này, luồng suy nghĩ lập tức thay đổi 180 độ. Bộ não nhận được tín hiệu dồi dào năng lượng từ cơ thể, nó lại tiếp tục hợp lý hóa: <em>"Mọi thứ rõ ràng rồi, làm việc thật thích thú, những việc mình ngại trước đây giờ giải quyết được hết"</em>. </li>
+                    </ul>
+                    <p class="mt-4 font-semibold text-indigo-700">Kết luận: Bạn đã không dùng "ý chí" để vượt qua sự chán nản. Bạn đã dùng hóa chất (Caffeine, Glucose) để thay đổi cơ thể, và cơ thể đã tự động viết lại kịch bản suy nghĩ cho tâm trí của bạn.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Khái quát Khoa học & Tiến hóa -->
+        <section class="bg-indigo-50 rounded-2xl p-8 md:p-12 border border-indigo-100">
+            <h2 class="text-3xl font-bold text-indigo-900 mb-6">Góc Nhìn Khoa Học & Tiến Hóa Cốt Lõi</h2>
+            <div class="space-y-4 text-indigo-900/80 leading-relaxed text-lg">
+                <p>Theo nhà thần kinh học nổi tiếng Antonio Damasio với <strong>"Thuyết Dấu ấn Sinh học" (Somatic Marker Hypothesis)</strong>, bộ não con người không suy nghĩ trong môi trường chân không. Nó liên tục lắng nghe các tín hiệu nội tạng (nhịp tim, hơi thở, nồng độ hormone, đường huyết, trạng thái viêm) được gọi là <strong>Interoception</strong> (Nội cảm). Dựa vào các dữ liệu thô này, não mới bắt đầu "chế tạo" ra cảm xúc và suy nghĩ sao cho phù hợp với hoàn cảnh cơ thể.</p>
+                <p><strong>Về mặt Tiến hóa:</strong> Bộ não tiến hóa không phải để giúp chúng ta giải toán hay suy nghĩ triết học, mà mục đích tối thượng của nó là <strong>Allostasis (Dự đoán và quản lý ngân sách năng lượng của cơ thể)</strong> để sinh tồn. Khi cơ thể bạn thiếu hụt tài nguyên (đói, mệt, lạnh, thiếu ngủ), não sẽ coi đó là một mối đe dọa sinh tồn. Để ngăn bạn tiêu hao thêm năng lượng, nó sẽ tạo ra những suy nghĩ tiêu cực, chán nản, bi quan, phóng đại các khó khăn khiến bạn "ngại ngùng", mục đích tiến hóa là ép bạn phải ngồi im, nghỉ ngơi, bảo toàn mạng sống. Ngược lại, khi cơ thể no đủ, ấm áp, nhiều dopamine, não hiểu rằng đây là lúc an toàn để săn bắt, hái lượm, mở rộng lãnh thổ, nên nó cung cấp cho bạn sự tự tin, động lực và tư duy mạch lạc.</p>
+                <p>Hầu hết mọi người là "nô lệ" cho các dao động sinh lý này nhưng lại ảo tưởng rằng họ đang kiểm soát suy nghĩ bằng lý trí tự do. Dưới đây là 7 ví dụ thực tế điển hình nhất.</p>
+            </div>
+        </section>
+
+        <hr class="border-gray-200">
+
+        <!-- 7 Ví dụ thực tế -->
+        <div class="space-y-12">
+            <h2 class="text-4xl font-bold text-center text-gray-900">7 Ví Dụ Trong Thực Tế Mọi Người Thường Gặp</h2>
+            
+            <!-- Ví dụ 1 -->
+            <article class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 grid md:grid-cols-5">
+                <div class="md:col-span-2 art-container art-hangry rounded-none bg-red-50 h-full min-h-[250px]">
+                    <div class="shape1"></div>
+                    <div class="shape2"></div>
+                </div>
+                <div class="p-8 md:col-span-3">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">1. Hội chứng "Hangry" (Đói sinh ra cáu gắt)</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4"><strong>Thực tế:</strong> Gần đến giờ ăn trưa hoặc buổi chiều muộn, bạn đột nhiên thấy đồng nghiệp thật phiền phức, công việc thật bế tắc, hoặc bạn sẵn sàng cãi nhau với người yêu chỉ vì một câu nói đùa bình thường. Bạn tin rằng <em>"Người yêu mình hôm nay vô lý quá, công việc này thật tồi tệ"</em>.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2">
+                        <p><strong>Khoa học:</strong> Đường huyết (Glucose) giảm mạnh. Khi não thiếu nhiên liệu, nó kích hoạt tuyến thượng thận tiết ra Cortisol và Adrenaline (hormone căng thẳng) để phân giải glycogen từ gan thành đường. Hỗn hợp hormone căng thẳng này tràn ngập cơ thể, khiến não bộ tự động tắt các vùng kiểm soát xung động ở vỏ não trước trán (Prefrontal Cortex). Cơ thể đang hoảng loạn, và não bạn "diễn dịch" sự hoảng loạn đó thành sự tức giận đối với đối tượng gần nhất.</p>
+                        <p><strong>Tiến hóa:</strong> Tổ tiên chúng ta khi đói cần một lượng sự hung hăng, bứt rứt và táo bạo nhất định để có động lực liều lĩnh đi săn thú dữ hoặc tranh giành thức ăn. Sự cáu gắt khi đói là một cơ chế báo động đỏ: "Phải giành giật thức ăn ngay lập tức nếu không sẽ chết".</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Ví dụ 2 -->
+            <article class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 grid md:grid-cols-5">
+                 <div class="md:col-span-2 md:order-2 art-container art-slump rounded-none bg-slate-100 h-full min-h-[250px]">
+                    <div class="shape1"></div>
+                    <div class="shape2"></div>
+                </div>
+                <div class="p-8 md:col-span-3 md:order-1">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">2. Cuộc khủng hoảng ý nghĩa nhân sinh lúc 2 giờ chiều</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4"><strong>Thực tế:</strong> Tầm 2 giờ đến 3 giờ chiều, bạn ngồi ở bàn làm việc và đột nhiên cảm thấy trống rỗng. Bạn nhìn màn hình và nghĩ: <em>"Cuộc đời mình đang đi về đâu? Công việc này thật vô nghĩa. Mình là một kẻ thất bại"</em>. Bạn thực sự chìm đắm trong suy tư triết học bi quan và tin rằng đó là những nhận thức sâu sắc về cuộc đời.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2">
+                        <p><strong>Khoa học:</strong> Đây là sự kết hợp của hai hiện tượng sinh lý: Nhịp sinh học tuần hoàn (Circadian Rhythm) giảm xuống một cách tự nhiên vào đầu giờ chiều, cùng với chứng buồn ngủ sau khi ăn (Post-prandial somnolence) do hệ phó giao cảm đưa máu về dạ dày để tiêu hóa thức ăn. Nhiệt độ cơ thể giảm nhẹ. Cảm giác "nặng nề" về mặt vật lý bị não bộ đọc nhầm thành sự "nặng nề" về mặt tâm lý và ý nghĩa tồn tại.</p>
+                        <p><strong>Tiến hóa:</strong> Con người tiến hóa ở vùng đồng cỏ nhiệt đới châu Phi. Đầu giờ chiều là lúc mặt trời gay gắt nhất, nhiệt độ cao nhất. Di chuyển hay đi săn lúc này rất dễ bị say nắng và mất nước. Động vật có vú tiến hóa một chu kỳ sinh học làm chùng năng lượng xuống vào buổi chiều để ép cơ thể tìm bóng râm nghỉ ngơi. Suy nghĩ bi quan của bạn thực chất chỉ là cách não nói: "Đừng làm gì cả, hãy nằm xuống".</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Ví dụ 3 -->
+            <article class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 grid md:grid-cols-5">
+                <div class="md:col-span-2 art-container art-sick rounded-none bg-green-50 h-full min-h-[250px]">
+                    <div class="shape1"></div>
+                    <div class="shape2"></div>
+                </div>
+                <div class="p-8 md:col-span-3">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">3. Cảm giác "cả thế giới quay lưng" khi bị cảm cúm ốm đau</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4"><strong>Thực tế:</strong> Khi bạn bắt đầu bị hắt hơi, sốt nhẹ hoặc viêm họng, bạn nằm trên giường và tự nhiên thấy mình thật cô độc. Bạn nhớ lại những chuyện buồn trong quá khứ, cảm thấy bạn bè không ai quan tâm mình, tương lai mù mịt. Bạn nghĩ mình đang trải qua một cơn trầm cảm nhẹ do áp lực cuộc sống.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2">
+                        <p><strong>Khoa học:</strong> Khi hệ miễn dịch phát hiện virus/vi khuẩn, nó tiết ra các protein gọi là Cytokines để tạo phản ứng viêm. Các Cytokines này đi lên não và trực tiếp thay đổi hoạt động của các chất dẫn truyền thần kinh, gây ra hiện tượng gọi là <strong>Sickness Behavior (Hành vi khi ốm)</strong>. Tình trạng sinh lý này tạo ra các triệu chứng y hệt trầm cảm lâm sàng: mất niềm vui, muốn cô lập, bi quan.</p>
+                        <p><strong>Tiến hóa:</strong> Đây là một chiến lược sinh tồn tuyệt vời. Nếu bạn bị nhiễm mầm bệnh, việc đi giao lưu cộng đồng sẽ lây bệnh cho bầy đàn. Cảm giác "muốn cô độc và bi quan" là cách tiến hóa ép bạn phải tự cách ly vào trong hang động, đồng thời dành toàn bộ năng lượng (thay vì đi chơi, săn bắt) cho hệ miễn dịch tiêu diệt virus.</p>
+                    </div>
+                </div>
+            </article>
+
+             <!-- Ví dụ 4 -->
+            <article class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 grid md:grid-cols-5">
+                <div class="md:col-span-2 md:order-2 art-container art-posture rounded-none bg-indigo-50 h-full min-h-[250px]">
+                    <div class="shape1"></div>
+                    <div class="shape2"></div>
+                </div>
+                <div class="p-8 md:col-span-3 md:order-1">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">4. Sự tự ti sinh ra từ việc ngồi gù lưng lướt điện thoại</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4"><strong>Thực tế:</strong> Bạn ngồi co cụm trên ghế sofa, gập cổ xuống bấm điện thoại hàng giờ đồng hồ. Sau đó, khi nghĩ về một dự án sắp tới hoặc một cuộc gặp gỡ, bạn thấy thiếu tự tin trầm trọng, sợ thất bại và cảm thấy mình thật nhỏ bé. Bạn nghĩ rằng mình vốn dĩ là người kém cỏi.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2">
+                        <p><strong>Khoa học:</strong> Hiện tượng này liên quan đến Proprioception (Cảm nhận bản thể). Các cơ bắp ở ngực chùng xuống, cổ gập lại sẽ gửi tín hiệu thần kinh ngược lên não bộ. Nghiên cứu sinh lý học chỉ ra rằng tư thế thu mình làm giảm nhẹ nồng độ Testosterone (hormone tự tin) và tăng Cortisol. Não bộ nhận thấy cơ thể đang ở tư thế hèn nhát, nó liền điều chỉnh suy nghĩ cho khớp với tư thế đó: tạo ra sự tự ti.</p>
+                        <p><strong>Tiến hóa:</strong> Trong thế giới động vật linh trưởng, tư thế vươn vai, mở rộng ngực là biểu hiện của con đầu đàn (Alpha), biểu thị sức mạnh và sự sẵn sàng nghênh chiến. Tư thế gù lưng, cúi đầu, ôm lấy cơ thể là tư thế của kẻ quy phục (Submissive) để bảo vệ các cơ quan nội tạng mềm yếu trước kẻ thù. Khi bạn bắt chước tư thế của kẻ thua cuộc, bộ não tiến hóa ngay lập tức tải về hệ điều hành tâm lý của kẻ thua cuộc.</p>
+                    </div>
+                </div>
+            </article>
+
+             <!-- Ví dụ 5 -->
+            <article class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 grid md:grid-cols-5">
+                <div class="md:col-span-2 art-container art-exercise rounded-none bg-teal-50 h-full min-h-[250px]">
+                    <div class="shape1"></div>
+                    <div class="shape2"></div>
+                    <div class="shape3"></div>
+                </div>
+                <div class="p-8 md:col-span-3">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">5. Sự giác ngộ và lòng vị tha xuất hiện sau khi chạy bộ toát mồ hôi</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4"><strong>Thực tế:</strong> Trước khi tập thể dục, bạn đang ôm cục tức vì một lời nhận xét của sếp và định viết một email cãi lại. Nhưng sau khi chạy bộ đầm đìa mồ hôi và tắm nước nóng xong, bạn đột nhiên thấy sự việc chẳng có gì to tát. Bạn tự nhủ: <em>"Sếp chắc cũng có áp lực riêng, mình nên vị tha và tập trung hoàn thiện bản thân"</em>. Bạn tin rằng mình vừa có sự trưởng thành về mặt nhận thức.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2">
+                        <p><strong>Khoa học:</strong> Vận động mạnh kích hoạt giải phóng một lượng lớn Endorphin (thuốc giảm đau tự nhiên), Endocannabinoid (chất gây hưng phấn tương tự cần sa tự nhiên trong não), và BDNF (chất tưới tẩm tế bào thần kinh). Nhịp tim và hơi thở điều hòa sau tập luyện kích thích dây thần kinh Phế vị (Vagus Nerve), báo hiệu trạng thái an toàn tuyệt đối. Các hóa chất này rửa trôi sự bực tức, mang lại cảm giác hưng phấn (Runner's high).</p>
+                        <p><strong>Tiến hóa:</strong> Chạy bộ đối với não bộ cổ đại đồng nghĩa với việc bạn vừa đi săn thành công, hoặc vừa chạy thoát khỏi một con hổ răng kiếm. Cả hai trường hợp đều dẫn đến kết quả: Bạn đã sống sót. Não bộ thưởng cho bạn một cơn lốc hóa chất hạnh phúc, khiến bạn thấy yêu đời, rộng lượng và không còn bận tâm đến những mối đe dọa xã hội nhỏ nhặt như lời nói của sếp nữa.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Ví dụ 6 -->
+            <article class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 grid md:grid-cols-5">
+                <div class="md:col-span-2 md:order-2 art-container art-sleep rounded-none bg-gray-900 h-full min-h-[250px]">
+                    <div class="shape1"></div>
+                    <div class="shape2"></div>
+                </div>
+                <div class="p-8 md:col-span-3 md:order-1">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">6. Sự đa nghi và đóng vai nạn nhân khi thiếu ngủ</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4"><strong>Thực tế:</strong> Bạn thức đêm 2 ngày liên tục chạy deadline, chỉ ngủ 4 tiếng/ngày. Bạn nhắn tin vào nhóm chat, 30 phút không ai trả lời. Bạn lập tức suy diễn: <em>"Bọn họ đang tẩy chay mình. Lâu nay họ bằng mặt không bằng lòng. Mình là nạn nhân của một tập thể tồi tệ"</em>. Sự đa nghi dâng cao tột độ.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2">
+                        <p><strong>Khoa học:</strong> Thiếu ngủ tước đoạt giai đoạn REM và Deep Sleep của não. Kết quả là Hạch hạnh nhân (Amygdala) - trung tâm cảnh báo sợ hãi của não - trở nên hoạt động quá mức lên tới 60%. Đồng thời, kết nối giữa Amygdala và Vỏ não trước trán (phần lý trí dùng để trấn an) bị cắt đứt. Não mất khả năng đọc hiểu nét mặt và sắc thái xã hội, dẫn đến việc nhìn mọi thứ mang tính trung lập thành mối đe dọa thù địch.</p>
+                        <p><strong>Tiến hóa:</strong> Khi tổ tiên chúng ta thiếu ngủ, đó thường là do họ đang ở trong môi trường đầy rẫy hiểm nguy rình rập (có thú dữ quanh hang, hoặc bầy khác đang tấn công). Trạng thái buồn ngủ nhưng không được ngủ là trạng thái cực kỳ dễ tổn thương. Tiến hóa lập trình não bộ phải chuyển sang chế độ "Cảnh giác siêu độ" (Hyper-vigilance) - thà nhìn nhầm một bụi cây rung rinh là con hổ còn hơn bỏ qua nó. Áp dụng vào hiện đại, sự cảnh giác đó biến thành thói đa nghi xã hội.</p>
+                    </div>
+                </div>
+            </article>
+
+             <!-- Ví dụ 7 -->
+            <article class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 grid md:grid-cols-5">
+                <div class="md:col-span-2 art-container art-cold rounded-none bg-sky-50 h-full min-h-[250px]">
+                    <div class="shape1"></div>
+                    <div class="shape2"></div>
+                    <div class="shape3"></div>
+                </div>
+                <div class="p-8 md:col-span-3">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">7. Sự cô đơn dâng trào khi cơ thể bị lạnh</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4"><strong>Thực tế:</strong> Một buổi tối mùa đông gió mùa đông bắc tràn về, bạn ngồi trong căn phòng trọ không bật máy sưởi, tay chân lạnh ngắt. Tự nhiên, cảm giác tủi thân, cô đơn tột cùng ập đến. Bạn khao khát có người yêu hoặc nghĩ rằng cuộc sống độc thân thật thảm hại. Đáng lẽ bạn chỉ cần mặc thêm áo ấm, nhưng bạn lại chọn cách lên mạng đăng một dòng trạng thái buồn bã về tình yêu.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2">
+                        <p><strong>Khoa học:</strong> Vùng Thùy đảo (Insula) trong não bộ chịu trách nhiệm xử lý cả hai thứ: Cảm giác nhiệt độ vật lý (nóng/lạnh) và Cảm giác kết nối xã hội (tình cảm ấm áp/sự ruồng bỏ lạnh nhạt). Khi cơ thể mất nhiệt vật lý, vùng Insula bị kích hoạt và nó thường "kích hoạt chéo" luôn cả cảm giác thiếu thốn sự ấm áp xã hội (cô đơn tâm lý).</p>
+                        <p><strong>Tiến hóa:</strong> Động vật hằng nhiệt sinh tồn trong mùa đông băng giá bằng cơ chế Điều hòa nhiệt độ xã hội (Social Thermoregulation) - tức là rúc vào nhau, ôm nhau để truyền hơi ấm (huddling). Cảm giác cô đơn tột độ khi bị lạnh là một công cụ của tiến hóa nhằm thúc giục con người phải đi tìm kiếm đồng loại, tìm kiếm bầy đàn để ôm ấp, từ đó chia sẻ nhiệt lượng và giữ mạng sống qua đêm đông.</p>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <hr class="border-gray-200">
+
+        <!-- Flashcards Section -->
+        <section class="py-8">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-10">Khối Flashcard: 25 Câu Hỏi Ôn Tập Củng Cố Kiến Thức</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Flashcards 1-25 generated sequentially -->
+                <!-- Q1 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 1</p>
+                    <p class="text-gray-900 font-medium mb-3">Hiện tượng "ì giấc ngủ" (Sleep Inertia) sinh ra cảm giác gì về mặt tư duy?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Sinh ra những suy nghĩ bi quan, chán nản, phủ nhận tác dụng của những thứ tích cực (như uống cà phê cho vui chứ không có tác dụng).</p>
+                    </div>
+                </div>
+                <!-- Q2 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 2</p>
+                    <p class="text-gray-900 font-medium mb-3">Caffeine trong cà phê tác động cơ học thế nào đến não bộ?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Caffeine có cấu trúc giống Adenosine, nó chèn vào thụ thể Adenosine, chặn tín hiệu mệt mỏi và kích hoạt Dopamine.</p>
+                    </div>
+                </div>
+                <!-- Q3 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 3</p>
+                    <p class="text-gray-900 font-medium mb-3">Khái niệm Allostasis trong sinh học tiến hóa là gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Là chức năng tối thượng của não bộ trong việc dự đoán và quản lý ngân sách năng lượng của cơ thể để sinh tồn.</p>
+                    </div>
+                </div>
+                <!-- Q4 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 4</p>
+                    <p class="text-gray-900 font-medium mb-3">Thuyết "Dấu ấn sinh học" (Somatic Marker Hypothesis) do ai đề xướng?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Nhà thần kinh học Antonio Damasio.</p>
+                    </div>
+                </div>
+                <!-- Q5 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 5</p>
+                    <p class="text-gray-900 font-medium mb-3">Interoception (Nội cảm) có nghĩa là gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Khả năng não bộ liên tục lắng nghe các tín hiệu nội tạng thô (nhịp tim, hơi thở, hormone) để chế tạo ra cảm xúc.</p>
+                    </div>
+                </div>
+                <!-- Q6 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 6</p>
+                    <p class="text-gray-900 font-medium mb-3">Hội chứng "Hangry" thực chất là sự thiếu hụt chất gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Thiếu hụt Glucose (Đường huyết giảm mạnh).</p>
+                    </div>
+                </div>
+                <!-- Q7 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 7</p>
+                    <p class="text-gray-900 font-medium mb-3">Khi đói, hormone nào được tiết ra làm chúng ta cáu gắt?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Cortisol và Adrenaline từ tuyến thượng thận.</p>
+                    </div>
+                </div>
+                <!-- Q8 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 8</p>
+                    <p class="text-gray-900 font-medium mb-3">Ý nghĩa tiến hóa của việc cáu gắt khi đói là gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Tạo động lực, sự hung hăng và liều lĩnh để đi săn mồi hoặc tranh giành thức ăn để sống sót.</p>
+                    </div>
+                </div>
+                <!-- Q9 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 9</p>
+                    <p class="text-gray-900 font-medium mb-3">Sự trống rỗng, bi quan lúc 2 giờ chiều do đâu mà ra?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Sự sụt giảm nhịp sinh học tuần hoàn và chứng buồn ngủ sau khi ăn (máu dồn về dạ dày).</p>
+                    </div>
+                </div>
+                <!-- Q10 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 10</p>
+                    <p class="text-gray-900 font-medium mb-3">Tiến hóa giải thích hiện tượng khủng hoảng đầu giờ chiều như thế nào?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Ép cơ thể nghỉ ngơi, chùng năng lượng xuống vào thời điểm nóng nhất trong ngày ở đồng cỏ để tránh say nắng, mất nước.</p>
+                    </div>
+                </div>
+                <!-- Q11 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 11</p>
+                    <p class="text-gray-900 font-medium mb-3">"Sickness Behavior" (Hành vi khi ốm) được kích hoạt bởi chất gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Cytokines - protein do hệ miễn dịch tiết ra khi có phản ứng viêm.</p>
+                    </div>
+                </div>
+                <!-- Q12 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 12</p>
+                    <p class="text-gray-900 font-medium mb-3">Tại sao khi ốm ta lại cảm thấy cô lập và bi quan giống trầm cảm?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Để ép cơ thể tự cách ly (tránh lây bệnh cho bầy đàn) và tiết kiệm năng lượng cho hệ miễn dịch chiến đấu với mầm bệnh.</p>
+                    </div>
+                </div>
+                <!-- Q13 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 13</p>
+                    <p class="text-gray-900 font-medium mb-3">Proprioception tác động thế nào đến tâm lý khi ngồi gù lưng?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Cơ ngực chùng, cổ gập gửi tín hiệu lên não làm giảm Testosterone, tăng Cortisol, sinh ra cảm giác tự ti, kém cỏi.</p>
+                    </div>
+                </div>
+                <!-- Q14 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 14</p>
+                    <p class="text-gray-900 font-medium mb-3">Tư thế gù lưng mang ý nghĩa gì trong thế giới linh trưởng?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Là tư thế của kẻ quy phục (Submissive), bảo vệ nội tạng mềm yếu trước kẻ thù đầu đàn.</p>
+                    </div>
+                </div>
+                <!-- Q15 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 15</p>
+                    <p class="text-gray-900 font-medium mb-3">Các hóa chất nào được giải phóng gây hưng phấn sau khi tập thể dục nặng?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Endorphin, Endocannabinoid, và BDNF.</p>
+                    </div>
+                </div>
+                <!-- Q16 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 16</p>
+                    <p class="text-gray-900 font-medium mb-3">Dây thần kinh Phế vị (Vagus Nerve) có vai trò gì sau khi chạy bộ?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Khi nhịp thở/tim điều hòa, nó báo hiệu cho não trạng thái an toàn tuyệt đối, xóa bỏ căng thẳng xã hội nhỏ nhặt.</p>
+                    </div>
+                </div>
+                <!-- Q17 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 17</p>
+                    <p class="text-gray-900 font-medium mb-3">Theo tiến hóa, tại sao chạy bộ xong ta thấy rộng lượng, yêu đời?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Vì não bộ hiểu lầm bạn vừa đi săn thành công hoặc thoát khỏi thú dữ, đồng nghĩa với việc sống sót nên ban thưởng hóa chất hạnh phúc.</p>
+                    </div>
+                </div>
+                <!-- Q18 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 18</p>
+                    <p class="text-gray-900 font-medium mb-3">Vùng não nào hoạt động quá mức lên tới 60% khi thiếu ngủ?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Hạch hạnh nhân (Amygdala) - trung tâm cảnh báo sợ hãi.</p>
+                    </div>
+                </div>
+                <!-- Q19 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 19</p>
+                    <p class="text-gray-900 font-medium mb-3">Thiếu ngủ gây suy nghĩ đa nghi là do đứt gãy kết nối giữa hai vùng não nào?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Sự mất kết nối giữa Hạch hạnh nhân (cảm xúc) và Vỏ não trước trán (lý trí trấn an).</p>
+                    </div>
+                </div>
+                <!-- Q20 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 20</p>
+                    <p class="text-gray-900 font-medium mb-3">Ý nghĩa tiến hóa của sự "đa nghi" khi buồn ngủ là gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Trạng thái buồn ngủ ở môi trường hoang dã là lúc dễ bị ăn thịt nhất. Não bật chế độ "Cảnh giác siêu độ" để tự vệ.</p>
+                    </div>
+                </div>
+                <!-- Q21 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 21</p>
+                    <p class="text-gray-900 font-medium mb-3">Vùng Thùy đảo (Insula) trong não xử lý những cảm giác nào?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Cảm giác nhiệt độ vật lý (nóng/lạnh) và cảm giác kết nối xã hội (ấm áp tình cảm/cô đơn lạnh nhạt).</p>
+                    </div>
+                </div>
+                <!-- Q22 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 22</p>
+                    <p class="text-gray-900 font-medium mb-3">Tại sao trời lạnh lại khiến ta thấy cô đơn tủi thân?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Vì Thùy đảo (Insula) bị kích hoạt bởi cái lạnh vật lý, dẫn tới kích hoạt chéo luôn cảm giác thiếu thốn tình cảm xã hội.</p>
+                    </div>
+                </div>
+                <!-- Q23 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 23</p>
+                    <p class="text-gray-900 font-medium mb-3">Cơ chế "Điều hòa nhiệt độ xã hội" (Social Thermoregulation) là gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Hành vi bầy đàn rúc vào nhau, ôm nhau để chia sẻ nhiệt lượng sinh tồn qua mùa đông lạnh giá.</p>
+                    </div>
+                </div>
+                <!-- Q24 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 24</p>
+                    <p class="text-gray-900 font-medium mb-3">Bài học lớn nhất từ trải nghiệm uống cà phê của bạn là gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Trạng thái cơ thể quyết định suy nghĩ. Thay vì dùng ý chí đấu tranh với tư duy tiêu cực, hãy thay đổi trạng thái hóa học/vật lý của cơ thể trước.</p>
+                    </div>
+                </div>
+                <!-- Q25 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="font-semibold text-indigo-700 mb-2 text-sm uppercase tracking-wide">Câu hỏi 25</p>
+                    <p class="text-gray-900 font-medium mb-3">Bộ não chúng ta bản chất là một cỗ máy diễn dịch. Nó diễn dịch dựa trên điều gì?</p>
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-gray-600 text-sm">Dựa trên các tín hiệu sinh lý nội tạng thô (năng lượng, viêm, hormone) để thêu dệt thành các câu chuyện mang ý nghĩa triết học hay tâm lý.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer theo đúng yêu cầu -->
+    <footer class="custom-footer flex flex-col justify-center items-center px-4 w-full text-center">
+        <p class="mb-3 max-w-3xl leading-relaxed">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="flex space-x-6">
+            <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center space-x-2">
+                <i class="fa-brands fa-youtube text-xl"></i>
+                <span class="text-sm">Youtube</span>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center space-x-2">
+                <i class="fa-brands fa-tiktok text-xl"></i>
+                <span class="text-sm">TikTok</span>
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center space-x-2">
+                <i class="fa-brands fa-facebook text-xl"></i>
+                <span class="text-sm">Facebook Page</span>
+            </a>
+        </div>
+    </footer>
+
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
