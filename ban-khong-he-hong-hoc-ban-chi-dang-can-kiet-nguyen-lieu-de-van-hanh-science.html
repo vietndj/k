@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: Giải Mã Mật Mã Cơ Thể cùng Gary Brecka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#0f766e', // Teal 700
+                        'secondary': '#047857', // Emerald 700
+                        'accent': '#f59e0b', // Amber 500
+                        'bg-light': '#f0fdfa', // Teal 50
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+        mermaid.initialize({ startOnLoad: true, theme: 'forest' });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Tùy chỉnh thanh cuộn */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0f766e; border-radius: 4px; }
+
+        /* --- CSS ABSTRACT ART --- */
+        .art-box {
+            height: 120px;
+            width: 100%;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 1. Rễ cây & Đất */
+        .art-tree {
+            background: linear-gradient(135deg, #14532d, #22c55e);
+        }
+        .art-tree::after {
+            content: ''; position: absolute; width: 150%; height: 100%; top: 50%; left: -25%;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        /* 2. Não bộ & Xung thần kinh (Anxiety) */
+        .art-brain { background: linear-gradient(135deg, #4c1d95, #a855f7); }
+        .art-brain::before {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 10px, transparent 10px, transparent 20px);
+        }
+
+        /* 3. Methylation (DNA) */
+        .art-dna { background: linear-gradient(to right, #0284c7, #38bdf8); }
+        .art-dna::after {
+            content: ''; position: absolute; width: 80px; height: 80px; top: 20px; left: calc(50% - 40px);
+            border: 4px solid rgba(255,255,255,0.3); border-radius: 50%;
+            box-shadow: 20px 0 0 -4px rgba(255,255,255,0.2), -20px 0 0 -4px rgba(255,255,255,0.2);
+        }
+
+        /* 4. Máu & Insulin */
+        .art-blood { background: linear-gradient(135deg, #be123c, #fb7185); }
+        .art-blood::before {
+            content: ''; position: absolute; bottom: -20px; left: -10%; width: 120%; height: 60px;
+            background: rgba(255,255,255,0.2); border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+        }
+
+        /* 5. Vitamin D3 (Mặt trời) */
+        .art-sun { background: linear-gradient(135deg, #d97706, #fbbf24); }
+        .art-sun::after {
+            content: ''; position: absolute; top: -30px; right: -30px; width: 100px; height: 100px;
+            background: rgba(255,255,255,0.4); border-radius: 50%; box-shadow: 0 0 40px rgba(255,255,255,0.6);
+        }
+
+        /* 6. Grounding (Từ trường) */
+        .art-earth { background: linear-gradient(135deg, #78350f, #d97706); }
+        .art-earth::before {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            background: repeating-radial-gradient(circle at 50% 150%, transparent 0, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);
+        }
+
+        /* 7. Oxy & Phổi */
+        .art-wind { background: linear-gradient(135deg, #0369a1, #7dd3fc); }
+        .art-wind::after {
+            content: ''; position: absolute; top: 20%; left: -20%; width: 140%; height: 40px;
+            background: rgba(255,255,255,0.2); transform: rotate(-15deg); border-radius: 50%;
+        }
+
+        /* 8. Nước khoáng & Hydro */
+        .art-water { background: linear-gradient(135deg, #0e7490, #22d3ee); }
+        .art-water::before {
+            content: ''; position: absolute; width: 30px; height: 30px; bottom: 20px; left: 20%;
+            background: rgba(255,255,255,0.5); border-radius: 50%; box-shadow: 40px -30px 0 -5px rgba(255,255,255,0.5), 80px -10px 0 -10px rgba(255,255,255,0.5);
+        }
+
+        /* 9. Cộng đồng (Kết nối) */
+        .art-connect { background: linear-gradient(135deg, #be185d, #f472b6); }
+        .art-connect::after {
+            content: ''; position: absolute; top: 50%; left: 10%; right: 10%; height: 2px; background: rgba(255,255,255,0.5);
+            box-shadow: 0 -20px 0 rgba(255,255,255,0.3), 0 20px 0 rgba(255,255,255,0.3);
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(15, 118, 110, 0.15);
+        }
+
+        /* Section styles */
+        .section-header {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        .section-header::after {
+            content: ''; position: absolute; bottom: -10px; left: 0; width: 60%; height: 4px;
+            background: #0f766e; border-radius: 2px;
+        }
+        
+        /* Flashcard style */
+        .qa-box {
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+            transition: all 0.2s;
+        }
+        .qa-box:hover {
+            background: #fef3c7;
+            border-left-width: 8px;
+        }
+
+        /* --- Fullscreen Mindmap Styles --- */
+        #mindmap-container {
+            cursor: zoom-in;
+            transition: all 0.3s ease;
+        }
+        .mermaid svg {
+            width: 100%; /* Ép sơ đồ chiếm toàn bộ chiều rộng */
+            height: auto;
+            max-width: none !important;
+        }
+        #mindmap-container:fullscreen, 
+        #mindmap-container:-webkit-full-screen {
+            background-color: #f0fdfa; /* Màu nền bg-light */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            padding: 2rem;
+            cursor: zoom-out;
+            overflow: auto;
+        }
+        #mindmap-container:fullscreen svg, 
+        #mindmap-container:-webkit-full-screen svg {
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 95vh;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- HERO HEADER -->
+    <header class="bg-primary text-white py-20 px-6 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10">
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtNGgtdjRoLTR2NGgtdjRoNHY0aDR2LTRoNHptMC0xNXYtNGgtdjRoLTR2NGgtdjRoNHY0aDR2LTRoNHptLTEwIDEwdjRoLTR2LTRoLTR2LTRoNHY0aDR6bTEwLTIwaDRWMGgtNHY0em0tMTAgMwaDR2LTRoLTR2NHptLTEwLTIwaDR2LTRoLTR2NHptMC0xMmg0VjBoLTR2NHptMCAzMGg0djRoLTR2LTR6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjEiLz48L2c+PC9zdmc+')]"></div>
+        </div>
+        <div class="max-w-5xl mx-auto relative z-10 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-sm text-sm font-semibold tracking-wide mb-4 uppercase">🚀 Health & Bio-Optimization Masterclass</span>
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Giải Mã Mật Mã Cơ Thể: <br><span class="text-accent">Chữa Lành Từ Nguyên Liệu Gốc</span></h1>
+            <p class="text-lg md:text-xl text-teal-100 max-w-3xl mx-auto mb-10">Dựa trên triết lý sâu sắc của Gary Brecka. Bạn không hề "hỏng hóc", bạn chỉ đang cạn kiệt nguyên liệu để vận hành cỗ máy vĩ đại nhất vũ trụ: Chính cơ thể bạn.</p>
+            
+            <a href="https://youtu.be/10enqcw2Qiw?si=f4vTtnndtKRHS2SR" target="_blank" class="inline-flex items-center gap-3 bg-white text-primary px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 hover:scale-105 transition-all shadow-xl">
+                <i class="fab fa-youtube text-red-500 text-2xl"></i> Xem video gốc: I Tested 100,000 People's DNA
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-16 space-y-24">
+
+        <!-- SECTION 1: THE BIG IDEA -->
+        <section id="big-idea">
+            <h2 class="text-3xl font-bold text-slate-800 section-header">🎯 [The Big Idea] Bức Tranh Toàn Cảnh</h2>
+            
+            <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mb-10">
+                <p class="text-xl text-slate-700 font-medium leading-relaxed">
+                    <i class="fas fa-quote-left text-accent opacity-50 mr-2 text-2xl"></i>
+                    Bệnh tật không phải là thứ tự nhiên "ập đến" với chúng ta, mà nó nảy sinh <strong class="text-primary">từ bên trong</strong>. Khi cơ thể thiếu hụt trầm trọng các "nguyên liệu thô" cơ bản (khoáng chất, vitamin, axit amin), nó sẽ mất khả năng tự sửa chữa và biểu hiện ra ngoài thành bệnh lý hoặc các vấn đề tâm lý.
+                </p>
+            </div>
+
+            <div class="bg-bg-light p-6 rounded-2xl border border-teal-100 shadow-inner">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-lg font-bold text-primary text-center w-full">🧠 Sơ đồ Tư duy: Khung Xương Tri Thức</h3>
+                </div>
+                <div class="flex justify-center mb-6">
+                    <button onclick="toggleFullscreen()" class="text-primary hover:text-white border border-primary hover:bg-primary flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm text-sm font-bold transition-all">
+                        <i class="fas fa-expand"></i> Phóng to toàn màn hình
+                    </button>
+                </div>
+                
+                <!-- Bắt buộc dùng khối Code Mermaid -->
+                <div id="mindmap-container" class="mermaid flex justify-center w-full" onclick="toggleFullscreen()" title="Click để phóng to">
+                    graph TD
+                    A[CƠ THỂ CON NGƯỜI] --> B(Gốc rễ: Nguyên Liệu Thô)
+                    A --> C(Môi trường biểu hiện)
+                    
+                    B --> D[Gen & Chuyển hóa]
+                    B --> E[Dinh dưỡng vĩ mô]
+                    
+                    D --> D1(Methylation - MTHFR)
+                    D --> D2(Catecholamines - COMT)
+                    
+                    E --> E1(Vitamin D3 & B12)
+                    E --> E2(Muối khoáng & Omega 3)
+                    
+                    C --> F[5 Trụ Cột Hàng Ngày]
+                    F --> F1(Ánh sáng ban mai)
+                    F --> F2(Tiếp đất - Grounding)
+                    F --> F3(Nước khoáng thực sự)
+                    F --> F4(Hơi thở sâu)
+                    F --> F5(Cộng đồng & Kết nối)
+                    
+                    style A fill:#0f766e,stroke:#fff,stroke-width:2px,color:#fff
+                    style B fill:#047857,stroke:#fff,color:#fff
+                    style C fill:#047857,stroke:#fff,color:#fff
+                    style F fill:#f59e0b,stroke:#fff,color:#fff
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DEEP INSIGHTS -->
+        <section id="deep-insights">
+            <h2 class="text-3xl font-bold text-slate-800 section-header">🧠 [Deep Insights] 9 Trụ Cột Tri Thức Sâu Sắc</h2>
+            <p class="text-slate-600 mb-10 text-lg">Tôi đã lọc bỏ những thuật ngữ sinh học phức tạp để giữ lại bản chất cốt lõi nhất. Hãy đọc chúng như cách bạn đọc một cuốn hướng dẫn sử dụng chính cơ thể mình.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Insight 1 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-tree"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 01</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Bác Sĩ Của Đất & Lá</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> Đừng cố chữa triệu chứng (cái lá rụng), hãy tìm thứ đang thiếu ở hệ thống gốc (đất).</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> Cơ thể là một hệ thống phản ứng dây chuyền. Việc bạn rụng tóc, đau khớp hay sương mù não chỉ là tín hiệu báo động đỏ của việc thiếu nguyên liệu gốc bên trong.
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Ẩn dụ:</strong> Nếu một cái lá cọ bị thối, người làm vườn giỏi sẽ không bôi thuốc lên cái lá. Họ xét nghiệm đất, bù đắp nitơ, và cái lá tự lành.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-brain"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 02</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Sự Thật Về "Rối Loạn Lo Âu"</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> Rất nhiều ca lo âu không phải do tâm lý yếu, mà do cơ thể thiếu vitamin B complex để phân giải hormone căng thẳng.</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> Khi bạn nghĩ đến chuyện xấu, não tiết ra Catecholamines (hormone chiến đấu). Nếu gen COMT của bạn chậm, hoặc thiếu chất, hormone này không bị dọn dẹp. Nó kẹt lại trong máu khiến bạn bồn chồn vô cớ.
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Ví dụ:</strong> Đang nằm trên giường an toàn nhưng não bạn phản ứng y hệt như đang có một kẻ cầm dao đứng trước mặt.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-dna"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 03</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Mật mã Methylation (MTHFR)</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> Methylation là nhà máy lọc. Gần 44% dân số mang gen lỗi khiến họ ăn đồ tốt nhưng cơ thể không hấp thụ được.</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> Cơ thể không dùng trực tiếp Folic acid (tổng hợp), nó phải đổi thành Methylfolate. Nếu gen lỗi, hệ thống tắc nghẽn, sinh ra độc tố (homocysteine) làm hẹp mạch máu, tăng huyết áp.
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Ẩn dụ:</strong> Giống như bạn đổ xăng thô vào xe tay ga cao cấp. Bạn có xăng, nhưng xe không chạy được vì nó không biết cách chuyển hóa nhiên liệu đó.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-blood"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 04</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Sát Thủ Thầm Lặng: Insulin</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> Insulin tăng cao không chỉ gây tiểu đường, nó "khóa cửa" không cho cơ thể đốt mỡ, dẫn đến thừa cân và mỡ máu.</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> Carb tinh chế (bánh mì trắng, gạo trắng) ép tuyến tụy làm việc quá sức. Insulin tràn ngập trong máu ra lệnh: "Tích trữ năng lượng đi, cấm đốt mỡ".
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Thực tế:</strong> Nhiều người không thèm đồ ngọt, chỉ ăn tinh bột trắng nhưng vẫn bị "kháng Insulin" mà không hề hay biết cho đến khi xét nghiệm máu (HbA1c).</p>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-sun"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 05</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Phép màu của D3 & Ánh sáng</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> D3 không hẳn là Vitamin, nó là một dạng Hormone sinh mệnh mà mọi tế bào đều cần, và chúng ta đang thiếu trầm trọng.</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> Ánh sáng ban mai (First light) đi vào mắt, đánh thức Cortisol lành mạnh, ngắt Melatonin, set lại đồng hồ sinh học. Thiếu D3 giả lập thành các cơn đau khớp.
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Ví dụ:</strong> Rất nhiều người bị chẩn đoán nhầm là viêm khớp dạng thấp, bị kê đơn thuốc giảm đau mòn xương, trong khi bản chất họ chỉ thiếu hụt D3 kinh niên.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-earth"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 06</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Grounding - Chạm Vào Mẹ Đất</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> Cơ thể là dòng điện. Đi chân trần trên cỏ/đất giúp xả tĩnh điện và sạc lại ion âm từ từ trường Trái Đất.</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> Tế bào máu cùng dấu sẽ đẩy nhau (rời rạc, hấp thụ oxy tốt). Khi mất cân bằng điện tích, hồng cầu dính chùm lại với nhau, làm giảm diện tích trao đổi chất. Grounding tách chúng ra lập tức.
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Ẩn dụ:</strong> Giống như bạn reset lại cục pin điện thoại bị chai bằng cách cắm nó vào nguồn điện gốc vĩ đại nhất: Trái Đất.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-wind"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 07</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Nghịch lý của Hơi thở</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> Đa số người trưởng thành đang "thở nông" - chỉ trao đổi khí ở cuống phổi, dẫn đến cơ thể luôn ngập ngụa CO2 và thiếu hụt Oxy tế bào.</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> Sự lão hóa tỷ lệ thuận với sự vắng mặt của oxy. Khi bạn dùng cơ hoành thở sâu tận đáy phổi, oxy mới thực sự đi vào máu để chữa lành mô bệnh.
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Thực tế:</strong> Hãy coi không gian từ mũi đến ngực chỉ là "ống xả rác". Khí phải đi qua đó lặn xuống tận đáy bụng mới gọi là một hơi thở đích thực.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-water"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 08</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Nước & Muối (Sự thật bị bóp méo)</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> Nước lọc tinh khiết (RO) là nước "chết" vì đã mất hết khoáng. Bạn cần muối khoáng thật (Celtic/Baja), không phải muối ăn công nghiệp.</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> Não bộ cần gradient áp suất thẩm thấu. Uống nước thiếu khoáng chất sẽ rút kiệt điện giải. Đủ muối khoáng thật giúp chấm dứt chứng đau nửa đầu kinh niên.
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Hành động:</strong> Mỗi buổi sáng, thả một nhúm muối biển xám Celtic (chứa ~90 khoáng chất) vào cốc nước trước khi uống để đánh thức tế bào.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                    <div class="art-box art-connect"></div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">Bài học 09</span>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Bản Án Tử Hình: Sự Cô Đơn</h3>
+                        <p class="text-sm text-slate-600 mb-4 flex-grow"><strong class="text-slate-800">Bản chất:</strong> Trong khoa học dự đoán tuổi thọ, yếu tố tàn phá mạnh nhất không phải là ăn đường hay hút thuốc, mà là sự cách ly xã hội.</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-2 border-primary text-sm mb-4">
+                            <strong class="block text-primary mb-1">⚙️ Cơ chế:</strong> "Hội chứng trái tim tan vỡ". Khi ý chí đầu hàng sự cô độc, tần số năng lượng sụt giảm, hệ miễn dịch sụp đổ. Đưa một người vào môi trường cô lập cắt giảm một nửa tuổi thọ của họ.
+                        </div>
+                        <p class="text-sm text-slate-700 italic">💡 <strong>Ví dụ:</strong> Bí quyết của các Vùng Xanh (Blue Zones) sống thọ: Không phải chỉ nhờ ăn uống, mà là người già sống quây quần với con cháu đến hơi thở cuối cùng.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: ACTION PLAYBOOK -->
+        <section id="action-playbook" class="bg-primary text-white rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-10 -mr-10 opacity-20 transform rotate-12">
+                <i class="fas fa-rocket text-9xl"></i>
+            </div>
+            
+            <h2 class="text-3xl font-bold section-header border-teal-300 relative z-10">🚀 [Action Playbook] Sổ Tay Thực Chiến</h2>
+            <p class="text-teal-100 mb-8 max-w-2xl text-lg relative z-10">Kiến thức chỉ là lý thuyết nếu bạn không mang nó vào phòng ngủ, nhà bếp và tâm trí của mình. Đây là bản đồ hành động.</p>
+
+            <div class="grid md:grid-cols-2 gap-8 relative z-10">
+                <!-- If-Then -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-6 text-accent"><i class="fas fa-code-branch mr-2"></i> Kịch bản "Nếu - Thì"</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 p-5 rounded-xl backdrop-blur-sm border border-white/20">
+                            <p class="font-semibold text-white mb-2">🔴 NẾU: Nửa đêm bạn tỉnh giấc, não "nhảy số" hoang mang lo sợ vô cớ về ngày mai...</p>
+                            <p class="text-teal-50"><strong class="text-accent">🟢 THÌ:</strong> Hãy nhận thức ngay đây KHÔNG PHẢI lỗi của bạn. Đó là do Catecholamines tăng vọt. Thay vì lướt TikTok, hãy tập thở sâu (4-7-8) để ép Oxy vào máu xoa dịu hệ thần kinh, và lên kế hoạch bổ sung B-complex vào sáng mai.</p>
+                        </div>
+                        <div class="bg-white/10 p-5 rounded-xl backdrop-blur-sm border border-white/20">
+                            <p class="font-semibold text-white mb-2">🔴 NẾU: Bạn ăn rất ít, không ăn kẹo bánh nhưng bụng vẫn tích mỡ, người lờ đờ...</p>
+                            <p class="text-teal-50"><strong class="text-accent">🟢 THÌ:</strong> Cắt giảm Carbs tinh chế (cơm trắng, bánh mì trắng). Đi xét nghiệm "Glycemic Profile" (Chỉ số Insulin & HbA1c) để xem cơ thể bạn có đang bị "Khóa chế độ đốt mỡ" hay không.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro-actions -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-6 text-accent"><i class="fas fa-stopwatch mr-2"></i> Micro-actions (Làm trong 24h tới)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition">
+                            <div class="bg-accent text-primary rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 shrink-0">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-white">Vứt bỏ muối ăn tinh luyện</h4>
+                                <p class="text-teal-100 text-sm mt-1">Mua ngay 1 lọ Muối Biển Celtic hoặc Baja Gold. Sáng mai ngủ dậy: Pha 1 cốc nước lớn + 1 nhúm muối này uống ngay tắp lự.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition">
+                            <div class="bg-accent text-primary rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 shrink-0">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-white">10 Phút "Nạp Điện"</h4>
+                                <p class="text-teal-100 text-sm mt-1">Sáng mai, bước chân trần ra bãi cỏ/đất. Ngửa mặt lên trời đón ánh sáng đầu ngày (không đeo kính râm) và hít thở sâu 30 nhịp liên tục.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: REALITY CHECK -->
+        <section id="reality-check">
+            <h2 class="text-3xl font-bold text-slate-800 section-header">⚠️ [Reality Check] Nhận Diện Cạm Bẫy</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Bẫy -->
+                <div class="bg-red-50 border-t-4 border-red-500 p-8 rounded-b-2xl shadow-sm">
+                    <h3 class="text-xl font-bold text-red-700 mb-4"><i class="fas fa-flag text-red-500 mr-2"></i> Bẫy Vô Hình (Red Flags)</h3>
+                    <p class="text-slate-700 mb-4"><strong>Hội chứng "Bổ sung vô thức":</strong> Thấy mạng bảo uống gì là mua nấy (Resveratrol, NMN, Ashwagandha, Multivitamin...) mà không biết cơ thể mình THỰC SỰ ĐANG THIẾU GÌ.</p>
+                    <div class="bg-white p-4 rounded-lg text-sm text-slate-600 italic">
+                        <strong>Ví dụ thảm họa:</strong> Uống axit folic tổng hợp khi bạn mang gen lỗi MTHFR. Hệ quả: Cơ thể không những không hấp thu được, mà rác thải tích tụ làm tăng nguy cơ tắc mạch máu. Bạn mất tiền để chuốc lấy độc tố!
+                    </div>
+                </div>
+
+                <!-- Chốt chặn -->
+                <div class="bg-emerald-50 border-t-4 border-emerald-500 p-8 rounded-b-2xl shadow-sm">
+                    <h3 class="text-xl font-bold text-emerald-800 mb-4"><i class="fas fa-shield-alt text-emerald-500 mr-2"></i> Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                    <p class="text-slate-700 mb-4">Đừng dựa vào ý chí "Tôi sẽ cố dậy sớm". Ý chí là loại tài nguyên cạn kiệt nhanh nhất trong ngày.</p>
+                    <div class="bg-white p-4 rounded-lg text-sm text-slate-600">
+                        <strong>Luật "Khu vực cách ly sáng sớm":</strong> Thiết lập môi trường vật lý ép bạn phải làm đúng. <br><br>
+                        <em>Cách làm:</em> Để sạc điện thoại ở phòng tắm/phòng khách. Đặt 1 chai nước khoáng và lọ muối cạnh giường. Khi thức dậy, việc ĐẦU TIÊN vươn tay ra là uống nước chứ không phải cầm điện thoại. Bạn buộc phải rời giường mới tắt được báo thức.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: ACTIVE RECALL -->
+        <section id="active-recall">
+            <h2 class="text-3xl font-bold text-slate-800 section-header">🃏 [Active Recall] Trạm Ôn Tập Siêu Tốc</h2>
+            <p class="text-slate-600 mb-8 text-lg">Cách tốt nhất để biến thông tin thành trí tuệ là tự vấn. Đọc lướt qua các thẻ dưới đây để ghi khắc kiến thức vào não bộ.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Bệnh tật xảy ra ĐẾN với chúng ta hay TỪ BÊN TRONG chúng ta?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Từ bên trong (hầu hết). Do sự thiếu hụt nguyên liệu thô (khoáng, vitamin) lâu ngày dẫn đến hệ thống mất khả năng sửa chữa.</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Tại sao đo nhịp tim, siêu âm không tìm ra nguyên nhân cao huyết áp?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Vì lỗi không nằm ở tim, mà nằm ở mạch máu bị co thắt do cơ thể không chuyển hóa được axit amin Homocysteine (thường do thiếu Methylfolate).</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Điều gì khiến tế bào hồng cầu "dính chùm" lại với nhau?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Việc mang giày dép nhựa/cao su và sống trên cao khiến cơ thể mất cân bằng điện tích, tích tụ dương tính.</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Giải pháp tức thì để tách hồng cầu, tăng oxy là gì?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Grounding (Tiếp đất). Đi chân trần trên cỏ/đất trong 10 phút để nhận electron âm từ Trái đất.</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Cơn "sợ hãi không rõ nguyên nhân" (Anxiety) bản chất là gì?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Là do Cathecolamine (Hormone chiến đấu) tăng cao mà cơ thể (gen COMT chậm) không dọn dẹp kịp do thiếu Vitamin B-complex.</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Tại sao uống Folic Acid lại có thể gây độc cho 44% dân số?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Vì họ mang gen lỗi MTHFR, không thể biến Folic Acid tổng hợp thành dạng cơ thể xài được (Methylfolate).</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: 3 xét nghiệm máu quan trọng nhất cần ưu tiên làm là gì?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: 1. Glycemic profile (Đường huyết & Insulin) / 2. Hormone Panel / 3. Thiếu hụt khoáng/Vitamin (D3, B12, Magie).</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Tại sao ăn kiêng đường mà vẫn mập mạp và mệt mỏi?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Vì Carbohydrate tinh chế (Cơm, mì, bánh mì) làm tăng vọt Insulin. Khi Insulin cao, cơ chế ĐỐT MỠ bị khóa hoàn toàn.</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Liệu pháp Ánh Sáng Đỏ (Red Light) làm gì cho cơ thể?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Kích thích ty thể (Mitochondria) tống khí Nitric Oxide ra, hút Oxy vào, gia tăng 16 LẦN năng lượng (ATP) cho tế bào.</p>
+                </div>
+
+                <div class="qa-box p-4 rounded-r-lg shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Q: Yếu tố số 1 cắt giảm 50% tuổi thọ con người là gì?</p>
+                    <p class="text-sm text-slate-600 bg-white p-2 rounded">A: Sự cô độc, cách ly khỏi cộng đồng (Isolation) - kích hoạt "hội chứng trái tim tan vỡ", làm suy sụp hệ miễn dịch.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="text-center py-10 border-t border-gray-200 text-slate-500 text-sm">
+            <p>Được thiết kế dựa trên triết lý sâu sắc của Gary Brecka. Hãy trân trọng và lắng nghe cơ thể bạn.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Hàm xử lý phóng to / thu nhỏ toàn màn hình cho Mindmap
+        function toggleFullscreen() {
+            let elem = document.getElementById("mindmap-container");
+            
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+            }
+        }
+    </script>
+
+
+<script id="cms-pin-widget">
+  if(localStorage.getItem("cms_auth") === "granted") {
+    const path = window.location.pathname.split("/").filter(Boolean);
+    let repo = "vietndj.github.io", file = "index.html";
+    if (path.length > 1) { repo = path[0]; file = path.pop(); }
+    else if (path.length === 1) { if (path[0].endsWith(".html")) file = path[0]; else repo = path[0]; }
+    const fileKey = repo + "/" + decodeURIComponent(file);
+    let isPinned = false;
+    try { const dbStr = localStorage.getItem("cms_repo_data"); if(dbStr){ const db = JSON.parse(dbStr); if(Array.isArray(db.pinnedDataCache) && db.pinnedDataCache.includes(fileKey)) isPinned = true; } } catch(e){}
+    const btn = document.createElement("a");
+    btn.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    btn.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+    btn.style.cssText = "position:fixed;top:15px;right:15px;background:" + (isPinned ? "#FF3B30" : "#FF9500") + ";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";
+    btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+    btn.onmouseout = () => btn.style.transform = "scale(1)";
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open(this.href, "_blank");
+      isPinned = !isPinned;
+      this.innerHTML = isPinned ? "❌ Bỏ ghim" : "📌 Ghim bài";
+      this.style.background = isPinned ? "#FF3B30" : "#FF9500";
+      this.href = "https://vietndj.github.io/?" + (isPinned ? "unpin=" : "pin=") + encodeURIComponent(fileKey);
+    };
+    document.body.appendChild(btn);
+  }
+</script>
+
+</body>
+</html>
