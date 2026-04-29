@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sự Phi Lý Khi Làm Một Con Người - Trải Nghiệm Học Tập</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cosmic: {
+                            900: '#0B0B1A',
+                            800: '#15152F',
+                            700: '#2A2A5A',
+                        },
+                        neon: {
+                            purple: '#A855F7',
+                            cyan: '#06B6D4',
+                            green: '#10B981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', fontFamily: 'Inter' });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0B1A;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+
+        /* CSS Abstract Art / Blobs */
+        .blob-bg {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: morph 12s ease-in-out infinite alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(168, 85, 247, 0.3); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        .blob-2 { bottom: 20%; right: -10%; width: 40vw; height: 40vw; background: rgba(6, 182, 212, 0.2); border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; animation-delay: -4s; }
+        .blob-3 { top: 40%; left: 20%; width: 30vw; height: 30vw; background: rgba(16, 185, 129, 0.15); border-radius: 50% 50% 40% 60% / 60% 40% 50% 50%; animation-delay: -8s; }
+
+        @keyframes morph {
+            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            100% { border-radius: 40% 50% 60% 30% / 40% 50% 60% 30%; }
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(21, 21, 47, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        /* Mindmap Zoom Container */
+        #mindmap-wrapper {
+            cursor: grab;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #mindmap-wrapper:active { cursor: grabbing; }
+
+        /* Flashcard 3D Flip */
+        .flashcard-container {
+            perspective: 1000px;
+        }
+        .flashcard {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            min-height: 200px;
+        }
+        .flashcard-container:hover .flashcard {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .flashcard-front {
+            background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.8));
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+        .flashcard-back {
+            background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(6,182,212,0.1));
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B0B1A; }
+        ::-webkit-scrollbar-thumb { background: #2A2A5A; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A855F7; }
+    </style>
+</head>
+<body class="relative antialiased selection:bg-neon-purple selection:text-white">
+
+    <!-- Ambient Background Blobs -->
+    <div class="blob-bg blob-1"></div>
+    <div class="blob-bg blob-2"></div>
+    <div class="blob-bg blob-3"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-32">
+        
+        <!-- Header -->
+        <header class="text-center space-y-6 pt-10">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmic-800 border border-cosmic-700 text-neon-cyan text-sm font-semibold tracking-wide uppercase">
+                <i class="fa-solid fa-satellite-dish"></i> Chuyển hóa Tư duy
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-white to-neon-purple">
+                Sự Phi Lý Khi Làm Một Con Người 🌀
+            </h1>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto font-light">
+                Biến những bối rối của cuộc sống thành một trò chơi sáng tạo vô hạn.
+            </p>
+        </header>
+
+        <!-- SECTION 1: THE BIG IDEA -->
+        <section id="big-idea" class="space-y-8">
+            <div class="text-center max-w-4xl mx-auto space-y-4">
+                <h2 class="text-2xl font-bold text-white flex items-center justify-center gap-3">
+                    <span class="text-neon-purple">🎯</span> The Big Idea
+                </h2>
+                <p class="text-lg text-gray-300 leading-relaxed bg-cosmic-800/50 p-6 rounded-2xl border border-white/5">
+                    Cuộc đời rốt cuộc là một nghịch lý lộn xộn và mọi thứ đều quy về hư vô. Nhưng tin vui là: Chính sự "ngớ ngẩn" đó lại là cỗ máy tạo ra niềm vui, sự tự do và tính sáng tạo vô hạn. Đừng tự đóng khung mình, hãy coi bản thân là một Kẻ Quan Sát đang dạo chơi giữa một trò chơi kỳ diệu! 🚀
+                </p>
+            </div>
+
+            <!-- Mindmap -->
+            <div class="space-y-4">
+                <div class="flex justify-between items-end px-2">
+                    <p class="text-sm text-gray-400"><i class="fa-solid fa-magnifying-glass-plus mr-2"></i>Cuộn chuột để thu/phóng - Kéo để di chuyển</p>
+                </div>
+                <div id="mindmap-wrapper" class="w-full h-[600px] relative flex items-center justify-center">
+                    <div id="mindmap-container" class="absolute transform transition-transform duration-75 origin-center">
+                        <div class="mermaid">
+                            mindmap
+                            root((SỰ PHI LÝ CỦA<br/>SỰ TỒN TẠI))
+                                Lăng Kính Hài Hước
+                                    Phá vỡ kỳ vọng
+                                    Giác ngộ tức thời
+                                    Tất cả là trò đùa vui
+                                Tư Duy Sáng Tạo
+                                    Ai cũng là Nghệ sĩ
+                                    Chạm vào gốc rễ sự vật
+                                    Ứng tác với cuộc sống
+                                Tâm Thức & Bản Ngã
+                                    Kẻ quan sát trong tâm bão
+                                    Sự phóng chiếu của vũ trụ
+                                    Tách rời khỏi lo âu
+                                Kết Nối & Tình Yêu
+                                    Chấp nhận nghịch lý
+                                    Dùng tình yêu làm la bàn
+                                    Cộng đồng là tấm gương
+                        </div>
+                    </div>
+                </div>
+                <!-- YouTube Button -->
+                <div class="flex justify-center mt-6">
+                    <a href="https://www.youtube.com/watch?v=av3jm-sWEJM" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 bg-red-600/10 hover:bg-red-600/20 border border-red-600/30 text-red-400 hover:text-red-300 px-6 py-3 rounded-full transition-all">
+                        <i class="fa-brands fa-youtube text-xl group-hover:scale-110 transition-transform"></i>
+                        <span class="font-medium">Xem Video Gốc: SỰ PHI LÝ KHI LÀM MỘT CON NGƯỜI | Reggie Watts</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DEEP INSIGHTS -->
+        <section id="insights" class="space-y-12">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-white mb-4"><span class="text-neon-cyan">🧠</span> Trụ Cột Tri Thức</h2>
+                <p class="text-gray-400">9 bài học thiết lập lại hệ điều hành tâm trí của bạn.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Insight 1 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 text-2xl mb-4 border border-purple-500/30"><i class="fa-solid fa-masks-theater"></i></div>
+                    <h3 class="text-xl font-bold text-white">1. Tiếng Cười Là Sự Giác Ngộ Tức Thời</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Hài hước là khi não bạn bị đánh lừa bởi một kỳ vọng, rồi bất ngờ nhận ra một sự thật hoàn toàn khác.</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Khi kỳ vọng bị phá vỡ, cái tôi (ego) của bạn lỏng lẻo ra. Bạn tạm quên đi mình là ai và chạm vào bản chất buồn cười của thực tại.</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ẩn dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Chúng ta giống như đang làm màu trên một con tàu vũ trụ bằng đá đang bay giữa không gian vô tận. Nhớ ra điều đó, mọi bực dọc đều hóa nực cười.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-2xl mb-4 border border-cyan-500/30"><i class="fa-solid fa-palette"></i></div>
+                    <h3 class="text-xl font-bold text-white">2. Bất Kỳ Ai Cũng Là Nghệ Sĩ</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Nghệ thuật không phải là vẽ tranh hay hát. Nó là sự chú tâm tuyệt đối bạn đặt vào một việc bạn đang làm.</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Khi ngừng dán nhãn "tôi không có tính sáng tạo", bạn cho phép tiềm năng vô hạn của não bộ được kích hoạt trong những hành động nhỏ nhất.</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ví dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Thợ mộc đóng một chiếc tủ gỗ hoàn hảo, hay việc bạn xay một ly sinh tố ngon nhất có thể... đó chính là lúc bạn đang làm nghệ thuật.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-2xl mb-4 border border-green-500/30"><i class="fa-solid fa-water"></i></div>
+                    <h3 class="text-xl font-bold text-white">3. Tinh Thần Ứng Tác (Improv)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Không có khoảnh khắc nào trong đời thực sự lặp lại. Mọi thứ đang diễn ra ngay lúc này đều là lần đầu tiên.</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Khi coi mọi thứ là ứng tác, bạn sẽ ngừng hành động như một cái máy và bắt đầu phản ứng linh hoạt với thực tại.</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ẩn dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Hãy giống như người lướt sóng. Bạn không chống lại đại dương, bạn mượn sức mạnh của nó thông qua một miếng gỗ để nhảy múa.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 text-2xl mb-4 border border-pink-500/30"><i class="fa-solid fa-eye"></i></div>
+                    <h3 class="text-xl font-bold text-white">4. Thoát Khỏi "Top-Down Processing"</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Chúng ta thường nhìn thế giới qua những "khái niệm" có sẵn trong đầu, chứ không thực sự nhìn vào sự vật đó.</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Khi dán nhãn xong một sự vật, não sẽ ngừng tò mò về nó. Gỡ bỏ nhãn mác, bạn sẽ tìm lại được sự kỳ diệu.</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ví dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Hãy nhìn kỹ cái tua-vít cũ kỹ. Tại sao nó có rãnh? Tại sao đầu nó cong? Nhìn sâu vào những đồ vật tầm thường nhất để thấy cả triết lý thiết kế bên trong.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-2xl mb-4 border border-blue-500/30"><i class="fa-solid fa-hurricane"></i></div>
+                    <h3 class="text-xl font-bold text-white">5. Đứng Ở Tâm Bão</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Bạn không phải là những gì bạn đang cảm thấy. Cảm xúc là cơn bão, còn bạn là "Kẻ Quan Sát" tĩnh lặng ở giữa.</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Sự lo âu xảy ra khi bạn tự đồng hóa mình với cơn bão. Lùi lại một bước, bạn sẽ không bị cuốn đi.</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ví dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Khi ở đỉnh điểm của một trạng thái "phê" kỳ lạ, diễn giả thử đóng giả làm "người bình thường" đứng dậy lấy nước rót cho bạn. Việc tách rời bản ngã khỏi hoàn cảnh là một siêu năng lực.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl mb-4 border border-yellow-500/30"><i class="fa-solid fa-puzzle-piece"></i></div>
+                    <h3 class="text-xl font-bold text-white">6. Mảnh Vỡ Hologram</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Mỗi cá nhân, dù méo mó và kỳ lạ đến đâu, đều chứa đựng toàn bộ bản chất của vũ trụ.</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Nhận ra điều này giúp ta ngừng phán xét gay gắt và luôn nhìn thấy một người bạn tiềm năng ngay cả trong một kẻ tồi tệ.</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ẩn dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Đập vỡ một tấm phim Hologram (ảnh 3 chiều), bạn cầm bất kỳ mảnh nhỏ nào lên, nó vẫn chiếu ra TOÀN BỘ hình ảnh ban đầu. Con người cũng vậy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-2xl mb-4 border border-red-500/30"><i class="fa-solid fa-earth-asia"></i></div>
+                    <h3 class="text-xl font-bold text-white">7. Khi Lo Lắng, Hãy Phóng To Ra</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Quy luật "When in doubt, zoom out". Vấn đề của bạn khổng lồ vì bạn đang dí mắt sát vào nó.</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Kéo góc nhìn ra xa (nhìn từ quan điểm không gian, vũ trụ) sẽ đánh lừa não bộ, làm dịu hạch hạnh nhân (trung khu sợ hãi).</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ví dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Đang stress vì deadline hay nợ thuế? Hãy nhớ lại rằng việc có những hạt bụi gom lại thành bạn, đang mặc quần áo và ngồi nộp thuế trên một hòn đá bay, nó lố bịch và kỳ diệu thế nào.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 text-2xl mb-4 border border-orange-500/30"><i class="fa-solid fa-cat"></i></div>
+                    <h3 class="text-xl font-bold text-white">8. Chấp Nhận Nghịch Lý</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Trái ngược với một sự thật hiển nhiên là một điều sai. Nhưng trái ngược với một sự thật sâu sắc, có thể là một sự thật sâu sắc khác.</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Cãi vã sinh ra do ta cố chứng minh chỉ 1 bên đúng. Chấp nhận nghịch lý giúp ta giữ được kết nối mà không mất đi nhận thức bản thân.</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ẩn dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Giống như con mèo của Schrödinger, vừa sống vừa chết. Nếu ai đó cãi với bạn rằng "Trái đất phẳng", hãy nghĩ: Ở một chiều kích thực tại nào đó, họ đúng. Đừng tốn năng lượng ghét bỏ họ.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card p-8 space-y-4">
+                    <div class="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center text-teal-400 text-2xl mb-4 border border-teal-500/30"><i class="fa-solid fa-users-rays"></i></div>
+                    <h3 class="text-xl font-bold text-white">9. Tình Yêu & Sự Gắn Kết (Coherence)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-neon-cyan">Bản chất:</strong> Tình yêu không phải là cảm xúc ủy mị. Nó là nguyên lý vật lý của sự liên kết (Coherence), chống lại sự hỗn loạn (Entropy).</p>
+                        <p><strong class="text-neon-purple">Cơ chế:</strong> Khi bạn chọn cách hành động "phục vụ tình yêu", bạn sẽ tự động hút những yếu tố cộng hưởng (cộng đồng) để phát triển.</p>
+                        <div class="bg-white/5 p-3 rounded-lg border-l-2 border-neon-cyan">
+                            <span class="text-yellow-400 text-xs uppercase tracking-wider font-bold">💡 Ẩn dụ thực tế:</span>
+                            <p class="text-gray-300 mt-1 italic">Bạn vác một mớ thiết bị nặng trịch đi bộ lên đồi cao chỉ để chơi nhạc cùng bạn bè. Rất cực nhọc, nhưng phần thưởng của sự gắn kết (bộ lạc) vượt xa mọi mệt nhọc vật lý.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: ACTION PLAYBOOK -->
+        <section id="action" class="bg-gradient-to-r from-cosmic-800 to-cosmic-900 rounded-3xl p-8 lg:p-12 border border-white/10 relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-50"></div>
+            
+            <div class="relative z-10 space-y-10">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-white mb-4"><span class="text-neon-purple">🚀</span> Sổ Tay Thực Chiến</h2>
+                    <p class="text-gray-400">Đưa triết lý vũ trụ vào công việc 9-to-5 của bạn.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold text-neon-cyan"><i class="fa-solid fa-code-branch mr-2"></i> Kịch bản "Nếu - Thì"</h3>
+                        
+                        <div class="bg-black/30 p-5 rounded-xl border-l-4 border-neon-purple space-y-2">
+                            <p class="text-gray-300"><strong class="text-white">Nếu:</strong> Bạn đang bế tắc, lo âu tột độ vì sếp mắng hoặc mất khách hàng...</p>
+                            <p class="text-gray-400"><strong class="text-neon-purple">Thì:</strong> Áp dụng "Zoom-Out". Bước ra ngoài, nhìn lên trời, tự nhủ: "Mình đang đứng trên một hòn đá lơ lửng, và những sinh vật linh trưởng không lông này đang giận dữ vì mấy con số ảo trên màn hình". Hãy để sự buồn cười xoa dịu bạn.</p>
+                        </div>
+
+                        <div class="bg-black/30 p-5 rounded-xl border-l-4 border-neon-cyan space-y-2">
+                            <p class="text-gray-300"><strong class="text-white">Nếu:</strong> Cuộc sống của bạn đang quá rập khuôn, nhàm chán như cỗ máy...</p>
+                            <p class="text-gray-400"><strong class="text-neon-cyan">Thì:</strong> Kích hoạt "Improv" (Ứng tác). Hôm nay hãy thử mở cửa bằng tay không thuận, uống nước bằng một cái bát thay vì cốc, hoặc đi làm bằng một con đường ngoằn ngoèo lạ lẫm.</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold text-neon-green"><i class="fa-solid fa-bolt mr-2"></i> Hành Động Nhỏ (Trong 24h Tới)</h3>
+                        
+                        <div class="glass-card p-6 border-neon-green/30 hover:border-neon-green/60 transition-colors">
+                            <h4 class="font-bold text-white mb-2 text-lg">Bài tập "Người Ngoài Hành Tinh" 👽</h4>
+                            <p class="text-gray-400 text-sm mb-4">Mục tiêu: Đập vỡ định kiến (Top-down processing) để tìm lại cảm hứng nghệ sĩ.</p>
+                            <ul class="space-y-3 text-sm text-gray-300">
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-neon-green mt-1"></i>
+                                    <span><strong>Bước 1:</strong> Chọn một vật dụng vô tri nhất bạn thấy quanh mình (cái bấm móng tay, con chuột máy tính, chiếc thìa).</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-neon-green mt-1"></i>
+                                    <span><strong>Bước 2:</strong> Cầm nó lên, giả vờ bạn là người ngoài hành tinh lần đầu thấy nó. Đặt câu hỏi: Tại sao nó có đường cong này? Chất liệu này để làm gì? Ai đã thiết kế nó?</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-neon-green mt-1"></i>
+                                    <span><strong>Bước 3:</strong> Quan sát không chớp mắt trong đúng 2 phút. Bạn sẽ thấy não mình "bừng sáng" trở lại.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: REALITY CHECK -->
+        <section id="reality-check" class="space-y-12">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-white mb-4"><span class="text-red-500">⚠️</span> Nhận Diện Cạm Bẫy</h2>
+                <p class="text-gray-400">Lý do khiến triết lý hay ho thường thất bại ở thực tế.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-red-900/10 border border-red-500/20 p-8 rounded-2xl relative overflow-hidden group hover:border-red-500/50 transition-colors">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                        <i class="fa-solid fa-flag text-6xl text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-red-400 flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Bẫy Vô Hình (Spiritual Bypassing)
+                    </h3>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        <strong>Ảo tưởng:</strong> Tin rằng phải dùng "chất kích thích tâm trí" (như nấm, cỏ...) hoặc có trải nghiệm cực hạn mới chạm được vào tự do tâm thức. Dùng triết lý "đời là vô nghĩa" để biện minh cho sự vô trách nhiệm, trốn tránh nỗi đau thực tế.
+                    </p>
+                    <div class="bg-black/40 p-4 rounded-lg text-sm border-l-2 border-red-600">
+                        <span class="text-gray-400 italic">"Gặp khó khăn trong công việc, thay vì giải quyết, lại tự nhủ 'vũ trụ này là ảo' rồi bỏ mặc đồng nghiệp gánh vác." - Đây là trốn tránh, không phải giác ngộ.</span>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-green-900/10 border border-green-500/20 p-8 rounded-2xl relative overflow-hidden group hover:border-green-500/50 transition-colors">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                        <i class="fa-solid fa-shield-halved text-6xl text-green-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-green-400 flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-lock"></i> Chốt Chặn Kỷ Luật
+                    </h3>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        <strong>Quy tắc "Cắt đứt thói quen vô thức":</strong> Bạn không thể bắt não bộ "phải sáng tạo" bằng lời nói. Bạn phải thay đổi môi trường vật lý để ép não bộ thức tỉnh khỏi chế độ Auto-pilot.
+                    </p>
+                    <div class="bg-black/40 p-4 rounded-lg text-sm border-l-2 border-green-600 space-y-2">
+                        <p class="text-gray-300">🛡️ <strong>Chốt chặn cứng:</strong> Mỗi ngày xóa/khóa app giải trí (Tiktok, FB) vào đúng 1 khung giờ quen thuộc. Khi não bộ "đòi" lướt app theo thói quen mà không thấy, nó sẽ bực bội. ĐÓ chính là lúc bạn lấp vào khoảng trống đó bằng việc quan sát hiện tại (vẽ vời, hát nghêu ngao, dọn dẹp).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: FLASHCARDS -->
+        <section id="flashcards" class="space-y-10">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-white mb-4"><span class="text-yellow-400">🃏</span> Trạm Ôn Tập Nhanh</h2>
+                <p class="text-gray-400">Di chuột (hoặc chạm) vào thẻ để kiểm tra trí nhớ của bạn.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Generator loop for Flashcards -->
+                <script>
+                    const questions = [
+                        { q: "Bản chất thực sự của sự hài hước là gì?", a: "Là sự phá vỡ kỳ vọng, mang lại khoảnh khắc giác ngộ tức thời khi ta nhận ra sự ngớ ngẩn của thực tại." },
+                        { q: "Làm sao để đánh thức 'Nghệ sĩ' trong bạn?", a: "Ngừng phân chia rạch ròi. Dồn sự chú tâm tuyệt đối vào bất cứ việc gì đang làm (dọn nhà, pha trà...)." },
+                        { q: "Sai lầm 'Top-down processing' là gì?", a: "Là nhìn vạn vật qua 'nhãn mác' có sẵn trong đầu, khiến ta mất đi sự tò mò và khả năng quan sát chi tiết." },
+                        { q: "Tư duy 'Improv' (Ứng tác) dạy ta điều gì?", a: "Không có khoảnh khắc nào lặp lại. Hãy xem mọi hành động quen thuộc là một cơ hội để sáng tạo cách làm mới." },
+                        { q: "Luật 'When in doubt, zoom out' hoạt động sao?", a: "Khi lo âu, hãy tưởng tượng bạn đang nhìn từ vũ trụ xuống. Bạn sẽ thấy bản thân và rắc rối của mình thật bé nhỏ và buồn cười." },
+                        { q: "Làm sao để không bị cảm xúc cuốn đi?", a: "Hãy trở thành 'Kẻ quan sát' ở tâm bão. Bạn trải nghiệm cảm xúc, nhưng bạn không phải là cảm xúc đó." },
+                        { q: "Bài học từ miếng Hologram bị vỡ?", a: "Mỗi mảnh vỡ nhỏ nhất vẫn chứa trọn hình ảnh. Mỗi cá thể (dù kỳ quặc) đều mang trong mình bản chất của vũ trụ." },
+                        { q: "Làm gì khi có người cãi lý với bạn?", a: "Chấp nhận nghịch lý. Nhận ra rằng ở một góc nhìn nào đó, họ đúng. Đừng tốn năng lượng bảo vệ cái tôi." },
+                        { q: "Tại sao tình yêu mạnh hơn sợ hãi?", a: "Sợ hãi tạo ra sự hỗn loạn (entropy), tình yêu tạo ra sự gắn kết, đồng điệu và cộng hưởng (coherence)." },
+                        { q: "Lo âu (Anxiety) bắt nguồn từ đâu?", a: "Từ nỗi sợ cái chết sâu thẳm và ảo tưởng rằng ta có thể kiểm soát được mọi thứ trong thực tại." },
+                        { q: "Bẫy tâm linh nguy hiểm nhất là gì?", a: "Dùng khái niệm 'đời là cõi tạm/vô nghĩa' để trốn tránh trách nhiệm và nỗi đau của thực tại vật lý." },
+                        { q: "Giá trị thực sự của 'Cộng đồng'?", a: "Họ là những tấm gương trong suốt phản chiếu bạn, giúp bạn chia sẻ gánh nặng của việc tự nhận thức." }
+                    ];
+
+                    document.write(questions.map(item => `
+                        <div class="flashcard-container cursor-pointer h-52">
+                            <div class="flashcard w-full h-full">
+                                <div class="flashcard-front">
+                                    <div class="text-neon-cyan text-2xl mb-2 text-center"><i class="fa-regular fa-circle-question"></i></div>
+                                    <p class="text-center font-semibold text-gray-200 text-sm">${item.q}</p>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="text-neon-purple text-xl mb-2 text-center"><i class="fa-solid fa-lightbulb"></i></div>
+                                    <p class="text-center text-gray-200 text-sm leading-relaxed">${item.a}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="h-[128px] border-t border-white/10 bg-cosmic-900 mt-20 flex flex-col items-center justify-center text-center px-4 relative z-10">
+        <p class="text-gray-400 text-xs md:text-sm max-w-2xl mb-3">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="flex gap-6 items-center">
+            <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-red-500 transition-colors text-xl" title="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-white transition-colors text-xl" title="TikTok">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-500 transition-colors text-xl" title="Facebook">
+                <i class="fa-brands fa-facebook-f"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Zoom & Pan Script for Mindmap -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const wrapper = document.getElementById('mindmap-wrapper');
+            const container = document.getElementById('mindmap-container');
+            
+            let scale = 1;
+            let isDragging = false;
+            let startX, startY;
+            let translateX = 0, translateY = 0;
+
+            // Wait a moment for mermaid to render svg
+            setTimeout(() => {
+                const svg = container.querySelector('svg');
+                if(!svg) return;
+                
+                // Set initial scale to fit properly if needed
+                svg.style.transition = 'transform 0.1s ease';
+
+                wrapper.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    // Zoom direction
+                    const delta = e.deltaY * -0.001;
+                    scale += delta;
+                    
+                    // Constrain scale
+                    scale = Math.min(Math.max(0.5, scale), 3);
+                    updateTransform();
+                });
+
+                wrapper.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                });
+
+                window.addEventListener('mouseup', () => {
+                    isDragging = false;
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    updateTransform();
+                });
+
+                // Touch support for mobile dragging
+                wrapper.addEventListener('touchstart', (e) => {
+                    if(e.touches.length === 1) {
+                        isDragging = true;
+                        startX = e.touches[0].clientX - translateX;
+                        startY = e.touches[0].clientY - translateY;
+                    }
+                });
+
+                wrapper.addEventListener('touchend', () => {
+                    isDragging = false;
+                });
+
+                wrapper.addEventListener('touchmove', (e) => {
+                    if (!isDragging || e.touches.length > 1) return;
+                    e.preventDefault();
+                    translateX = e.touches[0].clientX - startX;
+                    translateY = e.touches[0].clientY - startY;
+                    updateTransform();
+                });
+
+                function updateTransform() {
+                    container.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                }
+            }, 1000); // Give mermaid 1 second to render
+        });
+    </script>
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
