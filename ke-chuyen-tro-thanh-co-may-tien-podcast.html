@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bậc Thầy Kể Chuyện: Chiến Lược Thao Túng Tâm Lý & Dòng Tiền</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* CSS Abstract Art & Backgrounds */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .art-blob-blue {
+            position: absolute; width: 40vw; height: 40vw; background: #38bdf8;
+            filter: blur(120px); opacity: 0.15; border-radius: 50%; z-index: -1;
+            top: -10%; left: -10%; animation: float 10s infinite ease-in-out;
+        }
+        
+        .art-blob-purple {
+            position: absolute; width: 30vw; height: 30vw; background: #a855f7;
+            filter: blur(100px); opacity: 0.15; border-radius: 50%; z-index: -1;
+            bottom: 20%; right: -5%; animation: float 8s infinite ease-in-out reverse;
+        }
+
+        .art-grid {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        /* Typography & Accents */
+        .text-gradient {
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        .section-title::after {
+            content: ''; position: absolute; left: 0; bottom: -8px;
+            width: 50%; height: 4px; background: linear-gradient(90deg, #38bdf8, transparent);
+            border-radius: 2px;
+        }
+
+        /* Mindmap Zoom Container */
+        #mindmap-wrapper {
+            width: 100%; height: 75vh; overflow: hidden;
+            cursor: grab; position: relative;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 1rem; border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        #mindmap-wrapper:active { cursor: grabbing; }
+        .mermaid { transform-origin: 0 0; transition: transform 0.1s ease; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;}
+
+        /* Flashcards */
+        .flashcard-container { perspective: 1000px; }
+        .flashcard {
+            width: 100%; height: 220px;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .flashcard:hover { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 1rem;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 1.5rem; text-align: center;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+        }
+        .flashcard-front {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .flashcard-back {
+            background: linear-gradient(145deg, #0284c7, #1d4ed8);
+            transform: rotateY(180deg); color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .zoom-controls {
+            position: absolute; bottom: 1rem; right: 1rem;
+            display: flex; gap: 0.5rem; z-index: 10;
+        }
+        .btn-zoom {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: white; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            backdrop-filter: blur(5px); transition: all 0.3s;
+        }
+        .btn-zoom:hover { background: rgba(56, 189, 248, 0.4); }
+
+    </style>
+</head>
+<body class="relative antialiased">
+
+    <!-- CSS Abstract Art Elements -->
+    <div class="art-grid"></div>
+    <div class="art-blob-blue"></div>
+    <div class="art-blob-purple"></div>
+
+    <main class="max-w-6xl mx-auto px-4 py-12 relative z-10">
+        
+        <!-- Header -->
+        <header class="text-center mb-16 pt-10">
+            <span class="px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-sm font-semibold border border-blue-500/20 mb-4 inline-block tracking-wider uppercase">
+                <i class="fa-solid fa-brain mr-2"></i>Giải mã Tâm lý học Nội dung
+            </span>
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+                Kể Chuyện Trở Thành <span class="text-gradient">Cỗ Máy Tiền</span>
+            </h1>
+            <p class="text-xl text-slate-400 max-w-2xl mx-auto font-light">
+                Biến những câu chuyện đời thường thành lưỡi câu sắc bén. Hack bộ não khách hàng bằng hiệu ứng Zeigarnik và xây dựng hệ thống phân phối nội dung không có điểm dừng.
+            </p>
+        </header>
+
+        <!-- 1. The Big Idea -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold section-title">🎯 Bức tranh toàn cảnh</h2>
+            <div class="glass-panel p-6 rounded-2xl mb-8 border-l-4 border-blue-500">
+                <p class="text-lg text-slate-200">
+                    <strong class="text-blue-400">Luận điểm cốt lõi:</strong> Kể chuyện không phải là văn chương bồng lai, nó là một <b>chiến lược thu phễu</b>. Bằng cách thao túng sự tò mò (Mở Loop) và mô tả chính xác tột độ nỗi đau của khách hàng, bạn không bán sản phẩm, bạn bán "phiên bản giải thoát" của chính họ.
+                </p>
+            </div>
+
+            <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl mb-6 group" id="mindmap-wrapper">
+                <div class="absolute top-4 left-4 bg-slate-900/80 px-4 py-2 rounded-lg backdrop-blur text-sm text-slate-300 z-10 border border-slate-700">
+                    <i class="fa-solid fa-magnifying-glass-plus mr-2 text-blue-400"></i>
+                    <em>Cuộn chuột để Thu/Phóng - Kéo thả để Di chuyển</em>
+                </div>
+                <!-- Mermaid Container -->
+                <div class="mermaid flex justify-center w-full h-full" id="mermaid-svg-container">
+                    mindmap
+                      root((Kể Chuyện\nRa Tiền))
+                        (1. Hack Não\nKhách Hàng)
+                          ::icon(fa fa-brain)
+                          Zeigarnik Effect\nNão ghét sự dang dở
+                          Mở Loop sớm\nĐóng Loop muộn
+                          Intrigue = Click\nTension = Retention
+                        (2. Phễu Cảm Xúc)
+                          ::icon(fa fa-filter)
+                          Logic chỉ là phụ\nCảm xúc quyết định
+                          Sự chú ý
+                          Lòng tin
+                          Niềm tin
+                          Hành động
+                        (3. Khung 5 Dòng)
+                          ::icon(fa fa-pen-nib)
+                          Tấm Gương\nĐọc vị thực tại
+                          Ma Sát\nNỗi đau cá nhân
+                          Giác Ngộ\nSự thật thức tỉnh
+                          Dịch Chuyển\nTừ nạn nhân -> Anh hùng
+                          Lời Mời\nPhần thưởng tự nhiên
+                        (4. The Content\nWaterfall)
+                          ::icon(fa fa-water)
+                          Build Once\nDistribute Forever
+                          1 Video Dài
+                          Cắt thành Short/Reels
+                          Biến thành Newsletter/Post
+                          CEO of Personal Media
+                </div>
+                <div class="zoom-controls">
+                    <button class="btn-zoom" onclick="zoomMap(0.1)"><i class="fa-solid fa-plus"></i></button>
+                    <button class="btn-zoom" onclick="zoomMap(-0.1)"><i class="fa-solid fa-minus"></i></button>
+                    <button class="btn-zoom" onclick="resetZoom()"><i class="fa-solid fa-expand"></i></button>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="https://youtu.be/Zv7wsu6n7Pw" target="_blank" class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full transition-transform hover:scale-105 shadow-[0_0_20px_rgba(220,38,38,0.4)]">
+                    <i class="fa-brands fa-youtube text-2xl mr-3"></i>
+                    Xem bản gốc: How to become a storytelling genius
+                </a>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold section-title">🧠 Các Trụ Cột Tri Thức</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Lesson 1 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-blue-400/50 transition-colors relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all"></div>
+                    <div class="text-3xl mb-4">🪝</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Hiệu ứng Zeigarnik</h3>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-blue-400">Bản chất:</strong> Não bộ con người bị ám ảnh và ghét sự dang dở. Khi bạn mở một "vòng lặp" thông tin nhưng không đóng nó ngay, người xem bị ép phải ở lại.</p>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-purple-400">Cơ chế:</strong> Sự tò mò (Intrigue) mang lại lượt Click. Nhưng Sự căng thẳng (Tension) - việc giữ bí mật đến giữa video - mới tạo ra Tỉ lệ giữ chân (Retention).</p>
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 text-sm mt-4">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i><b>Ví dụ:</b> "Tôi mở đầu bằng câu hỏi: Người kiếm $730k/tháng làm việc bao nhiêu tiếng? Bạn nghĩ là 14h/ngày? Sai rồi. Nhưng tôi giấu cách làm đến tận 4 phút sau."
+                    </div>
+                </div>
+
+                <!-- Lesson 2 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-blue-400/50 transition-colors relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all"></div>
+                    <div class="text-3xl mb-4">💼</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Ảo tưởng của sự Lý Trí</h3>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-blue-400">Bản chất:</strong> Con người luôn nghĩ mình mua hàng bằng logic (tính năng, giá cả). Thực tế, 100% quyết định mua hàng là do Cảm Xúc dẫn dắt.</p>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-purple-400">Cơ chế:</strong> Phễu mua hàng thực sự không phải là Traffic -> Lead -> Sale. Nó là: Chú ý -> Cảm thấy tin tưởng -> Sinh ra niềm tin "Nó sẽ hợp với mình" -> Hành động.</p>
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 text-sm mt-4">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i><b>Ví dụ:</b> Túi Birkin giá $50,000 không phải vì da cá sấu xịn. Người ta trả tiền cho câu chuyện về nghệ nhân thủ công, di sản thương hiệu và cảm giác chờ đợi 3 năm.
+                    </div>
+                </div>
+
+                <!-- Lesson 3 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-blue-400/50 transition-colors relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all"></div>
+                    <div class="text-3xl mb-4">🛡️</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Vũ khí Tối thượng: Sự Chân Thật</h3>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-blue-400">Bản chất:</strong> Lợi thế cạnh tranh lớn nhất không phải là bằng cấp bóng bẩy, mà là câu chuyện những góc khuất, thất bại và sự vươn lên của Founder.</p>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-purple-400">Cơ chế:</strong> Khi chia sẻ sự hỗn loạn đã suýt đánh gục bạn, bạn tạo ra một lớp bảo vệ (Moat) mà không đối thủ chung chung nào copy được.</p>
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 text-sm mt-4">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i><b>Ví dụ:</b> Doanh nghiệp Bitmaker bị chính phủ đòi đóng cửa. Matt thức trắng 48h gửi 3000 email kể câu chuyện chân thật. Kết quả: Được chính phủ miễn trừ và sau này bán cty với giá cao.
+                    </div>
+                </div>
+
+                <!-- Lesson 4 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-blue-400/50 transition-colors relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all"></div>
+                    <div class="text-3xl mb-4">🪞</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Khung 5 dòng: Tấm Gương & Ma Sát</h3>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-blue-400">Bản chất:</strong> Đừng vội bán giải pháp. Hãy mô tả tình huống sống hiện tại của khách hàng chính xác đến mức họ sởn gai ốc.</p>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-purple-400">Cơ chế:</strong> Gương (Mirror) gọi tên đúng thực trạng. Ma sát (Friction) chọc vào cái giá phải trả ở khía cạnh CÁ NHÂN (gia đình, sức khỏe) chứ không phải công việc.</p>
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 text-sm mt-4">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i><b>Ví dụ:</b> Đừng nói "Bạn quản lý thời gian kém". Hãy nói: "Bạn kẹt trong Slack cả ngày... và hệ quả là 3 năm nay bạn lỡ sinh nhật con và không có kỳ nghỉ thực sự nào."
+                    </div>
+                </div>
+
+                <!-- Lesson 5 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-blue-400/50 transition-colors relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all"></div>
+                    <div class="text-3xl mb-4">🚪</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">CTA Lời Mời Trơn Tru</h3>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-blue-400">Bản chất:</strong> Call-to-action (Kêu gọi hành động) tệ nhất là thứ giật cục, phá vỡ luồng cảm xúc của người nghe.</p>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-purple-400">Cơ chế:</strong> Biến CTA thành một "Lối thoát" (The Invitation) logic. Story mở ra vết thương, và Lead magnet (quà tặng) là miếng băng gâu dán lại vết thương đó.</p>
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 text-sm mt-4">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i><b>Ví dụ:</b> Sau khi kể chuyện làm 13h/ngày bế tắc, đừng nói "Mua khóa học đi". Hãy nói: "Nếu bạn cũng kiệt sức như tôi hồi đó, hãy tải cẩm nang miễn phí này để gỡ rối."
+                    </div>
+                </div>
+
+                <!-- Lesson 6 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-blue-400/50 transition-colors relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all"></div>
+                    <div class="text-3xl mb-4">🌊</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Thác Nội Dung (Waterfall)</h3>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-blue-400">Bản chất:</strong> Sáng tạo cái mới mỗi ngày là cách tự sát nhanh nhất. Hãy chơi ở "Easy Mode".</p>
+                    <p class="text-sm text-slate-300 mb-3"><strong class="text-purple-400">Cơ chế:</strong> Cấu trúc Thác Nước: Sản xuất 1 tài nguyên gốc (Video dài/Essay) -> Dùng Team cắt xẻ ra 20 formats khác nhau (Shorts, Reels, Threads, Carousel).</p>
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 text-sm mt-4">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i><b>Ví dụ:</b> Một video YouTube kể về quá khứ phá sản sẽ được Editor làm thành 3 cái Reels, Copywriter viết thành 1 bài LinkedIn và 1 Newsletter. Build once, Distribute forever.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold section-title">🚀 Sổ Tay Thực Chiến</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- IF-THEN -->
+                <div class="glass-panel p-8 rounded-2xl border-t-4 border-emerald-400 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 text-9xl opacity-5"><i class="fa-solid fa-bolt"></i></div>
+                    <h3 class="text-xl font-bold mb-6 text-emerald-400 uppercase tracking-wider"><i class="fa-solid fa-code-branch mr-2"></i>Kịch Bản Cứu Nguy (If - Then)</h3>
+                    
+                    <div class="mb-5 border-l-2 border-slate-600 pl-4">
+                        <p class="text-red-400 font-bold mb-1">🚨 Nếu: Bạn ngồi nhìn màn hình trắng, cạn ý tưởng viết bài...</p>
+                        <p class="text-slate-300"><i class="fa-solid fa-arrow-right text-emerald-400 mr-2"></i><b class="text-emerald-400">Thì:</b> Dừng bịa ý tưởng. Hãy dùng bài test 5 năm: "Vấn đề chết tiệt nào tôi ước có người chỉ cho tôi cách giải quyết 5 năm trước?". Viết về đống hỗn độn đó.</p>
+                    </div>
+
+                    <div class="mb-5 border-l-2 border-slate-600 pl-4">
+                        <p class="text-red-400 font-bold mb-1">🚨 Nếu: Khách hàng chỉ xem rồi lướt đi, không click vào bio/link...</p>
+                        <p class="text-slate-300"><i class="fa-solid fa-arrow-right text-emerald-400 mr-2"></i><b class="text-emerald-400">Thì:</b> Kiểm tra lại CTA. Bạn đang bắt họ chuyển trạng thái quá gắt. Hãy đổi CTA thành một món quà miễn phí giúp họ giải quyết tàn dư của vấn đề vừa đọc.</p>
+                    </div>
+                    
+                    <div class="border-l-2 border-slate-600 pl-4">
+                        <p class="text-red-400 font-bold mb-1">🚨 Nếu: Bạn đang đuối sức vì ngày nào cũng phải quay quay dựng dựng...</p>
+                        <p class="text-slate-300"><i class="fa-solid fa-arrow-right text-emerald-400 mr-2"></i><b class="text-emerald-400">Thì:</b> Chuyển ngay sang mô hình Media Company. Chọn đúng 1 câu chuyện tốt nhất tuần trước, ném cho Editor xào nấu ra 5 formats. Bạn được nghỉ hôm nay.</p>
+                    </div>
+                </div>
+
+                <!-- MICRO ACTIONS -->
+                <div class="glass-panel p-8 rounded-2xl border-t-4 border-amber-400 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 text-9xl opacity-5"><i class="fa-solid fa-stopwatch"></i></div>
+                    <h3 class="text-xl font-bold mb-6 text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-list-check mr-2"></i>Micro-actions (Hành động trong 24h tới)</h3>
+                    
+                    <div class="flex items-start mb-6 bg-slate-800/40 p-4 rounded-lg">
+                        <div class="bg-amber-500/20 text-amber-400 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg mr-4 shrink-0">1</div>
+                        <div>
+                            <h4 class="font-bold text-white mb-1">Viết "Khung 5 Dòng" cho sản phẩm hiện tại của bạn</h4>
+                            <p class="text-sm text-slate-300">Lấy giấy bút ra và điền: Thực trạng của khách -> Cái giá họ đang phải trả (chạm tới nỗi đau gia đình/cá nhân) -> Sự giác ngộ bạn nhận ra -> Chuyển đổi của bạn -> Quà tặng tải về.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start bg-slate-800/40 p-4 rounded-lg">
+                        <div class="bg-amber-500/20 text-amber-400 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg mr-4 shrink-0">2</div>
+                        <div>
+                            <h4 class="font-bold text-white mb-1">Kiểm toán Lại Lời Kêu Gọi Hành Động (CTA)</h4>
+                            <p class="text-sm text-slate-300">Mở 3 bài post gần nhất của bạn. Nếu CTA đang là "Hãy mua hàng", "Click link nhé" - Xóa đi. Viết lại sao cho CTA là "Miếng băng gạc" tự nhiên dán vào nỗi đau vừa kể.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold section-title">⚠️ Reality Check: Góc Tỉnh Táo</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Red Flag -->
+                <div class="bg-red-900/20 border border-red-500/30 p-6 rounded-2xl relative">
+                    <div class="absolute top-4 right-4 text-red-500 animate-pulse"><i class="fa-solid fa-triangle-exclamation text-2xl"></i></div>
+                    <h3 class="text-xl font-bold text-red-400 mb-3">Bẫy Vô Hình (Red Flag)</h3>
+                    <p class="font-bold text-white mb-2">Hội chứng "Kẻ Ái Kỷ" (Tự kể chuyện mình quá nhiều).</p>
+                    <p class="text-sm text-slate-300 mb-4">Bạn nghĩ rằng kể lể về quá trình gian khổ của doanh nghiệp là hay. Nhưng thực tế, người đọc chỉ quan tâm <b>họ có thấy bản thân họ trong câu chuyện của bạn không</b>. Nếu bạn kể mải miết mà không có bước "The Mirror" (Tấm gương phản chiếu khách hàng), bài viết sẽ flop thảm hại.</p>
+                    <div class="bg-black/30 p-3 rounded text-xs text-red-300 border-l-2 border-red-500">
+                        <b>Ví dụ thất bại:</b> "Công ty tôi đã phải nhập máy móc 2 tỷ, quy trình 10 bước khép kín chuẩn ISO..." -> Khách hàng lướt qua ngay lập tức vì không liên quan đến cuộc đời họ.
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-indigo-900/20 border border-indigo-500/30 p-6 rounded-2xl relative">
+                    <div class="absolute top-4 right-4 text-indigo-400"><i class="fa-solid fa-shield-halved text-2xl"></i></div>
+                    <h3 class="text-xl font-bold text-indigo-400 mb-3">Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                    <p class="font-bold text-white mb-2">Quy tắc "Chữ Mũi Tên" (The Pointer Rule).</p>
+                    <p class="text-sm text-slate-300 mb-4">Đừng cố dặn bản thân "phải viết hay hơn". Hãy thiết lập chốt chặn vật lý: Trước khi ấn nút Đăng bài, <b>hãy dùng tính năng tìm kiếm Ctrl+F để đếm chữ "Bạn" (You) và "Tôi/Chúng tôi" (I/We)</b>. Nếu chữ "Tôi" nhiều gấp 3 lần chữ "Bạn", cấm tuyệt đối không được đăng. Trả lại bài cho đến khi sửa xong.</p>
+                    <div class="bg-black/30 p-3 rounded text-xs text-indigo-300 border-l-2 border-indigo-500">
+                        <b>Cơ chế bảo vệ:</b> Ngăn chặn bản năng nói về cái tôi, ép não bộ phải viết bằng góc nhìn và sự thấu cảm dành cho người đọc.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall (Flashcards) -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold section-title">🃏 Trạm Ôn Tập Tương Tác (Active Recall)</h2>
+            <p class="text-slate-400 mb-8">Di chuột (hoặc chạm) vào các thẻ dưới đây để lật mặt sau. Cơ chế này ép não bạn tự truy xuất thông tin trước khi xem đáp án, giúp lưu trữ vào trí nhớ dài hạn.</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 flashcard-container">
+                
+                <!-- Card 1 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Hiệu ứng Zeigarnik là gì?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Não bộ ghét sự dang dở. Khi mở một 'vòng lặp' nhưng chưa đóng, người xem bị ép phải khao khát kết quả và ở lại.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Intrigue (Tò mò) vs Tension (Căng thẳng)?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Intrigue tạo ra cú Click (vd: Thumbnail, Tiêu đề). Còn Tension (giữ lại bí mật) tạo ra sự giữ chân (Retention).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Phễu Mua Hàng Tâm Lý khác phễu truyền thống chỗ nào?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Nó không dựa trên Logic (Traffic -> Lead) mà dựa trên Cảm xúc: Attention -> Trust -> Belief -> Action.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Vì sao Skims đè bẹp các hãng áo định hình khác?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Vì người ta mua câu chuyện về sự ám ảnh đồ mặc trong của Kim Kardashian, không mua tấm vải gia công ở nhà máy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Lợi thế cạnh tranh (Moat) mạnh nhất của Founder là gì?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Sự thật trần trụi. Kể về sự cố, hỗn loạn mà bạn đã vượt qua, đó là thứ hàng nhái không thể copy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Bước 1 trong Khung kể chuyện 5 dòng là gì?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Tấm Gương (The Mirror): Tả chính xác tình huống hiện tại để họ giật mình: "Họ đang đọc vị tâm trí mình!"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Bước "Ma Sát" (Friction) cần khai thác yếu tố nào?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Chi phí CÁ NHÂN. Không phải "doanh thu giảm", mà là "bạn lỡ sinh nhật con cái và không có thời gian ngủ".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Lỗi chí mạng khi đưa ra Call-To-Action?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Sự giật cục, thiếu liên quan. Vừa kể chuyện buồn bã xong lại chèn link "Hãy tải newsletter ngay!".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Thế nào là một CTA "Tự nhiên"?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Câu chuyện mở ra vòng lặp/nỗi đau, CTA đóng vai trò như viên thuốc hoặc cẩm nang giải quyết trực tiếp vòng lặp đó.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 10 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Tư duy đằng sau sự "Hào phóng tột đỉnh"?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Cho đi miễn phí thứ giá trị nhất, khiến khách hàng phải nghĩ: "Đồ free mà thế này, thì đồ trả phí còn khủng thế nào?"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 11 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Mục tiêu quan trọng nhất khi cho đi Lead Magnet?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Thu thập Email. Email list là tài sản giá trị nhất giúp bạn bán hàng không phụ thuộc thuật toán.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 12 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Hệ thống Thác Nội dung (Content Waterfall) là gì?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Chỉ tạo 1 content gốc/tuần, sau đó dùng nhân sự cắt nhỏ nó ra thành 20 nội dung khác trên mọi nền tảng.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 13 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Lỗi chí mạng khiến Creator kiệt sức (Burnout)?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Cố gắng đẻ ra ý tưởng mới hoàn toàn mỗi ngày. Sáng tạo ở chế độ "Hard mode".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 14 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">CEO of Personal Media Company khác Content Creator ở đâu?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">CEO chỉ cung cấp Core Story, để quy trình và team (Editor/Copywriter) làm khâu sản xuất và phân phối.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 15 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div class="flashcard-front absolute inset-0 bg-slate-800 rounded-xl p-4 flex items-center justify-center text-center [backface-visibility:hidden] border border-blue-500/20">
+                            <h4 class="font-bold text-blue-300 text-lg">Bài test 5 năm (5-year test) để tìm ý tưởng là gì?</h4>
+                            <p class="absolute bottom-2 text-xs text-slate-500">Lật xem đáp án <i class="fa-solid fa-share font-bold ml-1"></i></p>
+                        </div>
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 flex items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                            <p class="font-medium text-white text-sm">Hỏi bản thân: Bản nháp hoặc cẩm nang nào mình ước có người đưa cho mình 5 năm trước khi mình gặp khủng hoảng?</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-10 border-t border-slate-800 text-slate-500 relative z-10">
+        <p>Kiến trúc Thông tin & Trải nghiệm Học tập thiết kế bởi Cố vấn AI của bạn.</p>
+    </footer>
+
+    <!-- Logic For Zooming Mindmap -->
+    <script>
+        let scale = 1;
+        const MIN_SCALE = 0.5;
+        const MAX_SCALE = 3;
+        let isDragging = false;
+        let startPos = { x: 0, y: 0 };
+        let translate = { x: 0, y: 0 };
+        
+        const wrapper = document.getElementById('mindmap-wrapper');
+        const container = document.getElementById('mermaid-svg-container');
+
+        // Zoom logic
+        function updateTransform() {
+            container.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
+        }
+
+        function zoomMap(delta) {
+            scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale + delta));
+            updateTransform();
+        }
+
+        function resetZoom() {
+            scale = 1;
+            translate = { x: 0, y: 0 };
+            updateTransform();
+        }
+
+        wrapper.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY * -0.002;
+            zoomMap(delta);
+        }, { passive: false });
+
+        // Drag/Pan logic
+        wrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startPos = { x: e.clientX - translate.x, y: e.clientY - translate.y };
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            translate.x = e.clientX - startPos.x;
+            translate.y = e.clientY - startPos.y;
+            updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch support for dragging
+        wrapper.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            startPos = { x: touch.clientX - translate.x, y: touch.clientY - translate.y };
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            translate.x = touch.clientX - startPos.x;
+            translate.y = touch.clientY - startPos.y;
+            updateTransform();
+        }, { passive: false });
+
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+    </script>
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
