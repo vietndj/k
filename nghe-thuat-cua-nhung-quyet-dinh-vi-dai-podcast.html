@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ tay Quyết định Vĩ đại | Mentor's Playbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Thêm thư viện Panzoom -->
+    <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: false, 
+            theme: 'dark',
+            mindmap: { padding: 20 }
+        });
+
+        // Đợi DOM tải xong, render Mermaid sau đó gắn chức năng Thu/Phóng
+        document.addEventListener('DOMContentLoaded', async () => {
+            await mermaid.run();
+            const svgs = document.querySelectorAll('.mermaid svg');
+            svgs.forEach(svg => {
+                // Tối ưu kích thước SVG để Panzoom hoạt động mượt mà
+                svg.style.width = '100%';
+                svg.style.height = '100%';
+                svg.style.maxWidth = 'none';
+                
+                // Khởi tạo Panzoom
+                const panzoom = Panzoom(svg, {
+                    maxScale: 5,
+                    minScale: 0.3,
+                    contain: 'outside'
+                });
+                
+                // Thêm sự kiện lăn chuột và click đúp
+                svg.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
+                svg.parentElement.addEventListener('dblclick', panzoom.reset);
+            });
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0F19;
+            color: #E2E8F0;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+        }
+
+        .accent-gradient {
+            background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- CSS Abstract Art Components --- */
+        /* S1: Target / Radar */
+        .art-radar {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            border: 2px dashed rgba(59, 130, 246, 0.5);
+            display: flex; justify-content: center; align-items: center;
+            position: relative;
+            animation: spin 20s linear infinite;
+        }
+        .art-radar::before {
+            content: '';
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(16, 185, 129, 0.8);
+        }
+        .art-radar::after {
+            content: '';
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3B82F6, #10B981);
+            position: absolute;
+        }
+
+        /* S2: Brain Nodes */
+        .art-nodes {
+            width: 100px; height: 100px;
+            position: relative;
+        }
+        .node-1, .node-2, .node-3 {
+            position: absolute;
+            background: #3B82F6;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #3B82F6;
+        }
+        .node-1 { width: 30px; height: 30px; top: 10%; left: 35%; }
+        .node-2 { width: 20px; height: 20px; bottom: 20%; left: 10%; background: #10B981; box-shadow: 0 0 15px #10B981;}
+        .node-3 { width: 25px; height: 25px; bottom: 30%; right: 10%; }
+        .art-nodes::before {
+            content: ''; position: absolute;
+            width: 60%; height: 2px; background: rgba(255,255,255,0.2);
+            top: 30%; left: 20%; transform: rotate(45deg);
+        }
+
+        /* S3: Forward Arrows */
+        .art-arrows {
+            width: 80px; height: 80px;
+            display: flex; flex-direction: column; gap: 10px;
+            transform: rotate(-45deg);
+        }
+        .arrow-line {
+            width: 100%; height: 15px;
+            background: linear-gradient(90deg, transparent, #F59E0B);
+            border-radius: 10px;
+            clip-path: polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%);
+        }
+
+        /* S4: Warning Shield */
+        .art-shield {
+            width: 80px; height: 90px;
+            background: repeating-linear-gradient(45deg, #EF4444, #EF4444 10px, #1E293B 10px, #1E293B 20px);
+            clip-path: polygon(50% 0%, 100% 20%, 100% 70%, 50% 100%, 0% 70%, 0% 20%);
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* S5: Stacked Cards */
+        .art-cards {
+            width: 80px; height: 80px;
+            position: relative;
+        }
+        .art-card {
+            width: 60px; height: 80px;
+            position: absolute;
+            border-radius: 8px;
+            border: 2px solid #8B5CF6;
+        }
+        .art-card:nth-child(1) { transform: rotate(-10deg) translateX(-10px); background: #1E293B; }
+        .art-card:nth-child(2) { transform: rotate(5deg) translateX(10px); background: #0F172A; border-color: #3B82F6;}
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Header / Mentor Intro -->
+    <header class="container mx-auto px-6 pt-16 pb-12 max-w-5xl">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 text-sm font-semibold mb-6">
+            <i class="fa-solid fa-user-tie"></i> Mentor's Masterclass
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            Nghệ Thuật Của Những <br>
+            <span class="accent-gradient">Quyết Định Vĩ Đại</span>
+        </h1>
+        <p class="text-xl text-slate-400 max-w-3xl leading-relaxed">
+            Chào bạn, <br>
+            Ranh giới giữa việc xây dựng một "đế chế" và một "công việc kinh doanh vất vả" không nằm ở sự chăm chỉ. Nó nằm ở việc bạn dám đưa ra những quyết định mà người khác lảng tránh. Hôm nay, chúng ta sẽ mổ xẻ 5 quyết định lịch sử từ 5 gã khổng lồ, để xem cách họ thiết kế tương lai như thế nào. Sẵn sàng phá vỡ giới hạn chưa? Bắt đầu thôi. 🚀
+        </p>
+    </header>
+
+    <!-- SECTION 1: THE BIG IDEA -->
+    <section class="container mx-auto px-6 py-12 max-w-5xl">
+        <div class="glass-panel p-8 md:p-12 relative overflow-hidden">
+            <div class="absolute top-[-50px] right-[-50px] opacity-20 pointer-events-none">
+                <div class="art-radar w-64 h-64"></div>
+            </div>
+            
+            <div class="flex items-center gap-4 mb-8">
+                <div class="art-radar"></div>
+                <h2 class="text-3xl font-bold font-display">1. Tầm Nhìn Cốt Lõi 🎯</h2>
+            </div>
+            
+            <div class="bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-xl mb-10">
+                <p class="text-lg text-slate-300">
+                    <strong class="text-white">Luận điểm thay đổi cuộc chơi:</strong> Đừng bao giờ bảo vệ sự an toàn của ngày hôm nay bằng cách hy sinh sự tồn tại của ngày mai. Sự vĩ đại đòi hỏi bạn phải liên tục tự phá vỡ (disrupt) chính mình trước khi thị trường làm điều đó thay bạn.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mở rộng Full Màn Hình cho Mindmap -->
+    <section class="w-full bg-slate-900/80 border-y border-slate-700 relative h-[75vh] min-h-[500px] overflow-hidden">
+        <!-- Hướng dẫn thao tác -->
+        <div class="absolute top-6 left-1/2 -translate-x-1/2 bg-black/70 text-emerald-400 px-6 py-2.5 rounded-full text-sm font-semibold z-10 border border-emerald-500/30 backdrop-blur-md flex items-center gap-3 shadow-xl">
+            <i class="fa-solid fa-arrows-up-down-left-right text-emerald-500"></i>
+            <span>Kéo để di chuyển | Cuộn chuột để thu phóng | Click đúp để đặt lại</span>
+        </div>
+        
+        <div class="mermaid flex justify-center items-center w-full h-full cursor-move">
+            mindmap
+              root((QUYẾT ĐỊNH<br/>VĨ ĐẠI))
+                [Định vị Tương lai]
+                  Nvidia & AI
+                  Bảo vệ sự phù hợp
+                [Tập trung Tuyệt đối]
+                  Apple & iPhone
+                  Khai tử 70% dự án
+                [Lãnh đạo Thực chiến]
+                  Airbnb mùa Covid
+                  Cùng làm mọi thứ
+                [Đổi mới Sinh tồn]
+                  Polaroid
+                  Tạo ra luật chơi mới
+                [Quản trị Nội tại]
+                  Tâm trí & Đội ngũ
+                  Xây dựng Hệ điều hành
+        </div>
+    </section>
+
+    <section class="container mx-auto px-6 py-8 max-w-5xl">
+        <div class="flex justify-center mt-2 mb-12">
+            <a href="https://youtu.be/ohqjbfLj-6o?si=DC5g1QDABlR3OLAp" target="_blank" class="group flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg shadow-red-500/30">
+                <i class="fa-brands fa-youtube text-xl"></i>
+                    Xem Video Gốc: Quyết định thiên tài mà các Founder sợ không dám đưa ra
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: DEEP INSIGHTS -->
+    <section class="container mx-auto px-6 py-12 max-w-5xl">
+        <div class="flex items-center gap-4 mb-12">
+            <div class="art-nodes">
+                <div class="node-1"></div><div class="node-2"></div><div class="node-3"></div>
+            </div>
+            <h2 class="text-3xl font-bold font-display">2. Các Trụ Cột Tri Thức 🧠</h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-8">
+            <!-- Insight 1 -->
+            <div class="glass-panel p-8 border-t-4 border-t-emerald-500 hover:-translate-y-1 transition-transform">
+                <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                    <span class="text-emerald-400">01.</span> Tự Sát Để Tái Sinh (Steve Jobs)
+                </h3>
+                <div class="space-y-4 text-slate-300">
+                    <p><strong><i class="fa-solid fa-crosshairs text-slate-400 w-6"></i> Bản chất:</strong> Sự phức tạp là kẻ thù của sự xuất chúng. Đừng cố gắng làm 10 thứ tàm tạm, hãy giết chết 9 thứ để làm 1 thứ thực sự vĩ đại.</p>
+                    <p><strong><i class="fa-solid fa-gear text-slate-400 w-6"></i> Cơ chế vận hành:</strong> Khi bạn nhồi nhét quá nhiều sản phẩm, bạn pha loãng thời gian, tiền bạc và sự chú ý. Bằng cách "chặt đứt" các nhánh phụ, toàn bộ dưỡng chất sẽ dồn vào thân cây chính, tạo ra sự thống trị tuyệt đối trên thị trường.</p>
+                    <div class="bg-slate-800/50 p-4 rounded-lg text-emerald-300 border border-emerald-500/20">
+                        <p><strong>💡 Ẩn dụ thực tế:</strong> Năm 1997, khi Apple cận kề phá sản với hàng chục dòng sản phẩm rườm rà, Steve Jobs trở lại và lập tức "khai tử" 70% sản phẩm. Vài năm sau, ông tiếp tục tạo ra iPhone - thứ trực tiếp kết liễu chiếc máy nghe nhạc iPod đang hái ra tiền của chính mình. Thà tự ăn thịt chính mình còn hơn để đối thủ nhai nuốt.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 2 -->
+            <div class="glass-panel p-8 border-t-4 border-t-blue-500 hover:-translate-y-1 transition-transform">
+                <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                    <span class="text-blue-400">02.</span> Trồng Cây Của Thập Kỷ Tới (Jensen Huang)
+                </h3>
+                <div class="space-y-4 text-slate-300">
+                    <p><strong><i class="fa-solid fa-crosshairs text-slate-400 w-6"></i> Bản chất:</strong> Đừng chạy theo những gì đang hot hôm nay. Hãy tự hỏi: "10 năm nữa, thứ gì sẽ trở thành nền tảng không thể thiếu?" và xây dựng nó ngay từ bây giờ.</p>
+                    <p><strong><i class="fa-solid fa-gear text-slate-400 w-6"></i> Cơ chế vận hành:</strong> Hầu hết các công ty tối ưu hóa để bảo vệ doanh thu hiện tại. Những kẻ xuất chúng lại đi bảo vệ "sự phù hợp" (relevance) trong tương lai. Khi bạn định vị mình trước khi một xu hướng trở nên rõ ràng, bạn không cần phải cạnh tranh nữa, bạn sở hữu sân chơi đó.</p>
+                    <div class="bg-slate-800/50 p-4 rounded-lg text-blue-300 border border-blue-500/20">
+                        <p><strong>💡 Ẩn dụ thực tế:</strong> Nvidia không vô tình trúng mánh AI. Ba thập kỷ trước, khi trí tuệ nhân tạo chỉ là một dự án khoa học viễn tưởng ở các trường đại học, Jensen Huang đã dồn nguồn lực để xây dựng hạ tầng cho nó. Ông không hỏi AI có thể kiếm bao nhiêu tiền, ông hỏi: "Khi AI trở thành tất yếu, ai sẽ làm chủ hạ tầng?"</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 3 -->
+            <div class="glass-panel p-8 border-t-4 border-t-purple-500 hover:-translate-y-1 transition-transform">
+                <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                    <span class="text-purple-400">03.</span> Xuống Tận Chiến Hào (Brian Chesky)
+                </h3>
+                <div class="space-y-4 text-slate-300">
+                    <p><strong><i class="fa-solid fa-crosshairs text-slate-400 w-6"></i> Bản chất:</strong> Khi công ty đối mặt với khủng hoảng sinh tử, sự ủy quyền là một tội ác. Người đứng đầu phải xắn tay áo lặn sâu vào từng chi tiết nhỏ nhất.</p>
+                    <p><strong><i class="fa-solid fa-gear text-slate-400 w-6"></i> Cơ chế vận hành:</strong> Khi cấu trúc rệu rã, tinh thần đội ngũ chạm đáy, việc thuê một người quản lý mới chỉ làm rắc rối thêm rắc rối. Việc trực tiếp can thiệp của người lãnh đạo giúp dọn dẹp các rào cản hành chính (bỏ qua phê duyệt nhiều tầng) và thiết lập lại tiêu chuẩn cốt lõi với tốc độ ánh sáng.</p>
+                    <div class="bg-slate-800/50 p-4 rounded-lg text-purple-300 border border-purple-500/20">
+                        <p><strong>💡 Ẩn dụ thực tế:</strong> Tháng 3/2020, Covid cuốn sạch 80% doanh thu của Airbnb. Thay vì lùi lại, CEO Brian Chesky nhảy thẳng vào từng phòng ban. Ông tự tay cắt gọt từ 90 màn hình UI phức tạp xuống phiên bản tối giản nhất, làm phẳng mọi cấp độ quản lý. Triết lý của ông: "Nếu tôi không thể đích thân tập trung vào nó, chúng ta sẽ không làm nó."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 4 -->
+            <div class="glass-panel p-8 border-t-4 border-t-orange-500 hover:-translate-y-1 transition-transform">
+                <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                    <span class="text-orange-400">04.</span> Đừng Tìm Ngách, Hãy Định Hình Nó (Edwin Land)
+                </h3>
+                <div class="space-y-4 text-slate-300">
+                    <p><strong><i class="fa-solid fa-crosshairs text-slate-400 w-6"></i> Bản chất:</strong> Thay vì cố gắng làm tốt hơn một chút thứ đang có sẵn, hãy phát minh ra một thế giới hoàn toàn mới mà ở đó, bạn là tiêu chuẩn duy nhất.</p>
+                    <p><strong><i class="fa-solid fa-gear text-slate-400 w-6"></i> Cơ chế vận hành:</strong> Cạnh tranh trong một thị trường sẵn có tốn máu và tiền. Giải quyết một "điểm mù" phi lý của thế giới hiện tại sẽ giúp bạn phá vỡ luật chơi cũ. Khi bạn làm được điều chưa ai nghĩ tới, khách hàng tự động xoay quanh bạn.</p>
+                    <div class="bg-slate-800/50 p-4 rounded-lg text-orange-300 border border-orange-500/20">
+                        <p><strong>💡 Ẩn dụ thực tế:</strong> Năm 1943, máy ảnh chụp xong phải gửi đi rửa phim mất nhiều ngày. Cô con gái 3 tuổi của Edwin Land hỏi: "Tại sao con không thể xem ảnh ngay bây giờ?". Thay vì làm cho quá trình rửa phim rẻ hơn, ông xóa sổ quá trình đó và tạo ra chiếc Polaroid chụp lấy liền. Ông không cạnh tranh, ông tự tạo ra ngách riêng.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 5 -->
+            <div class="glass-panel p-8 border-t-4 border-t-cyan-500 hover:-translate-y-1 transition-transform">
+                <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                    <span class="text-cyan-400">05.</span> Quản Trị Hệ Điều Hành Tâm Trí (Brad Jacobs)
+                </h3>
+                <div class="space-y-4 text-slate-300">
+                    <p><strong><i class="fa-solid fa-crosshairs text-slate-400 w-6"></i> Bản chất:</strong> Rủi ro lớn nhất không nằm ở thị trường, mà nằm ở sự phản ứng hoảng loạn trong não bộ của chính bạn.</p>
+                    <p><strong><i class="fa-solid fa-gear text-slate-400 w-6"></i> Cơ chế vận hành:</strong> Sự rõ ràng trong tư duy sinh ra các quyết định mạnh mẽ. Khi bạn biết tách rời cảm xúc ra khỏi áp lực, bạn ngừng "phản ứng" (react) và bắt đầu "đáp trả" (respond) có tính toán. Tâm trí tĩnh lặng là đòn bẩy cao nhất của một lãnh đạo.</p>
+                    <div class="bg-slate-800/50 p-4 rounded-lg text-cyan-300 border border-cyan-500/20">
+                        <p><strong>💡 Ẩn dụ thực tế:</strong> Brad Jacobs đã xây dựng 7 công ty tỷ đô. Bí mật của ông không phải tiền bạc, mà là kỷ luật nội tâm. Ông dùng Thiền để dập tắt nhiễu loạn trong não. Kết hợp với việc chỉ thuê "Nhân sự hạng A" (vì nhân sự B sẽ kéo theo nhân sự C), ông tạo ra những cỗ máy chạy mượt mà bất chấp sóng gió thị trường.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: ACTION PLAYBOOK -->
+    <section class="container mx-auto px-6 py-12 max-w-5xl">
+        <div class="flex items-center gap-4 mb-12">
+            <div class="art-arrows">
+                <div class="arrow-line"></div>
+                <div class="arrow-line"></div>
+                <div class="arrow-line"></div>
+            </div>
+            <h2 class="text-3xl font-bold font-display">3. Sổ Tay Thực Chiến 🚀</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700">
+                <div class="inline-block bg-yellow-500/20 text-yellow-400 text-sm font-bold px-3 py-1 rounded-md mb-4">Kịch bản 1</div>
+                <p class="font-semibold text-lg mb-2">NẾU bạn đang làm 10 dự án nhỏ giọt cùng lúc mà không cái nào đột phá...</p>
+                <div class="pl-4 border-l-2 border-yellow-500 text-slate-300">
+                    <p class="mb-2"><strong>THÌ:</strong> Hãy mang năng lượng của "Kẻ thủ lĩnh chiến tranh" (Warchief energy). Bạn đang mắc bẫy pha loãng. Hãy tìm ra 1 sản phẩm/dịch vụ kiếm tiền dễ nhất, biên độ lợi nhuận cao nhất.</p>
+                    <p>Dũng cảm "đóng băng" 9 dự án còn lại. Kể cả nó đau đớn, hãy làm ngay. Sự tập trung tột độ mới đục thủng được thị trường.</p>
+                </div>
+            </div>
+            
+            <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700">
+                <div class="inline-block bg-blue-500/20 text-blue-400 text-sm font-bold px-3 py-1 rounded-md mb-4">Kịch bản 2</div>
+                <p class="font-semibold text-lg mb-2">NẾU văn hóa team đang đi xuống, nhân sự đùn đẩy trách nhiệm...</p>
+                <div class="pl-4 border-l-2 border-blue-500 text-slate-300">
+                    <p class="mb-2"><strong>THÌ:</strong> Tuyệt đối không vội thuê thêm "Quản lý nhân sự/Marketing" để giải quyết hộ. Đó là đắp thêm sự phức tạp.</p>
+                    <p>Hãy tự mình nhảy xuống chiến hào. Ngồi cùng team, loại bỏ các bước phê duyệt rườm rà. Bạn là tiêu chuẩn của công ty: Những gì bạn dung túng, nhân viên sẽ lặp lại.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel p-8 bg-gradient-to-r from-slate-900 to-slate-800 border border-emerald-500/30">
+            <h4 class="text-xl font-bold text-emerald-400 mb-4"><i class="fa-solid fa-bolt mr-2"></i> Hành động Micro (Làm ngay trong 24h tới)</h4>
+            <ul class="space-y-4 text-slate-300">
+                <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                    <span><strong>Buổi lễ "Khai tử":</strong> Viết ra giấy 3 tính năng, sản phẩm hoặc dự án phụ không đóng góp vào 80% doanh thu. Gạch chéo chúng và chính thức thông báo dừng lại với team.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                    <span><strong>Reset Hệ điều hành:</strong> Đặt báo thức ngay lúc này. Tối nay trước khi ngủ, ngồi tĩnh tâm 5 phút không điện thoại. Trực tiếp trải nghiệm bài tập: <em>"Tưởng tượng mình đang giảm 50% mức độ stress hiện tại"</em> để dọn dẹp bộ nhớ não bộ.</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 4: REALITY CHECK -->
+    <section class="container mx-auto px-6 py-12 max-w-5xl">
+        <div class="flex items-center gap-4 mb-12">
+            <div class="art-shield"></div>
+            <h2 class="text-3xl font-bold font-display">4. Cảnh Tỉnh Thực Tế ⚠️</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Red Flags -->
+            <div class="bg-red-900/10 border border-red-500/20 p-8 rounded-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-2 h-full bg-red-500/50"></div>
+                <h3 class="text-2xl font-bold text-red-400 mb-4"><i class="fa-solid fa-flag text-red-500 mr-2"></i> Bẫy Vô Hình</h3>
+                <p class="text-slate-300 mb-4">
+                    <strong>Hội chứng "Nhiều sản phẩm = Nhiều tiền" (Tảo hôn kinh doanh)</strong>. Rất nhiều founder nghĩ việc đẻ ra 12 gói dịch vụ khác nhau sẽ thu hút nhiều tệp khách hơn.
+                </p>
+                <p class="text-slate-400 text-sm italic">
+                    Hậu quả: Khách hàng bối rối. Nguồn lực đứt gãy. Bạn không thể tối ưu hóa chất lượng cho bất kỳ cái nào, dẫn đến việc doanh nghiệp trở thành một "bãi rác" các dự án dang dở.
+                </p>
+            </div>
+
+            <!-- Guardrails -->
+            <div class="bg-indigo-900/10 border border-indigo-500/20 p-8 rounded-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-2 h-full bg-indigo-500/50"></div>
+                <h3 class="text-2xl font-bold text-indigo-400 mb-4"><i class="fa-solid fa-shield-halved text-indigo-500 mr-2"></i> Chốt Chặn Kỷ Luật</h3>
+                <p class="text-slate-300 mb-4">
+                    <strong>Luật Bức Tường Thép: Cấm khởi tạo dự án mới.</strong>
+                </p>
+                <p class="text-slate-400 text-sm">
+                    Thay vì tự nhủ "mình phải tập trung", hãy đặt quy tắc vật lý: Ký một cam kết với Co-founder/Mentor rằng bạn <strong>không được phép</strong> thảo luận hay cấp ngân sách cho bất kỳ dự án mới nào, cho đến khi Sản Phẩm Lõi đạt được con số Doanh thu X hoặc tỷ lệ giữ chân khách hàng Y. Chặn đường lui để tiến lên.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: ACTIVE RECALL -->
+    <section class="container mx-auto px-6 py-16 max-w-5xl border-t border-slate-800">
+        <div class="flex flex-col items-center mb-12 text-center">
+            <div class="art-cards mb-4">
+                <div class="art-card"></div>
+                <div class="art-card"></div>
+            </div>
+            <h2 class="text-3xl font-bold font-display mb-2">5. Trạm Ôn Tập Tương Tác 🃏</h2>
+            <p class="text-slate-400">15 câu hỏi cốt lõi để khắc sâu kiến thức vào bộ não. Đọc và nhẩm câu trả lời trước khi nhìn đáp án.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Flashcard Items -->
+            
+            <!-- Card 1 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">1. Thay vì bảo vệ doanh thu hiện tại, các founder xuất chúng bảo vệ điều gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> "Sự phù hợp" (relevance) của doanh nghiệp trong tương lai.</p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">2. Jensen Huang đã đặt câu hỏi gì thay vì hỏi "AI lớn cỡ nào"?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Khi AI trở thành tất yếu, AI sẽ làm chủ hạ tầng của nó?</p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">3. Câu hỏi đúng để tránh việc mù quáng chạy theo trend là gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Thay vì "Cái gì đang hoạt động hôm nay", hãy hỏi "Cái gì sẽ là hiển nhiên trong 10 năm tới?"</p>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">4. Steve Jobs đã làm gì vào năm 1997 để cứu Apple?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Khai tử 70% dòng sản phẩm để tạo ra sự tập trung triệt để.</p>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">5. Tại sao nói việc ra mắt iPhone là một quyết định tàn nhẫn?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Vì nó tự tay kết liễu iPod - sản phẩm đang cõng doanh thu của Apple lúc bấy giờ.</p>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">6. Nhược điểm chí mạng của việc tung ra quá nhiều sản phẩm là gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Pha loãng thời gian, khiến bạn và thương hiệu không được nhớ đến vì bất cứ điều gì.</p>
+                </div>
+            </div>
+
+            <!-- Card 7 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">7. CEO Airbnb Brian Chesky đã phản ứng thế nào mùa Covid?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Tự nhảy xuống chiến hào: làm phẳng bộ máy, cắt bỏ các màn hình UI dư thừa.</p>
+                </div>
+            </div>
+
+            <!-- Card 8 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">8. Triết lý của Chesky về sự ủy quyền trong khủng hoảng là gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> "Nếu tôi không thể đích thân tập trung vào nó, chúng ta sẽ không làm nó."</p>
+                </div>
+            </div>
+
+            <!-- Card 9 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">9. Bài học duy trì văn hóa cốt lõi của một doanh nghiệp là gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Bạn nhận được chính xác những gì bạn dung túng. Tiêu chuẩn của bạn là tiêu chuẩn của team.</p>
+                </div>
+            </div>
+
+            <!-- Card 10 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">10. Câu hỏi từ con gái 3 tuổi đã thay đổi lịch sử nhiếp ảnh của Edwin Land (Polaroid) là gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> "Tại sao con không thể xem ảnh ngay bây giờ?"</p>
+                </div>
+            </div>
+
+            <!-- Card 11 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">11. Thay vì chật vật tìm ngách để cạnh tranh, ta nên làm gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Xây dựng một không gian hoàn toàn mới để bạn tự trở thành Tiêu chuẩn.</p>
+                </div>
+            </div>
+
+            <!-- Card 12 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">12. Brad Jacobs, người tạo ra 7 cty tỷ đô, coi đâu là mối đe dọa lớn nhất?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Tâm lý cá nhân (cách não bộ phản ứng hoảng loạn trước áp lực).</p>
+                </div>
+            </div>
+
+            <!-- Card 13 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">13. Nguồn gốc của hầu hết các vấn đề stress đến từ đâu?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Do chính tâm trí ta tự cường điệu (sản xuất) ra, góc nhìn không phải là thực tế.</p>
+                </div>
+            </div>
+
+            <!-- Card 14 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">14. Tác hại cực độc của việc để lại nhân sự Hạng B trong team là gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> Nhân sự A thu hút nhân sự A. Nhân sự B sẽ thu hút nhân sự hạng C, kéo rớt toàn bộ văn hóa.</p>
+                </div>
+            </div>
+
+            <!-- Card 15 -->
+            <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-xl hover:border-blue-500 transition-colors">
+                <p class="text-white font-semibold mb-3">15. Sự khác biệt giữa React (Phản ứng) và Respond (Đáp trả) là gì?</p>
+                <div class="pt-3 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm"><span class="text-emerald-400 font-bold">A:</span> React là làm theo cảm xúc hoảng loạn tức thời. Respond là tư duy tĩnh lặng, đánh giá rõ ràng và ra quyết định chiến lược.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-[#0f1422] border-t border-slate-800 py-8 text-center text-slate-500 mt-12">
+        <p>Cẩm nang được chắt lọc bởi Hệ thống Cố vấn Học Tập. Nhấn "Preview" để xem trực quan Mindmap và UI tương tác.</p>
+    </footer>
+
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
