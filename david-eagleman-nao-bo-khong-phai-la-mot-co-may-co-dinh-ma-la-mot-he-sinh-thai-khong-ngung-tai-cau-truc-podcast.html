@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến trúc Não bộ & Kỷ luật Thực thi | Dr. David Eagleman</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAFAFA;
+            color: #18181B;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* CSS Abstract Art Styles */
+        .art-container {
+            width: 100%;
+            height: 140px;
+            overflow: hidden;
+            position: relative;
+            background: #f4f4f5;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Thesis Art */
+        .art-thesis {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        }
+        .art-thesis::before {
+            content: '';
+            position: absolute;
+            width: 150px; height: 150px;
+            background: #4f46e5;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            top: -20px; left: -20px;
+            opacity: 0.1;
+        }
+        .art-thesis::after {
+            content: '';
+            position: absolute;
+            width: 200px; height: 2px;
+            background: #3730a3;
+            transform: rotate(45deg);
+            top: 50%; left: 20%;
+            opacity: 0.2;
+        }
+
+        /* Mindmap Art Variations */
+        .art-m1 { background: #fee2e2; }
+        .art-m1::after { content:''; position:absolute; width: 80px; height: 80px; background: #ef4444; border-radius: 50%; top: 30px; left: 30px; opacity: 0.2; mix-blend-mode: multiply;}
+        .art-m1::before { content:''; position:absolute; width: 60px; height: 60px; background: #b91c1c; top: 50px; right: 40px; opacity: 0.1; transform: rotate(15deg);}
+
+        .art-m2 { background: #e0f2fe; }
+        .art-m2::after { content:''; position:absolute; width: 100%; height: 50%; background: #0ea5e9; bottom: 0; opacity: 0.1; clip-path: polygon(0 100%, 100% 100%, 100% 0); }
+        
+        .art-m3 { background: #fef3c7; }
+        .art-m3::after { content:''; position:absolute; box-sizing: border-box; width: 100px; height: 100px; border: 15px solid #d97706; border-radius: 50%; top: 20px; right: 20px; opacity: 0.15;}
+
+        .art-m4 { background: #dcfce7; }
+        .art-m4::after { content:''; position:absolute; width: 120px; height: 120px; background: #22c55e; opacity: 0.1; top: 10px; left: 50%; transform: translateX(-50%) rotate(45deg);}
+
+        .art-m5 { background: #f3e8ff; }
+        .art-m5::after { content:''; position:absolute; width: 200px; height: 200px; border-radius: 50%; box-shadow: inset 20px 0 0 #a855f7; top: -30px; left: -30px; opacity: 0.2;}
+
+        .art-m6 { background: #ffedd5; }
+        .art-m6::after { content:''; position:absolute; width: 40px; height: 100px; background: #f97316; opacity: 0.2; top: 20px; left: 40px;}
+        .art-m6::before { content:''; position:absolute; width: 40px; height: 60px; background: #c2410c; opacity: 0.15; top: 60px; left: 90px;}
+
+        .art-m7 { background: #e0e7ff; }
+        .art-m7::after { content:''; position:absolute; width: 100%; height: 2px; background: #4f46e5; top: 30%; opacity: 0.2;}
+        .art-m7::before { content:''; position:absolute; width: 100%; height: 2px; background: #4f46e5; top: 70%; opacity: 0.2;}
+
+        .art-m8 { background: #ccfbf1; }
+        .art-m8::after { content:''; position:absolute; width: 80px; height: 80px; background: #14b8a6; opacity: 0.15; border-radius: 10px; top: 30px; left: 50px; transform: rotate(30deg);}
+
+        .art-m9 { background: #fce7f3; }
+        .art-m9::after { content:''; position:absolute; width: 0; height: 0; border-left: 50px solid transparent; border-right: 50px solid transparent; border-bottom: 86.6px solid #db2777; opacity: 0.1; top: 20px; right: 40px;}
+
+        .art-m10 { background: #f3f4f6; }
+        .art-m10::after { content:''; position:absolute; width: 60px; height: 60px; border: 4px dashed #4b5563; border-radius: 50%; top: 40px; left: 40%; opacity: 0.2;}
+
+        /* Execution Art */
+        .art-exec { background: #18181b; }
+        .art-exec::after { content:''; position:absolute; width: 2px; height: 100%; background: #52525b; left: 20%; }
+        .art-exec::before { content:''; position:absolute; width: 20px; height: 20px; background: #fafafa; border-radius: 50%; left: calc(20% - 9px); top: 50%; }
+
+        /* Dashboard Art */
+        .art-dash { background: #fff1f2; border: 1px solid #ffe4e6; }
+        .art-dash::after { content:''; position:absolute; width: 120px; height: 120px; background: repeating-linear-gradient(45deg, #fecdd3, #fecdd3 10px, transparent 10px, transparent 20px); opacity: 0.5; top: 10px; right: 10px; border-radius: 8px;}
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header / Nav -->
+    <nav class="max-w-6xl mx-auto px-6 py-8 border-b border-gray-200">
+        <h1 class="text-xl font-bold tracking-tight text-gray-900">Dr. David Eagleman <span class="font-light text-gray-400">| Phân tích Não bộ & Kỷ luật</span></h1>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-16 space-y-32">
+
+        <!-- 1. [Thesis] Luận điểm cốt lõi -->
+        <section>
+            <p class="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-4">1. [Thesis] Luận điểm Cốt lõi</p>
+            <div class="art-container art-thesis"></div>
+            <h2 class="text-3xl md:text-5xl font-extrabold leading-tight text-gray-900">
+                Não bộ không phải là một cỗ máy cố định, mà là một hệ sinh thái không ngừng tái cấu trúc.
+            </h2>
+            <p class="mt-6 text-xl text-gray-600 leading-relaxed max-w-4xl">
+                Để đạt được hiệu suất tối đa và tránh sự thoái hóa, chúng ta phải liên tục đặt bản thân vào "ma sát có ích" (virtuous friction) để phá vỡ trí thông minh kết tinh, đồng thời tự nguyện trói mình vào các Ràng buộc Odysseus để ngăn chặn sự thao túng của các mạng lưới nơ-ron bốc đồng.
+            </p>
+        </section>
+
+        <!-- Mindmap Tổng quan (Thêm mới) -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mt-8">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-6">
+                <div>
+                    <p class="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-2">Mindmap Tổng quan</p>
+                    <h3 class="text-2xl font-bold text-gray-900">Khung xương Kiến thức</h3>
+                </div>
+                <a href="https://youtu.be/m-nnyNZ0TQ0?si=P-9CiwOfAk3e9hnp" target="_blank" class="inline-flex items-center px-4 py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm w-fit group">
+                    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                    Xem Video: Nhà khoa học thần kinh Stanford: Không nhớ giấc mơ? Não đang cảnh báo bạn!
+                </a>
+            </div>
+            
+            <div class="w-full overflow-x-auto overflow-y-hidden border border-gray-100 rounded-xl bg-[#f8fafc] p-4 lg:p-8">
+                <!-- Mermaid block -->
+                <div class="mermaid flex justify-center w-full text-lg min-w-[800px]">
+                    mindmap
+                      root((Kiến trúc<br/>Não bộ))
+                        Cơ chế Sinh học
+                          Tính Mềm dẻo (Neuroplasticity)
+                          Hội đồng Cạnh tranh
+                          Cơ chế Phòng thủ Giấc mơ
+                          Đa dạng Nhận thức
+                        Tối ưu Học tập
+                          Ma sát Có ích
+                          Phá vỡ T.Minh Kết tinh
+                          Dự trữ Nhận thức
+                        Kỷ luật Thực thi
+                          Giao kèo Ulysses
+                          Phân luồng Ma sát
+                          Môi trường Tự động
+                        Kỷ nguyên AI
+                          Mô tô cho Tâm trí
+                          Nghịch lý Sự nỗ lực
+                          Zero-Copy-Paste
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. [Mindmap] 10 Danh mục Cốt lõi -->
+        <section>
+            <p class="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-8">2. 10 Nguyên lý Vận hành Não bộ Chuyên sâu</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m1"></div>
+                    <h3 class="text-xl font-bold mb-3">1. Tính Mềm dẻo (Neuroplasticity)</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Bộ não tự đúc nặn lại chính nó dựa trên những trải nghiệm và thách thức mà nó phải đối mặt.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Não là lớp đất sét chưa khô. Sự thích nghi này tốn năng lượng (hoạt động thần kinh rực lửa khi học cái mới). Khi thiếu thách thức, não ngừng tạo kết nối mới, mô vật lý bắt đầu thoái hóa do quy luật bảo toàn năng lượng sinh học.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m2"></div>
+                    <h3 class="text-xl font-bold mb-3">2. Hội đồng Cạnh tranh (Team of Rivals)</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Không có "một bản ngã" duy nhất. Bạn là một tập hợp các mạng lưới nơ-ron liên tục tranh giành quyền kiểm soát.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Cấu trúc não chia thành các phe phái (ví dụ: hạch hạnh nhân đòi thỏa mãn tức thì vs. vỏ não trước trán đòi kỷ luật dài hạn). Hành vi của bạn là kết quả bỏ phiếu của "Quốc hội Nơ-ron" tại thời điểm đó.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m3"></div>
+                    <h3 class="text-xl font-bold mb-3">3. Ma sát Có ích vs. Ma sát Độc hại</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Không phải nỗ lực nào cũng phát triển não bộ. Chỉ sự vật lộn với tư duy mới tạo ra giá trị.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Ma sát độc hại (việc lặp đi lặp lại như nhập liệu) tiêu hao năng lượng mà không tạo synapse mới. Ma sát có ích (giải quyết vấn đề chưa từng gặp) kích hoạt vùng Anterior Mid-Cingulate Cortex, buộc não mở rộng cơ sở hạ tầng thần kinh.</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m4"></div>
+                    <h3 class="text-xl font-bold mb-3">4. Bẫy Trí thông minh Kết tinh</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Càng trưởng thành, chúng ta càng dựa dẫm vào các mô hình thế giới đã được xây dựng sẵn để tiết kiệm năng lượng.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Khi thành thạo (Crystallized Intelligence), bộ não xử lý thông tin tự động, giảm tiêu hao glucose. Tuy nhiên, sự "tối ưu hóa" này là kẻ thù của sự linh hoạt, khiến não mất khả năng học hỏi (Fluid Intelligence) nếu không bị cưỡng ép phá vỡ.</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m5"></div>
+                    <h3 class="text-xl font-bold mb-3">5. Dự trữ Nhận thức (Cognitive Reserve)</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Xây dựng mạng lưới kết nối dự phòng để chống chọi với sự lão hóa vật lý của mô não.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Nghiên cứu trên các nữ tu cho thấy: Ngay cả khi não bị tàn phá bởi Alzheimer, việc duy trì thách thức xã hội và trí tuệ tạo ra các "cây cầu phụ" (new pathways). Mô chết đi, nhưng tín hiệu vẫn tìm được đường đi mới.</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m6"></div>
+                    <h3 class="text-xl font-bold mb-3">6. Cơ chế Phòng thủ của Giấc mơ</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Giấc mơ là "screensaver" bảo vệ vỏ não thị giác không bị các giác quan khác chiếm đoạt trong đêm.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Do tính mềm dẻo, chỉ cần 60 phút nhắm mắt, não sẽ dùng vùng thị giác để xử lý âm thanh/xúc giác. Giấc mơ (giấc ngủ REM) là các xung điện ngẫu nhiên bắn vào vỏ não thị giác để giữ lãnh thổ sinh học này.</p>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m7"></div>
+                    <h3 class="text-xl font-bold mb-3">7. Giao kèo Ulysses (Hard-stops)</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Dùng hành động hiện tại để khóa chặt các lựa chọn bốc đồng của bản thân trong tương lai.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Nhận thức được "Team of Rivals", bản ngã lý trí (vỏ não trước trán) phải thiết kế môi trường vật lý (ví dụ vứt hết rượu) trước khi bản ngã bốc đồng (hệ viền - limbic) cướp quyền điều khiển vào lúc yếu lòng.</p>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m8"></div>
+                    <h3 class="text-xl font-bold mb-3">8. Nghịch lý của Sự nỗ lực (Effort Phenomenon)</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Con người có thiên hướng định giá cao những thứ phản ánh nỗ lực thực sự của đồng loại.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Về mặt tiến hóa, nỗ lực đồng nghĩa với việc tiêu tốn tài nguyên sinh tồn. Các văn bản/tác phẩm do AI tạo ra (slop) bị não bộ định giá thấp do thiếu đi bằng chứng về "sự hy sinh năng lượng" của tác giả thực.</p>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m9"></div>
+                    <h3 class="text-xl font-bold mb-3">9. AI - Chiếc mô tô cho Tâm trí</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> AI khuếch đại tốc độ kết hợp dữ liệu, nhưng không thể thay thế sự lựa chọn ý nghĩa của con người.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Sáng tạo là quá trình phối trộn (remix) khái niệm. AI làm điều này ở quy mô triệu lần/giây nhờ thuật toán thống kê, nhưng nó đánh vào "giữa đường cong phân phối". Con người cần để phá vỡ khuôn mẫu và tìm ra sự mới lạ ở rìa biên giới.</p>
+                </div>
+
+                <!-- Card 10 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="art-container art-m10"></div>
+                    <h3 class="text-xl font-bold mb-3">10. Đa dạng Nhận thức Nội bộ</h3>
+                    <p class="mb-4 text-gray-800"><strong class="font-semibold text-gray-900">Logic cốt lõi:</strong> Không ai trải nghiệm thế giới giống ai. Có những người không thể tưởng tượng hình ảnh (Aphantasia) hoặc pha trộn giác quan (Synesthesia).</p>
+                    <p class="text-gray-500 text-sm leading-relaxed"><strong class="font-semibold text-gray-600">Lý giải chuyên sâu:</strong> Não bộ là cỗ máy giải quyết vấn đề linh hoạt. Nếu vùng xử lý hình ảnh nội bộ không hoạt động, nó sẽ route (điều hướng) tác vụ qua hệ thống vận động hoặc khái niệm. Không có một bản thiết kế "bình thường" duy nhất.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. [Executable Functions] Hàm thực thi -->
+        <section>
+            <p class="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-8">3. [Executable Functions] Hàm Thực thi</p>
+            <div class="art-container art-exec"></div>
+            
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+                <ul class="space-y-6">
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm mt-1 mr-4">1</span>
+                        <div>
+                            <h4 class="font-bold text-lg text-gray-900">Giao thức "Bỏ cuộc chủ động" (The 70/30 Novelty Protocol)</h4>
+                            <p class="text-gray-600 mt-1">Đừng ở lại quá lâu với thứ bạn đã giỏi. Ngay khi thành thạo một quy trình (hoạt động não bắt đầu giảm), hãy ép bản thân học một kỹ năng chéo hoàn toàn mới (VD: Giỏi kinh doanh -> Học vật lý lượng tử) để giữ đường dẫn nơ-ron luôn "bốc cháy".</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm mt-1 mr-4">2</span>
+                        <div>
+                            <h4 class="font-bold text-lg text-gray-900">Vòng lặp AI "Hủy diệt Bản ngã" (Ego-Destruction Prompt)</h4>
+                            <p class="text-gray-600 mt-1">Thay vì dùng AI để tìm kiếm sự đồng thuận, hãy sử dụng lệnh: <i>"Đây là ý tưởng của tôi. Hãy hoàn toàn khách quan, thẳng thắn tàn nhẫn và phân tích tại sao tôi hoàn toàn sai, các điểm mù của tôi là gì?"</i> Điều này phá vỡ rào cản phòng vệ tâm lý và ép não mở rộng giới hạn.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm mt-1 mr-4">3</span>
+                        <div>
+                            <h4 class="font-bold text-lg text-gray-900">Phân luồng Ma sát (Friction Routing)</h4>
+                            <p class="text-gray-600 mt-1">Ủy quyền 100% "Ma sát độc hại" (admin, nhập liệu, format văn bản) cho AI/Tự động hóa. Tái đầu tư toàn bộ năng lượng đó vào "Ma sát có ích" (chiến lược, thiết kế hệ thống, thấu cảm con người).</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm mt-1 mr-4">4</span>
+                        <div>
+                            <h4 class="font-bold text-lg text-gray-900">Tối đa hóa Tương tác Xã hội (Social Circuitry Activation)</h4>
+                            <p class="text-gray-600 mt-1">Mỗi tuần, hãy đặt bản thân vào những cuộc đối thoại với những người có thế giới quan đối lập. Con người là thực thể khó đoán nhất đối với não bộ, việc giải mã biểu cảm và ngôn ngữ của người khác là bài tập chống suy giảm nhận thức mạnh nhất.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 4. [Discipline Dashboard] Bảng điều khiển Kỷ luật -->
+        <section>
+            <p class="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-8">4. [Discipline Dashboard] Kỷ luật & Ràng buộc</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Bẫy Hệ thống -->
+                <div class="bg-red-50 p-8 rounded-2xl border border-red-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 rounded bg-red-100 flex items-center justify-center text-red-600 font-bold mr-4">!</div>
+                        <h3 class="text-2xl font-bold text-red-900">Nhận diện Bẫy Hệ thống</h3>
+                    </div>
+                    <ul class="space-y-4 text-red-800">
+                        <li class="pl-4 border-l-2 border-red-300">
+                            <strong>Bẫy lười biếng sinh học:</strong> Não bộ mặc định bảo vệ năng lượng. Trạng thái thoải mái chính là tín hiệu cho thấy tế bào thần kinh đang không phát triển.
+                        </li>
+                        <li class="pl-4 border-l-2 border-red-300">
+                            <strong>Sự thao túng của Thuật toán (Slot Machine UI):</strong> Thuật toán tạo ra các vòng lặp Dopamine ngắn (echo chambers) nhốt bạn vào buồng vang, triệt tiêu sự đa dạng nhận thức cần thiết để lớn lên.
+                        </li>
+                        <li class="pl-4 border-l-2 border-red-300">
+                            <strong>Rủi ro Ảo giác Phụ thuộc AI:</strong> Outsourcing việc tư duy sâu (Ma sát có ích) cho AI sẽ cắt đứt quá trình tự học (one-trial learning), khiến não teo tóp theo đúng nghĩa đen do thiếu vận động.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Giao kèo Ulysses -->
+                <div class="bg-slate-900 p-8 rounded-2xl border border-slate-700 text-white">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-emerald-400 font-bold mr-4">#</div>
+                        <h3 class="text-2xl font-bold text-white">Giao kèo Kỷ luật (Hard-stops)</h3>
+                    </div>
+                    <ul class="space-y-4 text-slate-300">
+                        <li class="pl-4 border-l-2 border-slate-600">
+                            <strong class="text-emerald-400">Thiết kế Môi trường Tự động:</strong> Thay vì dùng ý chí để cản cám dỗ, hãy loại bỏ cám dỗ vật lý. (VD: Để điện thoại ở phòng khác khi ngủ/làm việc sâu).
+                        </li>
+                        <li class="pl-4 border-l-2 border-slate-600">
+                            <strong class="text-emerald-400">Luật Zero-Copy-Paste:</strong> Không bao giờ copy nguyên văn câu trả lời tư duy từ AI vào công việc. Bạn phải tự tay gõ lại bằng ngôn ngữ và tư duy của mình để nơ-ron thực sự được rèn luyện.
+                        </li>
+                        <li class="pl-4 border-l-2 border-slate-600">
+                            <strong class="text-emerald-400">Cam kết Xã hội:</strong> Buộc chặt mục tiêu với người khác (VD: Hẹn chạy bộ lúc 7h sáng). "Hội đồng nội bộ" sợ mất mặt với xã hội hơn là sợ vi phạm lời hứa với chính mình.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Flashcards -->
+        <section>
+            <p class="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-8">Ôn tập Nhanh (Flashcards)</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                
+                <!-- Sinh 25 flashcards -->
+                <script>
+                    const cards = [
+                        { q: "Thời điểm não bộ đạt đỉnh về số lượng kết nối nơ-ron là khi nào?", a: "Năm 2 tuổi." },
+                        { q: "Tính mềm dẻo của não (Neuroplasticity) là gì?", a: "Khả năng thay đổi cấu trúc vật lý mạng nơ-ron dựa trên trải nghiệm." },
+                        { q: "Trí thông minh linh hoạt (Fluid Intelligence) là gì?", a: "Khả năng học hỏi mọi thứ từ số không (mạnh nhất lúc nhỏ)." },
+                        { q: "Trí thông minh kết tinh (Crystallized Intelligence) là gì?", a: "Việc sử dụng các mô hình nội bộ có sẵn để tiết kiệm năng lượng." },
+                        { q: "Tại sao con người hay mâu thuẫn nội tâm?", a: "Vì não là một 'Quốc hội' gồm nhiều phe phái tranh giành kiểm soát." },
+                        { q: "Hợp đồng Ulysses là gì?", a: "Dùng hành động hiện tại khóa chặt sự bốc đồng của tương lai." },
+                        { q: "Nghỉ hưu sớm thiếu giao tiếp gây ra điều gì?", a: "Dễ suy giảm nhận thức do não ngừng tạo đường dẫn nơ-ron mới." },
+                        { q: "Dự trữ nhận thức (Cognitive Reserve) là gì?", a: "Mạng lưới kết nối dày đặc giúp não hoạt động bù trừ mô thoái hóa." },
+                        { q: "Chức năng sinh học của giấc mơ là gì?", a: "Bảo vệ vỏ não thị giác khỏi bị giác quan khác chiếm đoạt trong bóng tối." },
+                        { q: "Bịt mắt hoàn toàn 60 phút sẽ dẫn đến điều gì?", a: "Vỏ não thị giác bắt đầu xử lý tín hiệu thính giác & xúc giác." },
+                        { q: "Ma sát độc hại (Vicious friction) là gì?", a: "Việc lặp lại nhàm chán không tạo synapse (nhập liệu, admin)." },
+                        { q: "Ma sát có ích (Virtuous friction) là gì?", a: "Sự vật lộn với tư duy khó để giải quyết vấn đề mới." },
+                        { q: "Cách prompt AI tốt nhất cho tư duy?", a: "'Hãy nói thẳng lý do tại sao ý tưởng này của tôi sai hoàn toàn'." },
+                        { q: "Nghịch lý của sự nỗ lực (Effort Phenomenon)?", a: "Con người luôn định giá cao những gì tốn mồ hôi và công sức thực." },
+                        { q: "Aphantasia là gì?", a: "Hội chứng không thể tưởng tượng bằng hình ảnh trực quan trong đầu." },
+                        { q: "Hyperfantasia là gì?", a: "Tưởng tượng trong đầu sắc nét và sống động như một bộ phim." },
+                        { q: "Não người mới học khác não chuyên gia thế nào?", a: "Não người mới bốc cháy năng lượng khắp nơi, chuyên gia thì tốn rất ít." },
+                        { q: "Thử thách khó nhất với não bộ là gì?", a: "Tương tác với người khác vì phản ứng của họ không thể đoán trước." },
+                        { q: "Tập thể dục tác động gì đến não?", a: "Thúc đẩy quá trình sinh sản nơ-ron mới (neurogenesis)." },
+                        { q: "AI đóng vai trò gì cho tư duy?", a: "Là 'chiếc mô tô cho tâm trí', khuếch đại tốc độ chứ không thay thế tài xế." },
+                        { q: "Điểm yếu của AI trong sáng tạo?", a: "Giỏi remix dữ liệu cũ nhưng không biết lựa chọn thứ có tính nhân bản." },
+                        { q: "Đặc tính của vỏ não (Cortex)?", a: "Là lớp ngoài mỏng có thể cấu hình lại để làm bất cứ việc gì." },
+                        { q: "Tại sao AI thường sinh ra tác phẩm trung bình?", a: "Vì thuật toán nhắm vào điểm giữa của đường cong phân phối dữ liệu." },
+                        { q: "Bí quyết giữ não trẻ lâu?", a: "Bỏ ngay kỹ năng vừa thành thạo để bắt đầu học cái mới hoàn toàn." },
+                        { q: "Rủi ro của thuật toán mạng xã hội?", a: "Tạo 'buồng vang' triệt tiêu ma sát, khiến não ngừng phát triển." }
+                    ];
+
+                    document.write(cards.map(c => `
+                        <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
+                            <div class="text-xs font-bold text-indigo-500 mb-2 uppercase tracking-wide">Câu hỏi</div>
+                            <div class="text-sm font-semibold text-gray-900 mb-4 flex-grow">${c.q}</div>
+                            <div class="border-t border-dashed border-gray-200 pt-3 mt-auto">
+                                <div class="text-xs font-bold text-emerald-500 mb-1 uppercase tracking-wide">Giải đáp</div>
+                                <div class="text-sm text-gray-600">${c.a}</div>
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Cao 128px -->
+    <footer class="w-full h-[128px] bg-gray-900 text-gray-400 flex flex-col items-center justify-center border-t border-gray-800 mt-16">
+        <p class="text-xs text-center max-w-2xl px-4 mb-3 font-medium text-gray-300">Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+        <div class="flex items-center space-x-6">
+            <!-- Youtube Icon -->
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="hover:text-white transition-colors flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M234.33,69.52a24,24,0,0,0-16.88-16.84C198.67,48,128,48,128,48s-70.67,0-89.45,4.68A24,24,0,0,0,21.67,69.52C16.89,88.42,16,128,16,128s.89,39.58,5.67,58.48a24,24,0,0,0,16.88,16.84C57.33,208,128,208,128,208s70.67,0,89.45-4.68a24,24,0,0,0,16.88-16.84C239.11,167.58,240,128,240,128S239.11,88.42,234.33,69.52ZM104,160V96l64,32Z"></path></svg>
+                <span class="text-sm">Youtube</span>
+            </a>
+            <!-- Tiktok Icon -->
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="hover:text-white transition-colors flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M216,96a56.06,56.06,0,0,1-56-56V32a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8v92.2a28,28,0,1,1-16-25.39V71.74A44,44,0,1,0,140,116.2V44.4A72.16,72.16,0,0,0,208,112a8,8,0,0,0,8-8V96Z"></path></svg>
+                <span class="text-sm">TikTok</span>
+            </a>
+            <!-- Facebook Icon -->
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="hover:text-white transition-colors flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"></path></svg>
+                <span class="text-sm">Facebook</span>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Khởi tạo thư viện Mermaid cho biểu đồ -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'base',
+            themeVariables: {
+                fontFamily: 'Inter, sans-serif',
+                primaryColor: '#e0e7ff',
+                primaryTextColor: '#18181b',
+                primaryBorderColor: '#4f46e5',
+                lineColor: '#94a3b8',
+                secondaryColor: '#f1f5f9',
+                tertiaryColor: '#f8fafc'
+            }
+        });
+    </script>
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
