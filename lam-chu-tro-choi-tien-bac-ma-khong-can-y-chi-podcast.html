@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản Đồ Tài Chính Tự Động | Cố vấn Học tập</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            securityLevel: 'loose',
+            mindmap: { padding: 20 }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; }
+        
+        /* CSS Abstract Arts */
+        .art-hero {
+            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+        }
+        .art-card-bg {
+            position: absolute;
+            z-index: 0;
+            filter: blur(40px);
+            opacity: 0.4;
+            border-radius: 50%;
+        }
+        .art-shape-1 { background: linear-gradient(135deg, #3b82f6, #10b981); width: 150px; height: 150px; top: -50px; right: -50px; }
+        .art-shape-2 { background: linear-gradient(135deg, #f59e0b, #ef4444); width: 100px; height: 100px; bottom: -20px; left: -20px; }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .mindmap-container {
+            width: 100vw;
+            max-width: 100%;
+            height: 75vh;
+            min-height: 500px;
+            overflow: auto;
+            cursor: grab;
+            background: #020617;
+            border-radius: 1rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            border: 1px solid #1e293b;
+        }
+        .mindmap-container:active { cursor: grabbing; }
+        
+        /* Flashcard Styles */
+        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .flashcard {
+            background: #1e293b;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border-left: 4px solid #10b981;
+            transition: transform 0.3s ease;
+        }
+        .flashcard:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
+        .answer-text { color: #94a3b8; font-size: 0.95rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed #334155; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- HERO SECTION -->
+    <header class="relative pt-20 pb-16 px-6 lg:px-12 text-center art-hero border-b border-slate-800">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-semibold tracking-wider uppercase mb-6 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                🚀 Thực Chiến Tài Chính Thế Kỷ 21
+            </span>
+            <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
+                Làm Chủ Trò Chơi Tiền Bạc<br/>Mà Không Cần Ý Chí
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 mb-8 max-w-2xl mx-auto font-light">
+                Biến những nguyên lý tài chính vĩ mô thành một cỗ máy làm giàu <span class="text-white font-semibold">Tự Động</span>. Không ngân sách khô khan, không thắt lưng buộc bụng cực đoan.
+            </p>
+        </div>
+    </header>
+
+    <!-- 1. THE BIG IDEA & MINDMAP -->
+    <section class="py-16 px-6 lg:px-12 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-10 text-center">
+                <h2 class="text-3xl font-bold mb-4 flex items-center justify-center gap-3">
+                    <i data-lucide="target" class="text-emerald-500"></i>
+                    [The Big Idea] Bức Tranh Toàn Cảnh
+                </h2>
+                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-emerald-500 pl-4 py-2 inline-block bg-slate-800/50 rounded-r-lg">
+                    "Sự giàu có không đến từ kỷ luật hay thu nhập khủng. Nó đến từ việc Thiết lập Hệ thống tự động trích lập 1 giờ thu nhập mỗi ngày của bạn trước khi bạn kịp tiêu nó."
+                </p>
+            </div>
+
+            <!-- Mindmap Container -->
+            <div class="mindmap-container flex items-center justify-center overflow-hidden" id="pan-zoom-container">
+                <div class="mermaid text-sm">
+                    mindmap
+                      root((TRIỆU PHÚ<br/>TỰ ĐỘNG))
+                        Trả Cho Bản Thân Trước
+                          1 Giờ Lương / Ngày
+                          12.5% Thu Nhập
+                          Trích Ngay Lúc Nhận Lương
+                        Kẻ Thù Của Tiền Bạc
+                          Sự Cạn Kiệt Ý Chí
+                          Lối Sống Leo Thang
+                          Lướt Sóng Cờ Bạc
+                        3 Giỏ Tài Sản Lõi
+                          Quỹ Tương Lai Đầu Tư
+                          Quỹ Khẩn Cấp Bằng Tiền
+                          Quỹ Ước Mơ Ngắn Hạn
+                        Vũ Khí Lãi Kép
+                          Hệ Số Latte 27$/Ngày
+                          Đầu Tư Chỉ Số Boring
+                          Sở Hữu Bất Động Sản
+                        Nguyên Tắc Cắt Nợ
+                          Phương Pháp DOLP
+                          Diệt Nợ Nhỏ Nhất Trước
+                          Cắt Bỏ Thẻ Tín Dụng
+                </div>
+            </div>
+            
+            <p class="text-center text-slate-500 text-sm mt-3 flex items-center justify-center gap-2">
+                <i data-lucide="mouse-pointer-click" class="w-4 h-4"></i>
+                Có thể kéo thả để xem chi tiết sơ đồ
+            </p>
+
+            <div class="mt-8 text-center">
+                <a href="https://youtu.be/99xyy1nUpug?si=whBPfaDngKJk0hY2" target="_blank" 
+                   class="inline-flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-full transition-all shadow-lg shadow-red-600/30">
+                    <i data-lucide="youtube" class="w-5 h-5"></i>
+                    Chuyên gia Nghỉ hưu Sớm: Mua nhà vs Đầu tư Cổ phiếu... (Sự thật là đây)
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. DEEP INSIGHTS -->
+    <section class="py-16 px-6 lg:px-12 bg-slate-900/50 border-y border-slate-800 relative">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold mb-12 flex items-center gap-3">
+                <i data-lucide="brain-circuit" class="text-blue-500"></i>
+                [Deep Insights] 9 Trụ Cột Tri Thức Tự Động Hóa
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-1"></div>
+                    <div class="relative z-10">
+                        <div class="text-emerald-400 font-bold text-sm tracking-widest uppercase mb-2">Quy Tắc Lõi</div>
+                        <h3 class="text-xl font-bold mb-3">#1 Trả Cho Mình Trước (Pay Yourself First)</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Luôn cắt ra 1 giờ thu nhập của mỗi ngày làm việc (khoảng 12.5% tổng lương) để đầu tư cho tương lai CỦA CHÍNH BẠN trước khi trả tiền cho bất kỳ ai khác.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Chính phủ lấy thuế của bạn ngay khi lương chưa về tay vì họ biết nếu đưa cho bạn, bạn sẽ tiêu hết. Áp dụng cơ chế tàn nhẫn đó cho chính mình.</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Ẩn dụ:</span> Bạn đi làm 8 tiếng. Hãy coi 1 tiếng đầu tiên trong ngày là làm việc để giải phóng bản thân khỏi kiếp làm thuê. 7 tiếng còn lại là để trả tiền nhà, mua thức ăn và nuôi xã hội.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-2" style="background: linear-gradient(135deg, #a855f7, #ec4899);"></div>
+                    <div class="relative z-10">
+                        <div class="text-purple-400 font-bold text-sm tracking-widest uppercase mb-2">Tâm Lý Học</div>
+                        <h3 class="text-xl font-bold mb-3">#2 Máy Móc Hoá Ý Chí (Automation Machine)</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Lập ngân sách khô khan (budgeting) KHÔNG hoạt động với đa số mọi người vì nó đòi hỏi ý chí. Tự động hoá lệnh chuyển tiền là chìa khóa.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Willpower (Ý chí) giống như cơ bắp, sẽ mệt mỏi vào cuối ngày. Nếu bạn phải tự tay mở app ngân hàng để chuyển tiền tiết kiệm mỗi tháng, bộ não sẽ tìm lý do để chối bỏ.</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Ví dụ thực tế:</span> Tại sao Netflix, Gym, hay Spotify kinh doanh mượt mà? Vì họ trừ tiền tự động. Hãy biến tài khoản tiết kiệm của bạn thành một "dịch vụ" tự trừ tiền hàng tháng.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-1" style="background: linear-gradient(135deg, #f59e0b, #ca8a04);"></div>
+                    <div class="relative z-10">
+                        <div class="text-amber-400 font-bold text-sm tracking-widest uppercase mb-2">Hiệu Ứng Lãi Kép</div>
+                        <h3 class="text-xl font-bold mb-3">#3 Nhân Tố Latte (The Latte Factor)</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Những rò rỉ tài chính nhỏ nhặt hàng ngày là thứ đang ngăn cản bạn bước vào hàng ngũ triệu phú.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Tiền sinh ra tiền theo cấp số nhân (Compound Interest). 27.40$/ngày dường như vô hại, nhưng khi vứt vào quỹ đầu tư 10%/năm, nó hóa thành một gã khổng lồ.</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Con số sốc:</span> Chỉ cần bạn lãng phí 27.40$/ngày (tương đương tiền một bữa trưa và ly cafe xịn), bạn mất 10.000$/năm. Nếu đầu tư số tiền đó trong 40 năm, bạn sẽ có hơn 4.4 Triệu Đô.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-2" style="background: linear-gradient(135deg, #14b8a6, #06b6d4);"></div>
+                    <div class="relative z-10">
+                        <div class="text-cyan-400 font-bold text-sm tracking-widest uppercase mb-2">Tài Sản Lõi</div>
+                        <h3 class="text-xl font-bold mb-3">#4 Sự Thật Về Sở Hữu Nhà</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Việc mua nhà là hình thức "ép buộc tiết kiệm" vĩ đại nhất, tạo ra khoảng cách giàu nghèo khổng lồ giữa người mua và người thuê.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Người thuê trả chi phí bảo trì và rủi ro gián tiếp thông qua giá thuê tăng hàng năm. Mua nhà sử dụng đòn bẩy ngân hàng (Vay 80%, vốn 20%) - khi giá nhà tăng 20%, lợi nhuận vốn của bạn là 100%.</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Thống kê thực chiến:</span> Tại Mỹ, giá trị tài sản ròng của người có nhà cao gấp 40 LẦN so với người đi thuê. Bạn mua một căn nhà giá 200k (vốn 40k), 10 năm sau nó lên 400k. Bạn bỏ túi 200k từ 40k vốn ban đầu!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-1" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);"></div>
+                    <div class="relative z-10">
+                        <div class="text-indigo-400 font-bold text-sm tracking-widest uppercase mb-2">Chiến Lược Đầu Tư</div>
+                        <h3 class="text-xl font-bold mb-3">#5 Vẻ Đẹp Của Sự Nhàm Chán</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Tiền bạc và Đầu tư nên cực kỳ buồn tẻ. Cuộc sống của bạn mới cần thú vị.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Cố gắng "Mua đáy bán đỉnh" hay chơi Memecoins/Options là công thức hoàn hảo để nghèo đi. Đầu tư dài hạn vào các quỹ chỉ số (Index Funds) vận hành dựa trên sự tăng trưởng vĩ mô của toàn bộ thị trường.</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Ví dụ thực tế:</span> Cứ đều đặn mua Quỹ VTI (Sở hữu 3500 công ty hàng đầu) hoặc QQQ (100 công ty công nghệ). Nó tự động sinh lời 10-15%/năm qua hàng thập kỷ mà không cần bạn phải làm "chuyên gia đọc nến".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-2" style="background: linear-gradient(135deg, #ef4444, #f97316);"></div>
+                    <div class="relative z-10">
+                        <div class="text-red-400 font-bold text-sm tracking-widest uppercase mb-2">Sát Thủ Diệt Nợ</div>
+                        <h3 class="text-xl font-bold mb-3">#6 Phương Pháp DOLP (Quả Cầu Tuyết)</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Đừng cố trả nợ dựa trên lãi suất cao nhất. Hãy trả từ khoản nhỏ nhất trước.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Con người hành động dựa trên Dopamine (Cảm giác chiến thắng). Khi bạn dứt điểm được 1 khoản nợ dù nhỏ, bộ não sẽ được nạp năng lượng để tiếp tục tiêu diệt các khoản lớn hơn.</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Ẩn dụ:</span> Giống như chơi game, bạn phải đánh quái nhỏ (Thẻ tín dụng 500$) để lên cấp trước khi đánh Boss (Khoản nợ 5000$), thay vì lao vào Boss ngay và kiệt sức nản chí.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-1" style="background: linear-gradient(135deg, #10b981, #84cc16);"></div>
+                    <div class="relative z-10">
+                        <div class="text-lime-400 font-bold text-sm tracking-widest uppercase mb-2">Quản Trị Phân Bổ</div>
+                        <h3 class="text-xl font-bold mb-3">#7 Nguyên Tắc 3 Chiếc Giỏ</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Tách dòng tiền tự động chạy thẳng vào 3 mục đích lõi: Tương lai, Khẩn cấp, và Ước mơ.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Tương lai (12.5% cho hưu trí/đầu tư dài hạn). Khẩn cấp (5% tiền mặt sẵn sàng ứng cứu). Ước mơ (5% cho quỹ mua sắm/du lịch để tránh cảm giác bị "bỏ đói" hưởng thụ).</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Thực tế phũ phàng:</span> Hơn 40% người dân Mỹ không thể xoay xở ngay 400$ tiền mặt khi xe hỏng hay đi cấp cứu. Quỹ Khẩn cấp chính là lớp giáp chống đạn bảo vệ Quỹ Tương Lai của bạn khỏi bị bán tháo.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-2" style="background: linear-gradient(135deg, #f43f5e, #be123c);"></div>
+                    <div class="relative z-10">
+                        <div class="text-rose-400 font-bold text-sm tracking-widest uppercase mb-2">Tài Chính Gia Đình</div>
+                        <h3 class="text-xl font-bold mb-3">#8 Không Có Điểm Mù Hôn Nhân</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Uỷ quyền tài chính hoàn toàn cho vợ/chồng là hành động tự sát tự nguyện.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Rất nhiều trường hợp người phối ngẫu quản lý tiền đột ngột qua đời, người ở lại mất trắng vì không biết tiền ở đâu, mật khẩu là gì hay hợp đồng bảo hiểm ở chỗ nào.</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Quy tắc cứng:</span> Cả hai phải có cùng mật khẩu tài khoản gia đình. Nếu có khác biệt tính cách chi tiêu, không cãi nhau về "Con số", hãy ngồi xuống vẽ ra "Giá trị chung" mà gia đình muốn hướng tới.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="glass-card rounded-2xl p-6 overflow-hidden">
+                    <div class="art-card-bg art-shape-1" style="background: linear-gradient(135deg, #64748b, #334155);"></div>
+                    <div class="relative z-10">
+                        <div class="text-slate-400 font-bold text-sm tracking-widest uppercase mb-2">Tối Ưu Dòng Tiền</div>
+                        <h3 class="text-xl font-bold mb-3">#9 Kẻ Hút Máu Đăng Ký (Subscriptions)</h3>
+                        <p class="text-slate-300 text-sm mb-3"><strong class="text-white">Bản chất:</strong> Các dịch vụ trả phí định kỳ đang rút cạn túi bạn một cách thầm lặng mỗi giây phút.</p>
+                        <p class="text-slate-400 text-sm mb-4"><strong class="text-white">Cơ chế:</strong> Doanh nghiệp hiện đại dựa vào "Sự ma sát tâm lý" - việc nhấn đăng ký thì dễ, nhưng việc tìm chỗ Hủy đăng ký thì rất khó lười. Chúng khai thác sự lười biếng của bạn.</p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <p class="text-sm"><span class="text-yellow-400 font-bold">💡 Mẹo Hacker Tài chính:</span> Hủy ngay mọi subscription sau khi bấm dùng thử miễn phí. Khi hết hạn, nếu bạn thực sự cần, nền tảng thường gửi email offer mức giá giảm 50% để giữ chân bạn.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ACTION PLAYBOOK -->
+    <section class="py-16 px-6 lg:px-12 relative">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 flex items-center gap-3">
+                <i data-lucide="rocket" class="text-orange-500"></i>
+                [Action Playbook] Sổ Tay Thực Chiến
+            </h2>
+            <p class="text-slate-400 mb-10 text-lg">Đừng để kiến thức chỉ là sự giải trí. Hãy lập trình lại cỗ máy tài chính của bạn bằng công thức IF - THEN.</p>
+
+            <div class="space-y-6">
+                <!-- If-Then 1 -->
+                <div class="flex flex-col md:flex-row gap-4 bg-slate-800/60 p-6 rounded-xl border border-slate-700 items-start md:items-center">
+                    <div class="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg font-bold min-w-[120px] text-center border border-red-500/30">NẾU...</div>
+                    <div class="text-slate-300 flex-1">Bạn cảm thấy: "Lương tôi quá thấp để dư ra nổi 27$ mỗi ngày!"</div>
+                    <div class="hidden md:block text-slate-500"><i data-lucide="arrow-right" class="w-6 h-6"></i></div>
+                    <div class="bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-lg font-bold min-w-[120px] text-center border border-emerald-500/30">THÌ...</div>
+                    <div class="text-white flex-1 font-medium">Bắt đầu "Thử Thách Vi Mô": Cài lệnh tự động lưu lại đúng 10$/ngày trong 100 ngày. Hoặc đơn giản là 1$/ngày. Vấn đề không nằm ở số tiền, mà là tạo rãnh tư duy "Tích luỹ".</div>
+                </div>
+
+                <!-- If-Then 2 -->
+                <div class="flex flex-col md:flex-row gap-4 bg-slate-800/60 p-6 rounded-xl border border-slate-700 items-start md:items-center">
+                    <div class="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg font-bold min-w-[120px] text-center border border-red-500/30">NẾU...</div>
+                    <div class="text-slate-300 flex-1">Bạn đang có 3 thẻ tín dụng và nợ tiêu dùng ngập đầu, rối loạn không biết trả cái nào.</div>
+                    <div class="hidden md:block text-slate-500"><i data-lucide="arrow-right" class="w-6 h-6"></i></div>
+                    <div class="bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-lg font-bold min-w-[120px] text-center border border-emerald-500/30">THÌ...</div>
+                    <div class="text-white flex-1 font-medium">Viết 3 khoản nợ ra giấy. Bỏ qua lãi suất. Trả tối thiểu cho 2 khoản lớn, dồn 100% tiền dư đập chết khoản có Dư Nợ Nhỏ Nhất. Cảm giác thắng lợi sẽ bơm doping cho bạn đi tiếp.</div>
+                </div>
+
+                <!-- If-Then 3 -->
+                <div class="flex flex-col md:flex-row gap-4 bg-slate-800/60 p-6 rounded-xl border border-slate-700 items-start md:items-center">
+                    <div class="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg font-bold min-w-[120px] text-center border border-red-500/30">NẾU...</div>
+                    <div class="text-slate-300 flex-1">Bạn trả góp mua nhà và thấy thời hạn 30 năm quá dài, lãi ngân hàng ăn mòn.</div>
+                    <div class="hidden md:block text-slate-500"><i data-lucide="arrow-right" class="w-6 h-6"></i></div>
+                    <div class="bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-lg font-bold min-w-[120px] text-center border border-emerald-500/30">THÌ...</div>
+                    <div class="text-white flex-1 font-medium">Báo ngân hàng đổi thành trả góp mỗi 2 tuần (Bi-weekly) với số tiền bằng một nửa. Bạn sẽ vô tình trả được 13 tháng trong 1 năm, rút ngắn 5-7 năm nợ ròng.</div>
+                </div>
+            </div>
+
+            <div class="mt-12 bg-gradient-to-r from-emerald-900/40 to-slate-900 p-8 rounded-2xl border border-emerald-500/20 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 text-emerald-500/10"><i data-lucide="zap" class="w-48 h-48"></i></div>
+                <h3 class="text-2xl font-bold mb-4 text-white">⚡ Micro-Actions (Làm ngay trong 24h tới)</h3>
+                <ul class="space-y-4 relative z-10">
+                    <li class="flex items-start gap-3">
+                        <i data-lucide="check-circle-2" class="text-emerald-500 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-200"><strong>Thanh trừng Subscriptions:</strong> Mở ngay Cài đặt trên điện thoại (Apple ID > Subscriptions / Google Play > Payments). HỦY không thương tiếc mọi app không đụng tới trong 30 ngày qua.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i data-lucide="check-circle-2" class="text-emerald-500 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-200"><strong>Thiết lập Automation Zero:</strong> Mở app ngân hàng, tạo 1 lệnh chuyển tiền định kỳ trị giá đúng <strong class="text-yellow-400">1% thu nhập của bạn</strong> vào một tài khoản tiết kiệm khác (khác ngân hàng càng tốt) ĐÚNG ngày bạn nhận lương.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. REALITY CHECK -->
+    <section class="py-16 px-6 lg:px-12 bg-slate-900/50 border-y border-slate-800">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl font-bold mb-10 flex items-center gap-3">
+                <i data-lucide="alert-triangle" class="text-yellow-500"></i>
+                [Reality Check] Nhận Diện Cạm Bẫy
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-red-950/20 border border-red-500/20 rounded-2xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="flag" class="w-24 h-24 text-red-500"></i></div>
+                    <h3 class="text-xl font-bold text-red-400 mb-6 flex items-center gap-2">
+                        <i data-lucide="flag" class="w-5 h-5"></i> Bẫy Vô Hình (Red Flags)
+                    </h3>
+                    
+                    <div class="space-y-6 relative z-10">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">🚩 Ảo Tưởng "Tiền Thuê Nhà Mang Đi Đầu Tư"</h4>
+                            <p class="text-slate-400 text-sm mt-2">Nhiều người nói: "Tôi chọn đi thuê nhà, số tiền chênh lệch rẻ hơn tôi sẽ đập vào cổ phiếu". Thực tế đau lòng: Phàm là con người, phần dư đó sẽ biến thành tiền mua quần áo, nâng cấp ô tô hay đi ăn nhà hàng sang trọng (Lifestyle Creep). Nếu không bị ép buộc (như trả nợ mua nhà), bạn sẽ KHÔNG đầu tư khoản tiền chênh lệch đó.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg">🚩 Tội Phạm "Khởi Nghiệp Ngay Cả Khi Trống Rỗng"</h4>
+                            <p class="text-slate-400 text-sm mt-2">Đừng nghĩ đến việc làm giàu nhanh (Get Rich Quick) bằng việc vay nợ chơi coin hay trade sóng ngắn khi bạn còn chưa có nổi Quỹ Khẩn Cấp 1000$. Rủi ro đòn bẩy sẽ nuốt chửng bạn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="shield" class="w-24 h-24 text-emerald-500"></i></div>
+                    <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i> Chốt Chặn Kỷ Luật (Guardrails)
+                    </h3>
+                    
+                    <div class="space-y-6 relative z-10">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">🛡️ Huỷ Diệt Môi Trường Cám Dỗ</h4>
+                            <p class="text-slate-400 text-sm mt-2">Nếu bạn đã từng vỡ nợ thẻ tín dụng 2 lần: Đừng dặn mình "Phải cẩn thận". Hãy gọi điện báo mất thẻ hoặc lấy kéo CẮT ĐÔI thẻ vật lý. Rút xoá app mua sắm khỏi màn hình chính.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg">🛡️ Trói Tay "Tài Khoản Tương Lai"</h4>
+                            <p class="text-slate-400 text-sm mt-2">Lập tài khoản chứng khoán/tiết kiệm ở một tổ chức mà bạn KHÔNG cài App trên điện thoại. Nếu muốn rút tiền, bạn bắt buộc phải bật Laptop hoặc ra ngân hàng. Ma sát vật lý càng cao, bạn càng lười rút vốn.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. ACTIVE RECALL FLASHCARDS -->
+    <section class="py-16 px-6 lg:px-12 bg-[#020617] relative">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold mb-4 text-center flex items-center justify-center gap-3">
+                <i data-lucide="layers" class="text-purple-500"></i>
+                [Active Recall] Trạm Khắc Não
+            </h2>
+            <p class="text-center text-slate-400 mb-12">Lướt qua để cấy ghép 15 nguyên lý này vĩnh viễn vào tiềm thức.</p>
+
+            <div class="flashcard-grid">
+                <!-- Cards 1-15 generated directly for immediate visibility -->
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">1. Định nghĩa chuẩn xác của "Trả cho bản thân trước" là gì?</h4>
+                    <div class="answer-text">Trích tự động 1 giờ thu nhập (khoảng 12.5% tổng lương) mỗi ngày vào quỹ tương lai ĐÚNG NGÀY nhận lương.</div>
+                </div>
+                
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">2. Tại sao lập ngân sách (Budgeting) hiếm khi hiệu quả?</h4>
+                    <div class="answer-text">Vì nó phụ thuộc vào ý chí (Willpower) vốn dĩ sẽ cạn kiệt. Kỷ luật sinh học của con người rất yếu.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">3. Phương pháp DOLP giải quyết Nợ hoạt động thế nào?</h4>
+                    <div class="answer-text">Bỏ qua lãi suất. Trả dứt điểm khoản nợ có Số Dư NHỎ NHẤT trước để lấy dopamine và động lực tâm lý.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">4. Sức mạnh của Mua Nhà so với Thuê Nhà nằm ở đâu?</h4>
+                    <div class="answer-text">Người có nhà giàu gấp 40 lần người thuê. Mua nhà là "Ép buộc tiết kiệm" và dùng đòn bẩy vốn của ngân hàng.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">5. "Latte Factor" chỉ ra lỗ hổng tư duy nào?</h4>
+                    <div class="answer-text">Chỉ 27.4$/ngày (khoản chi lặt vặt) khi chịu sức mạnh lãi kép có thể lên tới 4.4 Triệu Đô sau 40 năm.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">6. Vì sao đầu tư "Nhàm chán" (Boring) lại tốt hơn lướt sóng?</h4>
+                    <div class="answer-text">Vì lướt sóng là cờ bạc cảm xúc. Các Quỹ chỉ số (như S&P 500, QQQ) tăng trưởng ổn định cùng nền kinh tế mà không cần thao tác liên tục.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">7. Tỷ lệ vàng của "3 Chiếc Giỏ Tài Chính" là gì?</h4>
+                    <div class="answer-text">Tương lai (12.5% thu nhập) - Khẩn cấp (5%) - Ước mơ (5%).</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">8. Kẻ thù vô hình đang bòn rút tiền của bạn mỗi tháng?</h4>
+                    <div class="answer-text">Các dịch vụ Subscriptions (Gói đăng ký) tự động gia hạn mà bạn quên khuấy không dùng tới.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">9. Bí quyết thanh toán nợ thế chấp nhà nhanh hơn?</h4>
+                    <div class="answer-text">Thanh toán Bi-weekly (Mỗi 2 tuần trả 1 nửa tháng). Nó giúp trả 13 tháng/năm, cắt giảm 5-7 năm nợ gốc & lãi.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">10. Sai lầm lớn nhất của các cặp đôi về tiền bạc?</h4>
+                    <div class="answer-text">Có bí mật tài chính (Financial Infidelity) và dồn toàn bộ quyền quản trị cho một người duy nhất nắm giữ mật khẩu.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">11. Làm thế nào để tăng thu nhập chủ động tốt nhất?</h4>
+                    <div class="answer-text">Trở nên cực kỳ xuất sắc ở chính công việc hiện tại của bạn, dù bạn làm bất cứ nghề gì.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">12. Hợp đồng tiền hôn nhân (Prenup) dành cho ai?</h4>
+                    <div class="answer-text">Dành cho tất cả mọi người có thu nhập/tài sản mất cân đối, hoặc bước vào tuổi 30, hoặc tái hôn. Đừng để lãng mạn lấn át pháp lý.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">13. Cột mốc cứu sinh thay đổi cục diện tài chính là bao nhiêu?</h4>
+                    <div class="answer-text">10.000$ tiền mặt. Đủ để thoát ly một công việc độc hại hoặc rủi ro bất ngờ mà không cần gồng nợ.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">14. Nguyên tắc đầu tư cho người trẻ: Rủi ro cao hay Thấp?</h4>
+                    <div class="answer-text">Ngược với số đông xúi giục rủi ro cao (meme coin), người trẻ nên xây nền móng Chỉ số an toàn để không mất niềm tin đầu tư sớm.</div>
+                </div>
+
+                <div class="flashcard">
+                    <h4 class="text-white font-bold mb-2">15. Ý tưởng lớn nhất tóm gọn toàn bộ buổi Podcast?</h4>
+                    <div class="answer-text">Hãy cất tiền đi BẰNG MÁY MÓC trước khi ý chí con người của bạn kịp tìm ra lý do để tiêu nó.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="h-[128px] bg-black flex flex-col md:flex-row items-center justify-between px-8 lg:px-16 border-t border-slate-800">
+        <div class="text-slate-400 text-sm mb-4 md:mb-0 max-w-md text-center md:text-left">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="text-slate-400 hover:text-red-500 transition-colors" title="YouTube">
+                <i data-lucide="youtube" class="w-7 h-7"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-slate-400 hover:text-black hover:bg-white rounded transition-colors" title="TikTok">
+                <!-- Custom SVG for Tiktok as Lucide doesn't have it explicitly -->
+                <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a5.63 5.63 0 0 1-1.04-.1z"/></svg>
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="text-slate-400 hover:text-blue-500 transition-colors" title="Facebook">
+                <i data-lucide="facebook" class="w-7 h-7"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Initialize Icons & scripts -->
+    <script>
+        lucide.createIcons();
+
+        // Optional: Simple Pan & Zoom initialization for Mindmap if container exists
+        window.onload = function() {
+            setTimeout(() => {
+                const svg = document.querySelector('.mermaid svg');
+                if (svg) {
+                    svg.setAttribute('width', '100%');
+                    svg.setAttribute('height', '100%');
+                    svg.style.maxWidth = '100%';
+                    // Initialize pan/zoom
+                    svgPanZoom(svg, {
+                        zoomEnabled: true,
+                        controlIconsEnabled: true,
+                        fit: true,
+                        center: true,
+                        minZoom: 0.5,
+                        maxZoom: 5
+                    });
+                }
+            }, 1000); // Wait for mermaid to render
+        }
+    </script>
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
