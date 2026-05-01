@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👁️ KHOA HỌC THỊ GIÁC & SỰ THẬT BỊ ĐÁNH TRÁO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        /* CSS Variables cho Theme */
+        :root {
+            --primary: #0ea5e9; /* Sky blue */
+            --secondary: #14b8a6; /* Teal */
+            --accent: #8b5cf6; /* Violet */
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- CSS Abstract Art Backgrounds --- */
+        .art-hero {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #e0f2fe 0%, #ccfbf1 100%);
+        }
+        .art-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -10%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+        .art-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%; right: -5%;
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(20,184,166,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+
+        .art-divider {
+            height: 80px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 3rem 0;
+            border-radius: 1rem;
+        }
+        .art-divider-1 { background: linear-gradient(90deg, #fdf4ff 0%, #fae8ff 50%, #f3e8ff 100%); }
+        .art-divider-1 .shape { width: 40px; height: 40px; background: rgba(216, 180, 254, 0.5); transform: rotate(45deg); border-radius: 8px; margin: 0 15px;}
+        .art-divider-1 .shape.circle { border-radius: 50%; background: rgba(192, 132, 252, 0.4); }
+
+        .art-divider-2 { background: linear-gradient(135deg, #fef08a 0%, #fbd38d 100%); }
+        .art-divider-2 .shape { width: 120px; height: 12px; background: rgba(0,0,0,0.1); transform: skewX(-30deg); border-radius: 6px; margin: 0 5px;}
+
+        .art-divider-3 { background: linear-gradient(90deg, #fecaca 0%, #fca5a5 100%); }
+        .art-divider-3 .shape { width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-bottom: 40px solid rgba(153, 27, 27, 0.2); }
+
+        /* --- Mindmap Styles --- */
+        .mindmap-container {
+            width: 100%;
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .mindmap-container.fullscreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1000;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #f8fafc;
+            overflow: auto;
+        }
+        .mermaid {
+            width: 100%;
+            min-width: 800px; /* Ensure readability */
+            display: flex;
+            justify-content: center;
+        }
+
+        /* --- Flashcards 3D Flip --- */
+        .flashcard {
+            background-color: transparent;
+            width: 100%;
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flashcard:hover .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .flashcard-front {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            color: #334155;
+            border: 2px solid #e2e8f0;
+        }
+        .flashcard-back {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- HERO SECTION -->
+    <header class="art-hero py-20 px-4 mb-12 shadow-sm">
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <div class="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold mb-4 border border-blue-200 shadow-sm">
+                Podcast Breakdown 🎙️ Dr. Joseph Allen
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-800 tracking-tight mb-6 leading-tight">
+                👁️✨ KHOA HỌC THỊ GIÁC & <br class="hidden md:block"> SỰ THẬT BỊ ĐÁNH TRÁO
+            </h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto font-medium">
+                Chào bạn, nán lại một chút nhé. Đôi mắt không phải là cỗ máy cơ học thụ động chịu hao mòn, nó là phần mở rộng trực tiếp của bộ não. Đã đến lúc gỡ bỏ những lời đồn thổi của truyền thông và trang bị kiến thức sinh lý học thực chiến để bảo vệ "cửa sổ tâm hồn" của bạn.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 pb-20">
+
+        <!-- SECTION 1: THE BIG IDEA -->
+        <section class="mb-16">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="text-3xl">🎯</span>
+                <h2 class="text-3xl font-bold text-slate-800">[The Big Idea] Bức Tranh Toàn Cảnh</h2>
+            </div>
+            
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-8 border-l-4 border-l-blue-500">
+                <p class="text-lg text-slate-700">
+                    <strong>Luận điểm cốt lõi:</strong> Phần lớn sự suy giảm thị lực, mỏi mắt hay mù lòa không sinh ra từ "ánh sáng xanh" như các chiến dịch marketing hù dọa. Gốc rễ thực sự nằm ở <strong>môi trường sống "thiếu không gian hở"</strong>, sự gồng cứng cơ bắp vi mô, và sự đứt gãy kỷ luật sinh học (ăn uống, chớp mắt, khoảng cách vật lý).
+                </p>
+            </div>
+
+            <!-- YouTube Button -->
+            <div class="text-center mb-8">
+                <a href="https://www.youtube.com/watch?v=SWjzjClBCO4" target="_blank" 
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-transform transform hover:scale-105 shadow-lg">
+                    <i class="fab fa-youtube text-xl"></i>
+                    Bác sĩ Nhãn khoa Số 1: Lời nói dối về Ánh sáng xanh & Sự thật về Ruồi bay!
+                </a>
+            </div>
+
+            <!-- Mindmap -->
+            <div class="mindmap-container p-6" id="mindmap-container">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-sm text-slate-500 font-medium"><i class="fas fa-search-plus mr-1"></i> Sơ đồ Rễ cây (Nhìn thấu khung xương nội dung)</p>
+                    <button onclick="toggleFullscreen()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-semibold transition-colors">
+                        <i class="fas fa-expand mr-1"></i> Phóng to / Thu nhỏ
+                    </button>
+                </div>
+                <div class="overflow-x-auto w-full pb-4">
+                    <div class="mermaid">
+                        mindmap
+                          root((Hệ Sinh Thái
+                          Thị Giác))
+                            Định Kiến Bị Phá Vỡ
+                              Ánh sáng xanh không làm hỏng mắt
+                              Kính chống AS xanh = Hiệu ứng Placebo
+                              Cà rốt chữa cận là cú lừa truyền thông
+                              Bọng mắt phần lớn do Muối hút nước
+                            Cơ Chế Bệnh Lý Thực Sự
+                              Đại dịch Cận thị: Nhãn cầu mọc dài ra vật lý
+                              Ruồi bay (Floaters): Rác Collagen vón cục
+                              Khô mắt: Mỡ Meibomian đông cứng vì lười chớp
+                              Giả cận thị: Cơ nội nhãn bị "chuột rút"
+                            Nguyên Nhân Gốc Rễ
+                              Hội chứng không gian hẹp (Nhìn gần)
+                              Bốc hơi thời gian ở ngoài trời
+                              Căng thẳng Oxi hóa & Rỉ sét tế bào
+                            Kiến Trúc Hành Động
+                              Chốt chặn: Màn hình cách 1 cánh tay
+                              Dinh dưỡng: Rau xanh & Omega-3 Phospholipid
+                              Kỷ luật: 90 phút ngoài trời mỗi ngày
+                    </div>
+                </div>
+                <p class="text-center text-xs text-slate-400 mt-2">Dùng chuột hoặc vuốt để cuộn ngang xem chi tiết nếu ở màn hình nhỏ.</p>
+            </div>
+        </section>
+
+        <!-- CSS Abstract Art Divider 1 -->
+        <div class="art-divider art-divider-1 shadow-inner">
+            <div class="shape"></div>
+            <div class="shape circle"></div>
+            <div class="shape"></div>
+            <div class="shape circle"></div>
+            <div class="shape"></div>
+        </div>
+
+        <!-- SECTION 2: DEEP INSIGHTS -->
+        <section class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🧠</span>
+                <h2 class="text-3xl font-bold text-slate-800">[Deep Insights] Các Trụ Cột Tri Thức</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">🖥️</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">1. Khủng hoảng Không gian hẹp</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Màn hình không trực tiếp phá mắt, việc "khóa" tiêu cự ở khoảng cách siêu gần liên tục mới là thủ phạm gây cận thị.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Khi nhìn gần liên tục, cơ thể nhận tín hiệu sinh tồn: Nhãn cầu tự động mọc dài ra phía sau để thích nghi. Dài thêm 1mm = tăng 3 độ cận. Và nó vĩnh viễn không tụt lại được.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Ẩn dụ:</strong> Giống như ép một cái cây mọc trong chiếc hộp kính; cây buộc phải mọc uốn cong để sinh tồn. Khi tháo hộp ra, thân cây không bao giờ thẳng lại được nữa.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">🕶️</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">2. Cú lừa "Kính chống Ánh sáng xanh"</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Ánh sáng xanh từ điện thoại không đủ năng lượng gây tổn thương vật lý hay mù lòa. Nó chỉ đánh lừa não bộ, gây mất ngủ.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Sự bớt mỏi mắt khi đeo kính thực chất đến từ lớp phủ "chống chói" (anti-glare) hoặc đơn thuần là hiệu ứng giả dược (Placebo). Ánh sáng xanh thực sự có hại nằm ở mặt trời.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Hành động thực tế:</strong> Không cần tốn tiền mua kính. Bác sĩ khuyên: Chỉ cần đẩy điện thoại ra xa gấp đôi bình thường, bạn đã gạt bỏ được 75% lượng ánh sáng xanh phơi nhiễm.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">🧂</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">3. Bọng mắt & Định lý Muối</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Bọng mắt sưng to sáng hôm sau đôi khi không phải do bạn thiếu ngủ, mà do bát phở hoặc pizza đầy muối bạn ăn đêm qua.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Ăn mặn làm nồng độ muối tăng, biến cơ thể thành miếng bọt biển hút nước. Nước bị kéo đọng lại vùng da mỏng nhất: mí mắt dưới. Còn thiếu ngủ chỉ làm bạn "tưởng tượng" mình trông tệ hơn (chủ quan tâm lý).</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Ẩn dụ:</strong> Cơ thể bạn như một túi trà thấm ngược. Khi rắc muối vào nước, nước sẽ bị hút về phía có muối cao hơn. Mí mắt chính là nơi chứa lượng chất lỏng thừa đó.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">🪰</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">4. Bí ẩn của "Ruồi Bay" (Floaters)</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Những chấm đen lơ lửng khi nhìn lên trời sáng không phải ảo giác, đó là rác vật lý bên trong mắt bạn.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Nhãn cầu chứa dịch kính dạng thạch. Theo tuổi tác, thạch vỡ cấu trúc, các sợi collagen co rút vón cục lại. Ánh sáng chiếu qua đập vào cục vón, hắt bóng đen thẳng xuống võng mạc.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Ẩn dụ:</strong> Giống như một quả cầu tuyết (snow globe) lâu năm. Các mảnh tuyết vón lại với nhau. Khi chiếu đèn pin qua quả cầu, những cục tuyết đó in những chiếc bóng lộn xộn lên bức tường phía sau.</p>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">🏜️</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">5. Bóc trần cơn bão Khô Mắt</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Mắt khô rát không phải vì "thiếu nước", mà vì nước mắt bị bay hơi do mất lớp mỡ bảo vệ.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Mí mắt có các tuyến dầu Meibomian. Chớp mắt là động tác "vắt" dầu ra. Nhìn màn hình làm tần số chớp giảm đi 2/3. Dầu ứ đọng đông cứng lại thành sáp. Nước mắt không có màng dầu bảo vệ sẽ bốc hơi sạch, để lại muối cào xước giác mạc.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Ẩn dụ:</strong> Nước mắt là hồ bơi. Dầu là nắp đậy. Nắp kẹt (ít chớp mắt), nước bốc hơi dưới nắng gắt, để lại lớp cặn muối chà xát màng bơi hỏng bét.</p>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">💊</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">6. Omega-3 & Dinh dưỡng chống Rỉ sét</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Ăn cà rốt chữa cận là tuyên truyền thời WW2. Kẻ thù thực sự là quá trình oxy hóa (rỉ sét) võng mạc, và anh hùng là Rau xanh & Omega-3 Phospholipid.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Omega-3 thường khó vào mắt. Dạng phospholipid (từ trứng cá sushi, dầu nhuyễn thể) có chìa khóa mfsd2a đi thẳng qua hàng rào máu-võng mạc. Rau xanh cung cấp Lutein dập tắt quá trình viêm.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Ví dụ thực tế:</strong> Chỉ cần 2.7 khẩu phần rau lá xanh mỗi tuần giúp giảm 25% nguy cơ thoái hóa điểm vàng (bệnh mù lòa tuổi già).</p>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">☀️</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">7. Ánh Sáng Tự Nhiên: Thuốc hay Độc?</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Ở ngoài trời giúp chữa cận, nhưng nhìn thẳng vào mặt trời (Sun Gazing) là con đường ngắn nhất đến mù lòa.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Cường độ Lux cao ngoài trời tiết dopamine ở võng mạc, chặn nhãn cầu mọc dài. Tuy nhiên, nhìn thẳng mặt trời, thấu kính mắt sẽ hội tụ ánh sáng cường độ cực cao đốt cháy điểm vàng gây xẹo vĩnh viễn.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Ẩn dụ:</strong> Mặt trời như ngọn lửa sưởi. Ở gần sưởi ấm căn nhà sinh lý của bạn (đứng ngoài trời). Nhìn chằm chằm là bạn đang thò tay thẳng vào lõi than đỏ rực.</p>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">🏥</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">8. Đôi Mắt: Chiếc USB chứa dữ liệu toàn thân</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Khám mắt không chỉ để đo độ kính. Nó là cơ quan duy nhất để nhìn thấy mạch máu não bộ trực tiếp không cần rạch da.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Huyết áp cao, mỡ máu, bệnh tự miễn hay tiểu đường... sẽ phá vỡ các mao mạch siêu nhỏ ở đáy mắt đầu tiên. Bác sĩ có thể dự đoán bạn sắp đột quỵ hay không nhờ soi đáy mắt.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Câu chuyện:</strong> Bác sĩ Allen từng soi mắt thấy đốm xuất huyết "Roth spot" ở một nữ sinh viên tưởng như khỏe mạnh. Ông bắt đi xét nghiệm máu và đã cứu cô khỏi tử vong vì suy giảm tiểu cầu cấp tính.</p>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="text-4xl mb-4">🤸</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">9. Ảo ảnh "Bài Tập Sáng Mắt"</h3>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong class="text-blue-600">Bản chất:</strong> Liếc mắt ngang dọc không làm bạn hết cận. Bạn không thể "tập gym" cho trục nhãn cầu.</p>
+                        <p><strong class="text-teal-600">Cơ chế:</strong> Cảm giác sáng mắt sau khi tập là do bạn hết "Giả cận thị" (Pseudo-myopia) – trạng thái cơ nội nhãn bị chuột rút vì gồng quá lâu khi xem điện thoại. Nhả cơ ra thì dễ chịu, nhưng trục nhãn cầu dài ra thì vẫn giữ nguyên.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong class="text-purple-600">💡 Ẩn dụ:</strong> Bạn cầm quả tạ 5kg suốt 10 tiếng (nhìn gần). Đặt xuống tay vẫn co quắp. Tập mắt chỉ là động tác vươn vai nhả cơ chuột rút, chứ không hề làm cánh tay bạn thay đổi chiều dài.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CSS Abstract Art Divider 2 -->
+        <div class="art-divider art-divider-2 shadow-inner">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape" style="transform: skewX(30deg); width: 80px;"></div>
+            <div class="shape"></div>
+        </div>
+
+        <!-- SECTION 3: ACTION PLAYBOOK -->
+        <section class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🚀</span>
+                <h2 class="text-3xl font-bold text-slate-800">[Action Playbook] Sổ Tay Thực Chiến</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- If-Then -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2"><i class="fas fa-sitemap mr-2"></i> Kịch bản "Nếu - Thì"</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-blue-50 rounded-xl">
+                            <p class="font-bold text-slate-800 mb-1">🚨 NẾU: Bạn phải Edit Video/Code 12 tiếng liên tục và mắt khô rát như xát ớt.</p>
+                            <p class="text-slate-700">➡️ <strong class="text-blue-600">THÌ:</strong> Đừng tốn tiền mua thuốc bổ mắt ngay. Hãy dán một tờ giấy note ghi to chữ <strong>"CHỚP MẮT ĐI"</strong> cạnh camera. Khoa học chứng minh màn hình khiến não bộ quên mất phản xạ chớp mắt vắt dầu.</p>
+                        </div>
+                        <div class="p-4 bg-teal-50 rounded-xl">
+                            <p class="font-bold text-slate-800 mb-1">🚨 NẾU: Sáng mai thức dậy phải đi Pitching/Quay hình nhưng bọng mắt sưng to vĩ đại.</p>
+                            <p class="text-slate-700">➡️ <strong class="text-teal-600">THÌ:</strong> Hãy uống ngay 2 ly nước lọc lớn để pha loãng muối thẩm thấu do bữa ăn vặt đêm qua. Dùng khăn lạnh/đá chườm mắt <strong>TỐI ĐA 10-15 phút</strong> (Tuyệt đối không chườm lâu hơn vì mạch máu sẽ dội ngược sưng to hơn).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro-Actions -->
+                <div class="bg-gradient-to-br from-indigo-600 to-blue-700 p-6 rounded-2xl shadow-md text-white">
+                    <h3 class="text-xl font-bold mb-4 border-b border-indigo-400 pb-2"><i class="fas fa-bolt text-yellow-300 mr-2"></i> Hành Động Micro (Làm ngay trong 24h tới)</h3>
+                    
+                    <ul class="space-y-5 mt-6">
+                        <li class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-yellow-300">Bật Tính Năng "Screen Distance"</h4>
+                                <p class="text-indigo-100 text-sm mt-1">Mở iPhone > Cài đặt (Settings) > Thời gian sử dụng (Screen Time) > Bật "Khoảng cách màn hình". Chấp nhận việc nó gây khó chịu trong 3 ngày đầu để thiết lập lại giới hạn không gian vật lý của nhãn cầu.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-yellow-300">Quy tắc 90 Phút Ánh Sáng Lux</h4>
+                                <p class="text-indigo-100 text-sm mt-1">Sắp xếp làm việc ở quán Cafe ngoài trời hoặc ban công 90 phút mỗi ngày. Không cần nhìn mặt trời, chỉ cần ánh sáng tán xạ ngoài trời hắt vào để kích hoạt Dopamine kìm hãm cận thị.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CSS Abstract Art Divider 3 -->
+        <div class="art-divider art-divider-3 shadow-inner">
+            <div class="shape"></div>
+            <div class="shape" style="transform: rotate(180deg);"></div>
+            <div class="shape"></div>
+            <div class="shape" style="transform: rotate(180deg);"></div>
+        </div>
+
+        <!-- SECTION 4: REALITY CHECK -->
+        <section class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">⚠️</span>
+                <h2 class="text-3xl font-bold text-slate-800">[Reality Check] Nhận Diện Cạm Bẫy</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-red-50 p-6 rounded-2xl border border-red-100">
+                    <h3 class="text-lg font-bold text-red-700 mb-3 flex items-center gap-2"><i class="fas fa-flag text-red-500"></i> Bẫy Vô Hình (Red Flags)</h3>
+                    <p class="text-slate-700 mb-3"><strong>Ảo tưởng "Giáp Bất Tử" từ Kính Ánh sáng xanh:</strong></p>
+                    <p class="text-sm text-slate-600">Rất nhiều người chi hàng triệu mua kính cắt ánh sáng xanh, sau đó tự tin nằm cày TikTok trong phòng tối đến 3h sáng. <br><br><strong>Kết cục:</strong> Mắt vẫn khô rát, độ cận vẫn tăng. Tròng kính có thể lọc ánh sáng, nhưng không lọc được "Hội chứng không gian hẹp" và sự "lười chớp mắt" của bạn.</p>
+                </div>
+
+                <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+                    <h3 class="text-lg font-bold text-emerald-700 mb-3 flex items-center gap-2"><i class="fas fa-shield-alt text-emerald-500"></i> Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                    <p class="text-slate-700 mb-3"><strong>Thiết lập rào cản vật lý thay vì dùng "ý chí":</strong></p>
+                    <ul class="text-sm text-slate-600 space-y-2 list-disc pl-5">
+                        <li><strong>Quy tắc "1 Cánh tay":</strong> Không bao giờ để mặt cách màn hình gần hơn 1 sải tay. Dùng giá đỡ laptop, bàn phím rời để ép bản thân phải lùi lại.</li>
+                        <li><strong>Giới luật Khám định kỳ:</strong> "Mắt tôi nhìn rất rõ, tôi không sao" là câu nói ngây thơ nhất. Đáy mắt bị vỡ mao mạch tiền đột quỵ không hề gây đau nhức hay mờ mắt ở giai đoạn đầu. Chốt chặn: Book ngay lịch đo mắt đáy mắt 1 năm/lần.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: FLASHCARDS -->
+        <section class="mb-16">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="text-3xl">🃏</span>
+                <h2 class="text-3xl font-bold text-slate-800">[Active Recall] Trạm Ôn Tập Siêu Tốc</h2>
+            </div>
+            <p class="text-slate-500 mb-8 ml-11">Di chuột (hoặc chạm trên điện thoại) vào từng thẻ để lật đáp án. Cơ bắp trí nhớ cần sự ma sát!</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Màn hình điện thoại có trực tiếp làm tăng độ cận không?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm"><strong>KHÔNG.</strong> Khoảng cách mới là vấn đề. Việc khóa tiêu cự nhìn quá gần liên tục ép nhãn cầu phải vật lý mọc dài ra phía sau để thích nghi.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Ánh sáng xanh có phá hủy võng mạc gây mù lòa không?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm"><strong>KHÔNG.</strong> Năng lượng từ điện thoại quá yếu. Nó chỉ đánh lừa não bộ dừng tiết Melatonin, phá vỡ kiến trúc giấc ngủ của bạn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Tại sao mắt sưng húp bọng nước sau ngày "Cheat-day"?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Do <strong>Muối</strong>. Đồ ăn mặn hút chất lỏng về phía nó. Mí mắt dưới là vùng da mỏng nhạy cảm nhất nên sẽ đọng nước lại, tạo bọng mắt to.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Những "con ruồi bay" (Floaters) trước mắt thực chất là gì?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Là <strong>Rác Collagen vón cục</strong> trong dịch kính lão hóa. Ánh sáng chiếu vào tạo ra cái bóng đen in thẳng lên võng mạc ở đáy mắt.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Ăn gì thực sự ngừa mù lòa tuổi già tốt hơn Cà rốt?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm"><strong>Rau lá xanh đậm</strong> (Lutein) và <strong>Omega-3 dạng Phospholipid</strong> (Trứng cá, dầu nhuyễn thể). Cà rốt trị cận chỉ là tuyên truyền thời thế chiến.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Tại sao ngồi máy tính lâu mắt lại cực kỳ khô rát?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Vì sự tập trung làm <strong>giảm 2/3 số lần chớp mắt</strong>. Tuyến dầu Meibomian không được vắt ra, nước mắt không có màng dầu che phủ nên bốc hơi sạch.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Nhìn mặt trời mọc/lặn để thu nạp năng lượng có tốt không?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm"><strong>CỰC ĐỘC.</strong> Thấu kính mắt như kính lúp. Ánh mặt trời chiếu thẳng qua sẽ hội tụ lại đốt cháy thủng điểm vàng trên võng mạc gây sẹo vĩnh viễn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">"Tập gym cho mắt" có làm giảm độ cận thị thật không?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm"><strong>KHÔNG.</strong> Trục nhãn cầu đã dài ra thì không thể ngắn lại. Sự thoải mái sau khi tập chỉ là hết chuột rút cơ (Giả cận thị) mà thôi.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Mỗi ngày cần bao nhiêu thời gian ở ngoài trời để bảo vệ mắt?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm"><strong>Khoảng 90 - 120 phút.</strong> Cường độ ánh sáng tự nhiên (Lux cao) kích hoạt hệ thống thần kinh kìm hãm việc nhãn cầu mọc dài thêm.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 10 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Chườm đá giảm sưng mắt tối đa trong bao lâu?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Chỉ nên làm <strong>10 đến 15 phút</strong>. Lâu hơn sẽ kích hoạt phản xạ dội ngược của mạch máu, gây sưng to và viêm nhiễm nặng hơn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 11 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Cách nào giảm ngay 75% ánh sáng xanh phơi nhiễm mà không cần tốn tiền?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Áp dụng định luật vật lý: <strong>Đẩy thiết bị ra xa gấp đôi</strong> khoảng cách hiện tại của bạn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 12 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Làm sao Bác sĩ nhãn khoa chẩn đoán được bệnh tiểu đường, đột quỵ?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Bằng cách <strong>soi Đáy Mắt</strong>. Đây là nơi duy nhất quan sát trực tiếp mạng lưới mạch máu và dây thần kinh mà không cần phẫu thuật.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 13 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Thiếu ngủ có gây "quầng thâm mắt" đen hơn không?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm"><strong>KHÔNG đáng kể về mặt đo lường khách quan.</strong> Thiếu ngủ chủ yếu làm não bộ bạn "nhìn nhận" hình ảnh bản thân trong gương tồi tệ hơn (yếu tố tâm lý).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 14 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Kính chống chói (Anti-glare) có tác dụng gì?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Giảm tình trạng tán xạ ánh sáng, giúp mắt đỡ phải điều tiết gồng cứng, từ đó giảm <strong>cảm giác mỏi mắt</strong> (Eye Strain) rõ rệt hơn là chống ánh sáng xanh.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 15 -->
+                <div class="flashcard group">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="font-bold text-lg">Có hiện tượng "giãn tĩnh mạch" hay "rách võng mạc" do Floater không?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm"><strong>CÓ THỂ.</strong> Nếu đột nhiên thấy ánh chớp lóe sáng kèm vô số ruồi bay mới, đó có thể là dấu hiệu bong rách võng mạc cần cấp cứu ngay lập tức.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-6 h-32 flex flex-col justify-center items-center">
+        <div class="max-w-6xl mx-auto px-4 w-full text-center">
+            <p class="text-sm mb-3 font-medium text-slate-300">
+                Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+            </p>
+            <div class="flex justify-center items-center gap-6 text-2xl">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="hover:text-red-500 transition-colors" title="Kênh Youtube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="hover:text-white transition-colors" title="Kênh Tiktok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="hover:text-blue-500 transition-colors" title="Facebook Page">
+                    <i class="fab fa-facebook"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT FOR MINDMAP ZOOM INTERACTION -->
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+
+        function toggleFullscreen() {
+            const container = document.getElementById('mindmap-container');
+            container.classList.toggle('fullscreen');
+            
+            // Re-render check if needed, but flex/overflow usually handles it.
+            if(container.classList.contains('fullscreen')) {
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+    </script>
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
