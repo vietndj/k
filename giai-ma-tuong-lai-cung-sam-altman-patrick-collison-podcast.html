@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản Đồ Kỷ Nguyên AI | Giải Mã Tư Duy Sam Altman</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Mermaid -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', fontFamily: 'Space Grotesk' });
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        'tech-dark': '#0B0C10',
+                        'tech-gray': '#1F2833',
+                        'tech-neon': '#66FCF1',
+                        'tech-teal': '#45A29E',
+                        'tech-light': '#C5C6C7',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0B0C10;
+            color: #C5C6C7;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* CSS Abstract Art Styles */
+        .art-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            z-index: 1;
+        }
+        
+        .art-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.5;
+            z-index: -1;
+            transition: all 0.5s ease;
+        }
+
+        .art-blob-1 { top: -20%; left: -20%; width: 150px; height: 150px; background: #66FCF1; }
+        .art-blob-2 { bottom: -20%; right: -20%; width: 200px; height: 200px; background: #45A29E; }
+        .art-blob-3 { top: 30%; left: 40%; width: 100px; height: 100px; background: #7C3AED; }
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border: 1px solid rgba(102, 252, 241, 0.1);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(102, 252, 241, 0.2);
+            border-color: rgba(102, 252, 241, 0.5);
+        }
+
+        /* Mindmap Styles */
+        #mindmap-wrapper {
+            width: 100vw;
+            height: 85vh;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            background: radial-gradient(circle at center, #1F2833 0%, #0B0C10 100%);
+            overflow: hidden;
+            cursor: grab;
+            border-top: 1px solid rgba(102, 252, 241, 0.2);
+            border-bottom: 1px solid rgba(102, 252, 241, 0.2);
+        }
+        #mindmap-wrapper:active {
+            cursor: grabbing;
+        }
+        .mindmap-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #66FCF1, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B0C10; }
+        ::-webkit-scrollbar-thumb { background: #1F2833; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #45A29E; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Global Header Abstract Art -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-2]">
+        <div class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-tech-neon opacity-5 filter blur-[150px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-purple-600 opacity-5 filter blur-[150px]"></div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="pt-20 pb-12 px-6 text-center max-w-4xl mx-auto">
+        <div class="inline-block px-4 py-1.5 rounded-full border border-tech-neon/30 bg-tech-neon/10 text-tech-neon font-mono text-sm mb-6 shadow-[0_0_15px_rgba(102,252,241,0.2)]">
+            🚀 Kiến Thức Thực Chiến Khởi Nghiệp Kỷ Nguyên Mới
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            Giải Mã Tương Lai Cùng <br>
+            <span class="text-gradient">Sam Altman & Patrick Collison</span>
+        </h1>
+        <p class="text-lg md:text-xl text-tech-light/80 mb-8 max-w-2xl mx-auto">
+            Bóc tách những quy luật ngầm của trí tuệ nhân tạo, cách các CEO hàng đầu tích hợp AI và chiến lược sinh tồn trong thập kỷ tới.
+        </p>
+    </header>
+
+    <!-- 1. THE BIG IDEA -->
+    <section class="py-12 relative">
+        <div class="max-w-6xl mx-auto px-6 mb-8 text-center">
+            <h2 class="text-3xl font-display font-bold text-white mb-4 flex items-center justify-center gap-3">
+                <svg class="w-8 h-8 text-tech-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                The Big Idea & Bức Tranh Toàn Cảnh
+            </h2>
+            <div class="bg-tech-gray/50 border border-tech-neon/20 p-6 rounded-2xl backdrop-blur-sm max-w-3xl mx-auto shadow-lg">
+                <p class="text-xl text-white font-medium italic">
+                    "AI không chỉ là phần mềm, nó là lưới điện của thế kỷ 21 (Intelligence Utility). Cuộc chơi đã chuyển từ việc học cách tự code sang việc thiết kế hệ thống ủy quyền cho AI để giải phóng tối đa năng lực sáng tạo."
+                </p>
+            </div>
+            
+            <div class="mt-8">
+                <a href="https://www.youtube.com/watch?v=1ySBxK7viNs" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-2 bg-[#FF0000] hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all hover:scale-105 shadow-[0_0_20px_rgba(255,0,0,0.3)]">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    Xem Video Gốc: Sam Altman in conversation with Patrick Collison
+                </a>
+            </div>
+        </div>
+
+        <!-- Fullwidth Mindmap -->
+        <div class="mt-12 mb-4 text-center">
+            <span class="text-tech-light text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                Trượt để di chuyển, Cuộn chuột để thu phóng
+            </span>
+        </div>
+        <div id="mindmap-wrapper">
+            <div class="mindmap-controls">
+                <button onclick="zoomMindmap(1.2)" class="bg-tech-gray hover:bg-tech-neon hover:text-black text-white p-2 rounded shadow border border-tech-light/20 transition-colors" title="Phóng to">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                </button>
+                <button onclick="zoomMindmap(0.8)" class="bg-tech-gray hover:bg-tech-neon hover:text-black text-white p-2 rounded shadow border border-tech-light/20 transition-colors" title="Thu nhỏ">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path></svg>
+                </button>
+                <button onclick="resetMindmap()" class="bg-tech-gray hover:bg-tech-neon hover:text-black text-white p-2 rounded shadow border border-tech-light/20 transition-colors" title="Khôi phục">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </button>
+            </div>
+            <!-- Container transform cho SVG -->
+            <div id="mindmap-transform" style="transform-origin: 0 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+<pre class="mermaid">
+mindmap
+  root((Kỷ Nguyên AI))
+    (The Takeoff - Điểm Bùng Phát)
+      (Coding dẫn đầu)
+      (Vượt ngưỡng Parabol)
+      (Sức mạnh tính toán - Compute)
+    (Trạm Tự Động Hóa - AI Agents)
+      (Loại bỏ việc vặt)
+      (Mở khóa Flow State)
+      (Ủy quyền thực thi - Tools/API)
+    (Sự Trỗi Dậy Của 'Idea Guys')
+      (Rào cản kỹ thuật = 0)
+      (Thấu cảm người dùng lên ngôi)
+      (Kỹ năng: Đặt câu hỏi đúng)
+    (Văn Hóa Tích Hợp Doanh Nghiệp)
+      (CEO phải đi tiên phong)
+      (Mở khóa toàn bộ Data)
+      (Radical Transparency)
+    (AI Trong Khoa Học)
+      (Nén 10 năm thành 1 năm)
+      (Vật liệu mới)
+      (Mô phỏng Sinh học/Y tế)
+    (Tương Lai & Triết Lý)
+      (Mô hình 'Tiện ích Trí tuệ')
+      (Democratization - Trao quyền)
+      (Giới hạn vật lý - Energy/Data Center)
+</pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. DEEP INSIGHTS -->
+    <section class="py-16 px-6 max-w-7xl mx-auto">
+        <h2 class="text-3xl font-display font-bold text-white mb-10 flex items-center gap-3">
+            <svg class="w-8 h-8 text-tech-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+            Deep Insights: Các Trụ Cột Tri Thức
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Card 1 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-1"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">🚀</span>
+                    <h3 class="text-xl font-bold text-white">Điểm Bùng Phát Parabol</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> Sự tiến hóa của AI không diễn ra đều đều (tuyến tính) mà tích tụ ngầm rồi vọt lên cực nhanh. Coding là lĩnh vực đầu tiên phá vỡ giới hạn này.</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Khi Model thông minh hơn + Dữ liệu đủ lớn + Vòng lặp phản hồi của user, nó chạm một "ngưỡng" (threshold) khiến hiệu năng bật nhảy.</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ẩn dụ thực tế:</span>
+                        Giống như việc đun nước. Từ 0 đến 99 độ, nước trông vẫn im lìm. Nhưng chỉ cần thêm 1 độ chạm mốc 100, nó sôi sục và bốc hơi thay đổi hoàn toàn trạng thái.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-2 bg-purple-500"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">🤖</span>
+                    <h3 class="text-xl font-bold text-white">Kỷ Nguyên Của AI Agents</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> Chuyển từ việc "Hỏi AI để lấy chữ" sang "Giao việc cho AI để lấy kết quả". AI có khả năng dùng tool, xâu chuỗi hành động.</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Các model mới duy trì được trạng thái (stateful) và có khả năng suy luận từng bước, tự sửa lỗi để đi đến mục tiêu cuối cùng.</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ví dụ thực tế:</span>
+                        Thay vì nhờ AI "gợi ý quà", CEO Stripe cấp ngân sách 20$ và ra lệnh cho Agent tự lên mạng, tự chọn quà và tự thanh toán (nó tự mua một file thiết kế trên Gumroad).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-3 bg-blue-500"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">🌊</span>
+                    <h3 class="text-xl font-bold text-white">Mở Khóa Flow State</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> Giá trị lớn nhất của AI hàng ngày không phải là làm việc khó, mà là dọn dẹp các "rác rưởi" lặp đi lặp lại để ta tận hưởng công việc.</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Việc copy-paste, lướt qua lại giữa các app (context switching) bòn rút dopamine và năng lượng não bộ. Ủy quyền nó cho AI giúp não bộ duy trì trạng thái dòng chảy.</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ẩn dụ thực tế:</span>
+                        AI giống như việc bạn có một trợ lý dọn dẹp bàn làm việc, gọt sẵn bút chì, pha sẵn cafe. Việc của bạn chỉ là ngồi xuống và bắt đầu vẽ.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-1 bg-yellow-500"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">🧠</span>
+                    <h3 class="text-xl font-bold text-white">Sự Trỗi Dậy Của 'Idea Guys'</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> Trước đây người có ý tưởng bị coi thường nếu không biết code. Giờ đây, người thấu hiểu người dùng mới là bá chủ.</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Kỹ năng lập trình (viết cú pháp) bị hạ giá trị về 0. Trí tuệ được chuyển hóa thành ngôn ngữ tự nhiên. Việc khó nhất giờ là: "Bạn định làm gì với sức mạnh này?"</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ẩn dụ thực tế:</span>
+                        Hãy tưởng tượng AI là một dàn nhạc giao hưởng xuất chúng. Họ không cần bạn biết chơi từng nhạc cụ. Họ chỉ cần bạn (Nhạc trưởng) có một bản phổ và định hướng cảm xúc rõ ràng.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-2 bg-red-500"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">⚡</span>
+                    <h3 class="text-xl font-bold text-white">Tiện Ích Trí Tuệ (Intelligence Utility)</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> OpenAI định vị họ không phải là kẻ nuốt chửng mọi phần mềm, mà là người cung cấp "Hạ tầng", đo lường bằng số lượng Token.</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Giống như biên lợi nhuận của điện hay nước rất mỏng, OpenAI chấp nhận lợi nhuận thấp để phủ sóng toàn cầu, tạo thành nền tảng không thể thiếu.</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ví dụ thực tế:</span>
+                        Giống hệt Stripe (cung cấp cổng thanh toán). Stripe không làm bánh để bán, Stripe cung cấp đường ống để mọi tiệm bánh trên Internet nhận tiền dễ dàng.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-3 bg-green-500"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">🏢</span>
+                    <h3 class="text-xl font-bold text-white">Văn Hóa Doanh Nghiệp AI-First</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> Việc tích hợp AI không thể giao cho một phòng ban nhỏ, mà phải là mệnh lệnh trực tiếp từ người đứng đầu (Top-down).</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Chỉ có CEO mới có quyền phá bỏ các quy trình cũ kỹ, ép buộc toàn bộ công ty tìm cách loại bỏ sự chậm chạp bằng tự động hóa.</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ví dụ thực tế:</span>
+                        Toby Lütke (CEO Shopify) tự tay ngồi vọc vạch xây tool AI tự động, sau đó ra lệnh: "Chúng ta sẽ đưa AI vào mọi ngóc ngách, ai không làm theo sẽ không được chấp nhận".
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 7 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-1 bg-pink-500"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">🔓</span>
+                    <h3 class="text-xl font-bold text-white">Quyền Truy Cập Dữ Liệu Tối Đa</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> AI vô dụng nếu không hiểu ngữ cảnh công ty bạn. Sự khác biệt nằm ở việc bạn dám cấp bao nhiêu quyền cho nó.</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Các startup nhỏ thành công vang dội vì họ dám cho AI đọc toàn bộ Slack, Email, Codebase. AI biến thành bộ não trung tâm hiểu mọi luồng chảy thông tin.</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ví dụ thực tế:</span>
+                        Một team startup nhỏ tên Tempo cấp quyền cho AI vào Slack. Bạn chỉ cần chat trên Slack: "Đọc file Google Doc này và lên list việc cần làm". AI tự đọc, tự chia task, tự code, tự deploy mà không cần ai nhúng tay.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 8 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-2 bg-cyan-500"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">🔬</span>
+                    <h3 class="text-xl font-bold text-white">Máy Gia Tốc Khoa Học</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> Đóng góp lớn nhất của AI không phải làm thơ hay code app, mà là đẩy nhanh tốc độ nghiên cứu khoa học cơ bản (vật liệu, y sinh).</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Máy học có thể mô phỏng và sàng lọc hàng triệu cấu trúc phân tử/vật liệu trong vài phút - việc mà phòng thí nghiệm con người mất hàng năm.</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ẩn dụ thực tế:</span>
+                        AI như một cỗ máy thời gian, nén quá trình thử & sai 10 năm của nhân loại xuống chỉ còn 1 năm, mở đường tìm ra thuốc chữa Alzheimer.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 9 -->
+            <div class="art-container bg-tech-gray/40 p-6 card-hover backdrop-blur-md">
+                <div class="art-blob art-blob-3 bg-orange-500"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">🛡️</span>
+                    <h3 class="text-xl font-bold text-white">Dân Chủ Hóa Rủi Ro</h3>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <p><strong class="text-tech-neon">Bản chất:</strong> Giữ AI trong "tháp ngà" của các viện nghiên cứu là sai lầm nguy hiểm nhất. Cách an toàn nhất là trao nó cho tất cả mọi người.</p>
+                    <p><strong class="text-purple-400">Cơ chế:</strong> Triển khai lặp lại (Iterative deployment) giúp hệ thống học được các lỗ hổng qua thực tế, đồng thời xã hội có thời gian thích nghi để tạo ra kháng thể.</p>
+                    <div class="bg-black/30 p-3 rounded-lg border-l-2 border-tech-neon">
+                        <span class="text-xs text-tech-light/70 uppercase block mb-1">💡 Ẩn dụ thực tế:</span>
+                        Giống như việc đưa Internet cho thế giới thay vì giữ nó ở Lầu Năm Góc. Sự hỗn loạn có thể xảy ra, nhưng phần lớn con người sẽ dùng công cụ mới để xây dựng những điều vĩ đại.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 3. ACTION PLAYBOOK -->
+    <section class="py-16 bg-tech-gray/20 border-y border-tech-neon/10">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-3xl font-display font-bold text-white mb-2 flex items-center gap-3">
+                <svg class="w-8 h-8 text-tech-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                Action Playbook: Sổ Tay Thực Chiến
+            </h2>
+            <p class="text-tech-light mb-10">Chuyển hóa ngay lập tức kiến thức thành hệ thống vận hành cá nhân.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- If/Then Scenarios -->
+                <div class="bg-black/40 rounded-2xl p-6 border border-tech-light/10">
+                    <h3 class="text-xl font-bold text-tech-neon mb-6 border-b border-tech-neon/20 pb-2">Kịch Bản Phản Xạ (If - Then)</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-tech-gray/50 rounded-xl border-l-4 border-yellow-400">
+                            <p><strong class="text-yellow-400">NẾU</strong> bạn cảm thấy cạn kiệt năng lượng vì phải xử lý cả núi Email/Tin nhắn hỗn độn mỗi sáng...</p>
+                            <p class="mt-2 text-tech-light"><strong class="text-white">THÌ</strong> hãy dừng việc gõ phím. Tạo ngay một prompt: <em>"Đọc chuỗi email này, tóm tắt 3 việc cốt lõi cần làm và soạn sẵn 3 bản nháp từ chối lịch sự."</em> Ủy quyền hoàn toàn việc đọc hiểu.</p>
+                        </div>
+
+                        <div class="p-4 bg-tech-gray/50 rounded-xl border-l-4 border-blue-400">
+                            <p><strong class="text-blue-400">NẾU</strong> bạn có một ý tưởng App/Sản phẩm tuyệt vời nhưng không có team kỹ thuật...</p>
+                            <p class="mt-2 text-tech-light"><strong class="text-white">THÌ</strong> hãy vẽ luồng logic ra giấy. Chụp ảnh lại, ném vào AI và ra lệnh: <em>"Hãy đóng vai Senior Developer, viết code giao diện và logic cơ bản cho flow này"</em>. Đừng ngại việc bạn không biết code.</p>
+                        </div>
+
+                        <div class="p-4 bg-tech-gray/50 rounded-xl border-l-4 border-green-400">
+                            <p><strong class="text-green-400">NẾU</strong> quy trình làm việc của team bị nghẽn ở khâu chuyển giao thông tin...</p>
+                            <p class="mt-2 text-tech-light"><strong class="text-white">THÌ</strong> hãy quay video/record lại cuộc họp, ném cho AI để tự động sinh ra Checklist, chia Task cụ thể cho từng người. Không để não bộ làm việc của một cái máy ghi âm.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="bg-black/40 rounded-2xl p-6 border border-tech-light/10">
+                    <h3 class="text-xl font-bold text-tech-teal mb-6 border-b border-tech-teal/20 pb-2">Hành Động Nhỏ (Micro-actions trong 24h)</h3>
+                    
+                    <ul class="space-y-6">
+                        <li class="flex gap-4">
+                            <div class="w-10 h-10 rounded-full bg-tech-teal/20 flex items-center justify-center text-tech-teal shrink-0 font-bold">1</div>
+                            <div>
+                                <h4 class="text-white font-bold text-lg mb-1">Kiểm toán "Flow State"</h4>
+                                <p class="text-tech-light text-sm">Trong ngày hôm nay, hãy đặt 1 tờ giấy cạnh bàn. Bất cứ khi nào bạn phải bấm "Ctrl C - Ctrl V" hoặc chuyển qua lại giữa 2 Tab để tìm thông tin, hãy gạch 1 nét. Cuối ngày, tìm 1 tool AI / Automation để xử lý việc đó vĩnh viễn.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="w-10 h-10 rounded-full bg-tech-teal/20 flex items-center justify-center text-tech-teal shrink-0 font-bold">2</div>
+                            <div>
+                                <h4 class="text-white font-bold text-lg mb-1">Kiến tạo "The One Thing"</h4>
+                                <p class="text-tech-light text-sm">Nhìn lại danh sách mục tiêu. Sam Altman đã dồn toàn bộ sức mạnh compute cho GPT-3 bất chấp bị chế nhạo. Bạn đang phân tán nguồn lực vào bao nhiêu dự án? Hãy gạch bỏ bớt, chỉ giữ lại 1 điểm chạm duy nhất tạo ra đột phá.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. REALITY CHECK -->
+    <section class="py-16 px-6 max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-display font-bold text-white mb-10 flex items-center justify-center gap-3">
+            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            Reality Check: Nhận Diện Cạm Bẫy
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+            <!-- Red Flags -->
+            <div class="art-container bg-red-950/30 p-6 border border-red-500/30 rounded-2xl">
+                <div class="flex items-center gap-2 mb-4 text-red-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
+                    <h3 class="text-xl font-bold">Bẫy Vô Hình (Red Flags)</h3>
+                </div>
+                <div class="mb-4">
+                    <strong class="text-white block mb-1">Ảo Tưởng "Đắp Skin" (Wrapper Trap)</strong>
+                    <p class="text-sm text-tech-light">Sai lầm phổ biến nhất của giới khởi nghiệp là lấy API của AI, bọc lại bằng một giao diện đẹp và gọi đó là Startup. Khi model góc nâng cấp, mọi giá trị của bạn bị quét sạch.</p>
+                    <p class="text-xs text-red-300 mt-2 bg-red-900/40 p-2 rounded italic">VD: Hàng loạt các app "Viết caption tự động" sụp đổ chỉ sau 1 đêm khi Chatbot gốc ra mắt tính năng tương tự.</p>
+                </div>
+            </div>
+
+            <!-- Guardrails -->
+            <div class="art-container bg-blue-950/30 p-6 border border-blue-500/30 rounded-2xl">
+                <div class="flex items-center gap-2 mb-4 text-blue-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <h3 class="text-xl font-bold">Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                </div>
+                <div>
+                    <strong class="text-white block mb-1">Quy tắc "Producer Only" (Chỉ Tạo Ra)</strong>
+                    <p class="text-sm text-tech-light">Mạng xã hội và AI đều gây nghiện. Bạn sẽ dễ rơi vào bẫy "ngồi chat với AI cả ngày" mà không ra sản phẩm thực tế.</p>
+                    <div class="bg-blue-900/40 p-3 rounded mt-3 border-l-2 border-blue-400">
+                        <p class="text-sm text-white font-semibold">Quy tắc cứng vật lý:</p>
+                        <p class="text-xs text-tech-light mt-1">Gỡ cài đặt app AI trên điện thoại (để tránh lướt chat vô tri khi nằm trên giường). Chỉ sử dụng AI trên Laptop với 1 mục tiêu bắt buộc: "Biến đoạn chat này thành 1 file công việc hoàn chỉnh (Code, Doc, Plan)".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. ACTIVE RECALL -->
+    <section class="py-16 bg-black">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-3xl font-display font-bold text-white mb-2 flex items-center justify-center gap-3">
+                <svg class="w-8 h-8 text-tech-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                Trạm Ôn Tập Tương Tác (Flashcards)
+            </h2>
+            <p class="text-center text-tech-light mb-10 text-sm">Quét nhanh qua các flashcard để khắc sâu kiến thức vào bộ não của bạn.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Generate 15 Q&A Cards -->
+                <!-- Card 1 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Điều gì đã xảy ra vào "Day 119" mà AI cất cánh?</p>
+                    <p class="text-white text-sm">A: Sự đột phá của các mô hình trong việc <span class="text-tech-teal font-bold">Coding (lập trình)</span>, kéo theo đồ thị phát triển dạng Parabol.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Bước tiến tiếp theo của AI sau việc Coding là gì?</p>
+                    <p class="text-white text-sm">A: Xóa bỏ sự <span class="text-tech-teal font-bold">drudgery (nhàm chán vặt vãnh)</span> khi dùng máy tính (copy/paste, chuyển app).</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Cảm giác lớn nhất khi ủy quyền việc vặt cho AI?</p>
+                    <p class="text-white text-sm">A: Duy trì được <span class="text-tech-teal font-bold">Trạng thái dòng chảy (Flow State)</span> và sự tận hưởng trong công việc.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Hành động bất ngờ nhất của Agent khi được cấp 20$?</p>
+                    <p class="text-white text-sm">A: Tự lên mạng tìm và tự mua một <span class="text-tech-teal font-bold">tài sản số (thiết kế) trên Gumroad</span> cho chính nó.</p>
+                </div>
+                <!-- Card 5 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Bí quyết quản lý nhân tài kiệt xuất tại OpenAI?</p>
+                    <p class="text-white text-sm">A: Duy trì <span class="text-tech-teal font-bold">niềm tin chung</span> sâu sắc vào tầm nhìn, dẹp bỏ cái tôi vì mục tiêu siêu việt.</p>
+                </div>
+                <!-- Card 6 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Quyết định gây sốc nhất về tài nguyên của OpenAI là gì?</p>
+                    <p class="text-white text-sm">A: Dồn <span class="text-tech-teal font-bold">gần như toàn bộ Compute</span> vào một chương trình nghiên cứu duy nhất (thay vì dàn trải).</p>
+                </div>
+                <!-- Card 7 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Mục tiêu định vị mô hình kinh doanh của OpenAI?</p>
+                    <p class="text-white text-sm">A: Trở thành nhà cung cấp <span class="text-tech-teal font-bold">hạ tầng trí tuệ (Intelligence utility)</span> với biên lợi nhuận thấp.</p>
+                </div>
+                <!-- Card 8 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Tại sao Sam Altman lại vui với sự trỗi dậy của "Idea guys"?</p>
+                    <p class="text-white text-sm">A: Vì người <span class="text-tech-teal font-bold">hiểu sâu sắc người dùng</span> giờ đây có thể tự tạo sản phẩm mà không cần kỹ năng code.</p>
+                </div>
+                <!-- Card 9 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Làm sao để doanh nghiệp chuyển đổi AI thành công?</p>
+                    <p class="text-white text-sm">A: <span class="text-tech-teal font-bold">CEO phải nhúng tay</span> làm trực tiếp và áp đặt văn hóa từ trên xuống (Top-down).</p>
+                </div>
+                <!-- Card 10 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: "Radical Transparency" với AI trong công ty nghĩa là gì?</p>
+                    <p class="text-white text-sm">A: Cho phép AI <span class="text-tech-teal font-bold">truy cập mọi dữ liệu</span> (Slack, Mail, Code) để nó có ngữ cảnh giải quyết việc.</p>
+                </div>
+                <!-- Card 11 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Đóng góp vĩ đại nhất của AI cho nhân loại sẽ nằm ở đâu?</p>
+                    <p class="text-white text-sm">A: Ở việc <span class="text-tech-teal font-bold">tăng tốc Khoa Học</span> (Phát hiện vật liệu mới, y học, sinh học).</p>
+                </div>
+                <!-- Card 12 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Lợi ích của AI trong Khoa học là mức độ nào?</p>
+                    <p class="text-white text-sm">A: Nén <span class="text-tech-teal font-bold">10 năm nghiên cứu</span> trong thế giới cũ xuống chỉ còn 1 năm.</p>
+                </div>
+                <!-- Card 13 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Ngành công nghiệp nào không được chú ý nhưng sẽ bùng nổ nhờ AI?</p>
+                    <p class="text-white text-sm">A: <span class="text-tech-teal font-bold">Khoa học Vật liệu (Material Science)</span>.</p>
+                </div>
+                <!-- Card 14 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Quyết định gây tranh cãi nhất của OpenAI là gì?</p>
+                    <p class="text-white text-sm">A: Chiến lược <span class="text-tech-teal font-bold">Iterative Deployment</span> (Triển khai, phát hành ra công chúng liên tục).</p>
+                </div>
+                <!-- Card 15 -->
+                <div class="bg-tech-gray/50 border border-tech-light/10 rounded-xl p-4 hover:border-tech-neon/50 transition-colors">
+                    <p class="text-tech-neon text-sm font-bold mb-2">Q: Tại sao không giấu AI đi để đảm bảo an toàn?</p>
+                    <p class="text-white text-sm">A: Sự tập trung quyền lực là nguy hiểm. <span class="text-tech-teal font-bold">Dân chủ hóa (Democratization)</span> giúp xã hội cùng xây dựng lớp bảo vệ tốt hơn.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="h-[128px] border-t border-tech-neon/20 bg-tech-gray flex flex-col items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-tech-neon/5 to-purple-600/5"></div>
+        <div class="relative z-10 flex flex-col items-center gap-3 w-full px-4 text-center">
+            <p class="text-tech-light text-sm max-w-2xl hidden md:block">
+                Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+            </p>
+            <div class="flex gap-6 items-center">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="text-tech-light hover:text-tech-neon transition-colors" title="YouTube">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-tech-light hover:text-tech-neon transition-colors" title="TikTok">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.64-5.46-.22-2.39.8-4.78 2.63-6.29 1.45-1.2 3.39-1.74 5.28-1.54v4.06c-.66-.17-1.36-.14-1.98.15-.65.26-1.19.78-1.47 1.43-.28.6-.29 1.3-.06 1.9.22.56.66 1.02 1.21 1.25.64.28 1.38.25 2-.04.6-.26 1.07-.75 1.3-1.36.24-.62.24-1.32.06-1.93-.02-.91-.04-1.82-.04-2.73V.02h4.2z"/></svg>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="text-tech-light hover:text-tech-neon transition-colors" title="Facebook">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS for Mindmap Zoom/Pan -->
+    <script>
+        let currentScale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let isDragging = false;
+        let startX, startY;
+        
+        const wrapper = document.getElementById('mindmap-wrapper');
+        const transformContainer = document.getElementById('mindmap-transform');
+
+        function updateTransform() {
+            transformContainer.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+        }
+
+        function zoomMindmap(factor) {
+            currentScale *= factor;
+            // Limit zoom
+            if(currentScale > 3) currentScale = 3;
+            if(currentScale < 0.3) currentScale = 0.3;
+            updateTransform();
+        }
+
+        function resetMindmap() {
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateTransform();
+        }
+
+        // Mouse Wheel Zoom
+        wrapper.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const factor = e.deltaY < 0 ? 1.1 : 0.9;
+            zoomMindmap(factor);
+        });
+
+        // Mouse Drag to Pan
+        wrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            wrapper.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            wrapper.style.cursor = 'grab';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateTransform();
+        });
+    </script>
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
