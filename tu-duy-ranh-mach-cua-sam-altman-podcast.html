@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sam Altman's Clear Thinking System</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Mermaid JS (Sử dụng v9.4.3 để tương thích tốt nhất với script toàn cục) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@9.4.3/dist/mermaid.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        card: '#1e293b',
+                        accent: '#10b981', // Emerald green for Tech vibe
+                        accentHover: '#059669',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+    </script>
+
+    <style>
+        /* CSS Abstract Art Backgrounds */
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .bg-abstract-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(15,23,42,0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .bg-abstract-2 {
+            position: absolute;
+            bottom: 20%;
+            right: -10%;
+            width: 30vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, rgba(15,23,42,0) 70%);
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Flashcard Flip CSS */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .group:hover .group-hover\:rotate-y-180 { transform: rotateY(180deg); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Hide scrollbar for clean mindmap */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- SECTION 1 COMPONENTS ---
+        const Hero = () => {
+            return (
+                <section className="relative pt-20 pb-12 px-6 max-w-6xl mx-auto text-center">
+                    <div className="bg-abstract-1"></div>
+                    <span className="text-accent font-semibold tracking-wider uppercase text-sm border border-accent/30 bg-accent/10 px-4 py-1.5 rounded-full inline-block mb-6">
+                        <i className="fa-solid fa-brain mr-2"></i> Cognitive Masterclass
+                    </span>
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                        Phương Pháp Tư Duy Rành Mạch <br className="hidden md:block"/> 
+                        Của <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-blue-400">Sam Altman</span>
+                    </h1>
+                    <div className="max-w-3xl mx-auto bg-card/50 border border-slate-700 p-6 rounded-2xl backdrop-blur-sm mb-12">
+                        <h2 className="text-xl font-semibold mb-3 flex items-center justify-center text-slate-200">
+                            <i className="fa-solid fa-lightbulb text-yellow-400 mr-2"></i> The Big Idea
+                        </h2>
+                        <p className="text-slate-300 text-lg leading-relaxed">
+                            Viết lách không phải để lưu trữ thông tin, mà là <strong>công cụ tối thượng để "tư duy rành mạch"</strong>. Sự tĩnh lặng tuyệt đối và khả năng tháo dỡ các mảnh ghép ý tưởng (bằng cách xé giấy) mới là chìa khóa để kiến tạo nên những quyết định mang tầm vóc thay đổi thế giới.
+                        </p>
+                    </div>
+                </section>
+            );
+        };
+
+        const Mindmap = () => {
+            const [zoom, setZoom] = useState(1);
+            const mermaidRef = useRef(null);
+
+            useEffect(() => {
+                const renderMermaid = () => {
+                    const mermaidCode = `
+mindmap
+  root((Hệ thống Tư duy<br/>Sam Altman))
+    Công cụ Vật lý
+      Sổ gáy xoắn
+        Xé trang dễ dàng
+        Trải phẳng hoàn toàn
+      Bìa cứng
+        Viết mọi lúc mọi nơi
+      Vừa túi quần
+        Tính di động tuyệt đối
+      Bút chuyên dụng
+        Uniball 0.5 / Muji Dark Blue
+    Triết lý Vận hành
+      Xé & Trải phẳng
+        Nhìn nhiều ý tưởng cùng lúc
+        Tìm kiếm sự kết nối (Connecting dots)
+      Tiêu hủy sau xử lý
+        Vò nát ném đi
+        Giảm tải nhận thức
+      Không có "Sổ hoàn thành"
+        Chỉ là trạm trung chuyển
+    Mô thức Thời gian
+      Tối ưu hóa "Thời gian rác"
+        Làm việc trong 11 phút lẻ
+        Ghế sau ô tô
+      Chu kỳ Sóng não
+        T2-T6: Thu nạp, Gặp gỡ
+        Cuối tuần: Cô lập, Viết lách
+    Tư duy & AI
+      Viết là Rèn tư duy
+        Quan trọng như học Code
+      Gõ phím (Fingertips)
+        Kích hoạt ý tưởng sâu
+        Không dùng Voice memo
+                    `;
+                    try {
+                        // Gọi hàm render bằng callback (Hỗ trợ tốt nhất cho phiên bản 9.x)
+                        mermaid.render('mermaid-svg', mermaidCode, (svgCode) => {
+                            if (mermaidRef.current) {
+                                mermaidRef.current.innerHTML = svgCode;
+                            }
+                        });
+                    } catch (error) {
+                        console.error("Mermaid rendering failed", error);
+                    }
+                };
+                renderMermaid();
+            }, []);
+
+            return (
+                <section className="px-6 max-w-7xl mx-auto mb-20 relative">
+                    <div className="flex flex-col items-center">
+                        <div className="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 overflow-hidden relative shadow-2xl">
+                            <div className="absolute top-4 right-4 z-10 flex gap-2">
+                                <button onClick={() => setZoom(z => Math.max(0.5, z - 0.2))} className="bg-slate-800 hover:bg-slate-700 text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow-lg border border-slate-600">
+                                    <i className="fa-solid fa-minus"></i>
+                                </button>
+                                <button onClick={() => setZoom(z => Math.min(2, z + 0.2))} className="bg-slate-800 hover:bg-slate-700 text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow-lg border border-slate-600">
+                                    <i className="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            
+                            <div className="w-full h-[500px] overflow-auto no-scrollbar flex items-center justify-center bg-slate-900 cursor-grab active:cursor-grabbing">
+                                <div 
+                                    ref={mermaidRef} 
+                                    style={{ transform: 'scale(' + zoom + ')', transition: 'transform 0.2s ease-out' }}
+                                    className="origin-center"
+                                ></div>
+                            </div>
+                        </div>
+
+                        {/* Video Link Button */}
+                        <a 
+                            href="https://www.youtube.com/watch?v=tDmjz6HB-yw" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="mt-6 flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-medium transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:shadow-[0_0_30px_rgba(220,38,38,0.6)] transform hover:-translate-y-1"
+                        >
+                            <i className="fa-brands fa-youtube text-xl"></i>
+                            Xem Video Gốc: Sam Altman's Method for Clear Thinking
+                        </a>
+                    </div>
+                </section>
+            );
+        };
+
+        // --- SECTION 2 COMPONENTS ---
+        const InsightCard = ({ index, title, core, mech, example, icon }) => (
+            <div className="bg-card border border-slate-700/50 rounded-2xl p-6 hover:border-accent/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] group relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-slate-700 group-hover:bg-accent transition-colors"></div>
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-accent text-xl border border-slate-600 group-hover:scale-110 transition-transform">
+                        <i className={icon}></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-100">#{index}. {title}</h3>
+                </div>
+                
+                <div className="space-y-4">
+                    <div>
+                        <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Bản chất (Core Logic)</span>
+                        <p className="text-slate-300 mt-1">{core}</p>
+                    </div>
+                    <div>
+                        <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Cơ chế vận hành</span>
+                        <p className="text-slate-300 mt-1 text-sm">{mech}</p>
+                    </div>
+                    <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50 border-l-2 border-l-yellow-500">
+                        <span className="text-xs font-bold uppercase text-yellow-500 tracking-wider flex items-center gap-2 mb-1">
+                            <i className="fa-solid fa-lightbulb"></i> Ví dụ / Ẩn dụ
+                        </span>
+                        <p className="text-slate-300 text-sm italic">"{example}"</p>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const DeepInsights = () => {
+            const insights = [
+                {
+                    title: "Sự tháo dỡ (The Rip-out Method)",
+                    core: "Sổ tay không phải là cuốn sách để lưu giữ, nó là một không gian làm việc tạm thời. Chức năng quan trọng nhất của nó là cho phép bạn xé các trang ra.",
+                    mech: "Tư duy con người bị giới hạn bởi bộ nhớ làm việc (working memory). Khi bạn xé các trang và rải chúng ra bàn, bạn đang mở rộng 'RAM' của não bộ, giúp dễ dàng nhìn thấy sự liên kết giữa các điểm dữ liệu rời rạc.",
+                    example: "Giống như chơi trò xếp hình: Bạn không thể ghép bức tranh nếu cứ giữ các mảnh ghép trong hộp. Bạn phải đổ tất cả ra sàn nhà để nhìn bao quát toàn bộ.",
+                    icon: "fa-solid fa-file-invoice"
+                },
+                {
+                    title: "Tiêu hủy sau xử lý (Crumple & Discard)",
+                    core: "Hoàn tất việc suy nghĩ đồng nghĩa với việc tiêu hủy vật lý bản nháp của nó.",
+                    mech: "Sự bám chấp vào những ý tưởng cũ hoặc những trang giấy viết tay đẹp đẽ sẽ tạo ra gánh nặng nhận thức. Vứt bỏ chúng là cách giải phóng không gian tâm lý để đón nhận cái mới.",
+                    example: "Sam vò nát các trang giấy và ném xuống sàn sau khi đã xử lý xong thông tin, để người dọn dẹp vứt đi. Anh ấy hoàn toàn không có khái niệm 'cuốn sổ đã viết xong'.",
+                    icon: "fa-solid fa-trash-can"
+                },
+                {
+                    title: "Tính di động tuyệt đối (Pocket-sized)",
+                    core: "Công cụ tư duy phải trở thành một phần mở rộng của cơ thể bạn, luôn sẵn sàng ở mọi nơi.",
+                    mech: "Sự sáng tạo không tuân theo lịch trình. Nếu giữa khoảnh khắc nảy ra ý tưởng và việc ghi chép có ma sát (phải chạy đi tìm giấy, bật máy tính), ý tưởng đó sẽ chết.",
+                    example: "Cuốn sổ phải đút vừa túi quần và có bìa cứng. Bìa cứng đóng vai trò như một 'chiếc bàn di động' giúp bạn có thể đứng viết ở bất cứ đâu, ngay cả trên đường phố.",
+                    icon: "fa-solid fa-mobile-screen"
+                },
+                {
+                    title: "Sức mạnh của '11 Phút Lẻ'",
+                    core: "Đừng chờ đợi 'không gian và thời gian hoàn hảo' để làm việc sâu. Hãy khai thác triệt để những khoảng thời gian vụn vặt.",
+                    mech: "Cầu toàn là kẻ thù của năng suất. Khi bạn rèn luyện được khả năng 'bật công tắc' tập trung ngay lập tức, bạn sẽ tận dụng được hàng tá khối thời gian rác trong ngày.",
+                    example: "Thay vì đợi sáng thứ 7 với ly cà phê và nhạc chill, Sam nói anh sẵn sàng viết và suy nghĩ sâu trong bất kỳ '11 phút không gián đoạn' nào, kể cả là khi đang ngồi ở băng ghế sau xe ô tô.",
+                    icon: "fa-solid fa-stopwatch"
+                },
+                {
+                    title: "Viết là Công Cụ Tư Duy",
+                    core: "Viết lách không phải là hành động ghi lại những gì bạn ĐÃ nghĩ. Nó là công cụ ĐỂ tạo ra suy nghĩ.",
+                    mech: "Khi suy nghĩ trong đầu, các ý tưởng tồn tại dưới dạng đám mây mờ ảo. Việc viết ép bộ não phải tuyến tính hóa, cấu trúc hóa và kiểm chứng tính logic của những đám mây đó.",
+                    example: "Mặc dù có AI như Sora (tạo video) hay ChatGPT, Sam khẳng định việc học viết vẫn tối quan trọng. Giống như học Code, học viết thực chất là học cách thiết kế tư duy logic nền tảng.",
+                    icon: "fa-solid fa-pen-nib"
+                },
+                {
+                    title: "Nhịp điệu Sóng Não (Hội tụ & Phân kỳ)",
+                    core: "Phải có sự phân định rạch ròi giữa thời gian 'Nạp thông tin' và thời gian 'Xử lý thông tin'.",
+                    mech: "Sáng tạo đòi hỏi hai pha: Thu thập nguyên liệu (tương tác xã hội, họp hành) và Nhào nặn nguyên liệu (cô lập, tĩnh lặng). Trộn lẫn hai pha này sẽ làm hỏng cả hai.",
+                    example: "Sam dành từ Thứ 2 đến Thứ 6 liên tục ở văn phòng, họp hành điên cuồng và không có thời gian để nghĩ. Bù lại, cuối tuần anh thiết lập những khối thời gian dài tĩnh lặng, hoàn toàn cô lập để viết.",
+                    icon: "fa-solid fa-wave-square"
+                },
+                {
+                    title: "Lợi thế Xúc giác (Tactile Advantage)",
+                    core: "Đầu tư vào những công cụ vật lý tạo ra cảm giác thỏa mãn nhất khi sử dụng.",
+                    mech: "Khi công cụ tốt (giấy êm, bút trơn), ma sát vật lý giảm xuống mức 0, đưa bạn vào trạng thái 'Flow' (dòng chảy) nhanh hơn.",
+                    example: "Sam rất kỹ tính về độ nhám của giấy và chỉ tin dùng 2 loại bút: Uniball micro 0.5mm hoặc Muji dark blue 0.38mm. Một cây bút tồi sẽ làm đứt gãy mạch tư duy.",
+                    icon: "fa-solid fa-hand-pointer"
+                },
+                {
+                    title: "Tư duy ngón tay (Fingertips over Mouth)",
+                    core: "Nhận biết chính xác 'kênh' sản xuất ý tưởng tốt nhất của cơ thể bạn.",
+                    mech: "Mỗi người có một cách xử lý thông tin khác nhau. Có người cần nói ra (verbalize) để hiểu, có người cần viết ra.",
+                    example: "Trong khi nhiều người dùng Voice memo trên ChatGPT để nói ý tưởng, Sam nhận ra những ý tưởng đột phá nhất của anh chỉ xuất hiện khi các đầu ngón tay chạm vào bàn phím máy tính hoặc mặt giấy.",
+                    icon: "fa-solid fa-keyboard"
+                },
+                {
+                    title: "Nháp không bao giờ hoàn hảo",
+                    core: "Sự lộn xộn trong quá trình làm việc là dấu hiệu của một hệ thống đang hoạt động, không phải là sự thiếu ngăn nắp.",
+                    mech: "Nếu bạn cố gắng giữ cho cuốn sổ luôn sạch đẹp, bạn đang vô thức kìm hãm những ý tưởng điên rồ và táo bạo nhất.",
+                    example: "Hãy tưởng tượng một người thợ mộc. Xưởng của anh ta khi làm việc phải đầy mùn cưa và phôi gỗ. Cuốn sổ của Sam Altman cũng vậy, nó là 'xưởng mộc' của tâm trí, đầy trang xé nham nhở.",
+                    icon: "fa-solid fa-book-open-reader"
+                }
+            ];
+
+            return (
+                <section className="py-16 px-6 max-w-7xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold mb-4">🧠 Deep Insights</h2>
+                        <p className="text-slate-400">9 Trụ cột tư duy bóc tách từ thói quen của CEO OpenAI</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {insights.map((insight, idx) => (
+                            <InsightCard key={idx} index={idx + 1} {...insight} />
+                        ))}
+                    </div>
+                </section>
+            );
+        };
+
+        // --- SECTION 3 COMPONENTS ---
+        const Playbook = () => {
+            return (
+                <section className="py-16 px-6 max-w-5xl mx-auto relative">
+                    <div className="bg-abstract-2"></div>
+                    <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-8 opacity-10 text-accent pointer-events-none text-9xl">
+                            <i className="fa-solid fa-rocket"></i>
+                        </div>
+                        
+                        <h2 className="text-3xl font-bold mb-2 relative z-10">🚀 Action Playbook</h2>
+                        <p className="text-slate-400 mb-10 relative z-10">Sổ tay chuyển hóa kiến thức thành hành động thực chiến.</p>
+
+                        <div className="space-y-8 relative z-10">
+                            <div>
+                                <h3 className="text-xl font-bold text-accent mb-4 flex items-center">
+                                    <i className="fa-solid fa-code-branch mr-2"></i> Kịch bản "Nếu - Thì" (If - Then)
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="bg-slate-900/80 p-5 rounded-xl border-l-4 border-l-blue-500 border border-slate-700">
+                                        <p className="text-blue-400 font-bold mb-2">🔴 NẾU bạn đang cảm thấy não bộ "quá tải", mọi ý tưởng rối tung...</p>
+                                        <p className="text-slate-300">🟢 <strong>THÌ:</strong> Hãy lấy sổ gáy xoắn, viết mỗi rắc rối lên một tờ giấy riêng, xé chúng ra và rải phẳng lên mặt bàn. Phân loại chúng bằng tay cho đến khi nhìn ra lối thoát.</p>
+                                    </div>
+                                    <div className="bg-slate-900/80 p-5 rounded-xl border-l-4 border-l-purple-500 border border-slate-700">
+                                        <p className="text-purple-400 font-bold mb-2">🔴 NẾU bạn liên tục trì hoãn việc viết/lập kế hoạch vì "chưa có không gian phù hợp"...</p>
+                                        <p className="text-slate-300">🟢 <strong>THÌ:</strong> Kích hoạt "Chế độ 11 phút". Ngồi ngay tại vị trí hiện tại (ghế sofa, sảnh chờ), đặt báo thức 11 phút và cắm đầu viết không dừng lại.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="border-t border-slate-700 pt-8">
+                                <h3 className="text-xl font-bold text-accent mb-4 flex items-center">
+                                    <i className="fa-solid fa-bolt mr-2"></i> Hành động Micro (Làm ngay trong 24h)
+                                </h3>
+                                <div className="space-y-3">
+                                    <div className="flex items-start gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors">
+                                        <div className="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center shrink-0 mt-1">1</div>
+                                        <p className="text-slate-200"><strong>Dẹp bỏ sổ tay đắt tiền:</strong> Ra nhà sách mua ngay 1 cuốn sổ gáy xoắn rẻ nhất, bìa cứng, vừa túi quần. Cầm một cây bút mượt mà (VD: Muji/Uniball) và mạnh dạn <span className="text-accent underline decoration-wavy">xé bỏ thử 3 trang đầu tiên</span> để phá vỡ áp lực "giữ sổ sạch đẹp".</p>
+                                    </div>
+                                    <div className="flex items-start gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors">
+                                        <div className="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center shrink-0 mt-1">2</div>
+                                        <p className="text-slate-200"><strong>Block lịch Sáng Chủ Nhật:</strong> Lập ngay một sự kiện trên Google Calendar cuối tuần này: "2 Giờ Cô Lập". Tắt wifi, không điện thoại. Đặt trước mặt cuốn sổ gáy xoắn và giải quyết 1 vấn đề khó nhất tuần qua.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // --- SECTION 4 COMPONENTS ---
+        const RealityCheck = () => {
+            return (
+                <section className="py-16 px-6 max-w-6xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold mb-4">⚠️ Reality Check</h2>
+                        <p className="text-slate-400">Nhận diện cạm bẫy và thiết lập chốt chặn kỷ luật.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Red Flags */}
+                        <div className="bg-red-900/10 border border-red-900/50 rounded-2xl p-6 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                            <h3 className="text-2xl font-bold text-red-400 mb-6 flex items-center gap-2">
+                                <i className="fa-solid fa-flag"></i> Bẫy vô hình (Red Flags)
+                            </h3>
+                            <div className="space-y-6">
+                                <div>
+                                    <h4 className="font-bold text-slate-200 text-lg">1. Hội chứng "Nhà sưu tầm Văn phòng phẩm"</h4>
+                                    <p className="text-slate-400 mt-2">Bạn mua những cuốn sổ Moleskine đắt đỏ, viết nắn nót được 5 trang đầu tiên. Sau đó, vì sợ làm "xấu" cuốn sổ bằng những ý tưởng dở hơi, bạn cất nó vào ngăn kéo và ngừng luôn việc tư duy.</p>
+                                    <p className="text-red-300 mt-2 text-sm italic">Ví dụ thất bại: Có cả tủ sổ đẹp nhưng không có một dự án nào được hoàn thành thực tế.</p>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-200 text-lg">2. Ảo tưởng "Không Gian Hoàn Hảo"</h4>
+                                    <p className="text-slate-400 mt-2">Bạn tự nhủ: "Mình phải ra quán cà phê quen, gọi ly Cold Brew, đeo tai nghe chống ồn thì mới làm việc được".</p>
+                                    <p className="text-red-300 mt-2 text-sm italic">Hậu quả: Lãng phí hàng trăm "11 phút" quý giá ngồi trên xe buýt, sảnh chờ, hay trước giờ ngủ chỉ vì điều kiện không "chuẩn".</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Guardrails */}
+                        <div className="bg-accent/5 border border-accent/20 rounded-2xl p-6 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
+                            <h3 className="text-2xl font-bold text-accent mb-6 flex items-center gap-2">
+                                <i className="fa-solid fa-shield-halved"></i> Chốt chặn Kỷ luật (Guardrails)
+                            </h3>
+                            <div className="space-y-6">
+                                <div className="bg-card p-4 rounded-xl border border-slate-700">
+                                    <h4 className="font-bold text-slate-200 mb-2">Quy tắc 1: Lệnh cấm thiết bị trong "Không gian lõi"</h4>
+                                    <p className="text-slate-400 text-sm">Bản tính con người rất lười biếng. Thay vì dặn mình "tập trung đi", hãy tạo rào cản vật lý. Để điện thoại ở phòng khách khi bạn vào phòng làm việc hoặc phòng ngủ. Khi tay vô thức với lấy điện thoại và không thấy, bạn sẽ lấy sổ ra viết.</p>
+                                </div>
+                                <div className="bg-card p-4 rounded-xl border border-slate-700">
+                                    <h4 className="font-bold text-slate-200 mb-2">Quy tắc 2: Sự "Rẻ tiền" bắt buộc</h4>
+                                    <p className="text-slate-400 text-sm">KHÔNG BAO GIỜ dùng sổ tay trị giá trên 50.000 VNĐ để làm "sổ nháp tư duy". Phải tạo ra môi trường mà việc xé nát và vứt đi một trang giấy không mang lại cho bạn bất kỳ cảm giác xót của nào.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // --- SECTION 5 COMPONENTS ---
+        const Flashcard = ({ q, a }) => (
+            <div className="group h-48 w-full perspective-1000 cursor-pointer">
+                <div className="relative w-full h-full transition-transform duration-500 transform-style-3d group-hover:rotate-y-180">
+                    {/* Front */}
+                    <div className="absolute w-full h-full bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col justify-center items-center text-center backface-hidden shadow-lg">
+                        <i className="fa-regular fa-circle-question text-3xl text-accent/50 mb-3"></i>
+                        <p className="text-slate-200 font-medium">{q}</p>
+                        <span className="text-xs text-slate-500 absolute bottom-4 mt-4">Trỏ chuột để xem đáp án</span>
+                    </div>
+                    {/* Back */}
+                    <div className="absolute w-full h-full bg-accent/10 border border-accent rounded-2xl p-6 flex flex-col justify-center items-center text-center backface-hidden rotate-y-180 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                        <p className="text-white font-bold">{a}</p>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const ActiveRecall = () => {
+            const qaList = [
+                { q: "Tại sao Sam Altman chọn sổ gáy xoắn?", a: "Để xé trang liên tục và trải phẳng trên bàn, xem xét nhiều ý tưởng cùng lúc." },
+                { q: "Anh ấy làm gì với những trang nháp sau khi xong việc?", a: "Vò nát và vứt xuống sàn nhà. Không giữ lại." },
+                { q: "Đặc điểm cơ vật lý của 'cuốn sổ hoàn hảo'?", a: "Gáy xoắn, trải phẳng, bìa cứng (để viết trên không), vừa túi quần." },
+                { q: "Tốc độ tiêu thụ sổ tay của CEO OpenAI là bao nhiêu?", a: "Dùng hết sạch 1 cuốn trong vòng 2-3 tuần." },
+                { q: "Vai trò cốt lõi của việc Viết theo phương pháp này?", a: "Là công cụ ĐỂ tạo ra tư duy rành mạch, không phải để lưu trữ thông tin." },
+                { q: "Thời đại AI (Sora, ChatGPT), tại sao vẫn phải học viết?", a: "Vì viết rèn luyện cách cấu trúc logic não bộ, tương tự như việc học Code." },
+                { q: "Phương pháp '11 Phút' là gì?", a: "Tận dụng bất kỳ 11 phút rảnh rỗi nào (vd: ghế sau ô tô) để làm việc sâu, không đợi hoàn hảo." },
+                { q: "Sam Altman là tuýp người tư duy tốt nhất qua đâu?", a: "Qua các ngón tay (gõ phím/viết), anh ấy không ưu tiên việc tư duy bằng miệng (nói/voice memo)." },
+                { q: "Nhịp điệu làm việc trong tuần (T2-T6) là gì?", a: "Liên tục ở văn phòng, tương tác, nạp thông tin, cực kỳ bận rộn." },
+                { q: "Sam làm gì vào cuối tuần?", a: "Cô lập hoàn toàn, tĩnh lặng để suy nghĩ sâu và viết." },
+                { q: "Bút yêu thích của Sam là gì?", a: "Uniball micro 0.5mm hoặc Muji dark blue." },
+                { q: "Sai lầm lớn nhất khi duy trì sổ tay là gì?", a: "Sợ làm xấu sổ, dẫn đến việc không dám nháp những ý tưởng lộn xộn." },
+                { q: "Việc xé giấy rải ra bàn giúp khắc phục điểm yếu gì của não?", a: "Giới hạn của bộ nhớ làm việc (Working Memory), giúp 'nhìn' thấy bức tranh lớn." },
+                { q: "Việc vứt bản nháp có tác dụng tâm lý gì?", a: "Giảm tải nhận thức, xóa bỏ sự bám chấp để tập trung vào hành động tiếp theo." },
+                { q: "Tại sao nên dùng sổ tay rẻ tiền?", a: "Giảm rào cản tâm lý xót của, kích thích việc xé bỏ và sáng tạo điên rồ." }
+            ];
+
+            return (
+                <section className="py-16 px-6 max-w-7xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold mb-4">🃏 Active Recall Flashcards</h2>
+                        <p className="text-slate-400">Trạm ôn tập: Trỏ chuột (Hover) vào thẻ để kiểm tra độ hiểu sâu của bạn.</p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                        {qaList.map((item, idx) => (
+                            <Flashcard key={idx} q={item.q} a={item.a} />
+                        ))}
+                    </div>
+                </section>
+            );
+        };
+
+        // --- SECTION 6 COMPONENTS ---
+        const Footer = () => {
+            return (
+                <footer className="h-[128px] bg-slate-900 border-t border-slate-800 flex flex-col justify-center items-center px-6 mt-12">
+                    <p className="text-slate-400 text-sm text-center mb-4 max-w-3xl">
+                        Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+                    </p>
+                    <div className="flex gap-6">
+                        <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-red-500 transition-colors text-2xl" title="YouTube">
+                            <i className="fa-brands fa-youtube"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors text-2xl" title="TikTok">
+                            <i className="fa-brands fa-tiktok"></i>
+                        </a>
+                        <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-500 transition-colors text-2xl" title="Facebook">
+                            <i className="fa-brands fa-facebook"></i>
+                        </a>
+                    </div>
+                </footer>
+            );
+        };
+
+        // --- MAIN APP ---
+        const App = () => {
+            return (
+                <div className="min-h-screen relative font-sans">
+                    <Hero />
+                    <Mindmap />
+                    <DeepInsights />
+                    <Playbook />
+                    <RealityCheck />
+                    <ActiveRecall />
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
