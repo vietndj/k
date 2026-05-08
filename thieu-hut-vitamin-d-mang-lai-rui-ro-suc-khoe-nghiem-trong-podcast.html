@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking Tuổi Thọ & Tối Ưu Trí Não | Masterclass</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Mermaid JS -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#ecfdf5',
+                primaryTextColor: '#064e3b',
+                primaryBorderColor: '#10b981',
+                lineColor: '#34d399',
+                secondaryColor: '#f0fdf4',
+                tertiaryColor: '#ffffff'
+            },
+            fontFamily: 'Inter'
+        });
+
+        // Mindmap Zoom Logic
+        window.zoomLevel = 1;
+        window.zoomMindmap = function(direction) {
+            const container = document.getElementById('mindmap-zoom-container');
+            if (direction === 'in' && window.zoomLevel < 3) {
+                window.zoomLevel += 0.2;
+            } else if (direction === 'out' && window.zoomLevel > 0.4) {
+                window.zoomLevel -= 0.2;
+            } else if (direction === 'reset') {
+                window.zoomLevel = 1;
+            }
+            container.style.transform = `scale(${window.zoomLevel})`;
+        }
+    </script>
+
+    <style>
+        /* CSS VARIABLES */
+        :root {
+            --primary: #059669; /* Emerald 600 */
+            --primary-light: #10b981; /* Emerald 500 */
+            --primary-bg: #ecfdf5; /* Emerald 50 */
+            --dark: #0f172a; /* Slate 900 */
+            --text-main: #334155; /* Slate 700 */
+            --text-muted: #64748b; /* Slate 500 */
+            --bg-body: #f8fafc; /* Slate 50 */
+            --white: #ffffff;
+            --danger: #ef4444; /* Red 500 */
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b; /* Amber 500 */
+            --warning-bg: #fffbeb;
+        }
+
+        /* RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Nunito', sans-serif;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+        a { text-decoration: none; }
+        
+        /* LAYOUT COMPONENTS */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        /* SECTION HEADERS */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-header h2 {
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+        .section-header p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--primary-bg);
+            color: var(--primary);
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* 1. HERO & BIG IDEA */
+        .hero {
+            padding: 120px 0 80px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary-bg) 100%);
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+        /* CSS Abstract Art in Background */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px; left: -100px;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -50px; right: -50px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(52,211,153,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .hero .container { position: relative; z-index: 1; }
+        
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+            color: var(--dark);
+        }
+        .hero h1 span {
+            background: linear-gradient(to right, var(--primary), #0284c7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero .big-idea-box {
+            background: var(--white);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            max-width: 800px;
+            margin: 0 auto 40px;
+            border-left: 6px solid var(--primary);
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        /* MINDMAP SECTION */
+        .mindmap-wrapper {
+            width: 100%;
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            position: relative;
+            margin-top: 40px;
+        }
+        .mindmap-viewport {
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+        }
+        .mindmap-zoom-container {
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: center center;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .mindmap-controls {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            gap: 10px;
+            background: var(--white);
+            padding: 8px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .mindmap-controls button {
+            background: var(--bg-body);
+            border: none;
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mindmap-controls button:hover {
+            background: var(--primary-light);
+            color: var(--white);
+        }
+        .btn-youtube {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #ff0000;
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.2);
+            transition: transform 0.2s;
+            margin-top: 30px;
+        }
+        .btn-youtube:hover { transform: translateY(-3px); color: var(--white); }
+
+        /* 2. DEEP INSIGHTS */
+        .insights-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .insight-card {
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            display: grid;
+            grid-template-columns: 1fr;
+            transition: transform 0.3s;
+        }
+        @media(min-width: 768px) {
+            .insight-card { grid-template-columns: 350px 1fr; }
+        }
+        .insight-card:hover { transform: translateY(-5px); }
+        
+        .insight-visual {
+            background: linear-gradient(135deg, var(--primary-bg), #d1fae5);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-right: 1px solid #e2e8f0;
+            position: relative;
+        }
+        /* CSS Abstract shapes for visual */
+        .insight-visual .shape-circle {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: var(--white);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 48px; color: var(--primary);
+            box-shadow: 0 10px 25px rgba(16,185,129,0.2);
+            margin-bottom: 20px;
+        }
+        .insight-visual h3 { font-size: 28px; color: var(--primary); }
+        
+        .insight-content { padding: 40px; }
+        .info-block {
+            margin-bottom: 24px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .info-block::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            border-radius: 4px;
+        }
+        .info-block.core::before { background: var(--primary); }
+        .info-block.mechanism::before { background: #3b82f6; }
+        .info-block.metaphor { background: var(--warning-bg); padding: 20px; border-radius: 16px; border-left: none; }
+        .info-block.metaphor::before { display: none; }
+        
+        .info-block h4 {
+            font-size: 18px; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .info-block.core h4 { color: var(--primary); }
+        .info-block.mechanism h4 { color: #2563eb; }
+        .info-block.metaphor h4 { color: #d97706; margin-bottom: 12px;}
+
+        /* 3. ACTION PLAYBOOK */
+        .playbook-section { background-color: var(--white); }
+        .playbook-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        @media(min-width: 768px) {
+            .playbook-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .action-card {
+            background: var(--bg-body);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+        }
+        .action-card h3 { font-size: 22px; margin-bottom: 20px; color: var(--dark); }
+        .if-then-box {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border-left: 4px solid var(--primary-light);
+        }
+        .if-then-box strong { color: var(--primary); display: block; margin-bottom: 4px; }
+        .micro-action {
+            background: var(--primary);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .micro-action i { font-size: 24px; background: rgba(255,255,255,0.2); padding: 12px; border-radius: 12px; }
+
+        /* 4. REALITY CHECK */
+        .reality-section { background-color: var(--danger-bg); }
+        .reality-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        @media(min-width: 768px) {
+            .reality-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .warning-card, .guardrail-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(239,68,68,0.05);
+        }
+        .warning-card h3 { color: var(--danger); font-size: 24px; margin-bottom: 20px; }
+        .guardrail-card h3 { color: var(--primary); font-size: 24px; margin-bottom: 20px; }
+        .list-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .list-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .list-item h5 { font-size: 18px; margin-bottom: 8px; }
+
+        /* 5. ACTIVE RECALL (Flashcards) */
+        .recall-section { background-color: var(--dark); color: var(--white); }
+        .recall-section .section-header h2 { color: var(--white); }
+        .recall-section .section-header p { color: #94a3b8; }
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media(min-width: 600px) { .flashcard-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media(min-width: 992px) { .flashcard-grid { grid-template-columns: repeat(3, 1fr); } }
+        
+        .flashcard {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .flashcard:hover { transform: translateY(-3px); background: #273549; }
+        .flashcard-q {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #f8fafc;
+        }
+        .flashcard-a {
+            font-size: 15px;
+            color: var(--primary-light);
+            padding-top: 16px;
+            border-top: 1px dashed #475569;
+            font-weight: 500;
+        }
+
+        /* 6. FOOTER */
+        footer {
+            height: 128px;
+            background-color: var(--white);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 24px;
+        }
+        .footer-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 600px;
+        }
+        .footer-text strong { color: var(--dark); }
+        .social-links {
+            display: flex;
+            gap: 16px;
+        }
+        .social-link {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            color: var(--white);
+            transition: transform 0.2s;
+        }
+        .social-link:hover { transform: scale(1.1); }
+        .bg-youtube { background: #ef4444; }
+        .bg-tiktok { background: #000000; }
+        .bg-facebook { background: #1877f2; }
+
+        @media(max-width: 768px) {
+            .footer-content { flex-direction: column; gap: 16px; text-align: center; }
+            footer { height: auto; padding: 24px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HERO & THE BIG IDEA -->
+    <header class="hero">
+        <div class="container">
+            <span class="badge">Masterclass Notes</span>
+            <h1>Hacking Tuổi Thọ &<br><span>Tối Ưu Trí Não 🧠</span></h1>
+            
+            <div class="big-idea-box">
+                <i class="fa-solid fa-quote-left" style="color: var(--primary-light); opacity: 0.5; font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                Khỏe mạnh không chỉ là "không có bệnh", mà là việc tối ưu hóa cỗ máy sinh học từ cấp độ tế bào. Đừng đợi chiếc xe hỏng mới đem đi sửa, hãy bảo dưỡng và nâng cấp động cơ của nó mỗi ngày.
+            </div>
+
+            <p style="color: var(--text-muted); font-size: 18px; margin-bottom: 30px;">
+                Dựa trên khoa học thực chiến về VO2 Max, Vitamin D, Creatine và hệ miễn dịch.
+            </p>
+
+            <a href="https://youtu.be/JCTb3QSrGMQ?si=p3wBUpV-mdobG0JU" target="_blank" class="btn-youtube">
+                <i class="fa-brands fa-youtube"></i> Xem Video Trực Tiếp
+            </a>
+        </div>
+    </header>
+
+    <!-- MINDMAP OVERVIEW -->
+    <section id="mindmap" style="padding-top: 60px; padding-bottom: 100px;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Bản Đồ Tư Duy (Mindmap)</h2>
+                <p>Khung xương kiến thức tổng quan. Hãy nhìn bức tranh lớn trước khi đi sâu vào chi tiết.</p>
+            </div>
+
+            <div class="mindmap-wrapper">
+                <div class="mindmap-viewport" id="mindmap-viewport">
+                    <div class="mindmap-zoom-container" id="mindmap-zoom-container">
+                        <div class="mermaid">
+                            mindmap
+                              root((Tối Ưu<br/>Sinh Học))
+                                Hệ Tim Mạch (VO2 Max)
+                                  Norwegian 4x4
+                                  Trẻ hóa cơ tim
+                                  Đàn hồi mạch máu
+                                Hóa sinh Não Bộ
+                                  Creatine năng lượng
+                                  Xóa sương mù não
+                                  ATP tái tạo
+                                Hormone & Miễn dịch
+                                  Vitamin D3 & K2
+                                  Dọn rác Amyloid
+                                  Phòng ngừa Sa sút trí tuệ
+                                Phục hồi tự nhiên
+                                  Giấc ngủ sâu
+                                  Autophagy
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Zoom Controls -->
+                <div class="mindmap-controls">
+                    <button onclick="zoomMindmap('out')" title="Thu nhỏ"><i class="fa-solid fa-minus"></i></button>
+                    <button onclick="zoomMindmap('reset')" title="Mặc định"><i class="fa-solid fa-expand"></i></button>
+                    <button onclick="zoomMindmap('in')" title="Phóng to"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. DEEP INSIGHTS -->
+    <section id="insights" style="background-color: var(--bg-body);">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge">Kiến thức cốt lõi</span>
+                <h2>Các Trụ Cột Tri Thức 🧬</h2>
+                <p>Bóc tách 5 bài học sâu sắc nhất về cơ chế vận hành của cơ thể. Hiểu rõ "Tại sao" để làm đúng "Như thế nào".</p>
+            </div>
+
+            <div class="insights-grid">
+                <!-- Insight 1 -->
+                <div class="insight-card">
+                    <div class="insight-visual">
+                        <div class="shape-circle"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <h3>VO2 Max &<br>Nhịp Tim</h3>
+                    </div>
+                    <div class="insight-content">
+                        <div class="info-block core">
+                            <h4><i class="fa-solid fa-brain"></i> Bản chất</h4>
+                            <p>Sức khỏe tim mạch (đo bằng VO2 Max) là thước đo dự báo tuổi thọ chính xác nhất, quan trọng hơn cả gen di truyền hay việc bạn có hút thuốc hay không.</p>
+                        </div>
+                        <div class="info-block mechanism">
+                            <h4><i class="fa-solid fa-microchip"></i> Cơ chế vận hành</h4>
+                            <p>Phương pháp "Norwegian 4x4" (4 phút tập kiệt sức, 3 phút nghỉ nhẹ, lặp 4 lần) ép tim phải bơm lượng máu tối đa, kích thích độ đàn hồi của mạch máu và làm buồng tim to ra, khỏe hơn từ bên trong.</p>
+                        </div>
+                        <div class="info-block metaphor">
+                            <h4><i class="fa-solid fa-lightbulb"></i> Ẩn dụ thực tế</h4>
+                            <p>Giống như việc bạn thỉnh thoảng phải đem chiếc xe đua ra cao tốc đạp ga lên mức tối đa để "thổi bay" cặn bẩn trong động cơ, thay vì chỉ chạy lờ đờ ở số thấp trong đường phố mỗi ngày.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="insight-card">
+                    <div class="insight-visual" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+                        <div class="shape-circle" style="color: #d97706;"><i class="fa-solid fa-sun"></i></div>
+                        <h3 style="color: #d97706;">Nghịch lý<br>Vitamin D</h3>
+                    </div>
+                    <div class="insight-content">
+                        <div class="info-block core">
+                            <h4><i class="fa-solid fa-brain"></i> Bản chất</h4>
+                            <p>Thiếu hụt Vitamin D mang lại rủi ro sức khỏe nghiêm trọng tương đương, thậm chí hơn cả việc bạn hút thuốc lá mỗi ngày.</p>
+                        </div>
+                        <div class="info-block mechanism">
+                            <h4><i class="fa-solid fa-microchip"></i> Cơ chế vận hành</h4>
+                            <p>Vitamin D thực chất không phải vitamin mà là một <strong>hormone steroid</strong> quản lý hơn 1000 gen. Nhiệm vụ tối thượng của nó là kích hoạt các đại thực bào đi dọn dẹp mảng bám Amyloid trong não - thủ phạm chính gây ra bệnh Alzheimer và suy giảm trí nhớ.</p>
+                        </div>
+                        <div class="info-block metaphor">
+                            <h4><i class="fa-solid fa-lightbulb"></i> Ẩn dụ thực tế</h4>
+                            <p>Vitamin D giống như "Giám đốc điều hành" (CEO) của hệ miễn dịch. Khi CEO đi vắng dài ngày (do bạn không phơi nắng), toàn bộ nhà máy sinh học của bạn sẽ rơi vào hỗn loạn, rác thải (mảng bám) không ai dọn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="insight-card">
+                    <div class="insight-visual" style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe);">
+                        <div class="shape-circle" style="color: #4f46e5;"><i class="fa-solid fa-bolt"></i></div>
+                        <h3 style="color: #4f46e5;">Creatine &<br>Sương mù não</h3>
+                    </div>
+                    <div class="insight-content">
+                        <div class="info-block core">
+                            <h4><i class="fa-solid fa-brain"></i> Bản chất</h4>
+                            <p>Creatine là nhiên liệu nạp nhanh cho cả cơ bắp VÀ não bộ. Việc nó gây rụng tóc hay hại thận chỉ là lầm tưởng vô căn cứ đã bị khoa học bác bỏ.</p>
+                        </div>
+                        <div class="info-block mechanism">
+                            <h4><i class="fa-solid fa-microchip"></i> Cơ chế vận hành</h4>
+                            <p>Nó cung cấp các nhóm phosphate để tái tạo ATP (đồng tiền năng lượng của tế bào) cực nhanh. Não bộ tiêu thụ tới 20% năng lượng cơ thể, nên Creatine giúp xóa bỏ trạng thái "sương mù não" (brain fog) và mệt mỏi tinh thần vào giữa ngày.</p>
+                        </div>
+                        <div class="info-block metaphor">
+                            <h4><i class="fa-solid fa-lightbulb"></i> Ẩn dụ thực tế</h4>
+                            <p>Nếu ATP là % pin điện thoại của bạn, thì Creatine chính là chiếc <strong>sạc dự phòng (power bank) cắm sẵn 24/7</strong>, đảm bảo bộ não không bao giờ bị sập nguồn khi phải xử lý tác vụ nặng.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="insight-card">
+                    <div class="insight-visual" style="background: linear-gradient(135deg, #ffe4e6, #fecdd3);">
+                        <div class="shape-circle" style="color: #e11d48;"><i class="fa-solid fa-bed"></i></div>
+                        <h3 style="color: #e11d48;">Hệ thống<br>Glymphatic</h3>
+                    </div>
+                    <div class="insight-content">
+                        <div class="info-block core">
+                            <h4><i class="fa-solid fa-brain"></i> Bản chất</h4>
+                            <p>Giấc ngủ không phải là lúc não bộ tắt máy nghỉ ngơi, mà là lúc nó bật chế độ "lao công" làm việc cường độ cao nhất để dọn dẹp độc tố.</p>
+                        </div>
+                        <div class="info-block mechanism">
+                            <h4><i class="fa-solid fa-microchip"></i> Cơ chế vận hành</h4>
+                            <p>Trong giai đoạn ngủ sâu, các tế bào não thực sự co lại đến 60%, tạo ra không gian rộng rãi để hệ thống Glymphatic bơm dịch tủy sống vào, rửa sạch các protein độc hại tích tụ trong suốt ngày dài suy nghĩ.</p>
+                        </div>
+                        <div class="info-block metaphor">
+                            <h4><i class="fa-solid fa-lightbulb"></i> Ẩn dụ thực tế</h4>
+                            <p>Giống như việc các nhân viên dọn dẹp vệ sinh đường phố chỉ có thể làm việc hiệu quả nhất vào lúc 2-3 giờ sáng khi đường phố vắng người và xe cộ (những suy nghĩ) đã dừng lại.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="insight-card">
+                    <div class="insight-visual" style="background: linear-gradient(135deg, #ccfbf1, #99f6e4);">
+                        <div class="shape-circle" style="color: #0d9488;"><i class="fa-solid fa-recycle"></i></div>
+                        <h3 style="color: #0d9488;">Autophagy<br>(Tự Thực)</h3>
+                    </div>
+                    <div class="insight-content">
+                        <div class="info-block core">
+                            <h4><i class="fa-solid fa-brain"></i> Bản chất</h4>
+                            <p>Nhịn ăn gián đoạn (Fasting) không chỉ để giảm cân, mà là công tắc bật chế độ tự sửa chữa và "ăn thịt" những tế bào lỗi, già yếu của cơ thể.</p>
+                        </div>
+                        <div class="info-block mechanism">
+                            <h4><i class="fa-solid fa-microchip"></i> Cơ chế vận hành</h4>
+                            <p>Khi cơ thể thiếu hụt calo trong một khoảng thời gian đủ dài (16-24h), nó sẽ ngừng việc xây dựng (công tắc mTor tắt) và chuyển sang dọn dẹp. Các Lysosome sẽ đi "ăn" các ty thể hỏng và protein cuộn sai để tái chế thành năng lượng mới.</p>
+                        </div>
+                        <div class="info-block metaphor">
+                            <h4><i class="fa-solid fa-lightbulb"></i> Ẩn dụ thực tế</h4>
+                            <p>Tưởng tượng nhà bạn đang hết sạch thức ăn. Thay vì đi chợ, bạn quyết định lục lọi tủ lạnh, dọn dẹp những đồ ăn thừa sắp hỏng, vứt bỏ rác rưởi. Nhờ thế, căn nhà (cơ thể) trở nên sạch sẽ và gọn gàng hơn bao giờ hết.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ACTION PLAYBOOK -->
+    <section id="action" class="playbook-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge" style="background: #e0e7ff; color: #4f46e5;">Thực Chiến</span>
+                <h2>Sổ Tay Hành Động (Playbook) 🚀</h2>
+                <p>Kiến thức chỉ là sức mạnh tiềm năng. Đây là cách chuyển hóa chúng thành kết quả vật lý ngay trong tuần này.</p>
+            </div>
+
+            <div class="playbook-grid">
+                <!-- Col 1: If-Then -->
+                <div class="action-card">
+                    <h3>Kịch bản "Nếu - Thì" (If - Then)</h3>
+                    
+                    <div class="if-then-box">
+                        <strong><i class="fa-solid fa-cloud-sun"></i> Tình huống 1: Sương mù não buổi chiều</strong>
+                        <p>NẾU bạn cảm thấy mất tập trung, mệt mỏi vào lúc 2h-3h chiều... <br>👉 <strong>THÌ:</strong> Thay vì uống ly cà phê thứ 3 (gây rối loạn giấc ngủ), hãy pha 5g Creatine với nước để sạc lại trực tiếp ATP cho não.</p>
+                    </div>
+
+                    <div class="if-then-box">
+                        <strong><i class="fa-solid fa-building"></i> Tình huống 2: Môi trường văn phòng kín</strong>
+                        <p>NẾU bạn làm việc trong văn phòng 8 tiếng/ngày và đi làm lúc mặt trời chưa mọc... <br>👉 <strong>THÌ:</strong> Mặc định bổ sung Vitamin D3 kèm K2 (giúp canxi vào xương thay vì vào mạch máu) ngay trong bữa ăn có chất béo.</p>
+                    </div>
+
+                    <div class="if-then-box">
+                        <strong><i class="fa-solid fa-stopwatch"></i> Tình huống 3: Quá bận rộn không có 1 tiếng tập</strong>
+                        <p>NẾU bạn không có thời gian đến phòng gym... <br>👉 <strong>THÌ:</strong> Chỉ cần áp dụng đúng 1 hiệp 4 phút nhảy dây hoặc chạy bứt tốc tại chỗ đến mức thở dốc không nói được thành câu, sau đó nghỉ.</p>
+                    </div>
+                </div>
+
+                <!-- Col 2: Micro actions -->
+                <div class="action-card">
+                    <h3>Hành động siêu nhỏ (Micro-actions)</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">Những việc bạn có thể hoàn thành trong 24h tới mà không cần ý chí cao:</p>
+                    
+                    <div class="micro-action">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <div>
+                            <h4 style="color: white; font-size: 18px; margin-bottom: 5px;">Mua ngay 1 hũ Creatine Monohydrate</h4>
+                            <p style="font-size: 15px; opacity: 0.9;">Đừng mua loại đắt tiền hay pha trộn phức tạp. Chỉ cần mua loại Monohydrate cơ bản nhất, rẻ nhất. Để nó ngay cạnh bình nước trên bàn làm việc.</p>
+                        </div>
+                    </div>
+
+                    <div class="micro-action" style="background: #2563eb;">
+                        <i class="fa-solid fa-shoe-prints"></i>
+                        <div>
+                            <h4 style="color: white; font-size: 18px; margin-bottom: 5px;">Kiểm tra nhịp tim tối đa</h4>
+                            <p style="font-size: 15px; opacity: 0.9;">Ngày mai, hãy chạy bộ nhanh nhất có thể trong 1 phút. Dùng đồng hồ thông minh đo xem nhịp tim chạm ngưỡng bao nhiêu để biết "vùng Zone 5" của bạn.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="micro-action" style="background: #d97706;">
+                        <i class="fa-solid fa-vial"></i>
+                        <div>
+                            <h4 style="color: white; font-size: 18px; margin-bottom: 5px;">Lên lịch xét nghiệm chỉ số</h4>
+                            <p style="font-size: 15px; opacity: 0.9;">Mở điện thoại, đặt lịch với trung tâm xét nghiệm máu gần nhất để đo chỉ số Vitamin D (25-OH Vitamin D) vào cuối tuần này.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. REALITY CHECK -->
+    <section id="reality" class="reality-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge" style="background: #fecaca; color: var(--danger);">Cảnh báo</span>
+                <h2 style="color: var(--danger);">Nhận Diện Cạm Bẫy & Kỷ Luật ⚠️</h2>
+                <p>Tại sao 90% mọi người xem xong video thấy rất hay, nhưng 1 tháng sau mọi thứ vẫn y như cũ?</p>
+            </div>
+
+            <div class="reality-grid">
+                <div class="warning-card">
+                    <h3><i class="fa-solid fa-flag"></i> Bẫy vô hình (Red Flags)</h3>
+                    
+                    <div class="list-item">
+                        <h5>🚩 Ảo tưởng "Đi bộ 10,000 bước là đủ"</h5>
+                        <p>Nhiều người đi bộ thong thả mỗi ngày và nghĩ thế là khỏe. Thực tế, nếu bạn <strong>không bao giờ</strong> đưa nhịp tim lên vùng cường độ cao (Zone 5 khiến bạn thở dốc), cơ tim bạn vẫn sẽ lão hóa và mất dần độ đàn hồi. Bạn có thể trông gầy nhưng mỡ nội tạng rất cao (Hội chứng TOFI - Thin on the Outside, Fat on the Inside).</p>
+                    </div>
+
+                    <div class="list-item">
+                        <h5>🚩 Uống Vitamin D sai cách</h5>
+                        <p>Mua Vitamin D đắt tiền nhưng lại uống vào lúc bụng đói. Vitamin D hòa tan trong chất béo, nếu không có lipid làm dung môi, cơ thể bạn sẽ thải ra ngoài gần hết. Phải uống ngay sau bữa ăn có mỡ/dầu.</p>
+                    </div>
+                </div>
+
+                <div class="guardrail-card">
+                    <h3><i class="fa-solid fa-shield-halved"></i> Chốt chặn vật lý (Guardrails)</h3>
+                    
+                    <div class="list-item">
+                        <h5>🛡️ Quy tắc "Chướng ngại vật" cho việc tập luyện</h5>
+                        <p>Đừng dựa vào ý chí để đi tập. Hãy tạo ra sự phiền phức nếu KHÔNG đi tập. <br><strong>Ví dụ:</strong> Đặt đôi giày chạy bộ chắn ngang cửa phòng tắm. Buổi sáng muốn đi vệ sinh, bạn bắt buộc phải cầm đôi giày lên. Hoặc chuyển khoản trước tiền cho PT/bạn bè, nếu không tập sẽ mất tiền.</p>
+                    </div>
+
+                    <div class="list-item">
+                        <h5>🛡️ Chốt chặn 10h tối cho giấc ngủ</h5>
+                        <p>Đừng nhắc bản thân "ngủ sớm đi". Hãy cài đặt app khóa toàn bộ mạng xã hội vào 10h tối (cần mật khẩu của người khác để mở), đồng thời cài đặt đèn trong nhà tự động chuyển sang màu vàng tối. Dùng môi trường ép cơ thể tiết Melatonin.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. ACTIVE RECALL -->
+    <section id="recall" class="recall-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge" style="background: #334155; color: #cbd5e1;">Kiểm tra trí nhớ</span>
+                <h2>Trạm Ôn Tập Tương Tác 🃏</h2>
+                <p>Khoa học chứng minh việc chủ động đọc câu hỏi và tự nhẩm câu trả lời (Active Recall) giúp nhớ lâu gấp 3 lần so với đọc lại bài chép.</p>
+            </div>
+
+            <div class="flashcard-grid">
+                <!-- Flashcards 1-15 -->
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Yếu tố số 1 (hơn cả gen) dự báo tuổi thọ và sức khỏe tổng thể là gì?</div>
+                    <div class="flashcard-a">💡 Chỉ số sức khỏe tim mạch - VO2 Max.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Bài tập "Norwegian 4x4" yêu cầu tỷ lệ thời gian như thế nào?</div>
+                    <div class="flashcard-a">💡 4 phút cường độ kiệt sức, 3 phút nghỉ nhẹ nhàng (Lặp 4 lần).</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Thiếu hụt chất nào mang rủi ro tương đương việc hút thuốc lá?</div>
+                    <div class="flashcard-a">💡 Thiếu hụt Vitamin D.</div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Chức năng quan trọng nhất của Vitamin D đối với não bộ là gì?</div>
+                    <div class="flashcard-a">💡 Dọn dẹp mảng bám Amyloid, ngăn ngừa suy giảm trí nhớ.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Creatine có gây rụng tóc hay suy thận ở người khỏe mạnh không?</div>
+                    <div class="flashcard-a">💡 Không. Khoa học đã chứng minh đây chỉ là lầm tưởng.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Lợi ích cốt lõi nhất của Creatine đối với não bộ là gì?</div>
+                    <div class="flashcard-a">💡 Tái tạo ATP tức thì, giảm ngay tình trạng "sương mù não".</div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Khi nào hệ thống Glymphatic trong não bộ hoạt động mạnh nhất?</div>
+                    <div class="flashcard-a">💡 Trong giai đoạn ngủ sâu (Deep sleep).</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Tại sao Vitamin D cần được uống chung với K2?</div>
+                    <div class="flashcard-a">💡 D hấp thụ canxi, K2 điều hướng canxi vào xương thay vì làm tắc nghẽn mạch máu.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Vitamin D tan trong môi trường nào? Uống lúc nào tốt nhất?</div>
+                    <div class="flashcard-a">💡 Tan trong chất béo. Uống ngay sau bữa ăn có dầu/mỡ.</div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Autophagy (Tự thực) là quá trình gì?</div>
+                    <div class="flashcard-a">💡 Cơ thể "ăn" và dọn dẹp các tế bào lỗi, già yếu để tái chế năng lượng.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Làm thế nào để kích hoạt công tắc Autophagy?</div>
+                    <div class="flashcard-a">💡 Thông qua nhịn ăn gián đoạn (Fasting) từ 16 tiếng trở lên.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Hội chứng TOFI (Gầy bề ngoài, béo bên trong) nguy hiểm ở điểm nào?</div>
+                    <div class="flashcard-a">💡 Mỡ nội tạng bám quanh gan/tim dù cơ thể nhìn gầy do thiếu tập luyện.</div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Loại Creatine nào là tối ưu, rẻ và được nghiên cứu nhiều nhất?</div>
+                    <div class="flashcard-a">💡 Creatine Monohydrate.</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Sai lầm phổ biến nhất khi nghĩ về đi bộ 10,000 bước mỗi ngày là gì?</div>
+                    <div class="flashcard-a">💡 Tưởng thế là đủ khỏe tim mạch, nhưng thực tế tim chưa vào "Zone 5".</div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-q">❓ Tại sao không nên dựa vào "ý chí" để duy trì thói quen sức khỏe?</div>
+                    <div class="flashcard-a">💡 Ý chí là tài nguyên có hạn. Cần dùng "Chốt chặn vật lý/môi trường".</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-text">
+                <strong style="font-size: 16px; margin-bottom: 8px; display: block;">Sẵn sàng nâng cấp bản thân?</strong>
+                Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+            </div>
+            
+            <div class="social-links">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="social-link bg-youtube" title="Youtube">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="social-link bg-tiktok" title="TikTok">
+                    <i class="fa-brands fa-tiktok"></i>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="social-link bg-facebook" title="Facebook">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
+```
