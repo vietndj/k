@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10k/Tháng với Số Vốn Dưới $500 - Playbook Thực Chiến</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        h1, h2, h3, h4, .title-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Abstract Art Backgrounds cho các khối */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, rgba(15,23,42,0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .card-content { position: relative; z-index: 1; }
+
+        /* Mindmap Container */
+        #mindmap-container {
+            width: 100%;
+            height: 60vh;
+            overflow: hidden;
+            background: #1e293b;
+            border-radius: 1rem;
+            position: relative;
+            cursor: grab;
+            border: 1px solid #334155;
+        }
+        #mindmap-container:active { cursor: grabbing; }
+        
+        #mindmap-content {
+            transform-origin: 0 0;
+            transition: transform 0.1s ease-out;
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .zoom-controls {
+            position: absolute; bottom: 20px; right: 20px;
+            display: flex; gap: 10px; z-index: 10;
+        }
+
+        /* Flashcard Animations */
+        .flashcard-answer {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out, opacity 0.4s ease-out;
+            opacity: 0;
+        }
+        .flashcard-active .flashcard-answer {
+            max-height: 500px; padding-top: 1rem; opacity: 1;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #38bdf8, #818cf8);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Hero Header -->
+    <header class="pt-20 pb-10 px-6 text-center border-b border-gray-800 relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] opacity-20 pointer-events-none" style="background: radial-gradient(circle, #38bdf8 0%, transparent 60%);"></div>
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <span class="inline-block py-1 px-3 rounded-full bg-blue-500/20 text-blue-400 text-sm font-semibold mb-4 border border-blue-500/30">Hệ thống hoá kiến thức từ Podcast</span>
+            <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">Đế chế <span class="text-gradient">Thu nhập thụ động</span> bắt đầu từ 0 đồng</h1>
+            <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto">Playbook giải mã tư duy khởi nghiệp của Chris Koerner - Vua Side Hustle. Biến ý tưởng của bạn thành cỗ máy in tiền trong 90 ngày.</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12 space-y-24">
+
+        <!-- SECTION 1: THE BIG IDEA -->
+        <section id="big-idea" class="space-y-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold mb-4">🎯 1. The Big Idea & Bản đồ Chiến lược</h2>
+                <div class="p-6 bg-blue-900/20 border border-blue-800/50 rounded-2xl max-w-3xl mx-auto glass-card">
+                    <p class="text-lg md:text-xl font-medium text-blue-100 card-content leading-relaxed">
+                        "Khởi nghiệp không cần tiền tỷ hay sáng tạo lại bánh xe. Trọng tâm nằm ở việc <strong class="text-blue-400">gạt bỏ nỗi sợ bị đánh giá</strong>, <strong class="text-blue-400">sao chép y hệt</strong> những mô hình đang hoạt động tốt ở nơi khác, và liên tục <strong class="text-blue-400">kiểm chứng ý tưởng rẻ tiền</strong> thông qua Internet."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mindmap -->
+            <div class="relative">
+                <div id="mindmap-container" class="shadow-2xl">
+                    <div id="mindmap-content">
+                        <pre class="mermaid">
+mindmap
+  root((Chris Koerner
+  Vua Side Hustle))
+    Tư duy cốt lõi
+      Vượt qua nỗi sĩ diện
+      Không sáng tạo lại bánh xe
+      Copy nguyên mẫu đang win
+      Follow the Profit
+    Kỹ thuật Testing ý tưởng
+      Đăng ảo trên FB Marketplace
+      Giả vờ bán trước khi làm
+      Zero-cost Validation
+    Mô hình ít rủi ro
+      Đại lý AI cho Small Biz (Vibe coding)
+      Drop-servicing (Sửa gara/thay dầu)
+      Website Danh bạ (Directory)
+      RV Parks / Máy bán hàng tự động
+    Rào cản phá sản
+      Bẫy Co-founder 50/50
+      Chờ ý tưởng hoàn hảo
+      Quá tập trung vào 1 ngách (khi chưa test đủ)
+                        </pre>
+                    </div>
+                </div>
+                <div class="zoom-controls">
+                    <button onclick="zoomMindmap(0.2)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-lg text-xl font-bold border border-slate-600 transition shadow-lg">+</button>
+                    <button onclick="zoomMindmap(-0.2)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-lg text-xl font-bold border border-slate-600 transition shadow-lg">-</button>
+                    <button onclick="resetZoom()" class="px-4 h-10 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold border border-blue-500 transition shadow-lg">Reset</button>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="https://youtu.be/4QLWlcneJig?si=GoqqSPKhK4QjNqX0" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-600/50 rounded-full font-semibold transition-all">
+                    <i class="fa-brands fa-youtube text-xl"></i> Xem video gốc: Passive Income Expert: How To Make $10k Per Month In 90 Days!
+                </a>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DEEP INSIGHTS -->
+        <section id="deep-insights">
+            <h2 class="text-3xl font-bold mb-2">🧠 2. Deep Insights: Trụ cột Tri thức</h2>
+            <p class="text-gray-400 mb-10">Bóc tách 10 bài học sâu sắc nhất, giải thích theo nguyên lý Feynman.</p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Insight 1 -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl">🎭</div>
+                            <h3 class="text-xl font-bold text-white">Nỗi đau phải lớn hơn Nỗi sĩ diện</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> Rào cản lớn nhất ngăn bạn kiếm tiền không phải thiếu vốn, mà là sợ người quen trên Facebook đánh giá.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Tâm lý con người luôn thổi phồng "spotlight effect" (tưởng ai cũng đang nhìn mình). Hãy coi nhẹ cái tôi, chấp nhận làm việc "kém sang" để tích lũy dòng tiền.</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> Chris năm 9 tuổi lội cống nhặt bóng golf bán lại cho người lớn trên đường quốc lộ để mua xe đạp. Vứt bỏ sỉ diện là bước đầu của giàu có.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-xl">🖨️</div>
+                            <h3 class="text-xl font-bold text-white">Nghệ thuật "Copycat" chính đáng</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> 95% mô hình kinh doanh là giải quyết "vấn đề cũ". Không cần phát minh cái mới, hãy sao chép y hệt mô hình đang ra tiền.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Tự ý "thêm thắt" lúc đầu khi chưa hiểu thị trường sẽ tạo ra sai lầm (ví dụ tự nghĩ ra cách tính phí lưu kho mệt mỏi). Đối thủ làm thế vì họ đã tốn hàng năm để thử sai rồi.</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> Nhận cuộc gọi đòi mua màn hình iPhone vỡ với giá $3. Anh không bán, mà copy y nguyên ý tưởng đó: Thu gom màn hình vỡ, gửi sang Trung Quốc sửa, thu về hàng triệu USD.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl">🔬</div>
+                            <h3 class="text-xl font-bold text-white">Zero-cost Validation (Test 0 đồng)</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> Trưng bày ảo một sản phẩm chưa hề tồn tại để đo lường lực mua thật trước khi đổ tiền sản xuất.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Dùng AI tạo ảnh sản phẩm -> Đăng lên FB Marketplace/Ads rẻ tiền. Đếm số người nhắn tin "Tôi muốn mua". Nếu cầu mạnh (như hòn đá lăn xuống dốc theo bạn), thì mới bắt đầu sản xuất.</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> Muốn làm kẹo dẻo Creatine cho nữ? Đừng đi mua máy trộn. Dùng AI vẽ hình kẹo, đăng FB Marketplace. Nếu có 100 người inbox hỏi mua, lúc đó đi thuê gia công chưa muộn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 text-xl">💦</div>
+                            <h3 class="text-xl font-bold text-white">Sweaty Income đẻ ra Passive Income</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> Thu nhập thụ động không rớt từ trên trời xuống. Nó là kết quả của giai đoạn kiếm "Tiền mồ hôi nước mắt" (ugly income).</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Muốn có hệ thống tự động, bạn phải lao vào làm tay chân, đối mặt với sự từ chối, xây dựng luồng khách hàng. Khi hệ thống đã vận hành trơn tru và có lãi, bạn mới thuê người vận hành và tận hưởng thụ động.</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> Đứng ngoài trời nắng nóng Texas lái xe hộ người khác từ sàn đấu giá (Concierge car buying). Cực kỳ vất vả, nhưng nó cung cấp VỐN để nuôi các side-hustle xịn xò khác.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-xl">⚡</div>
+                            <h3 class="text-xl font-bold text-white">Bias For Action (Thiên kiến hành động)</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> Thu hẹp khoảng cách thời gian giữa lúc "lóe lên ý tưởng" và "bắt tay làm bài test đầu tiên".</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Khi để thời gian trôi, não bộ sẽ viện cớ để từ bỏ. Hành động ngay lập tức (dù nhỏ) sẽ duy trì động lực (momentum) và kích hoạt hiệu ứng hòn tuyết lăn.</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> Đi qua trạm dừng nghỉ Buc-ee's thấy họ không bán áo thun online. Không chần chừ, mua trọn 1 bộ sản phẩm, chụp ảnh, đẩy website lên mạng và vớ bẫm hàng trăm nghìn đô.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center text-teal-400 text-xl">🤖</div>
+                            <h3 class="text-xl font-bold text-white">Cơ hội "Arbitrage" với AI</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> Bán khoảng cách kiến thức: Lấy công cụ AI miễn phí/rẻ tiền cài đặt cho các doanh nghiệp mù mờ về công nghệ với giá cao.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Các doanh nghiệp nhỏ (thợ điện, dọn máng xối) biết họ cần AI nhưng sợ phức tạp. Bạn dùng ngôn ngữ đời thường giao tiếp với các tool AI (Vibe coding) để tạo ra mini-app cho họ. Thu phí setup $3000 + duy trì $500/tháng.</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> Làm một tổng đài giọng nói AI (Voice Agent) trực đêm cho ông thợ dọn nhà. Khách gọi lúc 9h30 tối AI tự chốt lịch, sáng hôm sau thợ chỉ việc đi làm.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 text-xl">🤝</div>
+                            <h3 class="text-xl font-bold text-white">Drop-servicing: Bán nước bọt</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> Xây một mặt tiền đẹp (Website/Facebook Ads) để gom khách hàng, sau đó pass đơn hàng lại cho xưởng/thợ truyền thống làm và ăn chênh lệch.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Các xưởng dịch vụ làm nghề rất tốt nhưng mù mờ Marketing và có giao diện (UI/UX) rất chán. Bạn làm web xịn, chốt khách giá cao ($80) rồi book thợ giá gốc ($40). Bạn ăn lời nhờ bán "Sự tiện lợi và trải nghiệm mượt mà".</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> Lập web "Sửa Garage Số 1". Khách book qua bạn. Bạn bốc điện thoại điều thợ cơ khí địa phương đến làm rụp cái xong. Không cần biết cái búa cờ lê là gì.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl">💔</div>
+                            <h3 class="text-xl font-bold text-white">Bỏ qua Đam mê (Khúc dạo đầu)</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> Đừng ảo tưởng tìm điểm giao thoa giữa "Thứ làm ra tiền" và "Thứ bạn đam mê" ngay ngày đầu.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Nếu cứ khăng khăng khởi nghiệp với thứ mình mê, bạn sẽ kiệt quệ và ghét luôn đam mê đó. Hãy "Follow the Profit" (Theo dòng lợi nhuận), đam mê nghệ thuật kinh doanh trước. Khi túi rủng rỉnh tiền, mang đam mê ra chơi cũng chưa muộn.</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> Chris mê làm đồ gỗ. Nhưng anh làm giàu từ việc đi nhặt bóng, bán máy bán hàng tự động, làm công viên RV. Lấy tiền từ RV parks về mua máy mộc xịn nhất chơi thong thả.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card md:col-span-2 rounded-2xl p-6 border border-slate-700 hover:border-blue-500/50 transition-colors">
+                    <div class="card-content space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl">⚖️</div>
+                            <h3 class="text-xl font-bold text-white">Ảo tưởng Cổ phần 50/50</h3>
+                        </div>
+                        <p class="text-gray-300"><strong class="text-gray-100">Bản chất:</strong> Chia cổ phần 50/50 với co-founder vào ngày đầu tiên là công thức của thảm họa và sự thù hận sau này.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed"><strong class="text-gray-200">Cơ chế:</strong> Lúc uống cà phê chém gió thì ai cũng cống hiến 100%. Khi vào việc, một người làm 80 tiếng/tuần, người kia bận chăm con. 50/50 lúc này sinh ra phẫn nộ. Lời khuyên: Đừng ký quỹ chia chác sớm. Hãy quy định: "Chúng ta cùng làm tới mốc $10k doanh thu đầu tiên, rồi mới ngồi xuống định giá và chia cổ phần theo đóng góp thực tế".</p>
+                        <div class="bg-black/30 p-4 rounded-xl border border-gray-800">
+                            <p class="text-sm text-yellow-100"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i><strong>Ví dụ:</strong> 1 ông Sales có data quan hệ chốt hợp đồng triệu đô với 1 cú điện thoại. 1 cậu Dev 18 tuổi gõ code 80h/tuần. Hai giá trị này khác hẳn nhau, cưa 50/50 chắc chắn sẽ toang.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: ACTION PLAYBOOK -->
+        <section id="action-playbook" class="space-y-8">
+            <h2 class="text-3xl font-bold mb-2">🚀 3. Sổ tay Thực chiến (Action Playbook)</h2>
+            <p class="text-gray-400">Ứng dụng ngay tư duy vào thực tế, vượt qua vùng an toàn.</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- If/Then Scenarios -->
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700">
+                    <h3 class="text-xl font-bold mb-6 text-white border-b border-slate-700 pb-2"><i class="fa-solid fa-code-branch text-blue-400 mr-2"></i> Kịch bản Nếu - Thì</h3>
+                    <ul class="space-y-6">
+                        <li class="flex gap-4">
+                            <div class="text-red-400 mt-1"><i class="fa-solid fa-circle-xmark"></i></div>
+                            <div>
+                                <strong class="text-white block mb-1">NẾU bạn có 1 ý tưởng hay nhưng sợ bạn bè chê cười...</strong>
+                                <span class="text-gray-400 text-sm">THÌ hãy tạo một Fanpage/Account ẩn danh. Chạy ads Facebook với chi phí $5/ngày để test xem NGƯỜI LẠ có sẵn sàng mở hầu bao không. Người lạ mới nuôi sống bạn, bạn bè thì không.</span>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="text-red-400 mt-1"><i class="fa-solid fa-circle-xmark"></i></div>
+                            <div>
+                                <strong class="text-white block mb-1">NẾU bạn không biết code, không có máy móc xịn...</strong>
+                                <span class="text-gray-400 text-sm">THÌ hãy dùng kĩ năng "Vibe coding" (Nhắn tin với AI). Yêu cầu ChatGPT hoặc Lovable thiết kế cho bạn 1 trang Landing Page cơ bản, hoặc đóng vai trò "Kẻ môi giới" (Drop-servicing) ăn chênh lệch.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="bg-gradient-to-br from-blue-900/40 to-slate-800/50 p-8 rounded-2xl border border-blue-500/30">
+                    <h3 class="text-xl font-bold mb-6 text-white border-b border-blue-800/50 pb-2"><i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> Micro-actions (Làm ngay trong 24h tới)</h3>
+                    
+                    <div class="space-y-4">
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" class="mt-1 w-5 h-5 rounded border-gray-600 text-blue-500 focus:ring-blue-500 bg-slate-700">
+                            <span class="text-gray-300 group-hover:text-white transition">
+                                <strong class="text-blue-300 block">Viết ra 3 ý tưởng tồi tệ nhất.</strong> Đừng cố nghĩ ý tưởng hoàn hảo. Nghĩ xem lĩnh vực nào hiện tại đang "cực kì cùi bắp" (ví dụ: thợ khóa, thông tắc bể phốt) và tưởng tượng bạn làm cho nó đẹp hơn 10%.
+                            </span>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" class="mt-1 w-5 h-5 rounded border-gray-600 text-blue-500 focus:ring-blue-500 bg-slate-700">
+                            <span class="text-gray-300 group-hover:text-white transition">
+                                <strong class="text-blue-300 block">Test ngầm 0 đồng.</strong> Chọn 1 ý tưởng. Dùng Midjourney/ChatGPT vẽ ảnh sản phẩm đó. Đăng ảnh lên Facebook Marketplace. Để đấy 24h xem có ai inbox hỏi giá không.
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: REALITY CHECK -->
+        <section id="reality-check" class="space-y-8">
+            <h2 class="text-3xl font-bold mb-2">⚠️ 4. Reality Check: Chốt chặn Kỷ luật</h2>
+            <p class="text-gray-400">Ảo tưởng sẽ đốt cháy tiền của bạn. Hãy nhìn vào sự thật.</p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Red Flags -->
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-l-red-500 border-t border-r border-b border-slate-700">
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-red-400 mb-4"><i class="fa-solid fa-flag text-red-500 mr-2"></i> Bẫy Vô Hình (Red Flags)</h3>
+                        <ul class="space-y-4 text-gray-300 text-sm">
+                            <li>
+                                <strong class="text-white block mb-1">Ảo vọng "Cái này chưa ai làm, tao sẽ độc quyền"</strong>
+                                Thường thì nếu chưa ai làm, nghĩa là thị trường đó "không ra tiền" (Mirage Opportunity). Hãy lao vào nơi đang có đối thủ - đó là bằng chứng của việc có người sẵn sàng chi tiền.
+                            </li>
+                            <li>
+                                <strong class="text-white block mb-1">Đợi làm xong sản phẩm hoàn hảo mới bán</strong>
+                                Mất 2 năm làm xong App ra mắt không ai tải. Lẽ ra phải rao bán ý tưởng App từ ngày 1 bằng Landing Page mô phỏng.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-l-green-500 border-t border-r border-b border-slate-700">
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-green-400 mb-4"><i class="fa-solid fa-shield text-green-500 mr-2"></i> Chốt chặn Kỷ luật (Guardrails)</h3>
+                        <ul class="space-y-4 text-gray-300 text-sm">
+                            <li>
+                                <strong class="text-white block mb-1">Quy tắc $100 Validation</strong>
+                                Tuyệt đối KHÔNG chi quá $100 cho bất cứ ý tưởng nào nếu chưa có ít nhất 10 tin nhắn/khách hàng lạ ngỏ ý muốn trả tiền.
+                            </li>
+                            <li>
+                                <strong class="text-white block mb-1">Thiết lập luật "Solo Founder" trước</strong>
+                                Bắt buộc tự chạy dự án 1 mình trong 30 ngày đầu để đánh giá năng lực bản thân trước khi gọi ai đó vào làm Co-founder.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: ACTIVE RECALL -->
+        <section id="active-recall" class="space-y-8">
+            <h2 class="text-3xl font-bold mb-2">🃏 5. Trạm Ôn tập Tương tác (Active Recall)</h2>
+            <p class="text-gray-400 mb-8">Nhấn vào từng thẻ để kiểm tra trí nhớ của bạn về các concept trong video.</p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="flashcards-container">
+                <!-- Javascript will inject flashcards here -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SECTION 6: FOOTER -->
+    <footer class="bg-gray-900 border-t border-gray-800 h-[128px] flex flex-col items-center justify-center text-center px-4">
+        <p class="text-gray-400 text-sm mb-3">Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy thuật toán.</p>
+        <div class="flex gap-6 items-center">
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="text-gray-500 hover:text-red-500 transition text-2xl" title="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-gray-500 hover:text-white transition text-2xl" title="TikTok">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="text-gray-500 hover:text-blue-500 transition text-2xl" title="Facebook">
+                <i class="fa-brands fa-facebook-f"></i>
+            </a>
+        </div>
+        <p class="text-xs text-gray-600 mt-2">&copy; 2026 Nguyễn Đức Việt. Designed for Action.</p>
+    </footer>
+
+    <!-- Script Interactions -->
+    <script>
+        // 1. Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            mindmap: { padding: 20 }
+        });
+
+        // 2. Zoom pan for Mindmap
+        let currentScale = 1;
+        const mindmapContent = document.getElementById('mindmap-content');
+        const container = document.getElementById('mindmap-container');
+
+        function zoomMindmap(step) {
+            currentScale += step;
+            if (currentScale < 0.5) currentScale = 0.5;
+            if (currentScale > 3) currentScale = 3;
+            updateTransform();
+        }
+
+        function resetZoom() {
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateTransform();
+        }
+
+        function updateTransform() {
+            mindmapContent.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+        }
+
+        // Add basic drag to pan
+        let isDragging = false;
+        let startX, startY;
+        let translateX = 0, translateY = 0;
+
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            container.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            container.style.cursor = 'grab';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateTransform();
+        });
+
+        // Block scroll zoom
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+
+        // 3. Flashcards Data injection
+        const flashcards = [
+            { q: "Sai lầm lớn nhất ngăn cản ý tưởng khởi nghiệp là gì?", a: "Sợ hãi ánh nhìn và sự đánh giá từ bạn bè/người thân." },
+            { q: "Chiến lược 'bắt đầu' an toàn nhất theo Chris là?", a: "Sao chép y hệt 100% một mô hình đang thành công, khoan sáng tạo." },
+            { q: "Công cụ validation 0 đồng được đề xuất là?", a: "Tạo ảnh sản phẩm giả bằng AI và đăng lên FB Marketplace đo lượt hỏi mua." },
+            { q: "Tại sao không nên chia 50/50 cổ phần lúc đầu?", a: "Vì giá trị cống hiến, thời gian và tiền bạc ở tương lai của 2 người sẽ khác biệt hoàn toàn." },
+            { q: "Mirage Opportunity (Cơ hội ảo ảnh) là gì?", a: "Một ngành có vẻ ngon ăn nhưng thấy ai nhảy vào cũng chết (VD: App tổng hợp lịch sinh hoạt sinh viên)." },
+            { q: "Drop-servicing là gì?", a: "Xây vỏ bọc web/marketing xịn để thu khách, sau đó bán lại cho xưởng thợ truyền thống làm." },
+            { q: "Thay vì học code phức tạp, nay ta có thể dùng kỹ năng gì?", a: "Vibe coding - Giao tiếp với AI bằng tiếng anh đời thường để dựng app/web." },
+            { q: "Vì sao nên hướng đến doanh nghiệp truyền thống thay vì khởi nghiệp tech?", a: "Vì họ rất dốt công nghệ, chỉ cần giúp họ dùng AI cơ bản là kiếm được tiền mảng B2B." },
+            { q: "Nguyên lý Sweaty Income?", a: "Làm việc chân tay dơ bẩn trước để kiếm vốn, sau đó mới dùng vốn đẻ ra thu nhập thụ động." },
+            { q: "Follow the Profit nghĩa là sao?", a: "Theo đuổi thứ ra tiền trước. Cứ có lãi nuôi thân đã, khoan bàn đến chuyện 'đam mê'." },
+            { q: "Buc-ee's dạy ta bài học gì?", a: "Bias for Action. Nghĩ là làm ngay. Thấy họ không bán web, tự mua đồ về lập web bán hộ ăn lời." },
+            { q: "Seller Financing trong mua BĐS RV là gì?", a: "Chủ cũ cho bạn vay luôn tiền mua đất của họ, trả góp bằng chính lợi nhuận park sinh ra." },
+            { q: "Directory website kiếm tiền từ đâu?", a: "Gom danh sách doanh nghiệp lại (VD: công viên chó), kéo traffic, rồi thu tiền quảng cáo ưu tiên." },
+            { q: "Nếu có 1 ý tưởng hay, bước tiếp theo nên là?", a: "Ngưng suy nghĩ viển vông, test ngay nó trên FB ads với ngân sách siêu nhỏ." },
+            { q: "Sự thật về Freedom (Tự do) của doanh nhân?", a: "Càng làm chủ càng có nhiều 'sếp' (nhân viên, khách hàng, đối tác, thuật toán). Đó là sự đánh đổi." }
+        ];
+
+        const flashcardContainer = document.getElementById('flashcards-container');
+        flashcards.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = "bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl p-5 cursor-pointer transition-colors duration-300 relative group overflow-hidden";
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <h4 class="font-semibold text-blue-200 text-sm pr-4">Q${index + 1}: ${item.q}</h4>
+                    <i class="fa-solid fa-chevron-down text-slate-500 group-hover:text-blue-400 transition transform duration-300"></i>
+                </div>
+                <div class="flashcard-answer">
+                    <p class="text-gray-300 text-sm border-t border-slate-600 pt-3">${item.a}</p>
+                </div>
+            `;
+            
+            card.addEventListener('click', function() {
+                const icon = this.querySelector('.fa-chevron-down');
+                const isActived = this.classList.contains('flashcard-active');
+                
+                // Đóng tất cả
+                document.querySelectorAll('.flashcard-active').forEach(c => {
+                    c.classList.remove('flashcard-active');
+                    c.querySelector('.fa-chevron-down').style.transform = 'rotate(0deg)';
+                });
+
+                // Mở card hiện tại nếu nó đang đóng
+                if (!isActived) {
+                    this.classList.add('flashcard-active');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+            flashcardContainer.appendChild(card);
+        });
+
+    </script>
+</body>
+</html>
