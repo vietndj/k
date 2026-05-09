@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sự Diệt Vong & Tỉnh Thức - Konstantin Kisin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0B1120',
+                            gold: '#FBBF24',
+                            crimson: '#E11D48',
+                            emerald: '#10B981'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS Variables cho Abstract Art */
+        :root {
+            --art-1: linear-gradient(135deg, #1e3a8a, #9333ea);
+            --art-2: linear-gradient(45deg, #be123c, #f59e0b);
+            --art-3: linear-gradient(to right, #065f46, #10b981);
+            --art-4: radial-gradient(circle, #312e81, #111827);
+            --art-5: linear-gradient(to top left, #831843, #fb7185);
+            --art-6: linear-gradient(120deg, #14532d, #84cc16);
+            --art-7: linear-gradient(to bottom, #7e22ce, #c084fc);
+            --art-8: radial-gradient(ellipse at center, #b45309, #fcd34d);
+            --art-9: linear-gradient(180deg, #0f172a, #334155);
+        }
+
+        body {
+            background-color: #050505;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Hiệu ứng kính mờ */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Flashcard CSS */
+        .flashcard-container {
+            perspective: 1000px;
+        }
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .flashcard-container:hover .flashcard {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+        .flashcard-front {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid #334155;
+            color: #f8fafc;
+        }
+        .flashcard-back {
+            background: linear-gradient(145deg, #b45309, #78350f);
+            color: white;
+            transform: rotateY(180deg);
+            border: 1px solid #f59e0b;
+        }
+
+        /* Khung Mermaid Zoom */
+        .mermaid-viewport {
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+            background-color: #0f172a;
+            border-radius: 1rem;
+            border: 1px solid #334155;
+        }
+        .mermaid-viewport:active {
+            cursor: grabbing;
+        }
+        #mindmap-wrapper {
+            transform-origin: 0 0;
+            transition: transform 0.3s ease-out;
+            width: 100%;
+            min-height: 600px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* CSS Abstract Art cho Card */
+        .art-box {
+            width: 100%;
+            height: 120px;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .art-1 { background: var(--art-1); }
+        .art-1::after { content:''; position:absolute; width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; top: 10px; left: -10px; }
+        
+        .art-2 { background: var(--art-2); }
+        .art-2::before { content:''; position:absolute; width: 100%; height: 20px; background: rgba(0,0,0,0.3); transform: rotate(-15deg); top: 50px; }
+        
+        .art-3 { background: var(--art-3); }
+        .art-3::after { content:''; position:absolute; width: 80px; height: 80px; border: 4px solid rgba(255,255,255,0.4); right: 20px; top: 20px; }
+        
+        .art-4 { background: var(--art-4); }
+        .art-4::before { content:''; position:absolute; width: 40px; height: 100%; background: rgba(255,255,255,0.1); left: 30%; }
+        
+        .art-5 { background: var(--art-5); }
+        .art-5::after { content:''; position:absolute; width: 0; height: 0; border-left: 50px solid transparent; border-right: 50px solid transparent; border-bottom: 80px solid rgba(255,255,255,0.2); bottom: 10px; left: 20px; }
+        
+        .art-6 { background: var(--art-6); }
+        .art-6::before { content:''; position:absolute; width: 100px; height: 100px; border-radius: 20%; background: rgba(0,0,0,0.2); transform: rotate(45deg); right: -20px; top: 10px;}
+        
+        .art-7 { background: var(--art-7); }
+        .art-7::after { content:''; position:absolute; width: 100%; height: 2px; background: white; top: 50%; box-shadow: 0 10px 0 white, 0 -10px 0 white; opacity: 0.3;}
+        
+        .art-8 { background: var(--art-8); }
+        .art-8::before { content:''; position:absolute; width: 50px; height: 50px; border-radius: 50%; background: white; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 20px rgba(255,255,255,0.5);}
+
+        .art-9 { background: var(--art-9); }
+        .art-9::after { content:''; position:absolute; width: 200%; height: 50%; background: rgba(255,255,255,0.05); top: -20%; left: -50%; transform: rotate(-5deg); }
+
+        /* Nút Youtube */
+        .yt-btn {
+            background: linear-gradient(90deg, #ff0000, #cc0000);
+            transition: all 0.3s;
+        }
+        .yt-btn:hover {
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-gold selection:text-black">
+
+    <!-- HERO SECTION -->
+    <header class="relative pt-20 pb-16 px-6 sm:px-12 lg:px-24 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="inline-block px-4 py-1 rounded-full border border-gray-600 text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">
+                <i class="fa-solid fa-bolt text-brand-gold mr-2"></i> Tư duy Hệ thống & Xã hội học
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-serif font-bold text-white leading-tight mb-6">
+                Bức Tranh Toàn Cảnh:<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold to-brand-crimson">Sự Sụp Đổ & Thức Tỉnh Của Nền Văn Minh</span>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-3xl leading-relaxed">
+                Phân tích chuyên sâu từ cuộc trò chuyện giữa Steven Bartlett và Konstantin Kisin. Không nói đạo lý suông, đây là tấm bản đồ thực dụng giúp bạn nhìn thấu cơ chế vận hành của xã hội, chính trị và tâm lý đám đông trong kỷ nguyên hỗn loạn.
+            </p>
+        </div>
+    </header>
+
+    <!-- 1. THE BIG IDEA & MINDMAP -->
+    <section class="py-16 px-6 sm:px-12 lg:px-24 bg-brand-dark">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-white mb-4 flex items-center">
+                <i class="fa-solid fa-bullseye text-brand-gold mr-4"></i> 1. The Big Idea
+            </h2>
+            <div class="glass-panel p-8 rounded-2xl mb-10 border-l-4 border-brand-crimson">
+                <p class="text-2xl text-gray-200 font-serif italic leading-relaxed">
+                    "Sự diệt vong của một xã hội thịnh vượng hiếm khi đến từ kẻ thù bên ngoài. Nó bắt nguồn từ cuộc 'tự sát văn hóa' bên trong — khi chúng ta bắt đầu tôn vinh sự yếu đuối, nuôi dưỡng tâm lý nạn nhân và chối bỏ các nền tảng tự do đã xây dựng nên chính chúng ta."
+                </p>
+            </div>
+
+            <!-- Nút Youtube -->
+            <div class="mb-10 text-center">
+                <a href="https://youtu.be/GbV6iW26h-Q?si=tBr4fxX29bzOx1BV" target="_blank" class="yt-btn inline-flex items-center text-white px-6 py-3 rounded-full font-bold shadow-lg">
+                    <i class="fa-brands fa-youtube text-2xl mr-3"></i>
+                    The Anti-Woke Expert: “We Are Witnessing The Fall Of The UK & The USA!” - Konstantin Kisin
+                </a>
+            </div>
+
+            <!-- Mindmap Controls -->
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-300">Sơ đồ Cấu trúc Cốt lõi (Mindmap)</h3>
+                <div class="flex space-x-2">
+                    <button onclick="zoomOut()" class="bg-gray-800 hover:bg-gray-700 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <button onclick="zoomIn()" class="bg-gray-800 hover:bg-gray-700 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mermaid Viewport -->
+            <div class="mermaid-viewport w-full" id="viewport">
+                <div id="mindmap-wrapper">
+                    <pre class="mermaid">
+                        mindmap
+                          root((Sự tồn vong của<br/>Xã hội Tự do))
+                            Tâm lý Nạn nhân
+                              Hiệu ứng Máy chiếu
+                              Đặc quyền Nạn nhân
+                              Phá hủy sự kiên cường
+                            Ý thức hệ Woke
+                              Chủ nghĩa Mác mới
+                              Thứ bậc Áp bức
+                              Sự đúng đắn Chính trị
+                            Khế ước Xã hội
+                              Vai trò Nam - Nữ
+                              Nhập cư & Ranh giới
+                              Khoản nợ Thế hệ
+                            Chốt chặn Sự thật
+                              Tự do Ngôn luận
+                              Từ bỏ Chủ nghĩa ý thức
+                              Chấp nhận Sự đánh đổi
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. DEEP INSIGHTS -->
+    <section class="py-16 px-6 sm:px-12 lg:px-24 bg-[#0a0a0a]">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-white mb-10 flex items-center">
+                <i class="fa-solid fa-brain text-brand-gold mr-4"></i> 2. Các Trụ cột Tri thức (Deep Insights)
+            </h2>
+            <p class="text-gray-400 mb-10 text-lg">Bóc tách logic, cơ chế vận hành và ví dụ thực chiến từ nội dung. Không lý thuyết hàn lâm.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Insight 1 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-1"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">1. Bẫy Tâm lý Nạn nhân (Victimhood)</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">Bạn luôn nhìn thế giới thông qua "bộ lọc" kỳ vọng và mặc cảm của chính mình.</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Khi một người bị nhồi sọ rằng họ là nạn nhân bị áp bức, não bộ sẽ vô thức tự động tìm kiếm sự phân biệt đối xử ở mọi tương tác, biến ảo tưởng thành nỗi đau có thật.</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ẩn dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">"Thí nghiệm Khắc sẹo": Người tham gia tưởng mặt mình có sẹo giả và bước vào phỏng vấn. Họ tin rằng mình bị đối xử tệ hại vì vết sẹo, dù thực tế vết sẹo đã bị xóa bí mật từ trước.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-2"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">2. Chủ nghĩa Mác phiên bản Mới</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">Sự phân chia giai cấp cũ (Tư bản vs Công nhân) thất bại, nên nó được thay bằng sự phân chia mới: Giới tính và Chủng tộc.</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Tạo ra "Hệ thống thứ bậc áp bức" (Hierarchy of Oppression). Ai càng thất bại, càng thuộc nhóm thiểu số thì càng được mặc định là thượng đẳng về đạo đức. Ai thành công là kẻ bóc lột.</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ẩn dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">Người châu Á (Trung, Hàn, Nhật) tại Mỹ từng là thiểu số, nhưng vì họ quá thành công về học vấn/tài chính, họ lập tức bị gạt sang nhóm "Kẻ bóc lột" và bị phân biệt đối xử ngược khi xét tuyển đại học.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-3"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">3. Phủ nhận Sự Đánh Đổi (Tradeoff Denialism)</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">Trên đời không có "Giải pháp hoàn hảo", chỉ có sự "Đánh đổi" (Thomas Sowell).</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Khi các nhà hoạt động bị ý thức hệ che mắt, họ chỉ tối ưu hóa mù quáng cho MỘT biến số duy nhất, dẫn đến hậu quả tàn phá các biến số quan trọng khác của xã hội.</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">Ép buộc mục tiêu "Net Zero" (Không khí thải) vô tình buộc các nước nghèo phải trả giá đắt. Nhờ đốt năng lượng hóa thạch, tuổi thọ trung bình ở Ấn Độ mới tăng từ 32 (năm 1947) lên 71 (hiện nay).</p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-4"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">4. "Sự đúng đắn Chính trị" là một Vũ khí</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">Political Correctness không sinh ra để bảo vệ người yếu thế, mà để bịt miệng người bất đồng.</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Khái niệm này xuất phát từ Liên Xô cũ: "Điều anh nói có thể là sự thật (factually correct), nhưng nó không đúng chuẩn chính trị (politically incorrect), nên anh phải im mồm."</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">Trong đại dịch, thuyết "Virus rò rỉ từ phòng thí nghiệm" từng bị dán nhãn là "thuyết âm mưu phân biệt chủng tộc" và bị cấm ngôn hoàn toàn trên MXH, dù sau này nó được chứng minh là có cơ sở lớn nhất.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-5"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">5. Ảo ảnh Mạng Xã Hội (Virtue Signaling)</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">MXH ưu tiên những thứ "nghe có vẻ tử tế" hơn là những thứ "thực sự hiệu quả".</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Vì MXH bị tách rời khỏi thực tế vật lý (không có cơ chế phản hồi bằng tổn thất thực tế ngay lập tức), con người dễ dãi cổ xúy các quyết định mang tính cảm xúc để nhận được tiếng vỗ tay của bộ lạc mình.</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">Trào lưu đổi avatar ô vuông đen (Blackout Tuesday). Nó không giải quyết được vấn đề phân biệt chủng tộc, nhưng dùng để tấn công và gắn mác "kẻ xấu" cho những ai từ chối tham gia nghi lễ đó.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-6"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">6. Quyền Lực của Sự Độc Lập</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">Chiến tranh thông tin không cố thuyết phục bạn tin vào một phe, mà khiến bạn mất niềm tin vào mọi thứ.</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Demoralization (Sự mất tinh thần): Các thế lực thù địch không gieo rắc ý tưởng mới, họ bơm tiền khuếch đại những luồng ý kiến cực đoan sẵn có trong xã hội, tạo ra một mớ hỗn độn để dân chúng chia rẽ và cắn xé nhau.</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ẩn dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">Vụ công ty Tenant Media bị phát hiện nhận tiền từ Nga để tài trợ cho các Podcaster Mỹ. Các KOL này không hề biết nguồn tiền, họ chỉ tự nhiên phát ngôn gắt gao hơn những quan điểm gây tranh cãi của chính họ.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-7"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">7. Bản chất của Ranh Giới (Nhập cư)</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">Lòng trắc ẩn phải đi kèm với năng lực quản lý và ranh giới rõ ràng.</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Nhập cư hợp pháp mang lại người tài, bồi đắp xã hội. Nhập cư trái phép bẻ gãy hệ thống luật pháp ngay từ hành động đầu tiên, tạo cơ hội cho kẻ xấu lợi dụng hệ thống.</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ẩn dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">Ngôi nhà của bạn cần thợ xây, đầu bếp (nhập cư hợp pháp). Bạn đăng tin và ký hợp đồng. Nhưng nếu Chủ Nhật có người lạ đập vỡ cửa trước xông vào nhà đòi làm việc đó (nhập cư trái phép), bạn có chấp nhận lòng trắc ẩn không?</p>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-8"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">8. Số 0 Đặc Biệt trong Kiểm Duyệt</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">Kiểm duyệt chỉ có tác dụng khi mọi luồng thông tin đều bị bóp nghẹt.</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Chỉ cần một nền tảng tự do duy nhất tồn tại (Số lượng nền tảng bị kiểm duyệt không còn là toàn bộ), sự kiểm duyệt ở các nơi khác lập tức mất tác dụng vì người dân sẽ bỏ sang nơi có sự thật.</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">Ngay khi Elon Musk mua lại Twitter (X) và thả cửa tự do ngôn luận, Mark Zuckerberg (Meta) lập tức thừa nhận sai lầm trong việc kiểm duyệt câu chuyện "Laptop của Hunter Biden", vì nếu giấu diếm, người dùng sẽ sang X đọc.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col h-full hover:-translate-y-1 transition duration-300">
+                    <div class="art-box art-9"></div>
+                    <h3 class="text-xl font-bold text-white mb-3">9. Đặc Quyền Bị Lãng Quên</h3>
+                    <div class="mb-3">
+                        <span class="text-brand-emerald text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-key mr-1"></i> Bản chất</span>
+                        <p class="text-gray-300 text-sm">Đặc quyền lớn nhất không phải giới tính hay màu da, mà là nền tảng văn minh tự do (Western Privilege).</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-brand-gold text-sm font-bold uppercase tracking-wider block mb-1"><i class="fa-solid fa-gear mr-1"></i> Cơ chế vận hành</span>
+                        <p class="text-gray-400 text-sm">Thế hệ trẻ sinh ra trong hòa bình thường "take it for granted" (coi mọi thứ là hiển nhiên). Họ phẫn nộ với những bất công nhỏ nhặt mà quên mất quyền sở hữu tài sản cá nhân và tự do phát ngôn là một đặc ân xa xỉ đối với phần còn lại của thế giới.</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-brand-crimson text-sm font-bold block mb-1"><i class="fa-regular fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-gray-300 text-sm italic">Trải nghiệm của Konstantin tại Nga: Trong thập kỷ gia đình anh kiếm được tiền, họ cũng có thể mất trắng tước đoạt tài sản ngay ngày mai nếu làm mếch lòng chính quyền. Tự do tài sản không tồn tại vững chắc ở đó.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ACTION PLAYBOOK -->
+    <section class="py-16 px-6 sm:px-12 lg:px-24 bg-brand-dark">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-white mb-8 flex items-center">
+                <i class="fa-solid fa-rocket text-brand-gold mr-4"></i> 3. Sổ tay Thực chiến (Action Playbook)
+            </h2>
+            
+            <div class="space-y-6">
+                <!-- If/Then 1 -->
+                <div class="bg-gray-800 rounded-xl p-6 border-l-4 border-blue-500 shadow-lg">
+                    <h4 class="text-xl font-bold text-white mb-2">Kịch bản 1: Mắc kẹt trong bẫy nạn nhân</h4>
+                    <p class="text-gray-300 mb-2"><strong class="text-blue-400">Nếu (If):</strong> Bạn sinh ra với những lá bài xấu (ngoại hình, xuất thân, môi trường) và cảm thấy bất công so với người khác...</p>
+                    <p class="text-gray-300"><strong class="text-brand-gold">Thì (Then):</strong> Hãy nhận thức phũ phàng rằng: "Không có kỵ binh nào đến cứu bạn đâu". Hãy ngừng kỳ vọng vào sự thương hại, chấp nhận lá bài xấu đó và bù đắp bằng cách đẩy các kỹ năng khác (kiến thức, giao tiếp, sự kiên cường) lên mức tối đa.</p>
+                </div>
+
+                <!-- If/Then 2 -->
+                <div class="bg-gray-800 rounded-xl p-6 border-l-4 border-purple-500 shadow-lg">
+                    <h4 class="text-xl font-bold text-white mb-2">Kịch bản 2: Va chạm ý thức hệ trên Mạng xã hội</h4>
+                    <p class="text-gray-300 mb-2"><strong class="text-purple-400">Nếu (If):</strong> Bạn bị lôi kéo vào một cuộc chửi bới chính trị/xã hội, bị đối phương dán nhãn là "bọn cánh tả/cánh hữu/kẻ thù"...</p>
+                    <p class="text-gray-300"><strong class="text-brand-gold">Thì (Then):</strong> Hãy lùi lại và hiểu rằng "Dán nhãn là vũ khí của sự lười biếng". Đừng bảo vệ phe phái (tribe), hãy bảo vệ sự thật. Nếu cuộc tranh luận không dựa trên Pragmatism (tính thực dụng) mà chỉ dập khuôn theo hệ tư tưởng, hãy rút lui lập tức.</p>
+                </div>
+
+                <!-- Micro-Actions -->
+                <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 mt-8 shadow-2xl">
+                    <h4 class="text-xl font-bold text-brand-emerald mb-4"><i class="fa-solid fa-bolt mr-2"></i> Hành động Micro (Làm ngay trong 24h)</h4>
+                    <ul class="list-none space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-brand-emerald mt-1 mr-3"></i>
+                            <span class="text-gray-300"><strong>Thực hành "Gỡ kính lọc":</strong> Tìm một khó khăn bạn đang gặp phải. Ép bản thân viết ra giải pháp dưới góc nhìn của một người chịu 100% trách nhiệm, cấm tuyệt đối việc đổ lỗi cho ngoại cảnh.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-brand-emerald mt-1 mr-3"></i>
+                            <span class="text-gray-300"><strong>Bảo hộ Tâm trí (Inoculation):</strong> Trò chuyện với con cái hoặc một người trẻ tuổi. Thay vì dạy họ về "đặc quyền da trắng/nam giới", hãy chỉ cho họ sự may mắn tột độ khi được sinh ra trong một xã hội có tự do ngôn luận và internet.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. REALITY CHECK -->
+    <section class="py-16 px-6 sm:px-12 lg:px-24 bg-[#0a0a0a]">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-white mb-8 flex items-center">
+                <i class="fa-solid fa-triangle-exclamation text-brand-crimson mr-4"></i> 4. Reality Check: Nhận diện Cạm bẫy
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="glass-panel p-6 rounded-2xl border border-brand-crimson/50">
+                    <h3 class="text-xl font-bold text-brand-crimson mb-4 flex items-center">
+                        <i class="fa-solid fa-flag mr-2"></i> Bẫy vô hình (Red Flags)
+                    </h3>
+                    <div class="mb-4">
+                        <h4 class="text-white font-bold mb-1">"Sự độc tài nhân danh điều tốt" (Tyranny for your own good)</h4>
+                        <p class="text-gray-400 text-sm mb-2">Sai lầm lớn nhất là tin rằng tước đoạt thử thách của người khác là đang giúp họ. Kẻ độc tài tàn ác nhất không phải kẻ ác, mà là kẻ tin rằng hắn đang cai trị bạn để bảo vệ bạn.</p>
+                        <div class="bg-gray-800 p-3 rounded text-sm text-gray-300 border-l-2 border-brand-crimson italic">
+                            VD: Các chính sách hạ thấp tiêu chuẩn bài thi Toán để "bảo vệ" học sinh da đen/thiểu số khỏi cảm giác thất bại. Việc này thực chất đang truyền thông điệp ngầm: "Vì màu da của bạn, bạn quá yếu kém để cạnh tranh công bằng".
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="glass-panel p-6 rounded-2xl border border-brand-emerald/50">
+                    <h3 class="text-xl font-bold text-brand-emerald mb-4 flex items-center">
+                        <i class="fa-solid fa-shield-halved mr-2"></i> Chốt chặn Kỷ luật
+                    </h3>
+                    <div class="mb-4">
+                        <h4 class="text-white font-bold mb-1">Bộ lọc Pragmatism (Thực dụng học)</h4>
+                        <p class="text-gray-400 text-sm mb-2">Đừng quản lý kỷ luật bằng cảm xúc hay "lời hứa suông". Cài đặt giới hạn môi trường vật lý.</p>
+                        <div class="bg-gray-800 p-3 rounded text-sm text-gray-300 border-l-2 border-brand-emerald">
+                            **Quy tắc:** Đứng trước một luồng tin tức/phong trào chính trị xã hội ồn ào. Tuyệt đối không bấm Like hay Share trong vòng 48h. Chốt chặn này ngăn bạn rơi vào bẫy "Virtue Signaling" (thể hiện đạo đức) hời hợt để lấy tiếng vỗ tay của đám đông.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. ACTIVE RECALL -->
+    <section class="py-16 px-6 sm:px-12 lg:px-24 bg-brand-dark">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-white mb-2 flex items-center">
+                <i class="fa-solid fa-layer-group text-brand-gold mr-4"></i> 5. Trạm Ôn tập Tương tác (Active Recall)
+            </h2>
+            <p class="text-gray-400 mb-10">Lướt chuột (Hover) hoặc chạm vào thẻ để lật xem cốt lõi sự thật đằng sau những ngụy biện xã hội.</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="flashcard-container h-48">
+                    <div class="flashcard">
+                        <div class="flashcard-front">
+                            <h4 class="text-lg font-semibold leading-snug">Tại sao gieo rắc "Tư duy nạn nhân" lại tàn nhẫn hơn cả sự phân biệt đối xử?</h4>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm font-medium">Vì "Perception is Projection". Nó cài đặt một bộ lọc độc hại vào não người tiếp nhận, khiến họ tự nhìn thấy sự đàn áp ở khắp mọi nơi và từ bỏ sức mạnh tự quyết của chính mình.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flashcard-container h-48">
+                    <div class="flashcard">
+                        <div class="flashcard-front">
+                            <h4 class="text-lg font-semibold leading-snug">Sự đúng đắn chính trị (Political Correctness) ban đầu được phát minh ra để làm gì?</h4>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm font-medium">Bắt nguồn từ Liên Xô, dùng làm vũ khí để bịt miệng những người nói ra sự thật mất lòng, bằng cách gán mác hành vi của họ là "không phù hợp với tư tưởng của bộ lạc".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flashcard-container h-48">
+                    <div class="flashcard">
+                        <div class="flashcard-front">
+                            <h4 class="text-lg font-semibold leading-snug">Sự khác biệt cốt lõi giữa nhập cư hợp pháp và nhập cư trái phép?</h4>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm font-medium">Giống như ngôi nhà: Bạn đăng tin thuê người đến làm việc (Hợp pháp), so với việc một người lạ đạp tung cửa xông vào nhà tự làm việc (Trái phép). Nó phá vỡ tính thượng tôn pháp luật.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flashcard-container h-48">
+                    <div class="flashcard">
+                        <div class="flashcard-front">
+                            <h4 class="text-lg font-semibold leading-snug">Tại sao MXH lại là môi trường hoàn hảo nuôi dưỡng Woke culture?</h4>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm font-medium">Vì MXH tách rời khỏi thực tế. Các quyết định sai lầm trên MXH không phải trả giá ngay lập tức bằng việc vỡ đầu chảy máu, nên người ta dễ dàng a dua theo những lý thuyết "nghe có vẻ đạo đức".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="flashcard-container h-48">
+                    <div class="flashcard">
+                        <div class="flashcard-front">
+                            <h4 class="text-lg font-semibold leading-snug">Khái niệm "Tradeoff Denialism" (Phủ nhận sự đánh đổi) nghĩa là gì?</h4>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm font-medium">Ảo tưởng rằng có thể giải quyết một vấn đề (như biến đổi khí hậu) một cách hoàn hảo mà không phải hy sinh hoặc gây ra hậu quả tàn khốc cho các khía cạnh khác (như cản trở nước nghèo phát triển).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="flashcard-container h-48">
+                    <div class="flashcard">
+                        <div class="flashcard-front">
+                            <h4 class="text-lg font-semibold leading-snug">Đặc quyền bị lãng quên (Western Privilege) là gì?</h4>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm font-medium">Quyền tự do ngôn luận, tự do kinh doanh và sở hữu tài sản tư nhân. Điều mà những người sinh ra ở phương Tây hoặc thế hệ trẻ thường coi là hiển nhiên và không chịu bảo vệ nó.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FOOTER -->
+    <footer class="bg-black border-t border-gray-800 h-32 flex flex-col justify-center items-center px-6 text-center text-sm">
+        <p class="text-gray-400 max-w-3xl mb-4">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="flex space-x-6">
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="text-gray-500 hover:text-brand-crimson transition-colors text-2xl">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-gray-500 hover:text-white transition-colors text-2xl">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="text-gray-500 hover:text-blue-500 transition-colors text-2xl">
+                <i class="fa-brands fa-facebook"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            fontFamily: 'Inter, sans-serif'
+        });
+    </script>
+    <script>
+        let currentScale = 1;
+        const mindmapWrapper = document.getElementById('mindmap-wrapper');
+        
+        function zoomIn() {
+            currentScale += 0.15;
+            applyTransform();
+        }
+        function zoomOut() {
+            currentScale = Math.max(0.4, currentScale - 0.15);
+            applyTransform();
+        }
+        function applyTransform() {
+            mindmapWrapper.style.transform = `scale(${currentScale})`;
+        }
+    </script>
+</body>
+</html>
