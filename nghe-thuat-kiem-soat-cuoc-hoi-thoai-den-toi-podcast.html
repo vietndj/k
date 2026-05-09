@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nghệ Thuật Kiểm Soát "Cuộc Hội Thoại Đen Tối"</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        card: '#1e293b',
+                        accent: '#38bdf8',
+                        alert: '#f43f5e'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS Abstract Art & Glassmorphism */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .blob-bg {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: pulse-slow 8s infinite alternate;
+        }
+
+        @keyframes pulse-slow {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.2); opacity: 0.6; }
+        }
+
+        /* Flashcard Flip Animation */
+        .perspective {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Mindmap Controls */
+        .mindmap-wrapper {
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+        }
+        .mindmap-wrapper:active {
+            cursor: grabbing;
+        }
+        #mindmap-content {
+            transition: transform 0.3s ease-out;
+            transform-origin: center center;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-dark text-slate-300 font-sans antialiased overflow-x-hidden selection:bg-accent selection:text-white relative">
+
+    <!-- CSS Abstract Art Backgrounds -->
+    <div class="blob-bg bg-indigo-600 w-96 h-96 rounded-full top-0 left-0"></div>
+    <div class="blob-bg bg-cyan-600 w-80 h-80 rounded-full top-1/4 right-0" style="animation-delay: 2s;"></div>
+    <div class="blob-bg bg-rose-600 w-[500px] h-[500px] rounded-full bottom-0 left-1/4" style="animation-delay: 4s;"></div>
+
+    <div class="max-w-6xl mx-auto px-4 py-12 relative z-10">
+
+        <!-- 1. THE BIG IDEA -->
+        <section class="mb-20 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-slate-800 border border-slate-700 text-accent text-sm font-semibold tracking-wider mb-4">
+                <i class="fa-solid fa-brain mr-2"></i> MASTERCLASS GIAO TIẾP THỰC CHIẾN
+            </span>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                Nghệ Thuật Kiểm Soát <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-indigo-400">"Cuộc Hội Thoại Đen Tối"</span>
+            </h1>
+            
+            <div class="glass-panel rounded-2xl p-6 md:p-8 mb-10 max-w-4xl mx-auto shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-accent to-indigo-500"></div>
+                <p class="text-xl md:text-2xl text-slate-200 font-medium leading-relaxed">
+                    "Trong mọi cuộc đàm phán hay tranh cãi, mất bình tĩnh đồng nghĩa với việc bạn tự nguyện nộp chìa khóa quyền lực cho đối phương. Giao tiếp đỉnh cao không nằm ở kỹ năng thao túng người khác, mà nằm ở khả năng kỷ luật cái tôi và bám sát mục tiêu cốt lõi của chính mình."
+                </p>
+            </div>
+
+            <!-- YouTube Link Button -->
+            <a href="https://youtu.be/xDQyLnNAXr4?si=BvrWGcp_AVc68IRV" target="_blank" class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(220,38,38,0.4)]">
+                <i class="fa-brands fa-youtube text-2xl"></i>
+                Xem video gốc: Bí mật Đặc vụ Secret Service
+            </a>
+        </section>
+
+        <!-- MINDMAP SECTION -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+                    <i class="fa-solid fa-sitemap"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Sơ Đồ Kiến Trúc Thông Tin</h2>
+            </div>
+            
+            <div class="glass-panel rounded-2xl border border-slate-700 relative shadow-2xl">
+                <!-- Zoom Controls -->
+                <div class="absolute top-4 right-4 z-20 flex gap-2 bg-slate-800/80 p-2 rounded-lg backdrop-blur-sm border border-slate-600">
+                    <button onclick="zoomMindmap(0.2)" class="w-10 h-10 flex items-center justify-center rounded bg-slate-700 hover:bg-slate-600 text-white transition" title="Phóng to">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    </button>
+                    <button onclick="zoomMindmap(-0.2)" class="w-10 h-10 flex items-center justify-center rounded bg-slate-700 hover:bg-slate-600 text-white transition" title="Thu nhỏ">
+                        <i class="fa-solid fa-magnifying-glass-minus"></i>
+                    </button>
+                    <button onclick="resetMindmap()" class="w-10 h-10 flex items-center justify-center rounded bg-slate-700 hover:bg-slate-600 text-white transition" title="Khôi phục">
+                        <i class="fa-solid fa-compress"></i>
+                    </button>
+                </div>
+
+                <!-- Mindmap Render Area -->
+                <div class="mindmap-wrapper bg-slate-900/50 rounded-2xl p-4 h-[600px] w-full" id="mindmap-wrapper">
+                    <div id="mindmap-content" class="w-full h-full flex items-center justify-center">
+                        <pre class="mermaid">
+                            mindmap
+                              root((Kiểm Soát Giao Tiếp))
+                                Tâm Lý Hành Vi
+                                  Hội chứng Me-Me<br/>Tập trung vào bản thân
+                                  Lý thuyết Đa mục tiêu<br/>Bảo vệ cái tôi vs Công việc
+                                  Độ chính xác Thấu cảm<br/>Rớt xuống 15% khi cãi vã
+                                P.L.A.N Framework
+                                  P - Purpose<br/>Xác định Mục Đích
+                                  L - Listen<br/>Lắng nghe chủ động
+                                  A - Ask<br/>Hỏi để xác nhận
+                                  N - Next Steps<br/>Chốt giải pháp
+                                Tư Duy Chống Lại
+                                  Gắn nhãn (Labeling)<br/>Tự triệt tiêu thấu hiểu
+                                  Thao túng vs Ảnh hưởng<br/>Trục lợi cá nhân vs Win-Win
+                                Ba Tử Huyệt
+                                  Cố chứng minh ĐÚNG
+                                  Nói: Tôi HOÀN TOÀN hiểu
+                                  Cho lời khuyên RÁC
+                        </pre>
+                    </div>
+                </div>
+                <p class="text-center text-sm text-slate-500 py-3 border-t border-slate-700">💡 Click vào các nút ở góc phải để phóng to / thu nhỏ. Dùng chuột kéo thả để di chuyển biểu đồ.</p>
+            </div>
+        </section>
+
+        <!-- 2. DEEP INSIGHTS -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white">Deep Insights <span class="text-slate-500 font-normal text-lg ml-2">| 9 Trụ cột Tri thức Cốt lõi</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Insight 1 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-indigo-500 flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-crosshairs text-indigo-400 mr-2"></i> 1. Đa Mục Tiêu & Cái Tôi</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Khi cãi nhau, bạn thường quên mất mục tiêu công việc ban đầu mà chỉ chăm chăm bảo vệ "danh dự" của mình.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> Não bộ ưu tiên sinh tồn. Khi bị công kích, bộ phận Amygdala kích hoạt chế độ "chiến đấu", gạt bỏ logic công việc để bảo vệ bản ngã (Identity goal).</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Ẩn dụ:</span> Giống như cầu thủ trên sân, thay vì chuyền bóng để team thắng, anh ta lại giữ bóng để tự ghi bàn lấy le, kết quả cả đội thua.
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-rose-500 flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-temperature-arrow-up text-rose-400 mr-2"></i> 2. Mất Bình Tĩnh = Bại Trận</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Kẻ thao túng dùng sự tức giận để kéo bạn ra khỏi mục đích chính. Trả đũa lại bằng sự tức giận là bạn đã rơi vào bẫy.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> Cortisol (hormone căng thẳng) làm tê liệt vỏ não trán trước (nơi ra quyết định logic). Ai giữ được nhịp tim thấp hơn, người đó nắm quyền kiểm soát trò chơi.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Ví dụ:</span> Đặc vụ FBI bị nghi phạm chửi bới. Nếu anh ta chửi lại, cuộc thẩm vấn thất bại. Đặc vụ im lặng, ghi chú lại và lạnh lùng hỏi: "Tại sao anh lại nổi điên khi tôi nhắc đến cái tên đó?".
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-accent flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-ear-listen text-accent mr-2"></i> 3. Băng Thông Lắng Nghe</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Chúng ta thường không nghe để hiểu, mà nghe để chuẩn bị câu phản biện.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> Người ta nói 150 từ/phút, nhưng não bạn xử lý 600 từ/phút. Phần "băng thông" dư thừa làm não bạn đi lang thang. Cần chủ động "phanh" lại để tập trung vào đối phương (Cognitive Inhibition).</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Ẩn dụ:</span> Lắng nghe giống như lái xe số sàn. Bạn phải chủ động đạp côn, giảm số thay vì để xe tự trượt dốc theo quán tính.
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-emerald-500 flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-eye-slash text-emerald-400 mr-2"></i> 4. Ảo Giác Thấu Cảm</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Đừng bao giờ nghĩ bạn đoán đúng 100% suy nghĩ của người khác, kể cả bạn đời.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> Khoa học chứng minh "Độ chính xác thấu cảm" tối đa là 40%. Khi cãi nhau căng thẳng, cái tôi trỗi dậy, con số này tụt xuống chỉ còn 15%.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Ví dụ:</span> Vợ than "Hôm nay mệt quá". Chồng đáp "Tại em ít tập thể dục đấy" (Sai bét!). Thay vì đoán, hãy hỏi: "Từ 'mệt' của em hôm nay là do công việc hay do sức khỏe?".
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-yellow-500 flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-tags text-yellow-400 mr-2"></i> 5. Cái Bẫy "Dán Nhãn"</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Gắn mác ai đó là "Kẻ thao túng" hay "Ái kỷ" là cách dễ nhất để giết chết cuộc giao tiếp.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> Dán nhãn là cơ chế lười biếng của não bộ. Bằng cách gán nhãn, bạn đặt bản thân vào vị trí nạn nhân hoàn hảo và tự tước đi nghĩa vụ phải đào sâu tìm hiểu nguyên nhân gốc rễ.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Ẩn dụ:</span> Dán nhãn giống như uống thuốc giảm đau che lấp triệu chứng, nó không chữa được khối u giao tiếp đang nằm bên trong.
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-purple-500 flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-person-circle-question text-purple-400 mr-2"></i> 6. Hội Chứng "Me-Me"</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Chúng ta thường phản chiếu mọi thế giới quan qua lăng kính bản thân và phớt lờ trải nghiệm của người khác.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> "Me-Me syndrome" xảy ra khi cái tôi quá lớn. Bạn cho rằng phản ứng của mình là thước đo tiêu chuẩn cho toàn xã hội. Nếu bạn không khóc, người khác khóc là "yếu đuối".</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Ví dụ:</span> Trong tang lễ bố, người chị khóc vì nhớ hình ảnh bố xem TV, người em ngạc nhiên vì "Trong phòng làm gì có TV?". Cùng một sự kiện, góc nhìn hoàn toàn khác nhau.
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-cyan-500 flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-shield-halved text-cyan-400 mr-2"></i> 7. Đọc Ngôn Ngữ Cơ Thể</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Đừng tự quy chụp ý nghĩa. Khoanh tay không hẳn là phòng thủ, có thể chỉ vì họ... lạnh.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> Ngôn ngữ cơ thể chỉ cho thấy "có sự thay đổi về trạng thái cảm xúc". Kỹ thuật đúng là dùng câu: "Có vẻ như... (It seems like...)".</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Ví dụ:</span> Đừng nói "Tại sao anh thái độ?". Hãy nói: "Có vẻ như anh không đồng ý vì tôi thấy anh vừa đảo mắt. Tôi hiểu vậy đúng không?".
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-orange-500 flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-ban text-orange-400 mr-2"></i> 8. Từ Bỏ Câu "Tôi Hiểu"</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Nói "Tôi hoàn toàn hiểu" thực chất là sự ngạo mạn. Bạn không bao giờ sống trong não của họ.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> Khi bạn nói câu này, bạn vô tình biến câu chuyện của HỌ thành câu chuyện của BẠN. Điều này ngắt kết nối sự đồng cảm.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Giải pháp:</span> Thay vì "Tôi hiểu", hãy ngồi xuống cùng họ trong vũng bùn và nói: "Chuyện này nghe có vẻ cực kỳ tồi tệ. Tôi có thể làm gì để giúp bạn lúc này?".
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-panel p-6 rounded-xl hover:translate-y-[-5px] transition duration-300 border-t-4 border-t-pink-500 flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-handshake-angle text-pink-400 mr-2"></i> 9. Ảnh Hưởng Khác Thao Túng</h3>
+                    <div class="flex-grow">
+                        <p class="mb-3 text-sm"><strong class="text-slate-200">🧠 Bản chất:</strong> Hành động giống nhau, nhưng tâm thế khác nhau sẽ quyết định bạn là Lãnh đạo hay Kẻ lừa đảo.</p>
+                        <p class="mb-3 text-sm text-slate-400"><strong class="text-slate-300">⚙️ Cơ chế:</strong> Ảnh hưởng (Influence) là tác động để đẩy đôi bên cùng lên (Win-Win). Thao túng (Manipulation) là dùng sự dối trá, lợi dụng để thu lợi ích cá nhân, phớt lờ hậu quả của người kia.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 mt-4 text-sm">
+                        <span class="text-yellow-400">💡 Ẩn dụ:</span> Cầm dao phẫu thuật. Bác sĩ dùng nó để cứu người (Influence). Kẻ xấu dùng nó để tước đoạt (Manipulation). Đều là một công cụ (sự thấu cảm tâm lý).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. ACTION PLAYBOOK -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white">Action Playbook <span class="text-slate-500 font-normal text-lg ml-2">| Sổ Tay Thực Chiến</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- If-Then Scenarios -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold text-accent border-b border-slate-700 pb-2">Kịch Bản Nếu - Thì (If-Then)</h3>
+                    
+                    <div class="glass-panel p-5 rounded-lg border-l-4 border-l-alert relative overflow-hidden">
+                        <div class="absolute right-[-20px] top-[-20px] text-6xl text-white/5"><i class="fa-solid fa-bolt"></i></div>
+                        <p class="text-slate-300 mb-2"><strong class="text-alert">NẾU:</strong> Đồng nghiệp/Khách hàng bất ngờ lăng mạ, chửi bới, hạ thấp bạn bằng ngôn từ thô tục.</p>
+                        <p class="text-slate-200"><strong class="text-emerald-400">THÌ:</strong> Tuyệt đối KHÔNG trả đũa bằng cảm xúc. Hãy dừng lại 3 giây, hạ giọng chậm và lạnh: <i>"Có vẻ như bạn đang rất tức giận đến mức phải dùng từ thô tục với tôi. Bạn có thể giải thích logic đằng sau sự tức giận này không?"</i>. Việc này ép não họ chuyển từ trạng thái thú tính (Amygdala) sang vùng logic.</p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-lg border-l-4 border-l-yellow-500 relative overflow-hidden">
+                        <div class="absolute right-[-20px] top-[-20px] text-6xl text-white/5"><i class="fa-solid fa-fire"></i></div>
+                        <p class="text-slate-300 mb-2"><strong class="text-yellow-400">NẾU:</strong> Bạn bắt đầu cảm thấy tim đập nhanh, mặt nóng ran và muốn tranh cãi phân định ĐÚNG - SAI đến cùng trong cuộc họp.</p>
+                        <p class="text-slate-200"><strong class="text-emerald-400">THÌ:</strong> Bật công tắc P.L.A.N. Ngay lập tức tự hỏi chữ P (Purpose): <i>"Mục đích của mình hôm nay là chốt dự án hay là chứng minh mình thông minh hơn gã này?"</i>. Chọn bảo vệ mục tiêu thay vì bảo vệ cái tôi.</p>
+                    </div>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold text-accent border-b border-slate-700 pb-2">Hành Động Nhỏ (Micro-actions trong 24h)</h3>
+                    
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-600 flex gap-4 items-start shadow-lg">
+                        <div class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 font-bold text-xl">1</div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg mb-1">Quy tắc "Khóa Môi"</h4>
+                            <p class="text-sm text-slate-300">Trong 24h tới, khi ai đó than vãn hoặc chia sẻ vấn đề với bạn, hãy <strong>NGẬM MIỆNG</strong>. Đừng đưa ra bất kỳ lời khuyên nào. Chỉ sử dụng đúng một câu hỏi: <br><span class="text-accent italic mt-2 inline-block">"Bạn chỉ cần tôi lắng nghe thôi, hay bạn muốn tôi cùng tìm giải pháp?"</span></p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-600 flex gap-4 items-start shadow-lg">
+                        <div class="w-12 h-12 rounded-full bg-cyan-600 text-white flex items-center justify-center flex-shrink-0 font-bold text-xl">2</div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg mb-1">Xóa bỏ từ "Tôi Hiểu"</h4>
+                            <p class="text-sm text-slate-300">Lấy giấy nhớ, viết chữ <del class="text-alert decoration-2 font-bold">TÔI HIỂU</del> và dán lên màn hình máy tính. Khi có người tâm sự, thay vì dùng từ này, hãy nói: <br><span class="text-accent italic mt-2 inline-block">"Chuyện này nghe có vẻ thực sự khó khăn với bạn."</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. REALITY CHECK -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-full bg-alert/20 flex items-center justify-center text-alert">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white">Reality Check <span class="text-slate-500 font-normal text-lg ml-2">| Cạm Bẫy Thực Tế</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Red Flag -->
+                <div class="glass-panel p-8 rounded-2xl border border-red-900/50 relative">
+                    <div class="absolute top-4 right-4 text-alert text-2xl"><i class="fa-solid fa-flag"></i></div>
+                    <h3 class="text-2xl font-bold text-alert mb-4">Bẫy Vô Hình (Red Flag)</h3>
+                    <p class="text-slate-300 mb-4 text-lg"><strong>Ảo tưởng đọc tâm trí (Mind-Reading Fallacy).</strong> Đa số mọi người sau khi đọc vài cuốn sách tâm lý liền tự cho mình khả năng đọc thấu tâm can người khác qua một cái liếc mắt.</p>
+                    <div class="bg-red-950/30 p-4 rounded-lg border border-red-900/50">
+                        <p class="text-sm text-slate-400"><strong class="text-white"><i class="fa-solid fa-xmark text-red-500 mr-1"></i> Sự Thất Bại:</strong> Vợ chồng cãi nhau tung tóe chỉ vì chồng nghe vợ thở dài và lập tức "giảng đạo" vì tưởng vợ đang bất mãn công việc nhà, trong khi cô ấy thở dài chỉ vì cái áo bị rách. Đừng tự suy diễn, hãy <strong>hỏi lại</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="glass-panel p-8 rounded-2xl border border-emerald-900/50 relative">
+                    <div class="absolute top-4 right-4 text-emerald-400 text-2xl"><i class="fa-solid fa-shield-virus"></i></div>
+                    <h3 class="text-2xl font-bold text-emerald-400 mb-4">Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                    <p class="text-slate-300 mb-4 text-lg">Đừng dựa vào ý chí (Willpower) để giữ bình tĩnh. Ý chí cạn kiệt rất nhanh khi Cortisol tăng. Hãy thiết lập <strong>rào cản vật lý</strong>.</p>
+                    <div class="bg-emerald-950/30 p-4 rounded-lg border border-emerald-900/50">
+                        <p class="text-sm text-slate-400"><strong class="text-white"><i class="fa-solid fa-check text-emerald-500 mr-1"></i> Quy tắc 5 Giây Nước:</strong> Khi cảm thấy máu dồn lên mặt, ép bản thân cầm ly nước uống 1 ngụm trước khi mở miệng (mất 5s). Hoặc xin đi vệ sinh. Phải tạo ra một khoảng đứt gãy vật lý để não chuyển từ trạng thái "Chiến đấu" về "Tư duy logic".</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ACTIVE RECALL -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white">Active Recall <span class="text-slate-500 font-normal text-lg ml-2">| Trạm Ôn Tập Tương Tác</span></h2>
+            </div>
+            
+            <p class="text-slate-400 mb-8 text-center">💡 Click vào thẻ (hoặc chạm trên điện thoại) để lật mở đáp án.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 perspective" id="flashcard-container">
+                <!-- Flashcards will be generated by JS -->
+            </div>
+        </section>
+    </div>
+
+    <!-- 6. FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 h-32 flex flex-col justify-center items-center relative z-20">
+        <div class="max-w-6xl mx-auto px-4 w-full flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                <h3 class="text-white font-bold text-lg mb-1 tracking-wider">Cập Nhật Kiến Thức Thực Chiến</h3>
+                <p class="text-slate-400 text-xs max-w-sm">Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+            
+            <div class="flex gap-4">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-red-600 hover:border-red-600 transition-all duration-300 tooltip" title="YouTube">
+                    <i class="fa-brands fa-youtube text-lg"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-black hover:border-black transition-all duration-300" title="TikTok">
+                    <i class="fa-brands fa-tiktok text-lg"></i>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-blue-600 hover:border-blue-600 transition-all duration-300" title="Facebook Page">
+                    <i class="fa-brands fa-facebook-f text-lg"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVITY SCRIPTS -->
+    <script>
+        // 1. Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            securityLevel: 'loose',
+            fontFamily: 'Inter, sans-serif'
+        });
+
+        // 2. Mindmap Zoom & Pan Logic
+        const wrapper = document.getElementById('mindmap-wrapper');
+        const content = document.getElementById('mindmap-content');
+        let scale = 1;
+        let isDragging = false;
+        let startX, startY;
+        let currentX = 0, currentY = 0;
+
+        function updateTransform() {
+            content.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+        }
+
+        function zoomMindmap(delta) {
+            scale += delta;
+            // Limit zoom
+            scale = Math.max(0.5, Math.min(scale, 3));
+            updateTransform();
+        }
+
+        function resetMindmap() {
+            scale = 1;
+            currentX = 0;
+            currentY = 0;
+            updateTransform();
+        }
+
+        // Drag to pan
+        wrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - currentX;
+            startY = e.clientY - currentY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            currentX = e.clientX - startX;
+            currentY = e.clientY - startY;
+            updateTransform();
+        });
+
+        // 3. Render Flashcards
+        const flashcardsData = [
+            { q: "Quy tắc P.L.A.N khi giao tiếp căng thẳng?", a: "Purpose (Mục đích) - Listen (Lắng nghe) - Ask (Hỏi) - Next Steps (Bước tiếp theo)." },
+            { q: "Lỗi phổ biến nhất khi Lắng nghe?", a: "Nghe chỉ để chuẩn bị câu trả lời lại, thay vì nghe để thấu hiểu thực sự." },
+            { q: "Tại sao nói 'Tôi hiểu' lại là cái bẫy?", a: "Mang tính chủ quan, phủ nhận trải nghiệm độc nhất của đối phương, gây phản cảm." },
+            { q: "Cách phản ứng khi bị lăng mạ?", a: "Không chửi lại. Yêu cầu họ giải thích bằng logic lý do họ dùng từ thô tục." },
+            { q: "Empathy Accuracy là gì?", a: "Độ chính xác thấu cảm. Nó tụt xuống chỉ còn ~15% khi bạn và đối phương cãi vã căng thẳng." },
+            { q: "Sự khác biệt giữa Thao túng và Ảnh hưởng?", a: "Ảnh hưởng là Win-Win. Thao túng là dối trá trục lợi cá nhân." },
+            { q: "Hội chứng Me-Me là gì?", a: "Xu hướng áp đặt tiêu chuẩn cảm xúc của bản thân lên toàn bộ sự việc của người khác." },
+            { q: "Làm gì khi thấy đối tác khoanh tay?", a: "Dùng câu hỏi: 'Có vẻ như bạn không đồng tình vì tôi thấy bạn khoanh tay. Tôi hiểu vậy đúng không?'" },
+            { q: "Tác hại của việc gán nhãn (Labeling)?", a: "Lười biếng đổ lỗi, tự xem mình là nạn nhân và đóng sập nỗ lực giải quyết vấn đề." },
+            { q: "Multiple Goals Theory giải thích gì?", a: "Khi cãi nhau, cái tôi (Identity) bị đe dọa, con người gạt bỏ mục tiêu công việc để bảo vệ bản ngã." },
+            { q: "Cortisol ảnh hưởng gì đến giao tiếp?", a: "Làm tê liệt vỏ não trán trước (logic), đẩy bạn vào trạng thái bản năng chiến đấu." },
+            { q: "Vòng tròn lòng tin nên bắt đầu từ đâu?", a: "Tâm điểm là lòng tin vào chính bản thân. Lòng tin với người khác cần có điều kiện (Earned trust)." },
+            { q: "Sức cản nhận thức (Cognitive bandwidth)?", a: "Não dư thừa băng thông khi nghe (600 vs 150 từ/p). Cần tập trung để không bị xao nhãng." },
+            { q: "Chốt chặn vật lý khi tức giận?", a: "Cầm ly nước uống hoặc xin đi vệ sinh. Đứt gãy 5s để não thoát chế độ chiến đấu." },
+            { q: "3 Tử huyệt tuyệt đối không làm?", a: "Cố chứng minh Đúng - Nói câu 'Tôi hoàn toàn hiểu' - Cho lời khuyên không ai mượn." }
+        ];
+
+        const flashcardContainer = document.getElementById('flashcard-container');
+        
+        flashcardsData.forEach((item, index) => {
+            const cardHTML = `
+                <div class="h-48 cursor-pointer relative" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+                    <div class="flip-card-inner w-full h-full relative">
+                        <!-- Front -->
+                        <div class="flip-card-front bg-slate-800 border border-slate-700 rounded-xl p-5 flex flex-col items-center justify-center text-center shadow-lg hover:border-accent transition-colors">
+                            <span class="text-accent text-sm font-bold mb-2">Câu hỏi ${index + 1}</span>
+                            <p class="text-white font-medium text-sm">${item.q}</p>
+                            <i class="fa-solid fa-rotate text-slate-500 mt-4 text-xs"></i>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-gradient-to-br from-indigo-900 to-slate-800 border border-indigo-500 rounded-xl p-5 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-emerald-400 text-sm font-bold mb-2"><i class="fa-solid fa-key"></i> Key</span>
+                            <p class="text-slate-200 text-sm leading-relaxed">${item.a}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            flashcardContainer.innerHTML += cardHTML;
+        });
+    </script>
+</body>
+</html>
