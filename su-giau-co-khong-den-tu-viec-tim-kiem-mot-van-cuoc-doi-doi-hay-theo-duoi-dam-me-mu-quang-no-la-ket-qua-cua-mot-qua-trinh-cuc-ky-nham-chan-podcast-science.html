@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scott Galloway - Đại Số Của Sự Giàu Có</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0B132B',    // Navy rất sâu
+                            base: '#1C2541',    // Navy sáng hơn
+                            gold: '#FFD700',    // Vàng quyền lực
+                            accent: '#3A506B',  // Xanh xám
+                            light: '#F0F4F8'    // Trắng xám nền
+                        }
+                    }
+                }
+            }
+        }
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+
+    <style>
+        body { background-color: #F0F4F8; color: #0B132B; }
+        .gradient-text {
+            background: linear-gradient(90deg, #1C2541, #3A506B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* CSS Abstract Art Shapes */
+        .art-box {
+            position: relative;
+            overflow: hidden;
+            background: #1C2541;
+            border-radius: 1rem;
+        }
+        .art-shape-1 {
+            position: absolute; top: -20%; left: -20%; width: 150px; height: 150px;
+            background: linear-gradient(135deg, #FFD700 0%, transparent 100%);
+            border-radius: 50%; filter: blur(20px); opacity: 0.6;
+        }
+        .art-shape-2 {
+            position: absolute; bottom: -10%; right: -10%; width: 120px; height: 120px;
+            background: linear-gradient(45deg, #3A506B 0%, transparent 100%);
+            border-radius: 30%; transform: rotate(45deg); opacity: 0.8;
+        }
+        .art-grid {
+            position: absolute; inset: 0;
+            background-image: radial-gradient(#ffffff 1px, transparent 1px);
+            background-size: 15px 15px; opacity: 0.1;
+        }
+
+        /* Flashcard Styling */
+        .flashcard-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .flashcard:hover .flashcard-answer {
+            max-height: 200px; /* Vừa đủ hiển thị nội dung */
+        }
+
+        /* Mindmap Container */
+        #mindmap-container {
+            width: 100%;
+            height: 600px;
+            overflow: hidden; /* Cắt phần tràn */
+            background: #0B132B;
+            border-radius: 1rem;
+            position: relative;
+            cursor: grab;
+        }
+        #mindmap-container:active { cursor: grabbing; }
+        #mindmap-wrapper {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            transform-origin: center center;
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <!-- Header Section -->
+    <header class="bg-brand-dark text-white py-20 px-6 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute top-10 left-10 w-72 h-72 bg-brand-gold rounded-full mix-blend-multiply filter blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-brand-accent rounded-full mix-blend-multiply filter blur-3xl"></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto relative z-10 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-brand-accent text-brand-gold font-bold text-sm mb-4 tracking-wider uppercase">Cố Vấn Thực Chiến 🚀</span>
+            <h1 class="text-5xl md:text-6xl font-serif font-bold mb-6 leading-tight">Đại Số Của Sự Giàu Có</h1>
+            <p class="text-xl md:text-2xl text-gray-300 font-light mb-10 max-w-3xl mx-auto">Sự thật phũ phàng về tiền bạc, sự nghiệp và lý do tại sao làm việc chăm chỉ là chưa đủ để xây dựng một đế chế tự do tài chính.</p>
+            
+            <a href="https://youtu.be/rKOx5qlLyaA" target="_blank" class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)]">
+                <i class="fa-brands fa-youtube text-2xl"></i>
+                <span>Xem Video Gốc: Scott Galloway x Diary Of A CEO</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 1. The Big Idea & Mindmap -->
+    <section class="py-16 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-brand-dark mb-4"><i class="fa-solid fa-bullseye text-brand-gold mr-2"></i>The Big Idea</h2>
+            <div class="bg-white p-8 rounded-2xl shadow-xl border-l-8 border-brand-dark max-w-4xl mx-auto">
+                <p class="text-xl font-medium text-gray-800 italic">"Sự giàu có không đến từ việc tìm kiếm một ván cược đổi đời hay theo đuổi 'đam mê' mù quáng. Nó là kết quả của một quá trình cực kỳ nhàm chán: Kiếm một công việc tỷ lệ thất nghiệp thấp, chi tiêu kỷ luật, ném tiền vào các quỹ chỉ số (Index Fund) và để thời gian (lãi kép) làm nốt phần việc còn lại."</p>
+            </div>
+        </div>
+
+        <!-- Mindmap -->
+        <div class="relative bg-brand-dark rounded-2xl shadow-2xl p-4">
+            <div class="absolute top-6 right-6 z-10 flex gap-2">
+                <button onclick="zoomIn()" class="bg-brand-accent hover:bg-brand-gold hover:text-brand-dark text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow"><i class="fa-solid fa-plus"></i></button>
+                <button onclick="zoomOut()" class="bg-brand-accent hover:bg-brand-gold hover:text-brand-dark text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow"><i class="fa-solid fa-minus"></i></button>
+                <button onclick="resetZoom()" class="bg-gray-600 hover:bg-gray-400 text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow"><i class="fa-solid fa-rotate-right"></i></button>
+            </div>
+            
+            <div id="mindmap-container">
+                <div id="mindmap-wrapper">
+                    <pre class="mermaid">
+                        mindmap
+                          root((Hệ Thống<br/>Tài Phú))
+                            [Tư Duy Lõi]
+                              Chấp nhận sự nhàm chán
+                              Lãi kép là Vua
+                              Kỷ luật thời gian
+                            [Bẫy Tử Thần]
+                              Làm theo Đam mê
+                              Chi tiêu bốc đồng
+                              Đầu tư Tất tay All-in
+                            [Đòn Bẩy]
+                              Đến Siêu đô thị
+                              Hôn nhân / Đối tác
+                              Sức mạnh kể chuyện
+                            [Thực Chiến]
+                              Trở thành Owner thay vì Earner
+                              Quỹ S&P 500 / Index Funds
+                              Xây dựng Hội đồng Cố vấn
+                    </pre>
+                </div>
+            </div>
+            <p class="text-gray-400 text-sm text-center mt-4"><i class="fa-solid fa-circle-info mr-1"></i> Sử dụng nút để thu phóng. Mindmap thể hiện cấu trúc khung xương của toàn bộ tư duy.</p>
+        </div>
+    </section>
+
+    <!-- 2. Deep Insights -->
+    <section class="py-16 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-brand-dark mb-4"><i class="fa-solid fa-brain text-brand-gold mr-2"></i>Deep Insights: 9 Trụ Cột Tri Thức</h2>
+                <p class="text-gray-600">Bóc tách logic thực dụng phía sau sự giàu có.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Insight 1 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-1"></div><div class="art-shape-2"></div>
+                        <i class="fa-solid fa-hourglass-half text-5xl text-brand-gold relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">1. Phép Màu Của Sự "Nhàm Chán"</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> Đầu tư sớm và đều đặn quan trọng hơn rất nhiều so với việc cố gắng kiếm một số tiền khổng lồ rồi mới đầu tư.</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Lãi kép hoạt động theo hàm mũ. Tiền lãi đẻ ra tiền lãi. Thời gian là đòn bẩy lớn nhất của lãi kép, không phải số vốn ban đầu.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Đợi đến khi có 1 triệu Bảng để đầu tư là ảo tưởng. Cách để có 1 triệu Bảng là bắt đầu đầu tư từ 500 Bảng đầu tiên (Giống như việc đổ từng muỗng cát kiên nhẫn trong nhiều năm sẽ thành một đụn cát khổng lồ).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-1" style="background: linear-gradient(135deg, #FF6B6B 0%, transparent 100%);"></div><div class="art-shape-2"></div>
+                        <i class="fa-solid fa-fire-extinguisher text-5xl text-white relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">2. Tài Năng Lớn Hơn Đam Mê</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> Lời khuyên "hãy theo đuổi đam mê" là lời nói dối độc hại. Hãy theo đuổi thứ bạn làm giỏi trong một ngành có tỷ lệ việc làm >90%.</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Đam mê là hệ quả của sự thành thạo và phần thưởng kinh tế. Khi bạn giỏi một thứ, kiếm được nhiều tiền từ nó, và có thể chăm lo cho gia đình, tự khắc bạn sẽ "đam mê" nó.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Chàng trai người Iraq lắp đá xà phòng bếp kiếm 1.3 triệu Bảng/năm. Hồi 17 tuổi, ước mơ của anh ta chắc chắn không phải là "lắp đá xà phòng", nhưng giờ anh ta rất đam mê nó vì nó cho anh ta một cuộc sống tuyệt vời.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-1"></div><div class="art-shape-2" style="background: linear-gradient(45deg, #4ECDC4 0%, transparent 100%);"></div>
+                        <i class="fa-solid fa-shield-halved text-5xl text-brand-gold relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">3. Áo Giáp Đa Dạng Hóa</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> Khi còn trẻ và không có gì để mất, hãy rủi ro (All-in). Nhưng khi đã có tài sản hoặc gia đình, TUYỆT ĐỐI không bao giờ bỏ tất cả trứng vào một giỏ.</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Bạn không thể kiểm soát các biến số vĩ mô (Khủng hoảng, chiến tranh, chuỗi cung ứng). Đa dạng hóa không chỉ bảo vệ tiền, nó bảo vệ SỨC KHỎE TÂM THẦN của bạn khỏi sự sụp đổ chậm chạp.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Năm 2008, Scott đã dồn toàn bộ tiền bạc và vay thêm nợ để cứu công ty Red Envelope của mình. Công ty phá sản, ông rơi vào nợ nần âm 2 triệu đô ngay khi con trai đầu lòng ra đời.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-1" style="background: linear-gradient(135deg, #1A535C 0%, transparent 100%);"></div>
+                        <i class="fa-solid fa-city text-5xl text-white relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">4. Lợi Thế Siêu Đô Thị</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> Trong những năm 20 tuổi, hãy chuyển đến sống tại một trong 20 siêu đô thị lớn nhất thế giới (London, New York, San Francisco, Dubai...).</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Ở đô thị, "bề mặt va chạm cơ hội" của bạn tăng lên gấp bội. Bạn liên tục cọ xát với những người thông minh nhất, nỗ lực nhất. Hiệu ứng bầy đàn sẽ tự động nâng cấp tiêu chuẩn của bạn lên.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Bạn không thể tự xưng là tay lướt sóng cừ khôi nếu chỉ lướt ở ao làng. Sóng ở Hawaii khác hoàn toàn. Hãy đến nơi có "sóng kinh tế" mạnh nhất.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-2" style="background: linear-gradient(45deg, #FF6B6B 0%, transparent 100%);"></div>
+                        <i class="fa-solid fa-person-falling-burst text-5xl text-brand-gold relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">5. Sức Chịu Đựng Sự Từ Chối</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> Thành công của bạn tỷ lệ thuận trực tiếp với số lượng rủi ro không thoải mái (uncomfortable risks) mà bạn sẵn sàng chấp nhận.</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Phép màu không xảy ra khi bạn ở nhà lướt điện thoại. Phần thưởng siêu ngạch (outsized returns) trên thị trường tồn tại chính là phần bù đắp cho nỗi đau bị bẽ mặt trước đám đông mà 99% mọi người trốn tránh.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Nhân viên Sales là những người bị ghét nhất nhưng lại kiếm tiền giỏi nhất, vì họ sẵn sàng "ăn rác" (bị chửi rủa, dập máy) mỗi ngày và hỏi: "Vậy tuần sau tôi gọi lại nhé?".
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-1" style="background: linear-gradient(135deg, #4ECDC4 0%, transparent 100%);"></div>
+                        <i class="fa-solid fa-book-open-reader text-5xl text-white relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">6. Quyền Năng Kể Chuyện</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> Storytelling (Kỹ năng kể chuyện) là kỹ năng cốt lõi duy nhất không bị thay thế bởi AI. Khả năng thiết kế một câu chuyện và thuyết phục người khác tin vào nó là cỗ máy in tiền thực sự.</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Con người không mua sản phẩm hay đầu tư vào bảng tính excel, họ đầu tư vào một viễn cảnh tương lai. Dù bạn gọi vốn, tán gái hay xin việc, kể chuyện là cách truyền tải giá trị mạnh nhất.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Thư gửi cổ đông của Jeff Bezos. Đọc xong, bất chấp định giá cổ phiếu cao rủi ro thế nào, câu chuyện của ông khiến bạn có cảm giác "phải mua ngay lập tức".
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-1"></div>
+                        <i class="fa-solid fa-chess-king text-5xl text-brand-gold relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">7. Trở Thành Owner (Chủ), Đừng Chỉ Là Earner (Thợ)</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> Luật pháp và hệ thống thuế được thiết kế để trừng phạt những người làm công ăn lương (Earner) và ưu đãi những người sở hữu tài sản (Owner).</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Thuế đánh vào thu nhập từ sức lao động (Salary) lên tới 40-50%. Trong khi đó, nếu bạn sở hữu tài sản (Cổ phiếu, Bất động sản), bạn có thể dùng nó làm tài sản thế chấp để vay tiền chi tiêu (không bị đánh thuế) và để tài sản tiếp tục sinh lời.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Giới siêu giàu không bán cổ phiếu để lấy tiền mặt (vì sẽ dính thuế thặng dư vốn). Họ vay ngân hàng với lãi suất rẻ bèo bằng cách cầm cố chính đống cổ phiếu đó.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-2" style="background: linear-gradient(45deg, #1A535C 0%, transparent 100%);"></div>
+                        <i class="fa-solid fa-users-gear text-5xl text-white relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">8. Bí Mật Xây "Hội Đồng Cố Vấn"</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> ĐỪNG BAO GIỜ nhắn tin cho một người thành công và hỏi: "Anh/chị có thể làm Mentor của em không?". Điều đó tạo ra áp lực khổng lồ.</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Mối quan hệ cần sự đầu tư nhỏ giọt. Thay vì đòi hỏi một chức danh Mentor to tát, hãy xin những lời khuyên cực kỳ cụ thể trong 10-15 phút. Khi họ đưa lời khuyên và thấy bạn áp dụng thành công, họ sẽ tự động đầu tư cảm xúc vào bạn.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Gửi một email ngắn gọn: "Chào anh, em có theo dõi dự án A của anh. Hiện em đang gặp kẹt ở vấn đề B. Anh có thể dành 10 phút gọi Zoom để cho em 1 lời khuyên được không?".
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col hover:-translate-y-2 transition duration-300">
+                    <div class="art-box h-32 w-full flex items-center justify-center">
+                        <div class="art-grid"></div><div class="art-shape-1" style="background: linear-gradient(135deg, #FFD700 0%, transparent 100%);"></div>
+                        <i class="fa-solid fa-ring text-5xl text-brand-dark relative z-10"></i>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">9. Hôn Nhân Là Vụ Đầu Tư Lớn Nhất</h3>
+                        <p class="mb-2 text-sm text-gray-700"><strong class="text-brand-accent">Bản chất:</strong> Chọn đúng bạn đời và bảo vệ cuộc hôn nhân là chiến lược quản trị rủi ro tài chính đỉnh cao nhất.</p>
+                        <p class="mb-4 text-sm text-gray-700"><strong class="text-brand-accent">Cơ chế:</strong> Đội nhóm (2 người) luôn tạo ra sức mạnh kinh tế lớn hơn cá nhân. Ngược lại, ly hôn sẽ thiêu rụi 70% tài sản ròng của bạn (chia đôi tài sản + phí luật sư + buộc phải bán tài sản sai thời điểm).</p>
+                        <div class="bg-gray-100 p-3 rounded-lg text-sm border-l-4 border-brand-gold">
+                            <i class="fa-solid fa-lightbulb text-brand-gold mr-1"></i> <strong>Ví dụ:</strong> Đa số những người cực kỳ giàu có đều duy trì hôn nhân bền vững. Họ mang sự khoan dung vào mối quan hệ vì hiểu rằng chi phí chìm của sự đổ vỡ là không thể gượng dậy.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Action Playbook -->
+    <section class="py-16 px-6 bg-brand-base text-white">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-brand-gold mb-4"><i class="fa-solid fa-rocket mr-2"></i>Action Playbook: Sổ Tay Thực Chiến</h2>
+                <p class="text-gray-300">Đừng đọc để biết. Hãy đọc để làm.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-brand-dark p-8 rounded-2xl border border-gray-700">
+                    <h3 class="text-2xl font-bold text-white mb-6 border-b border-gray-600 pb-2">Kịch Bản If - Then</h3>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-red-500 text-white font-bold px-2 py-1 rounded text-sm mt-1">IF</div>
+                            <p class="text-gray-300">Bạn đang kẹt ở một công việc làm thuê thu nhập thấp (VD: Thu ngân, bồi bàn, Call center) và cảm thấy bế tắc.</p>
+                        </div>
+                        <div class="flex items-start gap-3 mt-3">
+                            <div class="bg-green-500 text-white font-bold px-2 py-1 rounded text-sm mt-1">THEN</div>
+                            <p class="text-white font-medium">Hãy hành động như một "Người quản lý". Học mọi quy trình, chứng minh năng lực để được thăng chức lên Giám sát. Tích lũy chút vốn đầu tiên và dùng vị trí đó làm đòn bẩy bật sang ngành khác.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-red-500 text-white font-bold px-2 py-1 rounded text-sm mt-1">IF</div>
+                            <p class="text-gray-300">Bạn muốn xin lời khuyên hoặc kêu gọi vốn từ những người thành đạt bận rộn.</p>
+                        </div>
+                        <div class="flex items-start gap-3 mt-3">
+                            <div class="bg-green-500 text-white font-bold px-2 py-1 rounded text-sm mt-1">THEN</div>
+                            <p class="text-white font-medium">Viết 1 email dưới 5 câu. Nhắc đến điểm chung (cùng quê, cùng trường), nêu thẳng vấn đề cụ thể cần hỏi và xin duy nhất 10 phút gọi điện. Tuyệt đối không gửi "tiểu thuyết" kể lể.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-brand-dark p-8 rounded-2xl border border-gray-700 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 opacity-10"><i class="fa-solid fa-bolt text-9xl text-brand-gold"></i></div>
+                    <h3 class="text-2xl font-bold text-white mb-6 border-b border-gray-600 pb-2 relative z-10">Micro-Actions (Làm ngay trong 24h)</h3>
+                    
+                    <ul class="space-y-6 relative z-10">
+                        <li class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center font-bold flex-shrink-0 mt-1">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg">Thiết lập "Tiết kiệm cưỡng chế"</h4>
+                                <p class="text-gray-400 text-sm mt-1">Đăng nhập vào app ngân hàng ngay bây giờ. Cài đặt tự động chuyển 10% thu nhập hàng tháng sang một tài khoản khác hoặc thẳng vào quỹ ETF/Chứng khoán ngay ngày nhận lương.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center font-bold flex-shrink-0 mt-1">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg">Phát tín hiệu "Chịu đòn"</h4>
+                                <p class="text-gray-400 text-sm mt-1">Hôm nay, hãy chủ động tiếp cận một người lạ, hoặc gửi một email/tin nhắn cho một người giỏi hơn bạn để hỏi điều gì đó. Mục tiêu không phải là họ đồng ý, mục tiêu là rèn luyện "cơ bắp chịu đựng sự từ chối".</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Reality Check -->
+    <section class="py-16 px-6 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-brand-dark mb-4"><i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i>Reality Check: Nhận Diện Cạm Bẫy</h2>
+                <p class="text-gray-600">Lý do 90% mọi người vẫn trắng tay dù đọc rất nhiều sách làm giàu.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-white p-8 rounded-2xl shadow border-l-4 border-red-500">
+                    <h3 class="text-xl font-bold text-red-600 mb-4 uppercase tracking-wide"><i class="fa-solid fa-flag text-red-500 mr-2"></i>Cờ Đỏ Tâm Lý</h3>
+                    <div class="mb-4">
+                        <strong class="text-brand-dark block text-lg mb-1">Ảo tưởng "Đợi cục tiền to"</strong>
+                        <p class="text-gray-600 text-sm mb-2">Bạn nói: <em>"Khi nào em để dành được 100 triệu, em mới bắt đầu đầu tư, chứ 1-2 triệu chả bõ bèn gì."</em></p>
+                        <p class="bg-red-50 text-red-800 p-3 rounded text-sm text-justify">🚩 <strong>Sự thật phũ phàng:</strong> Bạn sẽ đốt sạch số tiền nhỏ đó vào tivi, điện thoại, quần áo. Bạn bỏ lỡ biến số vĩ đại nhất của Lãi kép là <strong>THỜI GIAN</strong>. 500k của tuổi 21 có sức mạnh gấp 10.000k của tuổi 45.</p>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-white p-8 rounded-2xl shadow border-l-4 border-green-500">
+                    <h3 class="text-xl font-bold text-green-600 mb-4 uppercase tracking-wide"><i class="fa-solid fa-shield-halved text-green-500 mr-2"></i>Chốt Chặn Kỷ Luật</h3>
+                    <div class="mb-4">
+                        <strong class="text-brand-dark block text-lg mb-1">"Trói tay" bản thân trước thị trường</strong>
+                        <p class="text-gray-600 text-sm mb-2">Con người yếu đuối trước cám dỗ. Bạn KHÔNG THỂ kỷ luật dựa vào ý chí.</p>
+                        <p class="bg-green-50 text-green-800 p-3 rounded text-sm text-justify">🛡️ <strong>Hành động Vật lý:</strong> Thay vì dặn lòng "không được tiêu pha", hãy sử dụng <strong>Force Savings</strong> (Tiết kiệm bắt buộc). Xóa toàn bộ thẻ tín dụng khỏi Apple Pay/Shopee. Đăng ký tự động trừ tiền mua quỹ ETF/Index trước khi tiền kịp hiển thị số dư khả dụng trong mắt bạn.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Active Recall (Flashcards) -->
+    <section class="py-16 px-6 bg-brand-light">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-brand-dark mb-4"><i class="fa-solid fa-layer-group text-brand-gold mr-2"></i>Trạm Ôn Tập Nhanh (Active Recall)</h2>
+                <p class="text-gray-600">Lướt qua các thẻ này để khắc sâu kiến thức vào bộ não. (Di chuột/Chạm để xem đáp án)</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Flashcard 1 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Lợi thế lớn nhất của bạn ở tuổi 20 là gì?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Thời gian và Sự linh hoạt. Bạn có thể chịu đựng rủi ro, nhảy việc, chuyển thành phố mà không bị vướng bận gia đình/con cái.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 2 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Tại sao khuyên "Theo đuổi đam mê" là sai lầm?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Đam mê có tỷ lệ thất nghiệp cao (nghệ thuật, thể thao). Hãy làm cái bạn giỏi ở nơi có nhu cầu cao. Trở nên xuất sắc và kiếm tiền từ đó sẽ đẻ ra đam mê.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 3 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Bí quyết đầu tư của giới siêu giàu là gì?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Đa dạng hóa cực đoan. Không bao giờ bỏ quá 3% đến 10% tổng tài sản vào một dự án rủi ro duy nhất.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 4 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Làm thế nào để "Lách luật" thuế hợp pháp?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Trở thành Owner. Mua tài sản (cổ phiếu/BĐS), để nó tăng giá, không bán (tránh thuế) mà dùng nó làm tài sản thế chấp vay tiền tiêu xài.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 5 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Tại sao phải chuyển đến các "Siêu đô thị"?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Nơi đó có sóng lớn nhất. Bạn liên tục va chạm với cơ hội, tiền bạc và những người xuất chúng để nâng cấp bản thân.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 6 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Dấu hiệu của một "Thất bại tồi tệ nhất"?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Thất bại chậm chạp. Nó cho bạn đủ tín hiệu xanh le lói để bạn tiếp tục đốt tiền và đốt 10 năm thanh xuân thay vì sụp đổ ngay từ đầu.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 7 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Làm sao để tiếp cận người thành công?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Đừng xin họ làm Mentor. Hãy gửi email siêu ngắn, tìm điểm chung, xin lời khuyên cho 1 vấn đề cụ thể qua cuộc gọi 10 phút.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 8 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Đâu là kỹ năng sinh tồn tối thượng?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Storytelling (Kể chuyện). Dù qua viết, video hay thuyết trình, khả năng thao túng cảm xúc người khác là đòn bẩy kiếm tiền mạnh nhất.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 9 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Công thức đầu tư nhàm chán mà Warren Buffett khuyên dùng?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Đổ tiền vào các Quỹ ETF chi phí thấp (như S&P 500) và kiên nhẫn để đó chục năm thay vì day-trading lướt sóng.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 10 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Tại sao nhân viên Sales hay bị ghét nhưng lại giàu?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Vì họ dám chịu đựng sự từ chối và bẽ mặt. Phần thưởng luôn dành cho những người dám làm việc mà đám đông sợ hãi.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 11 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> 98% con người sẽ mắc phải sai lầm tài chính gì?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Tiêu sạch mọi đồng tiền ngay khi cầm trên tay. Cần có cơ chế "Force savings" (tiết kiệm tự động trừ tiền).</p>
+                    </div>
+                </div>
+                <!-- Flashcard 12 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Tại sao ly hôn lại tàn phá tài chính?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Mất 50-70% tài sản chia đôi, phí luật sư, và phải bán tháo tài sản ở thời điểm không thuận lợi. Hãy bảo vệ hôn nhân.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 13 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Định nghĩa thực sự của sự Giàu Có (Wealth) là gì?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Không phải là khoe mẽ hàng hiệu. Là thu nhập thụ động từ tài sản LỚN HƠN tỷ lệ "đốt tiền" sinh hoạt hàng ngày của bạn.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 14 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Cách tạo ra may mắn?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Chấp nhận những rủi ro không thoải mái. Không có phép màu nào xảy ra khi bạn nhốt mình trong phòng và nhìn vào màn hình.</p>
+                    </div>
+                </div>
+                <!-- Flashcard 15 -->
+                <div class="flashcard bg-white p-5 rounded-xl shadow border border-gray-200 cursor-pointer">
+                    <p class="font-bold text-brand-dark mb-2 text-sm"><span class="text-brand-accent">Q:</span> Làm gì ở tuổi 40 nếu bạn chưa giàu?</p>
+                    <div class="flashcard-answer border-t border-gray-100 pt-2">
+                        <p class="text-gray-600 text-sm"><span class="text-green-600 font-bold">A:</span> Tận dụng sự ổn định của đối tác, lập bảng tính toán con số thu nhập hưu trí cần thiết và hành động ngay thay vì bỏ cuộc.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Footer -->
+    <footer class="bg-brand-dark text-white border-t border-gray-800" style="height: 128px;">
+        <div class="max-w-7xl mx-auto h-full px-6 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex flex-col justify-center mt-4 md:mt-0">
+                <p class="font-bold text-brand-gold text-lg tracking-wide uppercase">Các kênh hiện tại</p>
+                <p class="text-xs text-gray-400 max-w-md mt-1">Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+            
+            <div class="flex gap-4 mt-2 md:mt-0">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-red-600 hover:scale-110 flex items-center justify-center transition-all duration-300 shadow-lg">
+                    <i class="fa-brands fa-youtube text-xl"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-black hover:scale-110 flex items-center justify-center transition-all duration-300 shadow-lg">
+                    <i class="fa-brands fa-tiktok text-xl"></i>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-600 hover:scale-110 flex items-center justify-center transition-all duration-300 shadow-lg">
+                    <i class="fa-brands fa-facebook-f text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Zoom Logic cho Mindmap -->
+    <script>
+        let currentScale = 1;
+        const scaleStep = 0.2;
+        const maxScale = 2.5;
+        const minScale = 0.5;
+        const wrapper = document.getElementById('mindmap-wrapper');
+
+        function zoomIn() {
+            if (currentScale < maxScale) {
+                currentScale += scaleStep;
+                updateZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentScale > minScale) {
+                currentScale -= scaleStep;
+                updateZoom();
+            }
+        }
+
+        function resetZoom() {
+            currentScale = 1;
+            updateZoom();
+            // Reset drag position
+            wrapper.style.transform = `translate(0px, 0px) scale(${currentScale})`;
+            currentX = 0; currentY = 0;
+        }
+
+        function updateZoom() {
+            // Giữ nguyên vị trí kéo thả hiện tại, chỉ thay đổi scale
+            wrapper.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+        }
+
+        // Logic Kéo thả (Drag & Drop) cho Mindmap
+        const container = document.getElementById('mindmap-container');
+        let isDragging = false;
+        let startX, startY;
+        let currentX = 0, currentY = 0;
+
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - currentX;
+            startY = e.clientY - currentY;
+        });
+
+        container.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            currentX = e.clientX - startX;
+            currentY = e.clientY - startY;
+            wrapper.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+        });
+
+        container.addEventListener('mouseup', () => isDragging = false);
+        container.addEventListener('mouseleave', () => isDragging = false);
+    </script>
+</body>
+</html>
