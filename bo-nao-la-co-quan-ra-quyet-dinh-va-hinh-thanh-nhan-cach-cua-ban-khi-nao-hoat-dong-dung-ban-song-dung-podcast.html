@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Tối Ưu Não Bộ - Dr. Daniel Amen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* CSS Abstract Art cho các thẻ nội dung */
+        .card-art {
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+            border-radius: 1.25rem;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-art:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .card-art::before, .card-art::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            z-index: -1;
+            opacity: 0.15;
+        }
+        .card-art::before {
+            background: #0ea5e9; /* Soft Cyan */
+            width: 180px;
+            height: 180px;
+            top: -60px;
+            right: -60px;
+        }
+        .card-art::after {
+            background: #10b981; /* Healing Emerald */
+            width: 150px;
+            height: 150px;
+            bottom: -40px;
+            left: -40px;
+        }
+        .card-art.danger::before { background: #ef4444; } /* Red for Reality Check */
+        .card-art.danger::after { background: #f97316; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal-200 selection:text-teal-900">
+
+    <!-- Header Section -->
+    <header class="max-w-5xl mx-auto pt-16 pb-12 px-6 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-100 text-teal-800 font-semibold text-sm mb-6">
+            <i data-lucide="brain"></i> Neuroscience & Healing
+        </div>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-6 tracking-tight">
+            Nâng Cấp "Phần Cứng" Cuộc Đời Bạn
+        </h1>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            Hành trình giải mã bộ não cùng Bác sĩ Daniel Amen. Chìa khóa để thay đổi hoàn toàn năng lực, sự tĩnh tại và cách bạn nuôi dạy những đứa trẻ mạnh mẽ.
+        </p>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 pb-20 space-y-24">
+
+        <!-- 1. The Big Idea -->
+        <section>
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🎯</span>
+                <h2 class="text-3xl font-bold text-slate-800">The Big Idea & Bức tranh toàn cảnh</h2>
+            </div>
+            
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 mb-8 border-l-4 border-l-teal-500">
+                <h3 class="text-xl font-bold mb-3 text-slate-800">Luận Điểm Cốt Lõi (Paradigm Shift)</h3>
+                <p class="text-lg text-slate-700 leading-relaxed italic">
+                    "Bộ não là cơ quan ra quyết định và hình thành nhân cách của bạn. Khi não hoạt động đúng, bạn sống đúng. Mọi rắc rối từ trầm cảm, hôn nhân đổ vỡ đến con cái nổi loạn... không chỉ là vấn đề tâm lý, đó là <strong>vấn đề vật lý của bộ não</strong>. Hãy yêu thương và bảo vệ não bộ như tài sản quý giá nhất của sinh mệnh."
+                </p>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 md:p-6 relative">
+                <div class="flex flex-wrap gap-2 mb-4 justify-between items-center">
+                    <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Bản đồ Tư duy Tối ưu Não bộ</span>
+                    <div class="flex gap-2">
+                        <button onclick="zoomMindmap(0.2)" class="px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-700 transition flex items-center gap-1">
+                            <i data-lucide="zoom-in" class="w-4 h-4"></i> Phóng to
+                        </button>
+                        <button onclick="zoomMindmap(-0.2)" class="px-4 py-2 bg-white border border-slate-300 text-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 transition flex items-center gap-1">
+                            <i data-lucide="zoom-out" class="w-4 h-4"></i> Thu nhỏ
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-hidden w-full bg-white rounded-xl min-h-[500px] border border-slate-100">
+                    <!-- Wrapper để zoom không làm hỏng layout -->
+                    <div id="mindmap-wrapper" style="transform: scale(1); transform-origin: top center; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 100%;">
+                        <pre class="mermaid flex justify-center mt-4">
+                            mindmap
+                              root((BỘ NÃO
+                              TRUNG TÂM))
+                                KẺ THÙ BÀO MÒN
+                                  Cồn & Rượu Bia
+                                  Đường tinh luyện (Tiểu đường Tuýp 3)
+                                  Cú sốc Dopamine (Phim người lớn, MXH)
+                                  Suy nghĩ Tiêu cực (ANTs)
+                                CHIẾN LƯỢC BẢO VỆ
+                                  Saffron & Omega-3
+                                  Bảo vệ Giấc ngủ REM
+                                  Tập thể dục & Học cái mới
+                                NUÔI DẠY CON CÁI
+                                  20 Phút Hiện Diện 100%
+                                  Kỷ luật không nhượng bộ
+                                  Lắng nghe chủ động (Gương phản chiếu)
+                                QUỸ DỰ TRỮ (RESERVE)
+                                  Áo giáp chống chấn thương
+                                  Tích lũy từ thói quen hàng ngày
+                        </pre>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <a href="https://youtu.be/bOi_Y4ythYY?si=uyylfhdd5RicBO-q" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-[#FF0000] text-white rounded-full font-semibold hover:bg-red-700 transition shadow-lg shadow-red-500/30">
+                        <i data-lucide="youtube"></i>
+                        Xem Video Gốc: Bác sĩ Não bộ Số 1 cảnh báo Sai lầm Nuôi dạy con & Tác hại của Rượu
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section>
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🧠</span>
+                <h2 class="text-3xl font-bold text-slate-800">Deep Insights & Trụ cột Tri thức</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1 -->
+                <div class="card-art p-6 border border-slate-100 shadow-sm">
+                    <div class="text-teal-600 mb-2"><i data-lucide="wine" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-bold mb-4">1. Rượu Bia: Cú lừa của sự "Thư giãn"</h3>
+                    <div class="space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-slate-900">Bản chất:</strong> Rượu không phải là thần dược xả stress, nó đang khoan những "ổ gà" trên đường cao tốc dẫn truyền thông tin của não bạn.</p>
+                        <p><strong class="text-slate-900">Cơ chế:</strong> Cồn ngăn chặn tế bào gốc mới phát triển ở đồi hải mã (trung tâm trí nhớ) và làm gián đoạn giấc ngủ REM phục hồi.</p>
+                        <p class="p-3 bg-teal-50 rounded-lg border border-teal-100 text-teal-900 mt-2">
+                            <strong class="flex items-center gap-1 mb-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Ẩn dụ thực tế:</strong>
+                            Dùng rượu để xả stress giống như tháo phanh ô tô khi đang đổ đèo để xe chạy cho "nhàn". Bạn cảm thấy thoải mái ngay lúc đó, nhưng bạn mất hoàn toàn quyền kiểm soát cuộc đời trong dài hạn.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card-art p-6 border border-slate-100 shadow-sm">
+                    <div class="text-teal-600 mb-2"><i data-lucide="donut" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-bold mb-4">2. Đường: Kẻ đốt cháy nơ-ron</h3>
+                    <div class="space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-slate-900">Bản chất:</strong> Đường không chỉ làm bạn tăng cân, nó theo nghĩa đen đang nướng chín bộ não của bạn.</p>
+                        <p><strong class="text-slate-900">Cơ chế:</strong> Chế độ ăn nhiều carbohydrate tinh chế làm giòn mạch máu não, giảm lưu lượng máu. Alzheimer hiện nay được khoa học gọi là "Bệnh tiểu đường tuýp 3".</p>
+                        <p class="p-3 bg-teal-50 rounded-lg border border-teal-100 text-teal-900 mt-2">
+                            <strong class="flex items-center gap-1 mb-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Dữ liệu thực tế:</strong>
+                            Nghiên cứu cho thấy chế độ ăn chứa nhiều đường và tinh bột xấu làm TĂNG 400% nguy cơ mắc bệnh teo não (Alzheimer) so với người ăn uống cân bằng.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card-art p-6 border border-slate-100 shadow-sm">
+                    <div class="text-teal-600 mb-2"><i data-lucide="smartphone" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-bold mb-4">3. Phim Người Lớn & Bẫy Dopamine</h3>
+                    <div class="space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-slate-900">Bản chất:</strong> Nó tước đoạt đi khả năng cảm nhận được niềm vui từ những thứ bình dị nhất trong cuộc sống của bạn.</p>
+                        <p><strong class="text-slate-900">Cơ chế:</strong> Cơn bão dopamine liên tục giáng xuống "hạch khen thưởng" (Nucleus Accumbens) làm vùng này bị chai lỳ, khiến bạn mất động lực làm việc và suy giảm hạnh phúc thật sự.</p>
+                        <p class="p-3 bg-teal-50 rounded-lg border border-teal-100 text-teal-900 mt-2">
+                            <strong class="flex items-center gap-1 mb-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Ẩn dụ thực tế:</strong>
+                            Khi bạn mở nhạc Rock ở mức âm lượng MAX mỗi ngày, một bản nhạc hòa tấu êm dịu (giống như việc đọc sách, chơi với con) sẽ trở nên hoàn toàn câm điếc đối với bạn.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="card-art p-6 border border-slate-100 shadow-sm">
+                    <div class="text-teal-600 mb-2"><i data-lucide="bug" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-bold mb-4">4. Diệt kiến độc ANTs (Suy nghĩ tiêu cực)</h3>
+                    <div class="space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-slate-900">Bản chất:</strong> Đừng tin vào mọi thứ rác rưởi mà não bộ tự động vẽ ra.</p>
+                        <p><strong class="text-slate-900">Cơ chế:</strong> Suy nghĩ tiêu cực tự động (Automatic Negative Thoughts - ANTs) đánh sập hoạt động của thùy trán (nơi kiểm soát lý trí và sự tự giác), khóa bạn trong hố sâu của sự lo âu.</p>
+                        <p class="p-3 bg-teal-50 rounded-lg border border-teal-100 text-teal-900 mt-2">
+                            <strong class="flex items-center gap-1 mb-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Cách thức thực tế:</strong>
+                            Dùng bài test 1 câu hỏi. Khi não gào lên: "Mình chắc chắn sẽ thất bại vụ này!", hãy dừng lại và hỏi: "Điều đó có CHẮC CHẮN 100% là sự thật không?". Nếu không, hãy loại bỏ nó.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="card-art p-6 border border-slate-100 shadow-sm">
+                    <div class="text-teal-600 mb-2"><i data-lucide="shield-check" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-bold mb-4">5. Quỹ Dự Trữ Não (Brain Reserve)</h3>
+                    <div class="space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-slate-900">Bản chất:</strong> Đây là lớp áo giáp tâm lý và thể chất bảo vệ bạn trước những cú đấm bất ngờ của cuộc đời.</p>
+                        <p><strong class="text-slate-900">Cơ chế:</strong> Mọi thói quen tốt (ngủ, dinh dưỡng, vận động) đều dồn mô não vào ngân hàng dự trữ. Khi chấn thương xảy ra, nó là vùng đệm để bạn không gục ngã.</p>
+                        <p class="p-3 bg-teal-50 rounded-lg border border-teal-100 text-teal-900 mt-2">
+                            <strong class="flex items-center gap-1 mb-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Ví dụ thực tế:</strong>
+                            Hai người lính cùng chịu chung 1 vụ nổ mìn. Một người đứng dậy bình thường, người kia bị rối loạn tâm lý nặng nề vĩnh viễn. Khác biệt cốt lõi nằm ở độ dày của "Quỹ dự trữ não" trước lúc quả bom nổ.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="card-art p-6 border border-slate-100 shadow-sm">
+                    <div class="text-teal-600 mb-2"><i data-lucide="baby" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-bold mb-4">6. Luật Thép Khi Con Ăn Vạ</h3>
+                    <div class="space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-slate-900">Bản chất:</strong> Trẻ con học cách thao túng bạn thông qua những gì bạn dung túng.</p>
+                        <p><strong class="text-slate-900">Cơ chế:</strong> Nếu trẻ nổi cơn lôi đình để đòi thứ gì đó và bạn nhượng bộ, bạn đang tạo ra những rãnh thần kinh củng cố rằng: "Ăn vạ là chiến thuật kinh doanh thành công nhất".</p>
+                        <p class="p-3 bg-teal-50 rounded-lg border border-teal-100 text-teal-900 mt-2">
+                            <strong class="flex items-center gap-1 mb-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Ẩn dụ thực tế:</strong>
+                            Bạn phải chọn: Chịu một cơn bẽ mặt ngắn hạn ở siêu thị lúc này, hay chịu đựng sự phản trắc và đau khổ dài hạn với một đứa trẻ thao túng trong suốt 20 năm tới? Câu trả lời cho cơn ăn vạ luôn phải là: KHÔNG.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="card-art p-6 border border-slate-100 shadow-sm md:col-span-2">
+                    <div class="text-teal-600 mb-2"><i data-lucide="heart-handshake" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-bold mb-4">7. Sức mạnh "20 Phút Hiện Diện" & Lắng Nghe Chủ Động</h3>
+                    <div class="space-y-3 text-sm text-slate-700 md:flex md:gap-6">
+                        <div class="flex-1">
+                            <p><strong class="text-slate-900">Bản chất:</strong> Trẻ em không cần một vị tướng chỉ đạo mọi bước đi, chúng cần một đồng minh an toàn.</p>
+                            <p><strong class="text-slate-900">Cơ chế:</strong> Dành 20 phút/ngày làm ĐÚNG MỘT VIỆC: Chơi thứ trẻ muốn. Nguyên tắc 3 KHÔNG: Không ra lệnh, không đặt câu hỏi, không chỉ đạo. Chỉ hiện diện và lắng nghe.</p>
+                        </div>
+                        <div class="flex-1">
+                            <p class="p-3 bg-teal-50 rounded-lg border border-teal-100 text-teal-900 h-full mt-2 md:mt-0">
+                                <strong class="flex items-center gap-1 mb-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Câu chuyện:</strong>
+                                Có người cha than thở con gái lảng tránh anh ta. Khi áp dụng triệt để "20 phút/ngày" không xét nét, chỉ 3 tuần sau cô bé quấn quýt bố không rời. Hãy làm "tấm gương phản chiếu" cảm xúc của con thay vì làm bức tường gạch bật nảy mọi sự chia sẻ.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section>
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🚀</span>
+                <h2 class="text-3xl font-bold text-slate-800">Action Playbook & Sổ tay Thực chiến</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- If-Then Scenarios -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i data-lucide="split" class="text-teal-600"></i> Kịch bản NẾU - THÌ</h3>
+                    
+                    <div class="bg-white rounded-xl p-5 border-l-4 border-l-slate-800 shadow-sm">
+                        <p class="text-slate-600 text-sm mb-2 font-semibold">Tình huống 1: Mất kiểm soát cảm xúc</p>
+                        <p class="text-slate-800"><span class="font-bold text-slate-900">NẾU</span> bạn vừa nhận một email xấu, tim đập thình thịch và nghĩ "Đời mình tiêu rồi"...</p>
+                        <p class="text-slate-800 mt-2"><span class="font-bold text-teal-600">THÌ</span> cầm ngay tờ giấy, viết dòng suy nghĩ đó ra. Tự vấn: <i>"Điều này có ĐÚNG 100% không? Cảm giác của mình sẽ ra sao nếu vứt bỏ suy nghĩ này?"</i></p>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-5 border-l-4 border-l-slate-800 shadow-sm">
+                        <p class="text-slate-600 text-sm mb-2 font-semibold">Tình huống 2: Khủng hoảng siêu thị</p>
+                        <p class="text-slate-800"><span class="font-bold text-slate-900">NẾU</span> con bạn lăn đùng ra đất gào khóc ăn vạ đòi mua bằng được đồ chơi...</p>
+                        <p class="text-slate-800 mt-2"><span class="font-bold text-teal-600">THÌ</span> hãy khoanh tay, hít thở và nói "KHÔNG". Bỏ qua ánh mắt của người xung quanh. Không dỗ dành, không thương lượng.</p>
+                    </div>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i data-lucide="zap" class="text-amber-500"></i> Hành động Micro (Trong 24h tới)</h3>
+                    
+                    <div class="card-art p-5 border border-slate-100 shadow-sm flex gap-4 items-start">
+                        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 font-bold">1</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-1">Cài đặt Cổng Lọc Quyết Định</h4>
+                            <p class="text-sm text-slate-600">Đổi hình nền điện thoại hoặc dán giấy note trên máy tính đúng 1 câu này: <strong>"Việc mình sắp làm TỐT hay XẤU cho não bộ?"</strong>. Hãy tự hỏi trước mỗi bữa ăn, mỗi lần mở mạng xã hội.</p>
+                        </div>
+                    </div>
+
+                    <div class="card-art p-5 border border-slate-100 shadow-sm flex gap-4 items-start">
+                        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 font-bold">2</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-1">Thiết lập 20 Phút Hiện Diện</h4>
+                            <p class="text-sm text-slate-600">Tối nay, cất điện thoại sang phòng khác. Chọn 1 người bạn yêu thương (con cái/bạn đời). 20 phút chỉ làm đúng việc họ thích, không phản bác, không dạy đời.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section>
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">⚠️</span>
+                <h2 class="text-3xl font-bold text-slate-800">Reality Check & Nhận diện Cạm bẫy</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="card-art danger p-6 border border-red-100">
+                    <h3 class="text-xl font-bold text-red-700 flex items-center gap-2 mb-4"><i data-lucide="flag"></i> Bẫy Vô Hình</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/80 p-4 rounded-xl border border-red-50">
+                            <p class="font-bold text-slate-800 mb-1">Ảo tưởng "Thuốc giải tốc hành"</p>
+                            <p class="text-sm text-slate-700">Trầm cảm hay kiệt sức là một "triệu chứng", không phải một căn bệnh. Uống ngay thuốc chống trầm cảm (SSRIs) để chặn nỗi buồn cũng điên rồ như việc bạn đi vá lốp xe bị xịt mà không rút cái đinh ra. Bạn chỉ đang kìm hãm hệ thần kinh, tạo sự lệ thuộc mà không chữa rễ căn nguyên.</p>
+                        </div>
+                        <div class="bg-white/80 p-4 rounded-xl border border-red-50">
+                            <p class="font-bold text-slate-800 mb-1">Cạm bẫy "Một chút chắc không sao"</p>
+                            <p class="text-sm text-slate-700">Dùng cần sa (Marijuana) ở tuổi teen hay mượn rượu để dễ ngủ. Sự thật tàn khốc: Nó cắt đứt giai đoạn ngủ sâu (REM sleep), làm teo đồi hải mã và tước đoạt toàn bộ động lực sống dài hạn của bạn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="card-art p-6 border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2 mb-4"><i data-lucide="shield"></i> Chốt Chặn Kỷ Luật</h3>
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <p class="font-bold text-slate-800 mb-1">Chiến lược "Môi Trường Vô Khuẩn"</p>
+                            <p class="text-sm text-slate-700">Ý chí của con người luôn cạn kiệt vào cuối ngày. Thay vì bắt bộ não phải gồng mình nhịn ăn vặt hay nhịn uống bia, hãy thiết lập chốt chặn vật lý: <strong>KHÔNG mang chúng vào nhà.</strong> Tủ lạnh rỗng đồ ngọt thì bạn không thể ăn đường lúc 11h đêm được.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <p class="font-bold text-slate-800 mb-1">Chốt chặn Kỹ Thuật Số</p>
+                            <p class="text-sm text-slate-700">Bộ não đang phát triển không được trang bị áo giáp để chống lại thuật toán siêu nghiện. Sạc điện thoại ngoài phòng ngủ. Không lướt mạng 1 tiếng trước khi ngủ để bảo vệ thời gian quét dọn rác của nơ-ron thần kinh.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall -->
+        <section>
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🃏</span>
+                <h2 class="text-3xl font-bold text-slate-800">Active Recall & Trạm Ôn Tập</h2>
+            </div>
+            
+            <p class="text-slate-600 mb-6">Đọc lướt không tạo ra trí nhớ dài hạn. Hãy tự hỏi bản thân những câu dưới đây để khắc sâu kiến thức.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Flashcards -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Tác động cốt lõi của rượu lên não?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Tạo "ổ gà" trên chất trắng (đường truyền) và cản trở sản sinh tế bào gốc ở đồi hải mã.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Đái tháo đường tuýp 3 là gì?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Bệnh Alzheimer (teo não) do chế độ ăn quá nhiều đường và tinh bột xấu làm hỏng mạch máu não.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Phim khiêu dâm phá hủy động lực thế nào?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Dội bom dopamine liên tục làm "hạch khen thưởng" bị trơ lỳ, mất niềm vui với mọi thứ bình thường.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Diệt kiến độc ANTs bằng câu hỏi nào?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: "Điều mà não tôi vừa tự suy diễn có CHẮC CHẮN đúng 100% không?"</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Quỹ dự trữ não bộ (Reserve) là gì?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: "Lớp áo giáp" tích lũy từ thói quen tốt để giúp bạn phục hồi khi gặp biến cố/chấn thương.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Luật về sự ăn vạ của trẻ?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Nếu chúng nổi cáu để đạt được điều gì, câu trả lời TẤT YẾU VÀ LUÔN LUÔN là "Không".</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Kỹ thuật "Thời gian đặc biệt"?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: 20 phút mỗi ngày chơi cùng con thứ con thích mà không ra lệnh, không chỉ đạo.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Loại nhụy hoa nào mạnh như thuốc chống trầm cảm?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Saffron (kết hợp với Omega-3 và đi bộ).</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Thuốc SSRIs (chống trầm cảm) có phải thuốc chữa bệnh?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Không, chúng chỉ làm dịu triệu chứng và gây thay đổi não bộ khiến bạn lệ thuộc.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Hậu quả uống cồn sát giờ ngủ?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Phá nát chu kỳ ngủ sâu (REM), làm giảm khả năng kiểm soát cảm xúc vào hôm sau.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Cần sa có làm thư giãn não bộ tuổi teen?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Sai. Nó làm tổn thương thùy trán đang phát triển và tăng tỷ lệ rối loạn lo âu, tự tử.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Cách thở chữa hoảng loạn cấp tốc?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Hít vào 4 giây, giữ 1.5 giây. Thở ra 8 giây, giữ 1.5 giây.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Cách phản ứng khi con chia sẻ quan điểm lệch lạc?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Lắng nghe chủ động. Trở thành gương phản chiếu lại cảm xúc của con thay vì gạt đi.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Yếu tố lớn nhất quyết định việc thoát khỏi chấn thương tâm lý?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: Không phải độ lớn của chấn thương, mà là "Bộ não bạn mang vào chấn thương đó" khỏe tới đâu.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <p class="font-semibold text-slate-800 text-sm mb-3">Q: Câu hỏi duy nhất thay đổi cuộc đời?</p>
+                    <p class="text-sm text-teal-700 bg-teal-50 p-2 rounded">A: "Điều tôi đang chuẩn bị làm TỐT hay XẤU cho não bộ?"</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-8 h-32 flex items-center mt-12 border-t-4 border-teal-500">
+        <div class="max-w-5xl mx-auto px-4 w-full flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-sm text-center md:text-left max-w-2xl">
+                <p class="font-semibold text-white mb-1">Các kênh hiện tại</p>
+                <p class="text-slate-400">Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-red-600 hover:text-white transition duration-300">
+                    <i data-lucide="youtube" class="w-5 h-5"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-black hover:text-white transition duration-300">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition duration-300">
+                    <i data-lucide="facebook" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Khởi tạo Icons và Scripts -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Logic Zoom cho Mindmap Mermaid
+        let currentScale = 1;
+        function zoomMindmap(step) {
+            currentScale += step;
+            // Giới hạn zoom từ 0.5 đến 2.5 để không bị vỡ giao diện
+            if (currentScale < 0.5) currentScale = 0.5;
+            if (currentScale > 2.5) currentScale = 2.5;
+            
+            const wrapper = document.getElementById('mindmap-wrapper');
+            wrapper.style.transform = `scale(${currentScale})`;
+        }
+    </script>
+    
+    <!-- Load Mermaid JS -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e0f2fe',
+                primaryTextColor: '#0f172a',
+                primaryBorderColor: '#38bdf8',
+                lineColor: '#94a3b8',
+                secondaryColor: '#ecfdf5',
+                tertiaryColor: '#f1f5f9',
+                fontFamily: 'Inter, sans-serif'
+            }
+        });
+    </script>
+</body>
+</html>
