@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: Giải Mã Bản Thân & Chuyển Hoá Tổn Thương</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <!-- Mermaid JS -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#FDF8F5',
+                primaryTextColor: '#2D3748',
+                primaryBorderColor: '#D6BCFA',
+                lineColor: '#9F7AEA',
+                secondaryColor: '#E9D8FD',
+                tertiaryColor: '#FAF5FF'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            /* Dynamic Theme: Tâm lý học & Chữa lành kết hợp Thực chiến */
+            --bg-body: #FAF5FF; /* Tím nhạt thư giãn */
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --accent-primary: #805AD5; /* Tím tâm lý học/sự chuyển hóa */
+            --accent-secondary: #ED64A6; /* Hồng nhẹ nhàng */
+            --accent-tertiary: #3182CE; /* Xanh tin cậy */
+            --warning: #DD6B20;
+            --success: #38A169;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(288,100%,94%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(339,100%,94%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(215,100%,93%,1) 0, transparent 50%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-weight: 800; line-height: 1.3; color: var(--text-main); }
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Art & Blobs */
+        .art-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            position: relative;
+            height: 120px;
+        }
+        .blob {
+            position: absolute;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morph 8s ease-in-out infinite;
+            opacity: 0.6;
+            filter: blur(8px);
+            z-index: -1;
+        }
+        .blob.small { width: 80px; height: 80px; left: 40%; background: linear-gradient(135deg, #FBD38D, #F687B3); animation-delay: 2s; }
+        .blob.large { width: 150px; height: 150px; background: linear-gradient(135deg, #9F7AEA, #667EEA); }
+        @keyframes morph {
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            50% { border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%; }
+            100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        }
+
+        /* Glassmorphism Cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); }
+
+        /* Section 1: Big Idea */
+        .hero-box { text-align: center; padding: 4rem 2rem; }
+        .hero-box h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .hero-lead { font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; }
+        
+        .mindmap-wrapper {
+            background: white;
+            border-radius: 24px;
+            padding: 1rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+            position: relative;
+        }
+        .mindmap-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .btn {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn:hover { background: #6B46C1; transform: scale(1.05); }
+        .btn-outline { background: transparent; border: 2px solid var(--accent-primary); color: var(--accent-primary); }
+        .btn-outline:hover { background: var(--accent-primary); color: white; }
+        
+        .mermaid-container {
+            overflow: hidden; /* BẮT BUỘC để không cuộn tự do */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            border-radius: 16px;
+            background: #FAFAFA;
+            padding: 2rem;
+            cursor: grab;
+        }
+
+        /* Section 2: Insights Grid */
+        .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .insight-card {
+            border-top: 6px solid var(--accent-primary);
+        }
+        .insight-tag {
+            display: inline-block;
+            background: #E9D8FD;
+            color: var(--accent-primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .insight-part { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid #EDF2F7; }
+        .insight-part h4 { font-size: 1rem; color: var(--text-main); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;}
+
+        /* Section 3 & 4: Playbook & Reality Check */
+        .playbook-row { display: flex; flex-wrap: wrap; gap: 2rem; }
+        .playbook-col { flex: 1; min-width: 300px; }
+        .if-then-box {
+            background: #EBF8FF;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-tertiary);
+        }
+        .guardrail-box {
+            background: #FFF5F5;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--warning);
+        }
+
+        /* Section 5: Flashcards */
+        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .fc-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #E2E8F0;
+        }
+        .fc-q { font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.05rem;}
+        .fc-a { color: var(--text-muted); font-size: 0.95rem; }
+        .fc-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+
+        /* Footer */
+        .footer {
+            height: 128px;
+            background: var(--text-main);
+            color: white;
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            margin-top: 4rem;
+        }
+        .footer-info { max-width: 60%; }
+        .footer-info p { font-size: 0.9rem; color: #CBD5E0; }
+        .social-links { display: flex; gap: 1rem; }
+        .social-icon {
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            color: white; text-decoration: none; font-size: 1.2rem;
+            transition: background 0.3s;
+        }
+        .social-icon:hover { background: var(--accent-primary); }
+
+        @media (max-width: 768px) {
+            .section-title { font-size: 2rem; }
+            .hero-box h1 { font-size: 2.2rem; }
+            .footer { flex-direction: column; justify-content: center; height: auto; padding: 2rem; text-align: center; gap: 1rem; }
+            .footer-info { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- HEADER / HERO -->
+    <header class="hero-box">
+        <div class="art-container">
+            <div class="blob large"></div>
+            <div class="blob small"></div>
+            <span style="font-size: 3rem; z-index: 1;">🦋 🧠 🛡️</span>
+        </div>
+        <h1>Lật Ngược Thế Cờ: <br><span class="text-gradient">Biến Khuyết Điểm Thành Áo Giáp</span></h1>
+        <p class="hero-lead">Chào bạn, tôi ở đây để bóc tách cho bạn thấy: Dưới lớp vỏ bọc scandal của một biểu tượng giải trí (Paris Hilton) là một "chiến binh tâm lý học" xuất sắc. Câu chuyện này sẽ thay đổi cách bạn nhìn nhận về hội chứng ADHD, sự tổn thương và cách làm chủ lại câu chuyện cuộc đời mình.</p>
+    </header>
+
+    <!-- SECTION 1: THE BIG IDEA -->
+    <section class="card">
+        <h2 class="section-title">🎯 1. The Big Idea</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 2rem;">
+            <strong>Luận điểm cốt lõi:</strong> Những nhãn mác mà thế giới gán cho bạn (khuyết điểm, dị biệt, nạn nhân) không định hình con người bạn. Việc thấu hiểu cơ chế não bộ của chính mình và dám đối diện với bóng tối có thể biến sự yếu đuối thành "Siêu năng lực" (Superpower) và lớp vỏ bọc thành hệ thống phòng ngự vững chắc.
+        </p>
+
+        <div class="mindmap-wrapper">
+            <div class="mindmap-controls">
+                <button class="btn btn-outline" onclick="zoomMindmap(0.15)">[+] Phóng to</button>
+                <button class="btn btn-outline" onclick="zoomMindmap(-0.15)">[-] Thu nhỏ</button>
+            </div>
+            <div class="mermaid-container">
+                <div class="mermaid" id="main-mindmap">
+                    %%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 50, 'rankSpacing': 50}}}%%
+                    graph LR
+                        A([Bản Thể Gốc]) --> B([Nhận Thức Não Bộ])
+                        A --> C([Cơ Chế Phòng Vệ])
+                        A --> D([Kiến Tạo Di Sản])
+                        
+                        B --> B1([Hiểu về ADHD])
+                        B1 --> B1a([Từ bỏ tự trách])
+                        B1 --> B1b([Kích hoạt Hyperfocus])
+                        B --> B2([Hiểu về RSD])
+                        B2 --> B2a([Lọc tiếng ồn từ dư luận])
+                        
+                        C --> C1([Tạo Persona vỏ bọc])
+                        C1 --> C1a([Tách biệt cái tôi thật])
+                        C1 --> C1b([Bảo vệ sự nhạy cảm])
+                        C --> C2([Làm chủ Narrative])
+                        C2 --> C2a([Sự kiện SNL])
+                        C2 --> C2b([Lấy lại quyền lực])
+                        
+                        D --> D1([Chuyển hoá Nỗi Đau])
+                        D1 --> D1a([Vận động Luật bảo vệ trẻ em])
+                        D1 --> D1b([Giúp cộng đồng cháy nhà])
+                        D --> D2([Hạ Vũ Khí])
+                        D2 --> D2a([Đón nhận tình yêu thật])
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="https://youtu.be/a8Lw_GaoSi8?si=Q0nhvPZsRdBgRean" target="_blank" class="btn">
+                ▶️ PARIS HILTON: “Họ nghĩ tôi cố tình làm thế.” LỜI NÓI DỐI đã hủy hoại cuộc đời cô...
+            </a>
+        </div>
+    </section>
+
+    <!-- SECTION 2: DEEP INSIGHTS -->
+    <section>
+        <h2 class="section-title">🧠 2. Deep Insights: Các Trụ Cột Tri Thức</h2>
+        <div class="insights-grid">
+            
+            <!-- Insight 1 -->
+            <div class="card insight-card">
+                <span class="insight-tag">Tâm Lý Học Não Bộ</span>
+                <h3>Sự thật về ADHD (Rối loạn Tăng động Giảm chú ý)</h3>
+                <div class="insight-part">
+                    <h4>🔍 Bản chất:</h4>
+                    <p>ADHD không phải là "không thể tập trung", mà là "hệ thống không tương thích với những việc nhàm chán". Nó là một dạng não bộ khao khát sự kích thích liên tục.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>⚙️ Cơ chế:</h4>
+                    <p>Bộ não ADHD thiếu dopamine (môn hạnh phúc). Khi gặp việc đúng đam mê, nó kích hoạt trạng thái "Hyperfocus" (Siêu tập trung) vượt xa người bình thường, tạo ra dòng chảy sáng tạo không ngừng nghỉ.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>💡 Ví dụ thực tế:</h4>
+                    <p>Paris luôn bị điểm kém, mất bài tập ở trường (nơi hệ thống giáo dục cứng nhắc). Nhưng cô có thể laser-focus để tạo ra vô số xu hướng thời trang mới, tiên phong làm show truyền hình thực tế (Simple Life) và làm chủ nhiều đế chế kinh doanh đa ngành cùng lúc.</p>
+                </div>
+            </div>
+
+            <!-- Insight 2 -->
+            <div class="card insight-card" style="border-color: var(--accent-secondary)">
+                <span class="insight-tag">Phòng vệ Cảm xúc</span>
+                <h3>Hội chứng RSD (Cơn đau từ sự khước từ)</h3>
+                <div class="insight-part">
+                    <h4>🔍 Bản chất:</h4>
+                    <p>Rejection Sensitive Dysphoria (RSD) là đặc điểm đi kèm ADHD. Sự chỉ trích dù nhỏ nhất cũng bị phóng đại thành nỗi đau vật lý thực sự, không chỉ là sự buồn bã.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>⚙️ Cơ chế:</h4>
+                    <p>Hệ thần kinh phản ứng thái quá với sự tiêu cực. Người mắc hội chứng này luôn nghe thấy tiếng nói phán xét trong đầu và cảm nhận vạn vật xung quanh nhạy bén gấp 10 lần.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>💡 Án dụ minh hoạ:</h4>
+                    <p>Việc đọc một bình luận tiêu cực của báo chí thập niên 2000s đối với Paris không giống như bị muỗi đốt, mà giống như bị hất một xô nước sôi vào người. Mọi cảm xúc đều bị "nhân mười".</p>
+                </div>
+            </div>
+
+            <!-- Insight 3 -->
+            <div class="card insight-card" style="border-color: var(--accent-tertiary)">
+                <span class="insight-tag">Chiến lược Cánh chung</span>
+                <h3>Chiếc Áo Giáp "Cô Gái Ngốc Nghếch" (The Persona)</h3>
+                <div class="insight-part">
+                    <h4>🔍 Bản chất:</h4>
+                    <p>Tự tạo ra một nhân vật (caricature) cường điệu hóa để diễn trước công chúng, nhằm bảo vệ cái "Tôi" mỏng manh thực sự bên trong khỏi sự tấn công của dư luận.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>⚙️ Cơ chế:</h4>
+                    <p>Bằng cách đóng vai "cô tiểu thư ngốc nghếch", cô thiết lập một rào cản tâm lý: "Các người đang cười nhạo và chế giễu nhân vật giả tưởng kia, chứ không phải con người thật của tôi". Nó giúp não bộ không tiếp nhận tổn thương trực tiếp.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>💡 Ví dụ thực tế:</h4>
+                    <p>Giọng nói trẻ con, câu cửa miệng "That's hot" và hình tượng vô tư trên The Simple Life chính là áo giáp bọc thép bảo vệ cô khỏi những chấn thương tâm lý từ thời tuổi teen và sự bạo hành của truyền thông.</p>
+                </div>
+            </div>
+
+            <!-- Insight 4 -->
+            <div class="card insight-card" style="border-color: var(--warning)">
+                <span class="insight-tag">Cạm bẫy Quan hệ</span>
+                <h3>Ảo Giác Dopamine vs. Tình Yêu Đích Thực</h3>
+                <div class="insight-part">
+                    <h4>🔍 Bản chất:</h4>
+                    <p>Nhầm lẫn giữa cảm giác khao khát chinh phục (do não thiếu dopamine) với tình yêu thực sự. Khi có được rồi, sự nhàm chán lập tức ập đến.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>⚙️ Cơ chế:</h4>
+                    <p>Nguyên lý "Object Permanence" (Tính vĩnh cửu của vật thể) ở người ADHD yếu. "Xa mặt cách lòng" theo đúng nghĩa đen: Khi không nhìn thấy ai đó/vật đó, não bộ tạm thời "quên" mất sự tồn tại của họ, chuyển sự tập trung sang mục tiêu mới.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>💡 Ví dụ thực tế:</h4>
+                    <p>Paris từng ngỡ mình yêu say đắm rất nhiều chàng trai. Nhưng sau đó cô nhận ra đó chỉ là lúc não bộ đang "Hyperfocus" vào họ. Khi hết hứng thú, cô thậm chí quên mất họ tồn tại. Phải đến khi tự chữa lành, cô mới phân biệt được đâu là "cơn nghiện dopamine" và đâu là tình yêu an toàn (với người chồng hiện tại - Carter).</p>
+                </div>
+            </div>
+
+            <!-- Insight 5 -->
+            <div class="card insight-card" style="border-color: var(--success)">
+                <span class="insight-tag">Kỷ Luật Thực Chiến</span>
+                <h3>Lấy Lại Quyền Lực (Owning The Narrative)</h3>
+                <div class="insight-part">
+                    <h4>🔍 Bản chất:</h4>
+                    <p>Khi cuộc đời ép bạn vào một câu chuyện tồi tệ (bị lộ clip nhạy cảm, bị sỉ nhục), cách duy nhất để sống sót là chủ động bẻ lái cốt truyện đó theo ý mình thay vì mãi làm nạn nhân.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>⚙️ Cơ chế:</h4>
+                    <p>Việc dám đứng ra đùa cợt về chính bi kịch của mình tước đi vũ khí của những kẻ đang muốn công kích bạn. Khi bạn đã tự chế giễu mình, người khác không thể dùng điều đó làm tổn thương bạn nữa.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>💡 Ví dụ thực tế:</h4>
+                    <p>Sau nhiều tháng trốn trong nhà vì khủng hoảng lộ clip, Paris đồng ý lên show truyền hình SNL và diễn một tiểu phẩm hài hước châm biếm do Jimmy Fallon viết. Việc đó giống như một cú lật bàn, giúp cô lấy lại quyền kiểm soát hình ảnh.</p>
+                </div>
+            </div>
+
+            <!-- Insight 6 -->
+            <div class="card insight-card" style="border-color: #805AD5">
+                <span class="insight-tag">Kiến Tạo Di Sản</span>
+                <h3>Chữa Lành Bằng Cách Trở Thành Người Bảo Vệ</h3>
+                <div class="insight-part">
+                    <h4>🔍 Bản chất:</h4>
+                    <p>Cảnh giới cao nhất của việc chuyển hóa tổn thương không phải là cố quên nó đi, mà là dùng chính trải nghiệm đau đớn đó để đảm bảo không ai khác phải chịu đựng điều tương tự.</p>
+                </div>
+                <div class="insight-part">
+                    <h4>⚙️ Cơ chế:</h4>
+                    <p>Não bộ tìm thấy ý nghĩa và mục đích sống sâu sắc (Purpose) khi nỗi đau cá nhân được kết nối với nỗi đau chung của nhân loại. Sự trao đi tạo ra sự chữa lành dội ngược (Reverse Healing).</p>
+                </div>
+                <div class="insight-part">
+                    <h4>💡 Ví dụ thực tế:</h4>
+                    <p>Ngay sau đêm cháy rụi ngôi nhà chứa mọi kỷ niệm, việc đầu tiên Paris làm là đi quyên góp, hỗ trợ các gia đình khác cũng mất nhà. Cô dành 4 năm ròng rã đến Washington D.C vận động thay đổi bộ luật Liên bang để bảo vệ trẻ em khỏi nạn bạo hành ở các cơ sở giáo dục khắc nghiệt.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: ACTION PLAYBOOK -->
+    <section>
+        <div class="playbook-row">
+            <div class="playbook-col">
+                <h2 class="section-title">🚀 3. Sổ Tay Thực Chiến</h2>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent-primary);">Kịch Bản "Nếu - Thì" (If - Then)</h3>
+                    
+                    <div class="if-then-box">
+                        <strong>🚩 NẾU:</strong> Bạn đang liên tục trì hoãn và chán nản với một công việc hiện tại (dù bạn biết nó quan trọng).<br>
+                        <strong>✅ THÌ:</strong> Đừng vội tự dán nhãn "tôi là kẻ lười biếng". Hãy nhận diện đó là do não bạn đang thiếu kích thích (dopamine). Hãy tìm cách gán một yếu tố "hyperfocus" (một thử thách nhỏ, một phần thưởng, nghe nhạc mạnh) vào công việc đó.
+                    </div>
+
+                    <div class="if-then-box">
+                        <strong>🚩 NẾU:</strong> Ai đó vừa để lại một bình luận chê bai bạn trên mạng hoặc sếp chỉ trích bạn, và bạn cảm thấy sụp đổ hoàn toàn.<br>
+                        <strong>✅ THÌ:</strong> Kích hoạt bộ lọc "RSD". Nhắc nhở bản thân: "Phản ứng đau đớn dữ dội này là do cơ chế hệ thần kinh của mình phóng đại lên gấp 10 lần, chứ sự thật không tồi tệ đến thế."
+                    </div>
+
+                    <div class="if-then-box">
+                        <strong>🚩 NẾU:</strong> Bạn bị mắc kẹt trong một lời đồn thổi tồi tệ không thể đính chính.<br>
+                        <strong>✅ THÌ:</strong> Đừng cố đi giải thích với từng người. Hãy tập trung xây dựng một "Nhân vật/Kết quả" mạnh mẽ và tích cực đến mức lời đồn kia trở nên vô hình. Làm chủ câu chuyện bằng hành động tiếp theo.
+                    </div>
+                </div>
+
+                <div class="card" style="background: linear-gradient(to right, #FAF5FF, #FFF); border-left: 6px solid var(--accent-primary);">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent-primary);">🎯 Hành Động Micro (Trong 24h tới)</h3>
+                    <ul style="list-style-type: none;">
+                        <li style="margin-bottom: 15px;"><strong>1. Viết "Nhật ký Tái định nghĩa":</strong> Chọn 1 nhược điểm bạn luôn tự ti (VD: Cả thèm chóng chán). Viết ra 3 lợi thế mà nhược điểm này vô tình mang lại (VD: Nắm bắt xu hướng nhanh, đa nhiệm tốt).</li>
+                        <li><strong>2. Thiết lập "Hệ thống Bù trừ":</strong> Nếu bạn hay quên/thiếu tổ chức, hãy dùng 15 phút cài đặt ngay công cụ nhắc việc tự động, hoặc ủy quyền rõ ràng 1 việc tiểu tiết cho người khác. Đừng ép não bộ làm việc nó sinh ra không để làm.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SECTION 4: REALITY CHECK -->
+            <div class="playbook-col">
+                <h2 class="section-title">⚠️ 4. Reality Check</h2>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; color: var(--warning);">🚩 Bẫy Vô Hình (Red Flags)</h3>
+                    <p style="margin-bottom: 1rem;">
+                        <strong>Sự ảo tưởng về "Đam mê đích thực":</strong><br>
+                        Nhiều người trẻ lầm tưởng cảm giác hưng phấn tột độ lúc mới bắt đầu (cơn bão dopamine) là "đam mê cả đời" hay "tình yêu đích thực". Khi hưng phấn qua đi, họ bỏ cuộc vì nghĩ rằng "hết duyên".<br>
+                        <em>Ví dụ thất bại:</em> Nhảy việc liên tục mỗi 3 tháng vì thấy "chán", hoặc chia tay ngay khi mối quan hệ bước qua giai đoạn trăng mật, dẫn đến việc không tích lũy được chuyên môn sâu hay một mối tình bền vững nào.
+                    </p>
+                    <p>
+                        <strong>Tự dán nhãn nạn nhân vĩnh viễn:</strong><br>
+                        Việc nhận diện tổn thương (như hội chứng, rào cản) là để tìm cách vượt qua, nhưng nhiều người biến nó thành cái cớ để bào chữa cho sự giậm chân tại chỗ. "Vì tôi bị ADHD nên tôi được quyền vô trách nhiệm".
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; color: var(--success);">🛡️ Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                    <p style="margin-bottom: 1rem;">
+                        <strong>1. Chốt chặn "Người phân giải" (The Integrator):</strong><br>
+                        Nếu bạn mang não bộ của người có nhiều ý tưởng bay bổng, nguyên tắc vật lý bạn cần thiết lập là BẮT BUỘC phải làm việc cùng một "Người hệ thống hóa" (người giỏi logic, chi tiết). Đừng cố tự mình làm mọi khâu kế toán, sổ sách.
+                    </p>
+                    <p>
+                        <strong>2. Quy tắc 48h cất cánh:</strong><br>
+                        Bảo vệ bản thân khỏi những quyết định bốc đồng (do hyperfocus). Khi nảy ra một ý tưởng kinh doanh/đầu tư/tỏ tình cảm thấy "phải làm ngay lập tức", hãy ép bản thân viết nó ra giấy và cài báo thức khóa lại trong 48 tiếng. Trạng thái dopamine lắng xuống sẽ cho bạn góc nhìn thực tế.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: ACTIVE RECALL -->
+    <section>
+        <h2 class="section-title">🃏 5. Trạm Ôn Tập (Active Recall)</h2>
+        <p style="margin-bottom: 2rem; color: var(--text-muted);">Đọc câu hỏi, tự nhẩm câu trả lời trong đầu trước khi đọc đáp án bên dưới. Đây là cách giúp não bộ rèn luyện trí nhớ ngắn hạn thành dài hạn.</p>
+        
+        <div class="flashcard-grid">
+            <div class="fc-item">
+                <div class="fc-icon">🧠</div>
+                <div class="fc-q">Hội chứng ADHD thực chất không phải là "mất tập trung", mà là gì?</div>
+                <div class="fc-a">Là sự không tương thích với các việc nhàm chán. Khi gặp việc thú vị, nó biến thành khả năng "Hyperfocus" (Siêu tập trung).</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">💔</div>
+                <div class="fc-q">RSD (Rejection Sensitive Dysphoria) là gì?</div>
+                <div class="fc-a">Là sự nhạy cảm thái quá với sự khước từ. Lời chê bai gây ra cơn đau vật lý thực sự chứ không chỉ là buồn bã.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">🛡️</div>
+                <div class="fc-q">Tại sao Paris Hilton lại tạo ra hình tượng "cô tiểu thư ngốc nghếch"?</div>
+                <div class="fc-a">Đó là chiếc "áo giáp tâm lý". Dư luận cười nhạo nhân vật ảo, nhờ vậy cái tôi thật bên trong không bị tổn thương.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">📉</div>
+                <div class="fc-q">Vì sao người ADHD hay nhầm lẫn tình yêu và sự nhàm chán?</div>
+                <div class="fc-a">Vì họ nhầm lẫn cơn nghiện "dopamine" (cảm giác mới lạ) với tình yêu. Khi hết mới lạ, hiệu ứng "Out of sight, out of mind" xuất hiện.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">🎭</div>
+                <div class="fc-q">Làm thế nào để lấy lại quyền lực khi bị sỉ nhục (như lộ clip)?</div>
+                <div class="fc-a">Làm chủ câu chuyện (Owning the narrative). Dám đối mặt, dùng sự hài hước/hành động để bẻ lái dư luận (VD: Lên diễn hài trên SNL).</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">🏛️</div>
+                <div class="fc-q">Đỉnh cao của việc chữa lành tổn thương cá nhân là gì?</div>
+                <div class="fc-a">Là kiến tạo di sản: Dùng sức ảnh hưởng để đấu tranh, thay đổi luật pháp bảo vệ người khác khỏi nỗi đau tương tự.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">⚖️</div>
+                <div class="fc-q">"Hệ thống không được thiết kế cho chúng ta". Vậy giải pháp là gì?</div>
+                <div class="fc-a">Ngừng tự trách bản thân lười biếng. Hãy tự xây dựng/thuê một hệ thống, người trợ lý để bù đắp điểm yếu tổ chức.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">🔥</div>
+                <div class="fc-q">Khi nhà bị cháy rụi, phản ứng đầu tiên của Paris là gì? Nó chứng minh điều gì?</div>
+                <div class="fc-a">Cô lập tức đi quyên góp, cứu hộ chó mèo, giúp cộng đồng. Chứng minh: Giúp đỡ người khác là cách nhanh nhất để vượt qua cú sốc cá nhân.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">🧱</div>
+                <div class="fc-q">Làm sao để biết mình đã chữa lành thực sự trong tình yêu?</div>
+                <div class="fc-a">Là khi bạn dám "hạ vũ khí", tháo bức tường phòng vệ xuống để tin tưởng và đón nhận tình yêu đích thực (như cách cô gặp Carter).</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">💖</div>
+                <div class="fc-q">"Kindness is..." - Cụm từ định nghĩa lại phong cách của Paris?</div>
+                <div class="fc-a">"Kindness is Iconic" (Lòng tốt mang tính biểu tượng). Không phải vẻ ngoài rập khuôn, lòng tốt mới là thứ tồn tại mãi mãi.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-icon">⚠️</div>
+                <div class="fc-q">Sai lầm lớn nhất khi phát hiện mình có "điểm yếu" (như ADHD) là gì?</div>
+                <div class="fc-a">Dùng nó làm cái cớ đóng vai nạn nhân vĩnh viễn thay vì tìm cách tái cấu trúc môi trường để thích nghi.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-q">Quy tắc "Chốt chặn người phân giải" là gì?</div>
+                <div class="fc-a">Người có não bộ bay bổng/sáng tạo bắt buộc phải làm việc cùng người có tư duy hệ thống/logic để hiện thực hóa ý tưởng.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-q">Quy tắc "48h làm lạnh" giúp tránh cạm bẫy gì?</div>
+                <div class="fc-a">Tránh đưa ra quyết định bốc đồng dựa trên cơn bão "dopamine" nhất thời. Khóa ý tưởng lại 48h để đánh giá bằng lý trí.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-q">Sự khác biệt giữa việc "Che giấu" và "Tạo Persona" là gì?</div>
+                <div class="fc-a">Che giấu là sợ hãi cái tôi thật bị phát hiện. Tạo Persona là chủ động dùng một lớp vỏ giả tưởng làm mồi nhử dư luận để bảo vệ cái tôi bên trong.</div>
+            </div>
+            <div class="fc-item">
+                <div class="fc-q">Tại sao việc Paris tiên phong làm "The Simple Life" lại thành công?</div>
+                <div class="fc-a">Vì tư duy "Doing things first" (Dám làm cái đầu tiên). Sự mạo hiểm đi trước thời đại sinh ra từ chính khao khát cái mới của não bộ ADHD.</div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- SECTION 6: FOOTER -->
+<footer class="footer">
+    <div class="footer-info">
+        <h3 style="margin-bottom: 0.5rem; color: white;">Nguyễn Đức Việt - Cập nhật kiến thức thực chiến</h3>
+        <p>Kiến thức chuyên sâu về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+    </div>
+    <div class="social-links">
+        <a href="https://youtube.com/@vietndonline" target="_blank" class="social-icon" title="YouTube">▶️</a>
+        <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="social-icon" title="TikTok">🎵</a>
+        <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="social-icon" title="Facebook">📘</a>
+    </div>
+</footer>
+
+<script>
+    // Zoom Logic for Mermaid
+    let currentScale = 1;
+    function zoomMindmap(step) {
+        currentScale += step;
+        // Giới hạn zoom
+        if (currentScale < 0.5) currentScale = 0.5;
+        if (currentScale > 2.5) currentScale = 2.5;
+        
+        const svg = document.querySelector('#main-mindmap svg');
+        if (svg) {
+            svg.style.transform = `scale(${currentScale})`;
+            svg.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
+            svg.style.transformOrigin = 'left center'; // Phóng to từ gốc trái vì là sơ đồ LR
+        }
+    }
+
+    // Wait for mermaid to render, then style svg
+    setTimeout(() => {
+        const svg = document.querySelector('#main-mindmap svg');
+        if(svg) {
+            svg.style.width = "100%";
+            svg.style.height = "auto";
+            svg.style.maxWidth = "none"; // Bỏ giới hạn để zoom được tự do
+        }
+    }, 1500); // Đợi render xong
+</script>
+
+</body>
+</html>
