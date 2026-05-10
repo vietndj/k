@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Tri Thức - Học Tập Thực Chiến</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',    // bg-slate-900
+                            card: '#1e293b',    // bg-slate-800
+                            primary: '#3b82f6', // text-blue-500
+                            accent: '#8b5cf6',  // text-violet-500
+                            success: '#10b981', // text-emerald-500
+                            warning: '#f59e0b', // text-amber-500
+                            danger: '#ef4444',  // text-red-500
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Abstract Art CSS Backgrounds */
+        .abstract-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: #0f172a;
+        }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s infinite ease-in-out alternate;
+        }
+
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #3b82f6, transparent 70%); }
+        .orb-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #8b5cf6, transparent 70%); animation-delay: -5s; }
+        .orb-3 { top: 40%; left: 60%; width: 40vw; height: 40vw; background: radial-gradient(circle, #10b981, transparent 70%); opacity: 0.2; animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Mindmap Container */
+        #mindmap-container {
+            width: 100%;
+            overflow: hidden; /* No scroll zooming, controlled by JS */
+            position: relative;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 1rem;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+        }
+        
+        #mindmap-container:active { cursor: grabbing; }
+
+        #mindmap-wrapper {
+            transition: transform 0.3s ease-out;
+            transform-origin: center center;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Abstract element for cards */
+        .card-decoration {
+            position: absolute;
+            top: 0; right: 0;
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.2) 0%, transparent 100%);
+            border-bottom-left-radius: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans leading-relaxed">
+
+    <!-- Background Abstract Art -->
+    <div class="abstract-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <section id="big-idea" class="space-y-8 animate-fade-in">
+            <div class="text-center max-w-4xl mx-auto space-y-6">
+                <div class="inline-block px-4 py-2 rounded-full glass text-brand-primary text-sm font-semibold tracking-wider uppercase mb-4 shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-seedling mr-2"></i> Trải Nghiệm Học Tập Khai Phóng
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400">
+                    Bức Tranh Toàn Cảnh
+                </h1>
+                
+                <!-- The Big Idea Quote -->
+                <div class="relative glass rounded-2xl p-8 shadow-2xl border-l-4 border-l-brand-accent text-left">
+                    <i class="fa-solid fa-quote-left text-4xl text-brand-accent/30 absolute top-4 left-4"></i>
+                    <h2 class="text-2xl md:text-3xl font-medium text-slate-100 relative z-10 pl-8">
+                        "Kỷ luật và thành công không đến từ việc gồng mình ép buộc ý chí, mà đến từ việc <span class="text-brand-accent font-bold">thiết kế một môi trường</span> nơi việc làm đúng trở thành con đường dễ dàng và hiển nhiên nhất."
+                    </h2>
+                    <p class="mt-4 text-slate-400 pl-8 text-lg">💡 Sự dịch chuyển tư duy (Paradigm Shift) cốt lõi bạn cần nắm bắt trước khi đi sâu.</p>
+                </div>
+            </div>
+
+            <!-- YouTube Video Button -->
+            <div class="flex justify-center mt-6">
+                <a href="https://youtu.be/ekrNzK4WT9I?si=FPee6bQoPo7joU_Z" target="_blank" class="group relative inline-flex items-center justify-center px-6 py-3 text-base font-bold text-white transition-all duration-200 bg-red-600 border border-transparent rounded-full shadow-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 hover:scale-105">
+                    <i class="fa-brands fa-youtube text-xl mr-3"></i>
+                    Xem Video Gốc: Bí Quyết Vượt Qua Sự Trì Hoãn & Xây Dựng Kỷ Luật
+                </a>
+            </div>
+
+            <!-- Mindmap Section -->
+            <div class="space-y-4">
+                <div class="flex justify-between items-center bg-slate-800/50 p-4 rounded-t-xl border-b border-slate-700">
+                    <h3 class="text-lg font-semibold"><i class="fa-solid fa-network-wired text-brand-primary mr-2"></i> Bản Đồ Kiến Thức (Mindmap)</h3>
+                    
+                    <!-- Zoom Controls (No scroll zoom) -->
+                    <div class="flex space-x-2">
+                        <button onclick="zoomMindmap('out')" class="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <button onclick="zoomMindmap('reset')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 h-10 rounded-lg text-sm font-medium transition-colors">
+                            Reset
+                        </button>
+                        <button onclick="zoomMindmap('in')" class="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="glass border border-slate-700 rounded-b-xl relative overflow-hidden" id="drag-container" style="height: 600px;">
+                    <div class="absolute top-4 left-4 z-10 text-slate-400 text-sm">
+                        <i class="fa-solid fa-hand-pointer mr-1"></i> Kéo thả để di chuyển, dùng nút góc trên để Thu/Phóng.
+                    </div>
+                    <!-- Mermaid Wrapper -->
+                    <div id="mindmap-wrapper" style="transform: scale(1); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <div class="mermaid" id="mermaid-graph">
+                            mindmap
+                              root((Kiến Tạo<br/>Kỷ Luật))
+                                (Tư Duy Cốt Lõi)
+                                  ::icon(fa fa-brain)
+                                  Ý chí có hạn
+                                  Danh tính > Hành động
+                                  Hiệu ứng Lãi kép
+                                (Hệ Thống & Môi Trường)
+                                  ::icon(fa fa-cogs)
+                                  Giảm ma sát hành vi
+                                  Thiết kế điểm kích hoạt
+                                  Quản trị Năng lượng
+                                (Rào Cản Tâm Lý)
+                                  ::icon(fa fa-shield-alt)
+                                  Bẫy Hoàn hảo
+                                  Vòng lặp Dopamine ảo
+                                  Định luật Parkinson
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="deep-insights" class="space-y-10 pt-10 border-t border-slate-800">
+            <div class="text-center space-y-4">
+                <h2 class="text-3xl font-bold inline-block border-b-2 border-brand-primary pb-2">
+                    <i class="fa-solid fa-brain text-brand-primary"></i> Trụ Cột Tri Thức
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">10 Bài học sâu sắc nhất được bóc tách từ bản chất, giải thích cơ chế và minh họa bằng ví dụ thực tế. Đọc chậm lại để ngấm sâu hơn.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Card 1 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xl mr-4 shadow-[0_0_15px_rgba(59,130,246,0.3)]">1</div>
+                        <h3 class="text-xl font-bold">Ego Depletion (Suy kiệt ý chí)</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Đừng bao giờ dựa dẫm vào "sự quyết tâm". Ý chí giống như viên pin điện thoại, dùng nhiều sẽ cạn.</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> Não bộ tiêu hao Glucose mỗi khi bạn phải ra quyết định hoặc cưỡng lại cám dỗ. Càng về cuối ngày, bạn càng dễ nhượng bộ.</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-blue-500">
+                            💡 <strong>Ví dụ:</strong> Đó là lý do buổi sáng bạn dễ dàng đi tập gym và từ chối bánh ngọt, nhưng đến tối mệt mỏi, bạn sẽ gọi gà rán thay vì ăn salad.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration" style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, transparent 100%);"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl mr-4">2</div>
+                        <h3 class="text-xl font-bold">Định luật Parkinson</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Công việc luôn tự động "phình to" ra để lấp đầy khoảng thời gian bạn ấn định cho nó.</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> Khi có quá nhiều thời gian, não bộ sẽ tự vẽ thêm rắc rối, sự hoàn hảo thái quá hoặc sự trì hoãn để tiêu thụ hết deadline.</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-emerald-500">
+                            💡 <strong>Ví dụ:</strong> Nếu bạn có 1 tuần để viết báo cáo, bạn sẽ mất 1 tuần. Nếu sếp ép nộp trong 3 tiếng, bằng một cách thần kỳ nào đó, bạn vẫn hoàn thành xong.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration" style="background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, transparent 100%);"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl mr-4">3</div>
+                        <h3 class="text-xl font-bold">Ma sát hành vi (Friction)</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Con người là sinh vật lười biếng. Chúng ta luôn chọn con đường ít rào cản nhất (Path of least resistance).</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> Thêm bước trung gian vào việc xấu (tăng ma sát) và loại bỏ bước trung gian ở việc tốt (giảm ma sát) sẽ điều hướng lại luồng hành vi vô thức.</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Muốn chạy bộ sáng sớm? Đừng để giày trong tủ. Hãy đi tất đi ngủ và để đôi giày ngay cạnh mép giường. Thức dậy xỏ chân vào là chạy.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xl mr-4">4</div>
+                        <h3 class="text-xl font-bold">Lãi kép của Thói quen</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Thành công không phải là một cú đột phá, mà là tích lũy của những hành động siêu nhỏ mỗi ngày.</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> 1% tốt hơn mỗi ngày trong 1 năm = Tốt hơn 37 lần. Sự thay đổi không thấy rõ trong ngắn hạn nhưng bùng nổ theo cấp số nhân ở dài hạn.</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-blue-500">
+                            💡 <strong>Ví dụ:</strong> Lãi kép giống như lăn quả cầu tuyết từ đỉnh núi. Ban đầu bạn phải tự đẩy rất mệt (nắm tuyết nhỏ), nhưng khi đã đủ to, tự nó lăn và thu hút mọi thứ trên đường đi.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration" style="background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, transparent 100%);"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center font-bold text-xl mr-4">5</div>
+                        <h3 class="text-xl font-bold">Dịch chuyển Danh tính</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Đừng thay đổi hành động, hãy thay đổi "bạn là ai".</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> Con người có xu hướng tâm lý hành động nhất quán với niềm tin cốt lõi về bản thân (Cognitive Dissonance nếu làm ngược lại).</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-violet-500">
+                            💡 <strong>Ví dụ:</strong> Thay vì nói "Tôi đang cố gắng bỏ thuốc lá", hãy nói "Tôi là người không hút thuốc". Câu sau tạo ra một danh tính mới ngăn cản bạn nhận điếu thuốc từ người khác.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration" style="background: linear-gradient(135deg, rgba(239,68,68,0.2) 0%, transparent 100%);"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-xl mr-4">6</div>
+                        <h3 class="text-xl font-bold">Vòng lặp Dopamine</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Chúng ta nghiện sự "kỳ vọng" được thưởng, chứ không phải bản thân phần thưởng.</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> MXH, game được thiết kế với cơ chế "phần thưởng ngẫu nhiên", kích thích não tiết lượng lớn Dopamine liên tục, làm trơ cảm xúc với các việc khó nhằn (như đọc sách).</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-red-500">
+                            💡 <strong>Ví dụ:</strong> Hành động vuốt màn hình TikTok y hệt như kéo cần gạt máy đánh bạc ở casino. Bạn không biết video tiếp theo là gì, nên bạn cứ vuốt mãi.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 7 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xl mr-4">7</div>
+                        <h3 class="text-xl font-bold">Quy tắc 2 Phút</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Thu nhỏ mọi thói quen mới thành một hành động chỉ tốn chưa tới 2 phút để thực hiện.</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> Giúp vượt qua rào cản tâm lý "ngại bắt đầu". Một khi đã vào guồng trong 2 phút, quán tính vật lý sẽ đẩy bạn làm tiếp.</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-blue-500">
+                            💡 <strong>Ví dụ:</strong> Thay vì mục tiêu "Đọc 1 cuốn sách", hãy đặt mục tiêu "Đọc 1 trang sách trước khi ngủ". Thường thì sau trang đầu tiên, bạn sẽ đọc tiếp.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration" style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, transparent 100%);"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl mr-4">8</div>
+                        <h3 class="text-xl font-bold">Quản trị Năng lượng</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Quản lý thời gian là vô nghĩa nếu đến lúc làm việc đó bạn lại mệt lử.</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> Nhịp sinh học (Circadian Rhythm) quyết định mức độ tỉnh táo. Xếp việc khó nhất vào "Khung giờ vàng" sinh học của bạn.</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-emerald-500">
+                            💡 <strong>Ví dụ:</strong> Đừng vác một cái cưa cùn đi cưa cây suốt 8 tiếng. Hãy dành 2 tiếng mài cưa (ngủ đủ, tập thể dục) và cưa đứt thân cây trong 1 tiếng.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="glass rounded-xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                    <div class="card-decoration" style="background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, transparent 100%);"></div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl mr-4">9</div>
+                        <h3 class="text-xl font-bold">Khái niệm "Đủ tốt"</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong class="text-slate-100">Bản chất:</strong> Hoàn hảo là kẻ thù của Hoàn thành. Hãy làm dở, nhưng hãy hoàn thành.</p>
+                        <p><strong class="text-slate-100 text-brand-accent">Cơ chế:</strong> Trì hoãn thường sinh ra từ nỗi sợ không làm hoàn hảo. Chấp nhận "đủ tốt" (Version 1.0) giải phóng bạn khỏi áp lực tâm lý để tung sản phẩm/hành động ra ngoài.</p>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> 1 bài tập gym dở tệ trong 15 phút vẫn tốt hơn gấp tỷ lần 1 giáo án tập hoàn hảo nhưng nằm im trên giấy.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="action-playbook" class="space-y-10 pt-10 border-t border-slate-800">
+            <div class="text-center space-y-4">
+                <h2 class="text-3xl font-bold inline-block border-b-2 border-brand-accent pb-2">
+                    <i class="fa-solid fa-rocket text-brand-accent"></i> Sổ Tay Thực Chiến
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Kiến thức chỉ là sức mạnh tiềm năng. Áp dụng ngay vào thực tế qua các kịch bản đời thường dưới đây.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- If - Then Scenarios -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold flex items-center"><i class="fa-solid fa-code-branch mr-2 text-slate-400"></i> Kịch bản "Nếu - Thì"</h3>
+                    
+                    <div class="glass p-5 rounded-lg border-l-4 border-brand-accent">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 flex-shrink-0 bg-slate-800 rounded-lg flex flex-col items-center justify-center font-bold font-mono">
+                                <span class="text-[10px] text-slate-400 leading-none">IF</span>
+                                <i class="fa-solid fa-mobile-screen text-red-400 mt-1"></i>
+                            </div>
+                            <div>
+                                <p class="text-slate-300 text-sm mb-1"><strong class="text-red-400">Nếu</strong> bạn nhận ra mình vô thức lướt Reels/TikTok quá 15 phút...</p>
+                                <p class="text-slate-300 text-sm"><strong class="text-brand-success">Thì</strong> ngay lập tức úp ngược điện thoại xuống bàn, nhắm mắt hít thở sâu 3 lần, đứng dậy đi uống 1 ngốc nước để cắt đứt "Vòng lặp Dopamine".</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass p-5 rounded-lg border-l-4 border-brand-accent">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 flex-shrink-0 bg-slate-800 rounded-lg flex flex-col items-center justify-center font-bold font-mono">
+                                <span class="text-[10px] text-slate-400 leading-none">IF</span>
+                                <i class="fa-solid fa-battery-quarter text-amber-400 mt-1"></i>
+                            </div>
+                            <div>
+                                <p class="text-slate-300 text-sm mb-1"><strong class="text-amber-400">Nếu</strong> bạn thấy chán nản, lười biếng trước một task lớn (ví dụ: dọn dẹp nhà)...</p>
+                                <p class="text-slate-300 text-sm"><strong class="text-brand-success">Thì</strong> áp dụng quy tắc 2 phút: "Mình chỉ cầm cái chổi lên quét đúng góc phòng ngủ này thôi, xong sẽ vứt chổi". Thường bạn sẽ quét hết cả nhà.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold flex items-center"><i class="fa-solid fa-check-double mr-2 text-slate-400"></i> Hành động Micro (24h tới)</h3>
+                    <div class="glass rounded-xl p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
+                        <p class="text-sm text-slate-400 mb-6">Đừng lập kế hoạch to tát. Hãy làm 2 việc bé tí này ngay tối nay:</p>
+                        
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <label class="flex items-center space-x-3 cursor-pointer group">
+                                    <input type="checkbox" class="form-checkbox h-6 w-6 text-brand-success rounded border-slate-600 bg-slate-800 focus:ring-offset-slate-900 focus:ring-brand-success transition duration-150 ease-in-out">
+                                    <span class="text-slate-200 group-hover:text-white transition-colors">
+                                        <strong>1. Tắt ALL thông báo (Push Notifications)</strong> của Mạng xã hội trên điện thoại. (Giảm ma sát phân tâm).
+                                    </span>
+                                </label>
+                            </li>
+                            <li class="flex items-start">
+                                <label class="flex items-center space-x-3 cursor-pointer group">
+                                    <input type="checkbox" class="form-checkbox h-6 w-6 text-brand-success rounded border-slate-600 bg-slate-800 focus:ring-offset-slate-900 focus:ring-brand-success transition duration-150 ease-in-out">
+                                    <span class="text-slate-200 group-hover:text-white transition-colors">
+                                        <strong>2. Soạn sẵn đồ đạc cho ngày mai.</strong> Để quần áo tập, sổ tay công việc lên thẳng mặt bàn trước khi ngủ. (Quy luật ít lực cản nhất).
+                                    </span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reality-check" class="space-y-10 pt-10 border-t border-slate-800">
+            <div class="text-center space-y-4">
+                <h2 class="text-3xl font-bold inline-block border-b-2 border-brand-danger pb-2">
+                    <i class="fa-solid fa-triangle-exclamation text-brand-danger"></i> Nhận Diện Cạm Bẫy
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Lý do 90% mọi người nghe xong thấy hay, nhưng ngày mai lại quay về máng lợn cũ.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-red-950/20 border border-red-500/20 rounded-2xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-bl-full"></div>
+                    <h3 class="text-xl font-bold text-red-400 mb-6 flex items-center">
+                        <i class="fa-solid fa-flag text-red-500 mr-2"></i> Bẫy Vô Hình (Red Flags)
+                    </h3>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <h4 class="font-semibold text-slate-200">🚩 Bẫy "Hoàn hảo ngay từ ngày đầu"</h4>
+                            <p class="text-sm text-slate-400 mt-1">Đột ngột lên lịch tập gym 2 tiếng/ngày, dậy 5h sáng, kiêng đường 100%. Sự thay đổi cực đoan này bào mòn "Pin ý chí" ngay trong tuần đầu tiên.</p>
+                            <p class="text-sm text-red-300 mt-2 bg-red-900/30 p-2 rounded italic">VD Thất bại: Đóng tiền gym 1 năm, tập hùng hục được 3 ngày, đau cơ quá nghỉ 1 hôm -> bỏ luôn cả năm.</p>
+                        </div>
+                        <div class="border-t border-red-500/20 pt-4">
+                            <h4 class="font-semibold text-slate-200">🚩 Ảo tưởng sức mạnh Ý chí</h4>
+                            <p class="text-sm text-slate-400 mt-1">Tự nhủ "Mình sẽ cố không ăn khuya", nhưng trong tủ lạnh lại chất đầy mì tôm và xúc xích.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-bl-full"></div>
+                    <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center">
+                        <i class="fa-solid fa-shield-halved text-emerald-500 mr-2"></i> Chốt Chặn Kỷ Luật
+                    </h3>
+                    
+                    <div class="space-y-5">
+                        <p class="text-sm text-slate-300">Đừng tin vào lời hứa của bản thân. Hãy thiết lập các "giới hạn vật lý" cứng nhắc để bảo vệ bạn khỏi sự yếu lòng:</p>
+                        <div class="glass bg-black/20 p-4 rounded-lg">
+                            <h4 class="font-semibold text-slate-200 flex items-center"><i class="fa-solid fa-lock text-emerald-500 mr-2 text-xs"></i> Chốt chặn Môi trường</h4>
+                            <p class="text-sm text-slate-400 mt-1">Quy tắc "Không có không xài": Không mua đồ ăn vặt để trong nhà. Muốn ăn phải lết bộ ra tạp hóa lúc 11h đêm. (Tạo ma sát cực lớn).</p>
+                        </div>
+                        <div class="glass bg-black/20 p-4 rounded-lg">
+                            <h4 class="font-semibold text-slate-200 flex items-center"><i class="fa-solid fa-ban text-emerald-500 mr-2 text-xs"></i> Chốt chặn Công nghệ</h4>
+                            <p class="text-sm text-slate-400 mt-1">Khi cần Deep Work, ném điện thoại sang phòng khác. Dùng app Freedom/ColdTurkey khóa chặn các trang MXH trên máy tính trong 2 tiếng.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="active-recall" class="space-y-10 pt-10 border-t border-slate-800">
+            <div class="text-center space-y-4">
+                <h2 class="text-3xl font-bold inline-block border-b-2 border-brand-accent pb-2">
+                    <i class="fa-solid fa-layer-group text-brand-accent"></i> Trạm Ôn Tập (Flashcards)
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Kiểm tra ngay khả năng ghi nhớ. Đọc câu hỏi và tự nhẩm câu trả lời trước khi nhìn xuống phần đáp án.</p>
+            </div>
+
+            <!-- CSS for Flashcards (No flip, visible answer) -->
+            <style>
+                .flashcard { break-inside: avoid; margin-bottom: 1rem; }
+                .fc-answer {
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.3s ease-out;
+                }
+                /* Hover to reveal implicitly by css or just keep it compact. Let's make it always visible but styled distinctly per instruction: "kèm câu trả lời nhỏ hiển thị luôn ko cần tương tác" */
+            </style>
+
+            <div class="columns-1 md:columns-2 lg:columns-3 gap-4">
+                <!-- Generating 15 Questions -->
+                
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q1: Ego Depletion là gì?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Khái niệm chỉ ý chí giống như pin, xài nhiều sẽ cạn kiệt về cuối ngày.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q2: Làm sao để hack luật Parkinson?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Tự rút ngắn deadline xuống mức hơi phi lý để ép não tập trung cao độ.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q3: Ma sát hành vi (Friction) hoạt động ra sao?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Tăng bước trung gian cho việc xấu (giấu đt), bỏ bước trung gian cho việc tốt (để sẵn giày tập).</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q4: Sức mạnh của Lãi kép thói quen?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Tốt hơn 1% mỗi ngày, sau 1 năm bạn sẽ vượt trội gấp 37 lần.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q5: Tại sao nên đổi Danh tính thay vì Hành động?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Vì não bộ luôn bắt ta hành động nhất quán với niềm tin cốt lõi ("Tôi là người tập thể dục" vs "Tôi ráng chạy 1 bữa").</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q6: MXH dùng cái gì để giữ ta ở lại?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Vòng lặp Dopamine bằng phần thưởng ngẫu nhiên (giống máy đánh bạc).</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q7: Quy tắc 2 Phút dùng khi nào?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Khi quá lười bắt đầu. Hãy thu nhỏ việc đó lại thành 1 action dưới 2 phút.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q8: Quản trị thời gian sai ở đâu?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Sai vì bỏ qua năng lượng. 2h lúc minh mẫn > 8h lúc mệt mỏi rệu rã.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q9: Khái niệm "Đủ Tốt" chống lại cái gì?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Chống lại chủ nghĩa hoàn hảo - nguyên nhân sâu xa của sự trì hoãn.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q10: "Chốt chặn kỷ luật" là gì?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Giới hạn vật lý ép bạn không thể làm sai (vd: Xóa app, không mua đồ ngọt để nhà).</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q11: Lỗi lớn nhất khi mới lập kỷ luật?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Đòi thay đổi 180 độ ngay ngày đầu tiên, dẫn đến cạn kiệt ý chí và bỏ cuộc.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q12: Môi trường quan trọng thế nào?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Môi trường > Ý chí. Trong phòng đầy snack, sớm muộn bạn cũng ăn.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q13: If-Then plan là gì?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Lên kịch bản trước cho cám dỗ. (Nếu thèm ngọt -> Thì tôi ăn táo).</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q14: Não bộ tiêu thụ gì khi suy nghĩ/tự kiềm chế?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Glucose. Đó là lí do ta thèm ngọt khi căng thẳng.</div>
+                </div>
+
+                <div class="flashcard glass p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-slate-200 mb-2">Q15: Bí quyết cốt lõi của Landing Page này?</h4>
+                    <div class="text-sm text-brand-accent bg-slate-900/50 p-2 rounded">A: Hệ thống hóa thay vì Dùng ý chí.</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="glass border-t border-slate-800 mt-20" style="height: 128px; display: flex; align-items: center; justify-content: center;">
+        <div class="max-w-7xl mx-auto px-4 w-full flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <div class="text-center md:text-left">
+                <p class="text-sm text-slate-400 max-w-xl">
+                    <strong class="text-slate-200">Các kênh hiện tại:</strong> Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+                </p>
+            </div>
+
+            <div class="flex space-x-6">
+                <!-- YouTube -->
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="text-slate-400 hover:text-red-500 transition-colors duration-300 transform hover:scale-110" title="Kênh YouTube">
+                    <i class="fa-brands fa-youtube text-2xl"></i>
+                </a>
+                <!-- TikTok -->
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-slate-400 hover:text-white transition-colors duration-300 transform hover:scale-110" title="Kênh TikTok">
+                    <i class="fa-brands fa-tiktok text-2xl"></i>
+                </a>
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="text-slate-400 hover:text-blue-500 transition-colors duration-300 transform hover:scale-110" title="Facebook Page">
+                    <i class="fa-brands fa-facebook text-2xl"></i>
+                </a>
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            mindmap: {
+                padding: 15,
+                useMaxWidth: false
+            }
+        });
+
+        // Zoom & Drag Logic for Mindmap
+        let currentScale = 1;
+        const scaleStep = 0.2;
+        const wrapper = document.getElementById('mindmap-wrapper');
+        const container = document.getElementById('drag-container');
+        
+        function zoomMindmap(action) {
+            if (action === 'in') {
+                currentScale = Math.min(currentScale + scaleStep, 3); // Max zoom 3x
+            } else if (action === 'out') {
+                currentScale = Math.max(currentScale - scaleStep, 0.5); // Min zoom 0.5x
+            } else if (action === 'reset') {
+                currentScale = 1;
+                posX = 0;
+                posY = 0;
+                updateTransform();
+            }
+            wrapper.style.transform = `scale(${currentScale}) translate(${posX/currentScale}px, ${posY/currentScale}px)`;
+        }
+
+        // Dragging Logic (Pan)
+        let isDragging = false;
+        let startX, startY;
+        let posX = 0, posY = 0;
+
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - posX;
+            startY = e.clientY - posY;
+            container.style.cursor = 'grabbing';
+        });
+
+        container.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            posX = e.clientX - startX;
+            posY = e.clientY - startY;
+            updateTransform();
+        });
+
+        container.addEventListener('mouseup', () => {
+            isDragging = false;
+            container.style.cursor = 'grab';
+        });
+
+        container.addEventListener('mouseleave', () => {
+            isDragging = false;
+            container.style.cursor = 'grab';
+        });
+
+        function updateTransform() {
+            wrapper.style.transform = `scale(${currentScale}) translate(${posX/currentScale}px, ${posY/currentScale}px)`;
+        }
+    </script>
+</body>
+</html>
