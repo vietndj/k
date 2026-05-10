@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hành Trình Khám Phá Ý Thức | The Mind Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    },
+                    colors: {
+                        deep: '#0B0A15',
+                        primary: '#6D28D9',
+                        secondary: '#14B8A6',
+                        card: 'rgba(255, 255, 255, 0.03)',
+                    }
+                }
+            }
+        }
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark', 
+            flowchart: { curve: 'basis' } // Đường nối cong mềm mại
+        });
+    </script>
+
+    <style>
+        body {
+            background-color: #0B0A15;
+            color: #E2E8F0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(109, 40, 217, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(20, 184, 166, 0.15), transparent 25%);
+            overflow-x: hidden;
+        }
+
+        /* Abstract CSS Art Blobs */
+        .blob {
+            position: absolute;
+            filter: blur(40px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .blob-1 {
+            width: 150px; height: 150px;
+            background: linear-gradient(to right, #6D28D9, #3B82F6);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            top: -20px; right: -20px;
+        }
+        .blob-2 {
+            width: 120px; height: 120px;
+            background: linear-gradient(to right, #14B8A6, #22D3EE);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            bottom: -20px; left: -20px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            100% { transform: translate(20px, 30px) rotate(20deg) scale(1.1); }
+        }
+
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(20, 184, 166, 0.3);
+        }
+
+        /* Mindmap Container */
+        .mindmap-container {
+            width: 100%;
+            height: 450px;
+            overflow: hidden; /* Cấm cuộn tự do */
+            position: relative;
+            background: rgba(0,0,0,0.3);
+            border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .mindmap-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease-out;
+            transform-origin: center center;
+        }
+        .zoom-controls {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 10;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .zoom-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+        .zoom-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* Flashcard */
+        .flashcard {
+            perspective: 1000px;
+        }
+        .flashcard-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px dashed rgba(255,255,255,0.1);
+        }
+        .answer-text {
+            color: #14B8A6;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+        
+        .section-title {
+            background: linear-gradient(to right, #A78BFA, #5EEAD4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-300">
+
+    <!-- Header / Mentor Greeting -->
+    <header class="max-w-5xl mx-auto px-6 pt-16 pb-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 font-serif section-title leading-tight">
+            Giải mã Tâm trí & Làm chủ Ý thức
+        </h1>
+        <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto font-light">
+            Chào bạn, tôi đã dành thời gian nghiên cứu cuộc trò chuyện giữa Jay Shetty và Michael Pollan. Hãy tạm gác lại những ồn ào ngoài kia, chúng ta sẽ cùng lặn sâu vào "tảng băng chìm" của tâm trí.
+        </p>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 space-y-20 pb-20">
+
+        <!-- 1. The Big Idea -->
+        <section id="big-idea" class="relative">
+            <div class="blob blob-1"></div>
+            <div class="glass-card p-8 rounded-2xl relative overflow-hidden">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-3xl">🎯</span>
+                    <h2 class="text-2xl font-bold text-white">The Big Idea</h2>
+                </div>
+                <p class="text-lg leading-relaxed text-gray-200 mb-8 font-serif italic border-l-4 border-primary pl-4">
+                    "Ý thức không chỉ là một cỗ máy sinh tồn; nó là không gian tự do cuối cùng của con người. Giữa thời đại mà mạng xã hội thao túng sự chú ý và AI làm giả sự thấu cảm, việc vượt qua bản ngã (Ego) để kết nối chân thực với thực tại là hành động bảo vệ tính người quan trọng nhất."
+                </p>
+
+                <!-- Mindmap -->
+                <div class="mb-6 relative">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-400 mb-3 font-semibold">Khung Xương Kiến Thức</h3>
+                    <div class="mindmap-container">
+                        <div class="zoom-controls">
+                            <button id="zoom-in" class="zoom-btn" title="Phóng to"><i data-lucide="zoom-in" class="w-4 h-4"></i></button>
+                            <button id="zoom-out" class="zoom-btn" title="Thu nhỏ"><i data-lucide="zoom-out" class="w-4 h-4"></i></button>
+                        </div>
+                        <div class="mindmap-wrapper" id="mindmap-wrapper">
+                            <pre class="mermaid">
+                            graph LR
+                                A((Ý Thức<br>Con Người)) --> B(Bản Chất)
+                                A --> C(Kẻ Thù Thời Đại)
+                                A --> D(Giải Pháp)
+                                
+                                B --> B1(Tảng băng chìm: 90% Vô thức)
+                                B --> B2(Bộ não dự đoán thực tại)
+                                
+                                C --> C1(Mạng xã hội: Hack sự chú ý)
+                                C --> C2(AI Chatbot: Hack sự gắn kết)
+                                
+                                D --> D1(Trải nghiệm Awe thu nhỏ Ego)
+                                D --> D2(Phá vỡ rãnh mòn tư duy)
+                                D --> D3(Gắn kết với Tự nhiên)
+                                
+                                style A fill:#6D28D9,stroke:#A78BFA,stroke-width:2px,color:#fff
+                                style B fill:#0B0A15,stroke:#14B8A6
+                                style C fill:#0B0A15,stroke:#EF4444
+                                style D fill:#0B0A15,stroke:#3B82F6
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- YouTube Button -->
+                <div class="flex justify-center mt-6">
+                    <a href="https://youtu.be/QB5-cB_skHg?si=oaKvMSLbLjs5plCY" target="_blank" rel="noopener noreferrer" 
+                       class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-full font-medium transition-colors text-sm">
+                        <i data-lucide="youtube" class="w-5 h-5"></i>
+                        Xem Video Gốc: Cuộc đời quá ngắn (Cách tiêu xài khôn ngoan)
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section id="deep-insights" class="relative">
+            <div class="blob blob-2"></div>
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🧠</span>
+                <h2 class="text-3xl font-bold text-white">Deep Insights <span class="text-xl font-light text-gray-400">| Các Trụ Cột Tri Thức</span></h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Insight 1 -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-primary rounded-full blur-2xl opacity-20"></div>
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">🧊</span> Tảng Băng Ý Thức</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Tâm trí của bạn quản lý 90% các chức năng sinh tồn (huyết áp, nhịp tim...) một cách hoàn toàn tự động. Ý thức chỉ là phần nổi tí hon của tảng băng đó.</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> Chúng ta chỉ cần Ý thức khi phải xử lý các tình huống xã hội phức tạp hoặc đối mặt với các nhu cầu xung đột (VD: Vừa đói vừa buồn ngủ, chọn cái nào?).</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ẩn dụ:</strong> Tâm trí giống như một phòng máy tàu thủy chạy ngầm, còn ý thức là người thuyền trưởng thỉnh thoảng mới cần can thiệp để bẻ lái.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-teal-500 rounded-full blur-2xl opacity-20"></div>
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">🎭</span> Cỗ Máy Ảo Giác</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Những gì bạn nhìn thấy không phải thực tại. Bộ não luôn "dự đoán" trước thực tại dựa trên niềm tin cũ, các giác quan chỉ làm nhiệm vụ đi "sửa lỗi" cho dự đoán đó.</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> Đây là cách tiết kiệm năng lượng. Việc nhận luồng dữ liệu mới liên tục là quá tải, nên não ưu tiên những rập khuôn có sẵn.</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ví dụ:</strong> Ảo ảnh "Mặt nạ xoay". Bộ não của bạn từ chối nhìn thấy mặt lõm của chiếc mặt nạ vì từ bé bạn đã mặc định khuôn mặt người phải luôn lồi ra. Não sẽ bóp méo hình ảnh thực tế để bảo vệ niềm tin đó.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <div class="absolute right-10 bottom-10 w-24 h-24 bg-blue-500 rounded-full blur-2xl opacity-20"></div>
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">🏔️</span> Tuyết Rơi Trên Đồi</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Những suy nghĩ tiêu cực, overthinking hay nghiện ngập là những lối mòn trong tâm trí mà bạn không thể thoát ra bằng ý chí thông thường.</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> Càng nghĩ nhiều, rãnh mòn càng sâu. Việc thay đổi môi trường, thiền định sâu (hoặc dùng psychedelics trong y khoa) giúp vô hiệu hóa tạm thời Mạng lưới mặc định (DMN) - nơi quản lý bản ngã.</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ẩn dụ:</strong> Tâm trí như một ngọn đồi phủ tuyết. Mỗi suy nghĩ là một chiếc xe trượt tuyết tạo thành rãnh sâu. Thiền định/sự tỉnh thức tạo ra một "trận tuyết mới", lấp đầy rãnh cũ, cho phép bạn trượt một con đường hoàn toàn khác.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">🌌</span> Sự Tan Biến Cái Tôi</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Bản ngã (Ego) hay "Cái Tôi" thực chất chỉ là một bức tường phòng thủ. Nó giúp ta làm việc, sinh tồn, nhưng lại làm ta cô lập với thế giới.</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> Cái tôi liên tục lôi kéo ta vào quá khứ (hối tiếc) và tương lai (lo âu). Thu nhỏ cái tôi lại là cách duy nhất để thực sự tận hưởng hiện tại.</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ví dụ:</strong> Trải nghiệm nghe nhạc Bach. Khi tác giả buông bỏ cái tôi, không còn ranh giới giữa người nghe (chủ thể) và âm nhạc (khách thể). Ông cảm giác mình tan chảy thành những tờ giấy nhớ màu xanh và hóa thân thành chính bản nhạc.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">🤖</span> AI & Cuộc Xâm Lăng Cảm Xúc</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Nếu mạng xã hội đã "hack" sự chú ý của chúng ta, thì AI (các chatbot) đang tiến lên bước tiếp theo: Hack sự gắn kết và cảm xúc.</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> AI mang đến một sự tương tác "không ma sát". Nó luôn đồng tình, nịnh bợ và không bao giờ cãi lại. Điều này thỏa mãn cơn khát được chú ý của con người nhưng lại phá hủy khả năng đối mặt với sự phức tạp của các mối quan hệ thực tế.</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ẩn dụ:</strong> AI giống như một lượng "đường tinh luyện" cực cao cho cảm xúc. Nó ngọt ngào tức thời nhưng về lâu dài sẽ gây ra căn bệnh "Tiểu đường tâm lý" (AI psychosis) - khiến ta sợ hãi con người thật.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">👁️</span> Sức Mạnh Thu Nhỏ Của Awe</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Cách tốt nhất để giảm bớt sự phù phiếm và áp lực của cái tôi không phải là tranh cãi với nó, mà là đặt nó trước sự vĩ đại (Awe).</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> Trải nghiệm sự kinh ngạc trước thiên nhiên, vũ trụ hay một công trình khổng lồ sẽ trực tiếp tái lập trình lại nhận thức về tỷ lệ của bản thân trong não bộ.</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ví dụ:</strong> Thí nghiệm tại ĐH Berkeley. Khi yêu cầu sinh viên vẽ chính mình sau khi xem đoạn video hùng vĩ về núi Yosemite, họ tự vẽ bản thân mình nhỏ lại đúng phân nửa so với trước khi xem.
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Insight 7 -->
+                 <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">📻</span> Thuyết "Van Xả" Ý Thức</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Một giả thuyết khoa học cho rằng Não bộ KHÔNG tạo ra ý thức. Não bộ đóng vai trò là một "chiếc van" (Filter) lọc bớt ý thức.</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> Có một "trường ý thức" khổng lồ ngoài kia. Để sinh tồn và đi tìm thức ăn, não phải đóng van lại, chỉ cho một giọt nhỏ ý thức lọt qua để ta không bị phát điên bởi quá nhiều thông tin.</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ẩn dụ:</strong> Não người giống như một chiếc tivi thu sóng. Cô MC dự báo thời tiết không sống trong chiếc tivi. Khi tivi hỏng, sóng truyền hình vẫn tồn tại.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">🐾</span> Hiện Diện Như Thú Hoang</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Con người là sinh vật duy nhất có khả năng chi trả cho sự xa xỉ của việc "không có mặt ở hiện tại".</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> Công nghệ ru ngủ chúng ta trong sự an toàn giả tạo. Khi rảnh rỗi đứng xếp hàng, ta lập tức rút điện thoại ra để trốn tránh việc ở lại với tâm trí của chính mình.</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ẩn dụ:</strong> Động vật hoang dã bắt buộc phải tỉnh thức 100% khi thức, vì chỉ cần lơ đãng 1 giây, chúng sẽ trở thành bữa ăn của kẻ khác. Sự "an toàn" đang làm thui chột tính người của chúng ta.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2"><span class="text-2xl">🌱</span> Tái Ma Thuật Hóa Thế Giới</h3>
+                    <div class="space-y-4 flex-grow text-sm">
+                        <div><strong class="text-primary">Bản chất:</strong> Con người không độc quyền ý thức. Cây cỏ, nấm, vi khuẩn đều có dạng thức cảm giác (sentience) của riêng chúng.</div>
+                        <div><strong class="text-secondary">Cơ chế:</strong> Khi ta rũ bỏ góc nhìn "Vật chất luận" (coi mọi thứ chỉ là tài nguyên vô tri vô giác để sử dụng), ta bắt đầu mở rộng lòng trắc ẩn và chữa lành chứng sợ hãi cái chết.</div>
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded-lg border-l-2 border-yellow-500 italic">
+                            💡 <strong>Ví dụ:</strong> Những bệnh nhân ung thư khi trải nghiệm sự tan biến bản ngã đã hết sợ chết. Họ thấy cơ thể mình tan vào lòng đất, linh hồn được hấp thụ bởi rễ cây. Chết đi không phải là hết, mà là hòa tan lại vào tự nhiên.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section id="action-playbook" class="relative">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🚀</span>
+                <h2 class="text-3xl font-bold text-white">Action Playbook <span class="text-xl font-light text-gray-400">| Sổ Tay Thực Chiến</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- If-Then Scenarios -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-secondary mb-4 border-b border-gray-700 pb-2">Kịch bản If - Then</h3>
+                    <ul class="space-y-4 text-gray-300">
+                        <li class="flex items-start gap-3">
+                            <span class="mt-1">🔹</span>
+                            <div>
+                                <strong class="text-white">NẾU</strong> bạn thấy mình đang rơi vào vòng lặp suy nghĩ tiêu cực, trách móc bản thân (Rumination).<br>
+                                <strong class="text-primary mt-1 inline-block">THÌ</strong> hãy tìm ngay một trải nghiệm kinh ngạc (Awe). Đứng dậy, bước ra ngoài nhìn lên bầu trời sao, hoặc xem một video về vũ trụ. Hãy để sự vĩ đại thu nhỏ bản ngã của bạn lại.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="mt-1">🔹</span>
+                            <div>
+                                <strong class="text-white">NẾU</strong> bạn đang đứng chờ xếp hàng, kẹt xe, và tay theo bản năng định rút điện thoại ra.<br>
+                                <strong class="text-primary mt-1 inline-block">THÌ</strong> hãy hít một hơi, đút tay vào túi. Dùng 3 phút đó để quan sát quần áo của người phía trước, nghe lỏm một câu chuyện, hoặc đơn giản là để tâm trí mộng du (daydream).
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="mt-1">🔹</span>
+                            <div>
+                                <strong class="text-white">NẾU</strong> bạn do dự không dám khởi đầu một dự án mới vì một giọng nói sợ hãi vang lên trong đầu.<br>
+                                <strong class="text-primary mt-1 inline-block">THÌ</strong> hãy nhớ nguyên tắc "Do It". 90% các quyết định làm theo tiếng gọi trái tim sẽ đem lại hạnh phúc, giọng nói sợ hãi đó chỉ là "rãnh mòn" do não tự vệ sinh ra.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="glass-card p-6 rounded-2xl bg-gradient-to-b from-transparent to-primary/10">
+                    <h3 class="text-xl font-bold text-primary mb-4 border-b border-gray-700 pb-2">Hành động nhỏ trong 24h tới</h3>
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="w-5 h-5 rounded border-gray-600 text-primary focus:ring-primary bg-gray-800">
+                            <span class="text-gray-300 group-hover:text-white transition-colors">Để điện thoại ở phòng khác và ngồi yên lặng 10 phút vào sáng mai trước khi làm bất cứ việc gì.</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="w-5 h-5 rounded border-gray-600 text-primary focus:ring-primary bg-gray-800">
+                            <span class="text-gray-300 group-hover:text-white transition-colors">Xóa 1 app mạng xã hội thường "hack" sự chú ý của bạn nhiều nhất vào cuối tuần này.</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="w-5 h-5 rounded border-gray-600 text-primary focus:ring-primary bg-gray-800">
+                            <span class="text-gray-300 group-hover:text-white transition-colors">Từ chối chat với AI về các vấn đề cảm xúc cá nhân. Hãy nhắn tin cho 1 người bạn thật.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section id="reality-check" class="relative">
+             <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">⚠️</span>
+                <h2 class="text-3xl font-bold text-white">Reality Check <span class="text-xl font-light text-gray-400">| Nhận Diện Cạm Bẫy</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Red Flags -->
+                <div class="glass-card p-6 rounded-2xl border border-red-900/50 relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">🚩</div>
+                    <h3 class="text-xl font-bold text-red-400 mb-3 flex items-center gap-2">Bẫy Vô Hình (Red Flags)</h3>
+                    <p class="text-gray-300 mb-2"><strong>Sai lầm:</strong> Nghĩ rằng máy móc (AI) thấu hiểu bạn hơn con người.</p>
+                    <p class="text-gray-400 text-sm mb-4">Mọi người tìm đến AI vì sự "không ma sát". Cha mẹ hay bạn bè có thể bận rộn, cáu gắt hoặc yêu cầu bạn phải cố gắng. AI thì luôn rảnh, luôn an ủi rập khuôn và nịnh bợ. Bạn tưởng mình được chữa lành, nhưng thực chất đang mất đi kỹ năng đương đầu với thực tế.</p>
+                    <div class="bg-red-950/30 p-3 rounded text-sm text-red-200">
+                        <em>Thất bại điển hình:</em> Căn bệnh AI Psychosis, khi con người nảy sinh tình cảm yêu đương với Chatbot và đoạn tuyệt giao tiếp xã hội vì ngoài đời thực "quá phức tạp".
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="glass-card p-6 rounded-2xl border border-blue-900/50 relative">
+                     <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">🛡️</div>
+                    <h3 class="text-xl font-bold text-blue-400 mb-3 flex items-center gap-2">Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                    <p class="text-gray-300 mb-2"><strong>Không dựa vào Ý chí, hãy dùng Môi trường.</strong></p>
+                    <p class="text-gray-400 text-sm mb-4">Cái tôi của bạn rất xảo quyệt, nó sẽ tìm đủ mọi lý do hợp lý để bạn nuông chiều thói quen cũ. Thay vì tự nhủ "Mình sẽ ít cầm điện thoại đi", hãy thiết lập giới hạn vật lý cứng.</p>
+                    <div class="bg-blue-950/30 p-3 rounded text-sm text-blue-200">
+                        <em>Quy tắc cứng:</em> <strong>Vùng Không Thiết Bị (No-Tech Zone).</strong> Đặt ra luật: Không bao giờ mang điện thoại khi đi dạo thiên nhiên, và không mang điện thoại vào phòng ngủ. Sạc nó ở phòng bếp.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall -->
+        <section id="active-recall" class="relative">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🃏</span>
+                <h2 class="text-3xl font-bold text-white">Active Recall <span class="text-xl font-light text-gray-400">| Trạm Ôn Tập (Flashcards)</span></h2>
+            </div>
+            <p class="text-sm text-gray-400 mb-6 font-light">Đọc câu hỏi in đậm, tự trả lời trong đầu, sau đó đối chiếu với đáp án màu xanh bên dưới để ghim sâu kiến thức.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Generator loop for 15 questions -->
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">1. Tâm trí và ý thức khác nhau thế nào?</h4>
+                        <div class="answer-text">Tâm trí quản lý 90% vô thức (huyết áp, tiêu hóa...), ý thức chỉ là phần nổi tí hon của tảng băng đó.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">2. Tại sao cơ thể tự vận hành được mà vẫn cần Ý thức?</h4>
+                        <div class="answer-text">Để giải quyết các tình huống xã hội phức tạp và đưa ra quyết định khi có các nhu cầu xung đột.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">3. Default Mode Network (DMN) là khu vực nào trong não?</h4>
+                        <div class="answer-text">Nơi khởi nguồn của Bản ngã (Ego), chịu trách nhiệm du hành thời gian (hối tiếc quá khứ, lo tương lai).</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">4. Phép ẩn dụ "Tuyết rơi trên đồi" nói về điều gì?</h4>
+                        <div class="answer-text">Tuyết mới lấp đầy các rãnh mòn thói quen/suy nghĩ cũ, cho phép tâm trí tạo một con đường đi hoàn toàn mới.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">5. Tại sao nói bộ não "ảo giác ra thực tại"?</h4>
+                        <div class="answer-text">Nó dự đoán thế giới dựa trên niềm tin có sẵn, các giác quan thực chất chỉ làm nhiệm vụ đi "sửa lỗi".</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">6. Bài học từ chiếc Mặt nạ xoay (Rotating Mask)?</h4>
+                        <div class="answer-text">Não bộ thà bóp méo hình ảnh thực tế còn hơn là thay đổi niềm tin cốt lõi (rằng khuôn mặt thì không thể bị lõm).</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">7. MXH và AI tấn công ta ở 2 cấp độ nào?</h4>
+                        <div class="answer-text">MXH hack "Sự chú ý" (bề mặt). AI Chatbot hack "Sự gắn kết/Cảm xúc" (bề sâu).</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">8. Sự nguy hiểm đáng sợ nhất của AI là gì?</h4>
+                        <div class="answer-text">Cung cấp sự tương tác "không ma sát", luôn nịnh bợ, khiến ta yếu ớt trước sự phức tạp của mối quan hệ người-người thật.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">9. Trải nghiệm Awe (Sự kinh ngạc) có tác dụng gì?</h4>
+                        <div class="answer-text">Trực tiếp thu nhỏ Cái tôi (Ego), làm giảm bớt áp lực và sự quan trọng hóa bản thân.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">10. Thuyết "Van xả" (Valve Theory) giải thích ý thức ra sao?</h4>
+                        <div class="answer-text">Não không tạo ra ý thức. Não là cái van lọc bớt ý thức vô hạn của vũ trụ để ta có thể tập trung sinh tồn.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">11. Sai lầm khi so sánh Não với Máy tính?</h4>
+                        <div class="answer-text">Ở não bộ, không có ranh giới giữa phần cứng và phần mềm. Mọi trải nghiệm bạn có đều thay đổi vật lý cấu trúc não.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">12. Tại sao động vật luôn "Sống trọn hiện tại" hơn con người?</h4>
+                        <div class="answer-text">Con người trả giá cho sự an toàn bằng sự mất tập trung. Động vật nếu mất tập trung sẽ thành mồi cho kẻ khác ngay.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">13. Khi cái tôi tan biến, điều gì xuất hiện?</h4>
+                        <div class="answer-text">Sự kết nối sâu sắc, hòa làm một với vạn vật xung quanh (như âm nhạc, con người, tự nhiên).</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">14. Làm sao để xóa bỏ nỗi sợ cái chết?</h4>
+                        <div class="answer-text">Mở rộng khái niệm "Bản thân". Bạn không chỉ là cái xác thịt này, bạn là các phân tử carbon sẽ trở lại với thực vật và đất mẹ.</div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner transition-colors hover:border-secondary">
+                        <h4 class="font-bold text-white text-sm mb-2">15. Lời khuyên 2 chữ "Do It" hiệu quả vì sao?</h4>
+                        <div class="answer-text">Phần lớn chúng ta bị kìm hãm bởi nỗi sợ hãi viển vông từ cha mẹ/xã hội. 90% sẽ hạnh phúc hơn khi dám bước ra khỏi ranh giới.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. Footer -->
+    <footer class="w-full bg-[#05040a] border-t border-gray-800" style="height: 128px;">
+        <div class="max-w-5xl mx-auto px-6 h-full flex flex-col md:flex-row justify-between items-center text-sm">
+            
+            <div class="text-gray-400 mb-4 md:mb-0 max-w-lg">
+                <p class="font-semibold text-gray-200 mb-1">Cập nhật kiến thức thực chiến nhất</p>
+                <p class="text-xs">Về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-colors" title="YouTube">
+                    <i data-lucide="youtube" class="w-5 h-5"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-white hover:text-black transition-colors" title="TikTok">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors" title="Facebook">
+                    <i data-lucide="facebook" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons & Custom Scripts -->
+    <script>
+        lucide.createIcons();
+
+        // Xử lý tính năng Zoom cho Mermaid Mindmap
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.getElementById('mindmap-wrapper');
+            const btnIn = document.getElementById('zoom-in');
+            const btnOut = document.getElementById('zoom-out');
+            let currentScale = 1;
+
+            btnIn.addEventListener('click', () => {
+                currentScale += 0.2;
+                updateScale();
+            });
+
+            btnOut.addEventListener('click', () => {
+                currentScale = Math.max(0.4, currentScale - 0.2); // Không cho thu nhỏ quá mức
+                updateScale();
+            });
+
+            function updateScale() {
+                wrapper.style.transform = `scale(${currentScale})`;
+            }
+        });
+    </script>
+</body>
+</html>
