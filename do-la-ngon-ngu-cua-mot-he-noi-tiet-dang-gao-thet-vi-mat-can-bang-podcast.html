@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Làm Chủ Nội Tiết - Giải Mã Cơ Thể</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #1F4B4C;    /* Deep healing green */
+            --secondary: #E8F1EC;  /* Soft mint background */
+            --accent: #E08E79;     /* Warm coral for emphasis */
+            --text-dark: #2A3B3C;
+            --text-light: #647B7C;
+        }
+
+        body {
+            background-color: #F8FAF9;
+            color: var(--text-dark);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* CSS Abstract Art - Blob Shapes representing Cells/Hormones */
+        .blob-bg {
+            position: absolute;
+            z-index: -1;
+            filter: blur(40px);
+            opacity: 0.4;
+            animation: float 10s ease-in-out infinite;
+        }
+        .blob-1 {
+            background: linear-gradient(135deg, #A8D5BA, #2A9D8F);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            width: 300px; height: 300px;
+            top: -50px; left: -100px;
+        }
+        .blob-2 {
+            background: linear-gradient(135deg, #F4A261, #E76F51);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            width: 250px; height: 250px;
+            bottom: -50px; right: -50px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        /* Mindmap Container Constraints */
+        #mindmap-wrapper {
+            width: 100%;
+            overflow: hidden; /* Hide scrollbars, use buttons to zoom/pan */
+            background: white;
+            border-radius: 1rem;
+            border: 1px solid #E2E8F0;
+            position: relative;
+        }
+        #mindmap-container {
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-origin: center top;
+            cursor: grab;
+            padding: 2rem;
+        }
+        #mindmap-container:active { cursor: grabbing; }
+        
+        .zoom-btn {
+            background: white;
+            border: 1px solid #E2E8F0;
+            color: var(--primary);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover { background: var(--secondary); transform: scale(1.05); }
+
+        /* Typography & Decor */
+        h2.section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        h2.section-title::after {
+            content: '';
+            position: absolute; left: 0; bottom: -8px;
+            width: 60%; height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Flashcard simple UI */
+        .qa-card {
+            background: white;
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .qa-card:hover { transform: translateY(-2px); }
+
+        /* Footer */
+        .footer-social {
+            background: var(--primary);
+            color: white;
+            height: 128px;
+            border-radius: 1rem 1rem 0 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal-200 selection:text-teal-900">
+
+    <!-- HERO & BIG IDEA -->
+    <header class="relative px-6 pt-20 pb-12 overflow-hidden lg:px-20 max-w-7xl mx-auto">
+        <div class="blob-bg blob-1"></div>
+        <div class="blob-bg blob-2"></div>
+        
+        <div class="relative z-10 text-center max-w-4xl mx-auto">
+            <span class="inline-block py-1 px-3 rounded-full bg-teal-100 text-teal-800 text-sm font-semibold mb-4 tracking-wide uppercase">🌱 Chữa lành từ gốc rễ</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#1F4B4C] leading-tight mb-6">
+                Làm Chủ Nội Tiết: Kỷ Nguyên Y Học Chính Xác & Tái Tạo Sinh Học
+            </h1>
+            <div class="glass-card p-6 md:p-8 text-left text-lg text-gray-700 leading-relaxed shadow-xl border-l-4 border-l-[#E08E79]">
+                <h3 class="font-bold text-xl text-[#1F4B4C] mb-2">🎯 Lời Cố Vấn (The Big Idea)</h3>
+                <p>Cơ thể bạn không chống lại bạn. Những vấn đề như mỡ bụng cứng đầu, sương mù não, hay mất cảm xúc không phải là sự lười biếng hay "tuổi già ập đến". <strong>Đó là ngôn ngữ của một hệ nội tiết đang gào thét vì mất cân bằng</strong>, thường bắt nguồn từ những tổn thương trong quá khứ (Trauma) và lối sống độc hại hiện tại. Thay vì chữa trị "phần ngọn" bằng thuốc cho số đông, bí quyết nằm ở việc đọc hiểu dữ liệu sinh học của chính bạn và thiết lập lại hệ thần kinh.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- MINDMAP SECTION -->
+    <section class="max-w-7xl mx-auto px-6 mb-20 relative z-10">
+        <h2 class="text-2xl font-bold text-[#1F4B4C] mb-4 flex items-center gap-2">🧠 Bản Đồ Tư Duy Tổng Quan</h2>
+        
+        <!-- Controls -->
+        <div class="flex gap-3 mb-4">
+            <button class="zoom-btn" onclick="zoomMindmap(0.1)" title="Phóng to">+</button>
+            <button class="zoom-btn" onclick="zoomMindmap(-0.1)" title="Thu nhỏ">-</button>
+            <button class="zoom-btn !text-sm !w-auto !px-4 !rounded-full" onclick="resetMindmap()" title="Mặc định">Reset</button>
+        </div>
+
+        <!-- Mindmap container -->
+        <div id="mindmap-wrapper" class="shadow-lg h-[600px] flex justify-center items-start">
+            <div id="mindmap-container" class="w-full">
+                <div class="mermaid">
+                    mindmap
+                      root((HỆ NỘI TIẾT<br/>& CHỮA LÀNH))
+                        (Kẻ Cầm Quyền:<br/>Cortisol)
+                          ::icon(fas fa-bolt)
+                          Mỡ bụng nội tạng
+                          Teo não tuổi 40
+                          Hút cạn sinh lực
+                        (Cội Nguồn Tổn Thương)
+                          ::icon(fas fa-heart-broken)
+                          Điểm ACE (Sang chấn)
+                          Rối loạn hệ miễn dịch
+                          Mắc kẹt ở mode Sinh tồn
+                        (Phục Hồi Dữ Liệu)
+                          ::icon(fas fa-chart-line)
+                          Đo đường huyết liên tục (CGM)
+                          Đo nhịp tim (HRV)
+                          Kiểm tra Vitamin D & Gen
+                        (Dinh Dưỡng Thực Chiến)
+                          ::icon(fas fa-apple-alt)
+                          Rau họ cải (Giải độc)
+                          Chất xơ (Nuôi khuẩn ruột)
+                          Nghịch lý Keto ở Nữ
+                        (Phụ Nữ & Mảng Tối)
+                          ::icon(fas fa-venus)
+                          Tiền mãn kinh sớm
+                          Mất Testosterone
+                          Mất cân bằng Estrogen
+                        (Khởi Động Lại)
+                          ::icon(fas fa-power-off)
+                          Giấc ngủ (Sửa lỗi DNA)
+                          Hơi thở (Hạ nhịp thần kinh)
+                          Cực khoái (Kích hoạt đối giao cảm)
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-6">
+            <a href="https://youtu.be/0GQozcTPyO0?si=5rpaOfnzUF9kIEuy" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-1">
+                ▶️ Hormone Expert: Control Your Hormones Control Your Belly Fat!
+            </a>
+        </div>
+    </section>
+
+    <!-- SECTION 2: DEEP INSIGHTS -->
+    <section class="max-w-7xl mx-auto px-6 mb-20 relative">
+        <h2 class="section-title text-3xl font-extrabold text-[#1F4B4C]">🧠 Trụ Cột Tri Thức (Deep Insights)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+            
+            <!-- Insight 1 -->
+            <div class="glass-card p-6 border-t-4 border-t-red-400">
+                <div class="text-3xl mb-3">⚡</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">1. Cortisol Là "Kẻ Độc Tài"</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Trong cơ thể, các hormone không có quyền bình đẳng. Cortisol đứng đầu chuỗi thức ăn. Nếu nó nổi điên, các hormone khác phải nhường bước.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Khi căng thẳng, cơ thể ưu tiên sinh tồn. Nó dồn tài nguyên để sản xuất Cortisol, dẫn đến việc "rút ruột" Testosterone và Estrogen. Hậu quả: Tích mỡ bụng (vì tế bào mỡ bụng có nhiều thụ thể Cortisol) và teo não (đặc biệt ở nữ giới).</p>
+                <div class="bg-red-50 p-3 rounded-lg text-sm text-red-800">
+                    💡 <strong>Ẩn dụ:</strong> Cortisol giống như Còi Báo Cháy. Khi nhà cháy, bạn không màng đến việc dọn dẹp nhà cửa hay lãng mạn (Testosterone/Sex). Bạn chỉ lo dập lửa.
+                </div>
+            </div>
+
+            <!-- Insight 2 -->
+            <div class="glass-card p-6 border-t-4 border-t-purple-400">
+                <div class="text-3xl mb-3">🧩</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">2. Sang Chấn (Trauma) Trú Ngụ Trong Tế Bào</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Tuổi thơ bất hạnh không chỉ để lại sẹo tâm lý, nó lập trình lại hệ miễn dịch và nội tiết của bạn thành các căn bệnh mãn tính.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Điểm ACE (Adverse Childhood Experiences) càng cao, hệ thống "Fight or Flight" (Chiến hay Biến) càng bị kẹt ở trạng thái BẬT. Điều này gây viêm mãn tính, tự miễn dịch và rối loạn đường huyết ngay cả khi bạn đã trưởng thành và an toàn.</p>
+                <div class="bg-purple-50 p-3 rounded-lg text-sm text-purple-800">
+                    💡 <strong>Ví dụ:</strong> Chính Bác sĩ Sara dù học ở Harvard nhưng bị tiền tiểu đường và trầm cảm ở tuổi 30 do điểm ACE là 6/10 (bố mẹ ly hôn sớm, tổn thương thơ ấu).
+                </div>
+            </div>
+
+            <!-- Insight 3 -->
+            <div class="glass-card p-6 border-t-4 border-t-blue-400">
+                <div class="text-3xl mb-3">🩺</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">3. Sự Thất Bại Của "Y Học Số Đông"</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Y tế hiện đại khám bệnh theo mô hình "trung bình cộng" và chữa bằng thuốc tây, phớt lờ gốc rễ lối sống.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Bác sĩ chỉ có 30 phút học về dinh dưỡng ở trường Y. Khi bạn có cholesterol cao, họ kê thuốc Statin thay vì chữa lối sống, dù 70% bệnh tật hiện nay CÓ THỂ phòng tránh bằng lối sống. Đây là "Y học thiếu chính xác".</p>
+                <div class="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">
+                    💡 <strong>Ẩn dụ:</strong> Y học hiện đại giống như việc dùng băng dính đen dán lên đèn cảnh báo hết xăng trên bảng điều khiển xe ô tô, thay vì thực sự đổ thêm xăng.
+                </div>
+            </div>
+
+            <!-- Insight 4 -->
+            <div class="glass-card p-6 border-t-4 border-t-green-400">
+                <div class="text-3xl mb-3">🦠</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">4. Estrobolome & Tái Chế Hormone</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Hệ vi khuẩn đường ruột (Microbiome) chính là bộ điều khiển lượng Estrogen trong cơ thể bạn.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Bình thường, cơ thể dùng xong Estrogen sẽ thải ra ngoài. Nhưng nếu ruột bạn có các vi khuẩn xấu, chúng sẽ "tái chế" Estrogen cũ và bơm ngược lại máu. Gây thừa Estrogen, ung thư vú ở nữ và ung thư tuyến tiền liệt ở nam.</p>
+                <div class="bg-green-50 p-3 rounded-lg text-sm text-green-800">
+                    💡 <strong>Ẩn dụ:</strong> Estrogen cũ bị tái chế giống như "Nghiệp chướng" (Bad Karma) cứ lặp đi lặp lại. Chất xơ (từ rau họ cải) chính là người dọn rác để cắt đứt vòng lặp này.
+                </div>
+            </div>
+
+            <!-- Insight 5 -->
+            <div class="glass-card p-6 border-t-4 border-t-yellow-400">
+                <div class="text-3xl mb-3">🔥</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">5. Phụ Nữ & Lỗ Hổng Tiền Mãn Kinh</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Tiền mãn kinh (từ 35-45 tuổi) không chỉ là vấn đề kinh nguyệt. Nó là một cuộc khủng hoảng chuyển hóa toàn diện.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Buồng trứng lão hóa khiến ty thể (nhà máy năng lượng) trong tế bào đình công. Hệ lụy là hơn 100+ triệu chứng: sương mù não, mất ngủ, viêm khớp, tăng mỡ bụng. Đáng buồn là 75% phụ nữ không được bác sĩ chẩn đoán đúng và thường bị cho uống thuốc tránh thai một cách sai lầm.</p>
+                <div class="bg-yellow-50 p-3 rounded-lg text-sm text-yellow-800">
+                    💡 <strong>Ví dụ thực tế:</strong> Phụ nữ ở tuổi này thường thốt lên: "Tại sao tôi thà lau sàn nhà còn hơn là làm tình với chồng?" - Đó chính là sự sụt giảm nội tiết sâu sắc, không phải lỗi do tình cảm.
+                </div>
+            </div>
+
+            <!-- Insight 6 -->
+            <div class="glass-card p-6 border-t-4 border-t-teal-400">
+                <div class="text-3xl mb-3">⚖️</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">6. Cực Khoái & Hệ Đối Giao Cảm</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Tình dục và cực khoái không chỉ là khoái cảm, chúng là liều thuốc y học mạnh mẽ nhất để cân bằng hệ thần kinh.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Cực khoái buộc cơ thể chuyển đổi ngay lập tức từ hệ Thần kinh Giao cảm (Căng thẳng/Sinh tồn) sang Hệ Đối giao cảm (Nghỉ ngơi/Chữa lành). Sự phân cực (Masculine/Feminine) trong phòng ngủ giúp tái tạo năng lượng cực tốt cho não bộ.</p>
+                <div class="bg-teal-50 p-3 rounded-lg text-sm text-teal-800">
+                    💡 <strong>Ẩn dụ:</strong> Tình dục giống như nút "Reset" khẩn cấp cho một hệ thống máy tính đang chạy quá tải vì hàng trăm tab công việc mở cùng lúc.
+                </div>
+            </div>
+
+            <!-- Insight 7 -->
+            <div class="glass-card p-6 border-t-4 border-t-indigo-400">
+                <div class="text-3xl mb-3">🥑</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">7. Nghịch Lý Keto Ở Phụ Nữ</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Chế độ ăn Keto cực tốt để giảm Insulin, nhưng cơ thể nữ giới phản ứng gay gắt hơn nam giới rất nhiều.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Theo tiến hóa, việc đói/thiếu tinh bột phát tín hiệu "nguy hiểm sinh sản" cho cơ thể nữ. Nữ giới mất nhiều thời gian hơn để vào trạng thái Ketosis (18-20h so với 14h ở nam). Ép Keto quá đà gây rối loạn tuyến giáp, chu kỳ kinh nguyệt và tăng Cortisol.</p>
+                <div class="bg-indigo-50 p-3 rounded-lg text-sm text-indigo-800">
+                    💡 <strong>Ví dụ:</strong> Khoảng 45% phụ nữ ăn Keto gặp vấn đề rụng trứng hoặc kinh nguyệt không đều. Cần linh hoạt ăn nạp lại Carbs (Carb cycling) thay vì nhịn cực đoan.
+                </div>
+            </div>
+
+            <!-- Insight 8 -->
+            <div class="glass-card p-6 border-t-4 border-t-orange-400">
+                <div class="text-3xl mb-3">😴</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">8. Giấc Ngủ: Lõi Của Chuyển Hóa</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Bạn không thể "ăn kiêng" hay "tập luyện" để bù đắp cho một đêm mất ngủ.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Chỉ 1 đêm thiếu ngủ, Cortisol và Insulin ngày hôm sau sẽ tăng vọt. Nó khiến não bộ phát tín hiệu thèm đường/tinh bột để bù đắp năng lượng giả. Chỉ 2% dân số thế giới thực sự có "gen ngủ ít", 98% còn lại đang tự hủy hoại bản thân nếu ngủ dưới 7.5 tiếng.</p>
+                <div class="bg-orange-50 p-3 rounded-lg text-sm text-orange-800">
+                    💡 <strong>Ẩn dụ:</strong> Giấc ngủ giống như đội lao công ban đêm tại một tòa nhà văn phòng. Thiếu ngủ 1 ngày, rác rưởi (độc tố não) bắt đầu bốc mùi.
+                </div>
+            </div>
+
+            <!-- Insight 9 -->
+            <div class="glass-card p-6 border-t-4 border-t-pink-400">
+                <div class="text-3xl mb-3">🛡️</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">9. Quản Lý Sức Chứa (Capacity)</h3>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Bản chất:</strong> Chữa lành không phải là ép người khác thay đổi, mà là vẽ ranh giới bảo vệ chính hệ thần kinh của bạn.</p>
+                <p class="text-gray-600 mb-3 text-sm"><strong>Cơ chế:</strong> Khi sống chung với người mang nhiều tổn thương hoặc nghiện ngập, bạn dễ bị cuốn vào "liên kết sang chấn" (Trauma Bond). Cố gắng bao bọc họ sẽ tước đi cơ hội để họ chạm đáy và tự thức tỉnh. Việc của bạn là cầm chiếc gương trung thực, chứ không phải vác họ trên lưng.</p>
+                <div class="bg-pink-50 p-3 rounded-lg text-sm text-pink-800">
+                    💡 <strong>Ví dụ:</strong> Dr. Sara mất 10 năm trị liệu cặp đôi nhưng vẫn ly hôn, vì tình trạng của đối tác liên tục làm hệ thần kinh của cô bị kích động (Dysregulation).
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: ACTION PLAYBOOK -->
+    <section class="max-w-7xl mx-auto px-6 mb-20">
+        <div class="bg-white rounded-3xl p-8 lg:p-12 shadow-sm border border-teal-100 relative overflow-hidden">
+            <!-- Decorative circle -->
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-teal-50 rounded-full mix-blend-multiply opacity-50"></div>
+            
+            <h2 class="section-title text-3xl font-extrabold text-[#1F4B4C]">🚀 Sổ Tay Thực Chiến (Action Playbook)</h2>
+            <p class="text-gray-600 mb-8 max-w-2xl">Bỏ qua các khái niệm y khoa phức tạp, đây là các kịch bản ứng dụng thẳng vào thực tế cuộc sống của bạn.</p>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-10">
+                <!-- If-Then 1 -->
+                <div class="p-6 bg-slate-50 rounded-2xl border-l-4 border-[#E08E79]">
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">Khủng hoảng Căng thẳng / Kiệt sức</h4>
+                    <p class="mb-3 text-slate-700">🔴 <strong>NẾU:</strong> Bạn vừa họp xong một cuộc họp nảy lửa, tim đập nhanh, hoặc cảm thấy quá tải muốn bùng nổ...</p>
+                    <p class="text-teal-700 font-medium">🟢 <strong>THÌ:</strong> Đừng ngồi yên và suy nghĩ. Hãy "Hack" dây thần kinh phế vị (Vagus Nerve) bằng cách: Thở nhịp điệu (Resonance Breathing). Hít vào 5 giây, Thở ra 7 giây. Làm đúng 6 nhịp/phút trong 3-5 phút để ép cơ thể về trạng thái an toàn.</p>
+                </div>
+
+                <!-- If-Then 2 -->
+                <div class="p-6 bg-slate-50 rounded-2xl border-l-4 border-[#1F4B4C]">
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">Bế tắc giảm mỡ / Mỡ bụng cứng đầu</h4>
+                    <p class="mb-3 text-slate-700">🔴 <strong>NẾU:</strong> Bạn đang nhịn ăn, tập cardio điên cuồng mà bụng vẫn to, người lờ đờ...</p>
+                    <p class="text-teal-700 font-medium">🟢 <strong>THÌ:</strong> Dừng ngay việc nhịn đói cực đoan! Khả năng cao Cortisol của bạn đang quá cao. Hãy tập tạ nặng (Strength Training) để xả kho Glucose thừa trong cơ bắp, và ngủ thêm 1 tiếng thay vì chạy bộ lúc 5h sáng ép xác.</p>
+                </div>
+                
+                <!-- If-Then 3 -->
+                <div class="p-6 bg-slate-50 rounded-2xl border-l-4 border-indigo-400">
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">Cảm giác xa cách trong tình yêu</h4>
+                    <p class="mb-3 text-slate-700">🔴 <strong>NẾU:</strong> Hai vợ chồng/người yêu đang phai nhạt chuyện chăn gối, hoặc bạn (nữ) cảm thấy không có hứng thú...</p>
+                    <p class="text-teal-700 font-medium">🟢 <strong>THÌ:</strong> Phụ nữ cần "Kết nối cảm xúc" ĐỂ có thể làm tình. Đàn ông thì ngược lại. Hãy bắt đầu bằng những thẻ câu hỏi sâu (Level 3 questions), dành thời gian làm việc nhà cùng nhau để tạo sự an toàn trước khi nghĩ đến phòng ngủ.</p>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-xl text-[#1F4B4C] mb-4">⏱️ Micro-Actions (Hành động tức thì trong 24h tới)</h3>
+            <ul class="space-y-4">
+                <li class="flex items-start gap-3">
+                    <div class="bg-yellow-100 p-2 rounded-full mt-1">☀️</div>
+                    <div>
+                        <strong class="text-gray-800">Nhìn đường chân trời vào buổi sáng:</strong> Ngay khi ngủ dậy, ra ngoài trời (không qua kính), nhìn xa xăm 10-30 phút. Việc này giúp não reset lại nhịp sinh học và tạo Melatonin cho giấc ngủ buổi tối.
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <div class="bg-green-100 p-2 rounded-full mt-1">🥦</div>
+                    <div>
+                        <strong class="text-gray-800">Ăn 1 loại rau họ cải:</strong> Bổ sung súp lơ xanh, bắp cải hoặc mầm súp lơ vào bữa tối nay. Giúp gan đào thải Estrogen dư thừa và giảm viêm tức thì.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 4: REALITY CHECK -->
+    <section class="max-w-7xl mx-auto px-6 mb-20">
+        <h2 class="section-title text-3xl font-extrabold text-[#1F4B4C]">⚠️ Nhận Diện Cạm Bẫy (Reality Check)</h2>
+        
+        <div class="grid md:grid-cols-2 gap-8 mt-8">
+            <!-- Red Flags -->
+            <div>
+                <h3 class="flex items-center gap-2 text-xl font-bold text-red-600 mb-4">
+                    <span>🚩</span> Bẫy Vô Hình (Red Flags)
+                </h3>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-red-100">
+                    <h4 class="font-bold text-gray-800 mb-2">Ảo tưởng: "Tôi có thể Suy Nghĩ để hết Stress"</h4>
+                    <p class="text-gray-600 text-sm mb-4">Rất nhiều CEO và người thành đạt nghĩ rằng chỉ cần đọc sách self-help hay tư duy tích cực là Cortisol sẽ giảm. Sự thật là khi Hormone đã mất cân bằng, nó là một chuỗi phản ứng sinh lý hóa, không phải vấn đề tư duy. Bạn không thể "suy nghĩ" để thoát khỏi một trạng thái sinh học hoảng loạn.</p>
+                    <div class="text-sm bg-red-50 p-3 rounded-md text-red-800">
+                        <strong>Ví dụ Thất bại:</strong> Dr. Sara từng nghĩ cứ đi du lịch (Holiday) là sẽ hết stress. Nhưng khi về, chỉ số máu báo Cortisol vẫn cao gấp 3 mức bình thường. Stress đã trở thành "lỗi hệ thống" (Trauma signature) chứ không còn là stress hoàn cảnh.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guardrails -->
+            <div>
+                <h3 class="flex items-center gap-2 text-xl font-bold text-teal-600 mb-4">
+                    <span>🛡️</span> Chốt Chặn Kỷ Luật (Guardrails)
+                </h3>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-teal-100">
+                    <h4 class="font-bold text-gray-800 mb-2">Quy tắc Vật lý thay vì Ý chí</h4>
+                    <p class="text-gray-600 text-sm mb-4">Ý chí của con người luôn thua gục trước phần não bò sát khi mệt mỏi. Đừng tự dặn mình "không được uống rượu" hay "bớt lướt điện thoại". Hãy thiết lập chốt chặn vật lý không thể phá vỡ.</p>
+                    <div class="text-sm bg-teal-50 p-3 rounded-md text-teal-800 mb-3">
+                        <strong>Chốt chặn 1: Dùng dữ liệu làm quản ngục.</strong> Đeo máy đo đường huyết liên tục (CGM) hoặc vòng Whoop/Oura. Khi bạn THẤY TẬN MẮT một ly cồn làm nát bét chỉ số HRV (sức khỏe tim) suốt 9 ngày, bạn sẽ tự động sợ và bỏ, thay vì cố gắng dằn vặt bản thân.
+                    </div>
+                    <div class="text-sm bg-teal-50 p-3 rounded-md text-teal-800">
+                        <strong>Chốt chặn 2: Ranh giới phòng ngủ.</strong> Để bộ lọc không khí tốt nhất ở phòng ngủ, và để điện thoại ở phòng khác để bảo vệ vùng an toàn của hệ Đối giao cảm.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: ACTIVE RECALL -->
+    <section class="max-w-7xl mx-auto px-6 mb-20">
+        <h2 class="section-title text-3xl font-extrabold text-[#1F4B4C]">🃏 Trạm Ôn Tập (Active Recall)</h2>
+        <p class="text-gray-600 mb-6">Đọc lướt không tạo ra rãnh ghi nhớ. Hãy xem xét 15 điểm trọng yếu sau để biến thông tin thành kiến thức của bạn.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Q&A Items (Visible format as requested) -->
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Hormone nào có tính chất "độc tài", chi phối các hormone khác?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Cortisol. Khi Cortisol cao, cơ thể sẽ giảm sản xuất Testosterone và Estrogen.</div>
+            </div>
+            
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Tại sao mỡ lại hay tập trung ở vùng bụng khi stress?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Vì tế bào mỡ bụng có lượng thụ thể tiếp nhận Cortisol cao gấp nhiều lần các vùng khác.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Chỉ số ACE là gì và nó dự báo điều gì?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Adverse Childhood Experiences (Tổn thương thơ ấu). Điểm >= 1 tăng nguy cơ mắc 45 loại bệnh mãn tính.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Nghịch lý của y học hiện đại với bệnh mãn tính là gì?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">70% bệnh tật giải quyết được bằng lối sống, nhưng y học lại ưu tiên kê thuốc giảm triệu chứng (ví dụ thuốc Statin).</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Dấu hiệu teo não ở nữ giới tuổi trung niên thường do đâu?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Do nồng độ Cortisol cao kéo dài, làm giảm khả năng não bộ sử dụng Glucose làm năng lượng.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Hormone phong phú nhất trong cơ thể phụ nữ là gì?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Testosterone. Nó chi phối sự tự tin, sự tự chủ (agency) và ham muốn tình dục ở nữ.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Microbiome (khuẩn ruột) ảnh hưởng gì đến Estrogen?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Vi khuẩn xấu có thể "tái chế" Estrogen cũ, bơm lại vào máu gây thừa Estrogen (gây ung thư).</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Thuốc tránh thai có tác dụng phụ ẩn nào ít được biết đến?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Tăng viêm nhiễm gấp 2-3 lần, làm teo âm vật tới 20% và cướp đi Testosterone tự do.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Phụ nữ trong giai đoạn Tiền mãn kinh (35-45) mất gì mỗi thập kỷ?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Mất khoảng 2.2kg cơ bắp và tăng 2.2kg mỡ do kháng Insulin.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Cách tốt nhất để tiêu thụ lượng Glucose dư thừa trong máu?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Tập luyện sức mạnh (Nâng tạ / Strength Training) để tăng khối lượng cơ bắp.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Phụ nữ ăn Keto lâu dài thường đối mặt rủi ro gì?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Rối loạn tuyến giáp, chu kỳ kinh nguyệt bất thường và tăng nhẹ Cortisol do não báo động "đói sinh sản".</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Một đêm thiếu ngủ ảnh hưởng thế nào đến cơ thể hôm sau?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Làm tăng Insulin và Cortisol, khiến cơ thể lờ đờ và não liên tục thèm tinh bột/đường.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Khác biệt sinh học trong kích thích tình dục Nam và Nữ?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Nam làm tình để cảm thấy được kết nối. Nữ cần thấy được kết nối cảm xúc TRƯỚC mới có thể làm tình.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Cách hạ HRV (độ biến thiên nhịp tim) nhanh nhất (Cần tránh)?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Uống đồ uống có cồn (Alcohol). Nó làm sập HRV trong 7-9 ngày sau đó.</div>
+            </div>
+
+            <div class="qa-card">
+                <div class="font-bold text-gray-800 mb-2 text-sm">Hành động buổi sáng quan trọng nhất để chỉnh nhịp sinh học?</div>
+                <div class="text-sm text-teal-700 bg-teal-50 p-2 rounded">Đón ánh sáng mặt trời tự nhiên (nhìn về phía chân trời) ít nhất 30 phút ngay khi thức dậy.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: FOOTER -->
+    <footer class="max-w-7xl mx-auto px-6 mb-0">
+        <div class="footer-social px-6 text-center">
+            <h4 class="font-bold text-lg mb-1">Nguyễn Đức Việt - Cập nhật kiến thức thực chiến nhất</h4>
+            <p class="text-sm text-teal-100 mb-4">Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            <div class="flex justify-center gap-6">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="hover:text-red-400 transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    YouTube
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="hover:text-black transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                    TikTok
+                </a>
+                <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="hover:text-blue-400 transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS for Mindmap interaction -->
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+            primaryColor: '#e0f2fe',
+            primaryTextColor: '#0f172a',
+            primaryBorderColor: '#bae6fd',
+            lineColor: '#64748b',
+            secondaryColor: '#f1f5f9',
+            tertiaryColor: '#fff'
+        }});
+
+        let currentScale = 1;
+        const container = document.getElementById('mindmap-container');
+        const wrapper = document.getElementById('mindmap-wrapper');
+
+        function zoomMindmap(step) {
+            currentScale += step;
+            if (currentScale < 0.5) currentScale = 0.5;
+            if (currentScale > 3) currentScale = 3;
+            container.style.transform = `scale(${currentScale})`;
+        }
+
+        function resetMindmap() {
+            currentScale = 1;
+            container.style.transform = `scale(${currentScale}) translate(0px, 0px)`;
+            currentX = 0; currentY = 0;
+        }
+
+        // Panning functionality
+        let isDragging = false;
+        let startX, startY, currentX = 0, currentY = 0;
+
+        wrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - currentX;
+            startY = e.clientY - currentY;
+        });
+
+        wrapper.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            currentX = e.clientX - startX;
+            currentY = e.clientY - startY;
+            container.style.transform = `scale(${currentScale}) translate(${currentX/currentScale}px, ${currentY/currentScale}px)`;
+        });
+
+        wrapper.addEventListener('mouseup', () => { isDragging = false; });
+        wrapper.addEventListener('mouseleave', () => { isDragging = false; });
+
+        // Prevent wheel zoom to stop jumping
+        wrapper.addEventListener('wheel', (e) => {
+            e.preventDefault(); // Stop scrolling when hovering mindmap
+            // We disabled wheel zoom per request, only using buttons
+        }, { passive: false });
+    </script>
+</body>
+</html>
