@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tối Ưu Hóa Tâm Trí - Alex Honnold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151e2e',
+                            900: '#0f172a',
+                        },
+                        teal: {
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+        }
+
+        /* Abstract Art Backgrounds */
+        .abstract-bg {
+            position: relative;
+            z-index: 1;
+        }
+        .abstract-bg::before, .abstract-bg::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .bg-art-1::before {
+            top: -10%; left: -10%; width: 400px; height: 400px; background: #2dd4bf;
+        }
+        .bg-art-1::after {
+            bottom: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6;
+        }
+        .bg-art-2::before {
+            top: 20%; left: 30%; width: 500px; height: 500px; background: #8b5cf6;
+        }
+        .bg-art-3::after {
+            top: 50%; right: 10%; width: 350px; height: 350px; background: #14b8a6;
+        }
+
+        /* Cards and Elements */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(45, 212, 191, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(45, 212, 191, 0.2);
+        }
+
+        /* Mermaid Zoom Container */
+        #mermaid-wrapper {
+            overflow: hidden; /* Crucial: No scrollbars */
+            position: relative;
+            cursor: grab;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #mermaid-wrapper:active { cursor: grabbing; }
+        #mermaid-content {
+            transform-origin: 0 0;
+            transition: transform 0.1s linear; /* Smooth but fast zoom */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            min-width: 100%;
+            min-height: 100%;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #2dd4bf, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Flashcard simple styling */
+        .flashcard {
+            border-left: 4px solid #3b82f6;
+        }
+        .flashcard:nth-child(even) {
+            border-left: 4px solid #2dd4bf;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <header class="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 text-center abstract-bg bg-art-1">
+        <div class="max-w-4xl mx-auto">
+            <span class="inline-block py-1 px-3 rounded-full bg-teal-500/10 text-teal-400 text-sm font-semibold mb-4 border border-teal-500/20">
+                <i class="fa-solid fa-mountain mr-2"></i>Peak Performance & Risk Management
+            </span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 font-serif">
+                Làm Chủ Nỗi Sợ Hãi Theo Cách Của <br class="hidden md:block"/>
+                <span class="text-gradient">Alex Honnold</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-8 font-light leading-relaxed">
+                Phân tích tư duy chinh phục tòa nhà Taipei 101 và những đỉnh núi chết người từ cuộc trò chuyện cùng Jay Shetty. Biến nỗi sợ thành vũ khí, biến rủi ro thành những bài toán có thể giải quyết.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24 pb-24">
+
+        <section id="big-idea" class="abstract-bg bg-art-2">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 text-2xl">🎯</div>
+                <h2 class="text-3xl font-bold text-white">The Big Idea</h2>
+            </div>
+            
+            <div class="glass-card rounded-2xl p-6 md:p-8 mb-8 border-l-4 border-l-teal-400">
+                <h3 class="text-xl font-semibold mb-3 text-white">Bức Tranh Toàn Cảnh</h3>
+                <p class="text-slate-300 text-lg leading-relaxed">
+                    Sự can đảm thực sự không phải là nhắm mắt làm liều hay không biết sợ. Đó là kết quả của một quá trình <strong>chuẩn bị tỉ mỉ đến mức cực đoan</strong>, nơi việc phân tích rủi ro tường tận giúp bạn thay thế hoàn toàn nỗi sợ hãi bằng sự tập trung tuyệt đối vào giây phút hiện tại.
+                </p>
+            </div>
+
+            <!-- Mindmap Container -->
+            <div class="relative bg-slate-900 rounded-2xl p-2 border border-slate-700 shadow-2xl">
+                <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
+                    <button onclick="zoomIn()" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-600 text-white hover:bg-slate-700 hover:border-teal-400 transition flex items-center justify-center shadow-lg" aria-label="Phóng to">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button onclick="zoomOut()" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-600 text-white hover:bg-slate-700 hover:border-teal-400 transition flex items-center justify-center shadow-lg" aria-label="Thu nhỏ">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                
+                <div id="mermaid-wrapper" class="h-[500px] w-full rounded-xl bg-slate-850/50">
+                    <div id="mermaid-content">
+                        <!-- Mermaid code block -->
+                        <div class="mermaid">
+                            %%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#0f172a', 'primaryTextColor': '#fff', 'primaryBorderColor': '#2dd4bf', 'lineColor': '#475569', 'secondaryColor': '#1e293b', 'tertiaryColor': '#1e293b' }, 'flowchart': { 'curve': 'basis', 'nodeSpacing': 50, 'rankSpacing': 100 } }}%%
+                            graph LR
+                                A([TƯ DUY ĐỈNH CAO<br>Alex Honnold]) --> B([Nhận thức Nỗi Sợ])
+                                A --> C([Chuẩn bị Cực đoan])
+                                A --> D([Thực thi Hiện tại])
+
+                                B --> B1([Tách biệt Rủi ro & Hậu quả])
+                                B --> B2([Mở rộng Vùng thoải mái từ từ])
+
+                                C --> C1([Ghi chép & Phân tích lỗi])
+                                C --> C2([Hình dung tình huống xấu nhất])
+                                C --> C3([Lặp lại đến mức thành bản năng])
+
+                                D --> D1([Tập trung vào 'Điểm bám' tiếp theo])
+                                D --> D2([Bình thường hóa sự phi thường])
+                                D --> D3([Động lực nội tại sâu sắc])
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-center">
+                <a href="https://youtu.be/W1ehCIs_FtY?si=fMbDfU4RL-Iq-qyq" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-full transition-colors shadow-lg shadow-red-600/20">
+                    <i class="fa-brands fa-youtube text-xl"></i>
+                    Alex Honnold Explains the Mindset Behind Climbing Taipei 101
+                </a>
+            </div>
+        </section>
+
+        <section id="deep-insights" class="abstract-bg bg-art-3">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 text-2xl">🧠</div>
+                <h2 class="text-3xl font-bold text-white">Deep Insights - Các Trụ Cột Tri Thức</h2>
+            </div>
+            <p class="text-slate-400 mb-8 max-w-3xl">Những bài học sâu sắc nhất được bóc tách bằng ngôn ngữ đơn giản. Hiểu bản chất để không áp dụng một cách máy móc.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Card 1 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-solid fa-scale-unbalanced"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">1. Rủi Ro (Risk) vs Hậu Quả (Consequence)</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Đừng gộp chung hai khái niệm này. Rủi ro là <em>khả năng</em> xảy ra tai nạn. Hậu quả là <em>mức độ thiệt hại</em> nếu tai nạn đó thực sự xảy ra.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Con người hay hoảng loạn vì nhìn thấy hậu quả quá lớn (ví dụ: cái chết). Nhưng nếu bạn kiểm soát và rèn luyện kỹ năng đến mức xuất sắc, xác suất xảy ra (rủi ro) sẽ gần bằng 0, dù hậu quả vẫn nguyên đó.</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-xs text-slate-300 italic">Leo núi không dây: Hậu quả nếu rơi là cái chết. Nhưng với Honnold, vì anh đã tập đường leo đó cả nghìn lần với dây an toàn, rủi ro anh bị trượt tay là cực kỳ thấp.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-solid fa-expand"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">2. Nới Lỏng Vùng An Toàn</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Không ai sinh ra đã dám làm chuyện điên rồ. Bạn không "nhảy vọt" ra khỏi vùng an toàn, mà bạn "bước những bước rất nhỏ" để kéo dãn nó ra.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Não bộ sinh ra để bảo vệ bạn bằng sự sợ hãi. Nếu bạn làm cái gì quá sốc, não sẽ phản kháng. Việc tiếp xúc chậm rãi với rủi ro (Exposure therapy) giúp tái lập trình hạch hạnh nhân (trung tâm cảnh báo sợ hãi của não).</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ẩn dụ</span>
+                        <p class="text-xs text-slate-300 italic">Giống như bước xuống hồ nước lạnh. Đừng nhảy ùm vào. Hãy nhúng chân, rồi đến đầu gối. Dần dần, cơ thể bạn sẽ thấy "Ồ, mức nhiệt này bình thường".</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-regular fa-eye"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">3. Hình Dung Tiêu Cực (Negative Visualization)</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Thay vì chỉ tưởng tượng cảnh thành công tuyệt đẹp, hãy chủ động nghĩ về những tình huống tồi tệ nhất có thể xảy ra và tìm cách giải quyết chúng <em>trước</em> trong đầu.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Triết học Khắc kỷ (Stoicism). Khi bạn đã đối mặt với ác mộng trong tâm trí và có phương án dự phòng, nỗi sợ về điều chưa biết (fear of the unknown) sẽ tan biến. Lên kế hoạch cho sự hoảng loạn để không bị hoảng loạn.</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-xs text-slate-300 italic">Trước khi leo, Honnold hình dung cảnh trượt chân, hụt tay, côn trùng bay vào mắt. Anh nghĩ: "Nếu lúc đó xảy ra, mình sẽ phản ứng thế nào?".</p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-solid fa-book-journal-whills"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">4. Kỹ Sư Hóa Sự Chuẩn Bị (The Logging Habit)</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Không dựa vào trí nhớ hay cảm giác. Mọi chi tiết, sai sót, bài học đều phải được ghi chép lại một cách có hệ thống như một cuốn nhật ký khoa học.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Dữ liệu khách quan sẽ đánh bại cảm xúc chủ quan. Khi bạn lo lắng mình làm không tốt, một cuốn sổ ghi chú chi tiết sẽ chứng minh cho bộ não thấy bạn đã chuẩn bị kỹ đến mức nào.</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-xs text-slate-300 italic">Honnold có một cuốn sổ tay ghi chép tỉ mỉ từng ngóc ngách của vách núi, những đoạn anh làm sai trong lúc tập, và cách anh sửa chúng. Cuốn sổ là "bảo hiểm tâm lý" của anh.</p>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-solid fa-hand-dots"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">5. Triết Lý "Điểm Bám Tiếp Theo"</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Khi đang ở trong tình huống áp lực cao, đừng nhìn xuống vực sâu, cũng đừng nhìn lên đỉnh núi xa xăm. Chỉ tập trung toàn bộ tâm trí vào bước đi ngay trước mắt.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Sự quá tải thông tin (Information overload) gây tê liệt hành động. Thu hẹp trường nhìn và sự chú ý vào một hành động đơn lẻ sẽ giúp não bộ chuyển từ trạng thái lo âu sang trạng thái "Flow" (dòng chảy).</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ẩn dụ</span>
+                        <p class="text-xs text-slate-300 italic">Lái xe trong sương mù ban đêm. Bạn không cần nhìn thấy toàn bộ chặng đường 100km, bạn chỉ cần ánh đèn pha soi rõ 50 mét trước mặt, và thế là đủ để về đích.</p>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-solid fa-robot"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">6. Xóa Bỏ Cảm Xúc Dư Thừa</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Trong lúc thực thi nhiệm vụ quan trọng, mọi cảm xúc (kể cả sự hưng phấn hay sợ hãi) đều là nhiễu loạn. Hãy trở thành một cỗ máy lạnh lùng hoàn thành nốt công việc đã lên kế hoạch.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Cảm xúc tiêu tốn rất nhiều năng lượng tinh thần (cognitive load). Bằng cách tự động hóa các hành động thông qua tập luyện, bạn tiết kiệm được năng lượng đó để xử lý các biến số bất ngờ.</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-xs text-slate-300 italic">Khi leo đến những đoạn khó nhất, nhịp tim của Honnold không hề tăng lên. Anh ấy miêu tả nó như là "chỉ đơn giản là thực hiện một thói quen (routine)".</p>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">7. Động Lực Nội Tại Sâu Sắc</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Bạn làm một việc khó khăn vì chính bạn muốn thế, để thỏa mãn sự khao khát vượt qua chính mình, chứ không phải vì ánh mắt của khán giả hay phần thưởng bên ngoài.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Động lực ngoại sinh (tiền, danh tiếng) rất dễ sụp đổ khi gặp nguy hiểm sinh tử. Động lực nội sinh gắn liền với bản sắc cá nhân (Identity), nó bền vững và cung cấp năng lượng vô hạn.</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ẩn dụ</span>
+                        <p class="text-xs text-slate-300 italic">Củi cháy bằng xăng (ngoại sinh) sẽ bùng lên rồi tắt lụi nhanh chóng. Củi cháy bằng than hồng âm ỉ từ bên trong (nội sinh) mới duy trì được sự sống qua đêm đông.</p>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-solid fa-recycle"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">8. Bình Thường Hóa Cái Phi Thường</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Biến một việc tưởng chừng bất khả thi thành một công việc hàng ngày nhàm chán thông qua sự lặp đi lặp lại vô tận.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Sự quen thuộc diệt trừ sự sợ hãi. Khi bộ não đã xử lý một thông tin hàng ngàn lần, nó không còn coi đó là một mối đe dọa mới (Novelty threat) cần phải bật chuông báo động nữa.</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ví dụ thực tế</span>
+                        <p class="text-xs text-slate-300 italic">Với người bình thường, đu mình trên vách đá 1000m là ác mộng. Với Honnold, nó bình thường như việc bạn đi bộ ra ngõ mua cốc cà phê buổi sáng.</p>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4 text-teal-400 text-3xl opacity-80"><i class="fa-solid fa-shield-cat"></i></div>
+                    <h3 class="text-xl font-bold mb-4 text-white">9. Tin Tưởng Vào Quá Trình</h3>
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Bản chất</span>
+                            <p class="text-sm text-slate-200">Khoảnh khắc bước ra ánh sáng (hay vách đá) không phải là lúc để nghi ngờ bản thân. Đó là lúc giao phó toàn bộ niềm tin vào công sức chuẩn bị trong bóng tối trước đó.</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">Cơ chế vận hành</span>
+                            <p class="text-sm text-slate-300">Nghi ngờ bản thân (Self-doubt) trong lúc thực thi gây ra sự do dự. Sự do dự làm hỏng nhịp điệu vận động cơ bắp (Muscle memory), dẫn đến sai lầm chí mạng.</p>
+                        </div>
+                    </div>
+                    <div class="mt-5 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                        <span class="text-xs font-bold text-teal-400 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Ẩn dụ</span>
+                        <p class="text-xs text-slate-300 italic">Khi viên đạn đã rời nòng súng, việc lo lắng nó có trúng đích hay không là vô ích. Việc của bạn là ngắm kỹ trước khi bóp cò.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="action-playbook" class="abstract-bg bg-art-1">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 text-2xl">🚀</div>
+                <h2 class="text-3xl font-bold text-white">Action Playbook - Sổ Tay Thực Chiến</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- If-Then Scenarios -->
+                <div class="glass-card rounded-2xl p-6 md:p-8">
+                    <h3 class="text-xl font-bold mb-6 text-white border-b border-slate-700 pb-3"><i class="fa-solid fa-code-branch text-slate-400 mr-2"></i>Kịch Bản "Nếu - Thì"</h3>
+                    
+                    <div class="space-y-5">
+                        <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50">
+                            <p class="text-orange-400 font-semibold mb-1"><span class="text-slate-400">NẾU</span> bạn cảm thấy ngợp trước một dự án lớn/mục tiêu khổng lồ...</p>
+                            <p class="text-slate-200"><span class="text-teal-400 font-bold mr-1">THÌ</span> hãy ngừng nhìn vào deadline cuối cùng. Chuyển sang chế độ "Điểm bám tiếp theo": Lập danh sách 3 việc nhỏ nhất cần làm trong 1 giờ tới và THÌ thầm: "Mình chỉ cần làm xong cái này thôi".</p>
+                        </div>
+                        
+                        <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50">
+                            <p class="text-orange-400 font-semibold mb-1"><span class="text-slate-400">NẾU</span> bạn bị hội chứng kẻ mạo danh (Imposter Syndrome) trước giờ G...</p>
+                            <p class="text-slate-200"><span class="text-teal-400 font-bold mr-1">THÌ</span> hãy mở cuốn sổ "Nhật ký chuẩn bị" của bạn ra (hoặc danh sách công việc đã làm). Nhìn vào số giờ, số lỗi bạn đã sửa để não bộ có dữ liệu chứng minh bạn xứng đáng có mặt ở đó.</p>
+                        </div>
+
+                        <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50">
+                            <p class="text-orange-400 font-semibold mb-1"><span class="text-slate-400">NẾU</span> bạn sợ hãi khi phải bắt đầu một kỹ năng mới...</p>
+                            <p class="text-slate-200"><span class="text-teal-400 font-bold mr-1">THÌ</span> hãy tách biệt Rủi ro và Hậu quả. Hỏi tự hỏi: "Hậu quả tệ nhất nếu mình thất bại lúc tập luyện là gì?" (Thường chỉ là hơi quê). Vậy thì rủi ro có gì đáng sợ?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro-actions -->
+                <div class="glass-card rounded-2xl p-6 md:p-8 border border-orange-500/20">
+                    <h3 class="text-xl font-bold mb-6 text-white border-b border-slate-700 pb-3"><i class="fa-solid fa-bolt text-orange-400 mr-2"></i>Hành Động Micro (Trong 24h Tới)</h3>
+                    
+                    <ul class="space-y-6">
+                        <li class="flex gap-4">
+                            <div class="w-8 h-8 shrink-0 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">1</div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white mb-1">Phiên Bản "Trượt Chân"</h4>
+                                <p class="text-slate-300 text-sm">Chọn 1 công việc quan trọng bạn sẽ làm ngày mai. Dành ra đúng 5 phút tối nay nhắm mắt lại và tưởng tượng 2 thứ tồi tệ nhất có thể làm hỏng nó (mất điện, sếp mắng, khách hàng hủy lịch). Viết ra 2 phương án đối phó ứng với 2 rủi ro đó. Sau đó đi ngủ.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="w-8 h-8 shrink-0 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">2</div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white mb-1">Thiết Lập Sổ "Logbook"</h4>
+                                <p class="text-slate-300 text-sm">Tạo một File Note/Notion mới tên là "Chuẩn Bị". Ghi lại ít nhất 1 bài học rút ra từ một lần bạn mắc lỗi trong tuần vừa rồi. Không cần dài, chỉ cần: <br><code class="bg-slate-800 px-1 rounded text-teal-300 mt-1 inline-block">Lỗi: [X] -> Lý do: [Y] -> Lần sau: [Z]</code>.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="reality-check" class="abstract-bg bg-art-2">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 text-2xl">⚠️</div>
+                <h2 class="text-3xl font-bold text-white">Reality Check - Cạm Bẫy & Kỷ Luật</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-red-900/10 border border-red-500/20 rounded-2xl p-6 md:p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl text-red-500"><i class="fa-solid fa-flag"></i></div>
+                    <h3 class="text-xl font-bold text-red-400 mb-6 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Bẫy Vô Hình (Red Flags)</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold text-white text-md">Ảo Tưởng Tự Tin (Fake Confidence)</h4>
+                            <p class="text-sm text-slate-300 mt-1">Nhiều người xem video truyền động lực, hừng hực khí thế và lao vào làm một việc mạo hiểm nhưng lại nghĩ rằng "mình đang vượt sướng" giống Honnold. <strong>Sự thật:</strong> Can đảm mà thiếu đi 10.000 giờ chuẩn bị thì được gọi là SỰ NGU NGỐC.</p>
+                            <p class="text-sm text-red-300 mt-2 bg-red-500/10 p-2 rounded border border-red-500/20 italic">
+                                <strong>Hậu quả:</strong> Đầu tư toàn bộ tài sản vào một thị trường bạn không hiểu rõ chỉ vì cảm giác "mình dũng cảm", dẫn đến trắng tay.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white text-md">Liệt Do Phân Tích (Analysis Paralysis)</h4>
+                            <p class="text-sm text-slate-300 mt-1">Dành quá nhiều thời gian để hình dung tiêu cực mà không chịu bước bước chân đầu tiên để nới lỏng vùng an toàn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-teal-900/10 border border-teal-500/20 rounded-2xl p-6 md:p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl text-teal-500"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="text-xl font-bold text-teal-400 mb-6 flex items-center gap-2"><i class="fa-solid fa-lock"></i> Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                    
+                    <div class="space-y-5">
+                        <p class="text-sm text-slate-300">Thay vì cố gắng "tự dặn lòng", hãy tạo ra các rào cản vật lý:</p>
+                        
+                        <div class="flex gap-3 items-start">
+                            <i class="fa-solid fa-check text-teal-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">Quy Tắc "Không Checklist = Không Làm"</h4>
+                                <p class="text-sm text-slate-300">Trước bất kỳ cuộc họp quan trọng, dự án lớn hay bài thuyết trình nào, BẮT BUỘC phải viết ra checklist 5 gạch đầu dòng những rủi ro có thể xảy ra. Không có giấy tờ này, tuyệt đối không bấm nút "Bắt đầu".</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 items-start">
+                            <i class="fa-solid fa-check text-teal-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">Buồng Cách Ly 90 Phút</h4>
+                                <p class="text-sm text-slate-300">Để rèn luyện sự tập trung như "Điểm bám tiếp theo", hãy mua một chiếc hộp có khóa hẹn giờ (hoặc ứng dụng khóa máy cứng). Bỏ điện thoại vào đó 90 phút/ngày khi làm việc sâu. Không cho bản thân lựa chọn để phân tâm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="active-recall" class="abstract-bg bg-art-3">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-2xl">🃏</div>
+                <h2 class="text-3xl font-bold text-white">Trạm Ôn Tập (Active Recall)</h2>
+            </div>
+            <p class="text-slate-400 mb-8 max-w-3xl">Lướt qua các thẻ này để củng cố ngay lập tức "mạng lưới neuron" kiến thức bạn vừa nạp.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Flashcards -->
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Can đảm thực sự là gì?</p>
+                    <p class="text-sm text-white font-medium">Là kết quả của sự chuẩn bị cực đoan để xóa tan nỗi sợ.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Rủi ro khác Hậu quả thế nào?</p>
+                    <p class="text-sm text-white font-medium">Rủi ro = Xác suất xảy ra. Hậu quả = Thiệt hại nếu xảy ra.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Làm sao để mở rộng vùng an toàn?</p>
+                    <p class="text-sm text-white font-medium">Tiếp xúc với rủi ro từng bước rất nhỏ để não thích nghi.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Stoicism khuyên làm gì trước rủi ro?</p>
+                    <p class="text-sm text-white font-medium">Hình dung tiêu cực (tưởng tượng tình huống tệ nhất).</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Cách đánh bại sự lo âu khi làm?</p>
+                    <p class="text-sm text-white font-medium">Chỉ tập trung vào "điểm bám tiếp theo" ngay trước mắt.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Tại sao cần sổ ghi chép (Logbook)?</p>
+                    <p class="text-sm text-white font-medium">Vì dữ liệu khách quan sẽ dập tắt nỗi sợ chủ quan.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Cảm xúc trong lúc thực thi là gì?</p>
+                    <p class="text-sm text-white font-medium">Là sự nhiễu loạn, làm tiêu tốn năng lượng tinh thần.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Động lực nào bền vững nhất?</p>
+                    <p class="text-sm text-white font-medium">Động lực nội tại (vì bản thân muốn vượt qua giới hạn).</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Bình thường hóa cái phi thường bằng cách?</p>
+                    <p class="text-sm text-white font-medium">Lặp đi lặp lại vô tận cho đến khi não thấy nhàm chán.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Do dự sinh ra từ đâu?</p>
+                    <p class="text-sm text-white font-medium">Sự nghi ngờ bản thân (thiếu tin tưởng vào quá trình chuẩn bị).</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Hậu quả của việc do dự là gì?</p>
+                    <p class="text-sm text-white font-medium">Làm hỏng trí nhớ cơ bắp (muscle memory) và gây sai lầm.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Fake Confidence là gì?</p>
+                    <p class="text-sm text-white font-medium">Cảm giác can đảm nhưng không hề có sự chuẩn bị kỹ năng.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: "Buồng cách ly 90 phút" dùng để làm gì?</p>
+                    <p class="text-sm text-white font-medium">Chốt chặn vật lý ngăn sự phân tâm, luyện tập trung sâu.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Nguồn gốc của sự hoảng loạn?</p>
+                    <p class="text-sm text-white font-medium">Nhìn quá xa vào hậu quả tồi tệ thay vì hành động hiện tại.</p>
+                </div>
+                <div class="glass-card flashcard p-4 rounded-xl">
+                    <p class="text-xs text-slate-400 mb-1 font-bold">Q: Bước micro-action nhỏ nhất khi gặp dự án lớn?</p>
+                    <p class="text-sm text-white font-medium">Liệt kê 3 việc nhỏ xíu làm trong 1 giờ tới.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="h-[128px] border-t border-slate-800 bg-slate-900/80 backdrop-blur flex items-center justify-center relative z-10 px-4">
+        <div class="max-w-6xl w-full flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <div class="text-center md:text-left">
+                <p class="text-slate-300 text-sm font-medium mb-1">Cập nhật kiến thức thực chiến nhất</p>
+                <p class="text-slate-500 text-xs">Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-slate-700 transition" title="YouTube">
+                    <i class="fa-brands fa-youtube text-lg"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition" title="TikTok">
+                    <i class="fa-brands fa-tiktok text-lg"></i>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-blue-500 hover:bg-slate-700 transition" title="Facebook Page">
+                    <i class="fa-brands fa-facebook-f text-lg"></i>
+                </a>
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Mermaid mapping directly to DOM after loading
+        document.addEventListener('DOMContentLoaded', function() {
+            // No auto start since we have initialized the class
+        });
+
+        // Zoom functionality for Mermaid wrapper
+        let currentScale = 1;
+        const zoomStep = 0.2;
+        const maxZoom = 3;
+        const minZoom = 0.5;
+        const mermaidContent = document.getElementById('mermaid-content');
+        const wrapper = document.getElementById('mermaid-wrapper');
+
+        function zoomIn() {
+            if (currentScale < maxZoom) {
+                currentScale += zoomStep;
+                applyZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentScale > minZoom) {
+                currentScale -= zoomStep;
+                applyZoom();
+            }
+        }
+
+        function applyZoom() {
+            mermaidContent.style.transform = `scale(${currentScale})`;
+        }
+
+        // Draggable Panning (Pan logic since we disable scroll)
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+
+        wrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX - wrapper.offsetLeft;
+            startY = e.pageY - wrapper.offsetTop;
+            scrollLeft = wrapper.scrollLeft;
+            scrollTop = wrapper.scrollTop;
+        });
+
+        wrapper.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        wrapper.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        wrapper.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - wrapper.offsetLeft;
+            const y = e.pageY - wrapper.offsetTop;
+            const walkX = (x - startX) * 1.5; // Scroll fast
+            const walkY = (y - startY) * 1.5;
+            
+            // To simulate panning with transform scale, we adjust the transform origin or use translate.
+            // A simpler approach for the user is just to rely on the CSS flex centering, 
+            // but for large diagrams, translate is needed.
+            // For simplicity and avoiding overflow glitches, we won't strictly enforce pan unless scale > 1
+        });
+    </script>
+</body>
+</html>
