@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ tay: Vận Động & Trí Não</title>
+    
+    <!-- Tích hợp Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tích hợp FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Thư viện Mermaid cho Mindmap -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <!-- Cấu hình CSS Custom & Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brain: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        },
+                        healing: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Abstract Art Backgrounds */
+        .abstract-blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(20px) scale(1.05); }
+        }
+
+        .blob-1 { top: 0; left: -10%; width: 50vw; height: 50vw; background: #e0f2fe; border-radius: 50%; }
+        .blob-2 { top: 20%; right: -10%; width: 40vw; height: 40vw; background: #dcfce7; border-radius: 50%; animation-delay: -5s; }
+        .blob-3 { bottom: 10%; left: 20%; width: 60vw; height: 40vw; background: #f3e8ff; border-radius: 50%; animation-delay: -2s; }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Mindmap Container Controls */
+        #mindmap-wrapper {
+            position: relative;
+            width: 100%;
+            height: 600px; /* Fixed height */
+            overflow: hidden; /* Cấm cuộn tự do */
+            border-radius: 1rem;
+            background: #ffffff;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        #mermaid-zoom-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .zoom-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            color: #334155;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        
+        .zoom-btn:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        /* Section Abstract Decorators */
+        .section-decorator {
+            width: 60px;
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+        }
+        .dec-blue { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+        .dec-green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .dec-purple { background: linear-gradient(90deg, #a855f7, #c084fc); }
+        .dec-red { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .dec-yellow { background: linear-gradient(90deg, #eab308, #facc15); }
+    </style>
+</head>
+<body class="relative antialiased text-slate-800">
+
+    <!-- Background Art -->
+    <div class="abstract-blob blob-1"></div>
+    <div class="abstract-blob blob-2"></div>
+    <div class="abstract-blob blob-3"></div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <span class="inline-block py-1 px-3 rounded-full bg-brain-100 text-brain-900 text-sm font-semibold tracking-wide mb-4 border border-brain-500/20">
+                <i class="fa-solid fa-brain mr-2"></i> Neuroscience & Lifestyle
+            </span>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brain-900 to-brain-500 leading-tight mb-6">
+                Vận Động: "Liều Thuốc" Bảo Vệ <br class="hidden md:block"> Trí Não Khỏi Sự Tàn Phá Của Thời Gian
+            </h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                Chào bạn, tôi ở đây để cùng bạn bóc tách những khám phá thay đổi cuộc đời từ Tiến sĩ Wendy Suzuki. 
+                Chúng ta không nói về việc tập để có 6 múi. Chúng ta đang nói về việc xây dựng một bộ não "chống đạn".
+            </p>
+        </header>
+
+        <section id="big-idea" class="mb-24">
+            <div class="glass-card rounded-3xl p-8 md:p-12">
+                <div class="section-decorator dec-blue"></div>
+                <h2 class="text-3xl font-bold mb-6 flex items-center">
+                    <span class="text-4xl mr-3">🎯</span> [The Big Idea] Bức tranh toàn cảnh
+                </h2>
+                
+                <div class="bg-blue-50 border-l-4 border-brain-500 p-6 rounded-r-2xl mb-10 shadow-sm">
+                    <p class="text-lg text-brain-900 font-medium leading-relaxed italic">
+                        "Tập thể dục là sự can thiệp duy nhất có khả năng chuyển đổi tức thì cấu trúc hóa học của não bộ, và là khoản đầu tư sinh lời cao nhất để bảo vệ hồi hải mã của bạn khỏi sự tấn công của lão hóa và căn bệnh sa sút trí tuệ."
+                    </p>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-slate-700"><i class="fa-solid fa-sitemap text-brain-500 mr-2"></i> Khung Xương Kiến Thức (Mindmap)</h3>
+                
+                <!-- Mindmap Container -->
+                <div id="mindmap-wrapper" class="border border-slate-200">
+                    <!-- Nút điều khiển -->
+                    <div class="zoom-controls">
+                        <button id="zoom-out" class="zoom-btn" title="Thu nhỏ"><i class="fa-solid fa-minus"></i></button>
+                        <button id="zoom-in" class="zoom-btn" title="Phóng to"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    
+                    <!-- Vùng chứa Mermaid -->
+                    <div id="mermaid-zoom-container">
+                        <div class="mermaid">
+                            %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e0f2fe', 'primaryTextColor': '#0f172a', 'primaryBorderColor': '#0ea5e9', 'lineColor': '#94a3b8', 'fontFamily': 'Inter'}}}%%
+                            graph LR
+                                Root("🧠 BỘ NÃO & VẬN ĐỘNG") --> Mech("Cơ chế Sinh học")
+                                Root --> Short("Hiệu ứng Tức thì")
+                                Root --> Long("Tấm khiên Dài hạn")
+                                Root --> Enemy("Kẻ thù của Não")
+                                
+                                Mech --> M1("Tăng lưu lượng máu lên não")
+                                Mech --> M2("Tiết ra BDNF (Phân bón não)")
+                                Mech --> M3("Sản sinh Dopamine & Serotonin")
+                                
+                                Short --> S1("Tăng cường độ tập trung (2 tiếng)")
+                                Short --> S2("Cải thiện Tâm trạng ngay lập tức")
+                                Short --> S3("Phản xạ nhanh nhạy hơn")
+                                
+                                Long --> L1("Tạo Tế bào thần kinh mới (Neurogenesis)")
+                                Long --> L2("Làm to Hồi hải mã (Trung tâm trí nhớ)")
+                                Long --> L3("Trì hoãn Sa sút trí tuệ (Dementia/Alzheimer)")
+                                
+                                Enemy --> E1("Lối sống tĩnh tại (Ngồi quá nhiều)")
+                                Enemy --> E2("Thiếu ngủ mãn tính")
+                                Enemy --> E3("Căng thẳng tột độ kéo dài")
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nút Link Video Youtube -->
+                <div class="mt-8 text-center">
+                    <a href="https://youtu.be/5o-tRub-0pQ" target="_blank" rel="noopener noreferrer" 
+                       class="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-full transition-all shadow-lg hover:shadow-red-500/30 transform hover:-translate-y-1">
+                        <i class="fa-brands fa-youtube text-2xl mr-3"></i>
+                        Nhà Thần kinh học: Nghiên cứu Mới về Vận Động và Sa sút Trí tuệ!
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="deep-insights" class="mb-24">
+            <div class="section-decorator dec-green"></div>
+            <h2 class="text-3xl font-bold mb-4 flex items-center">
+                <span class="text-4xl mr-3">🧠</span> [Deep Insights] 9 Trụ cột Tri thức
+            </h2>
+            <p class="text-slate-600 mb-10 text-lg">Bóc tách khoa học não bộ bằng ngôn ngữ bình dân nhất. Đừng cố học thuộc, hãy hiểu "tại sao nó lại thế".</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Insight 1 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-healing-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">🧬</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">1. Tính khả dẻo của Não (Neuroplasticity)</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-healing-900 bg-healing-50 px-2 py-1 rounded">Bản chất:</span> Não bạn không phải là một khối bê tông đúc sẵn. Nó giống như đất sét, có thể liên tục thay đổi hình dáng, tái tạo mạng lưới kể cả khi bạn đã già.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Khi bạn học cái mới hoặc vận động, não tự tạo ra các con đường liên kết thần kinh mới. Con đường nào được dùng nhiều sẽ to ra (khỏe hơn), không dùng sẽ teo đi.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ẩn dụ:</span> Não bạn giống như khu rừng. Càng đi nhiều một tuyến đường, đường đó càng mòn, rộng rãi và dễ đi. Nếu ngừng đi, cỏ dại sẽ mọc lấp mất đường.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">✨</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">2. Phân tử màu nhiệm BDNF</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-blue-900 bg-blue-50 px-2 py-1 rounded">Bản chất:</span> BDNF (Brain-Derived Neurotrophic Factor) là một loại protein cực kỳ quan trọng do não tiết ra, giúp tế bào thần kinh sống sót và sinh sôi.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Ngay khi bạn tập thể dục nhịp tim tăng, não lập tức "tắm" trong BDNF. Phân tử này đặc biệt tập trung ở khu vực trí nhớ, giúp tế bào mới mọc lên khỏe mạnh.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ví dụ:</span> Dr. Wendy gọi BDNF chính là "Miracle-Gro" (Thương hiệu phân bón siêu tốc nổi tiếng) dành riêng cho bộ não của bạn. Vận động chính là động tác tưới phân bón đó.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">💾</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">3. Hồi hải mã (Hippocampus)</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-purple-900 bg-purple-50 px-2 py-1 rounded">Bản chất:</span> Đây là cấu trúc nhỏ nằm sâu trong não, đóng vai trò sống còn trong việc tạo ra, lưu trữ trí nhớ mới và khả năng tưởng tượng.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Nó là khu vực rất nhạy cảm. Tuổi tác, stress khiến nó teo lại. Nhưng vận động đều đặn thực sự làm nó TO LÊN về mặt vật lý nhờ sự sinh sôi của tế bào mới.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ẩn dụ:</span> Giống như ổ cứng (SSD) của máy tính. Bệnh sa sút trí tuệ là virus phá hủy ổ cứng này. Tập thể dục là cách bạn chủ động mua thêm dung lượng lưu trữ trước khi virus tấn công.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-yellow-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">⏳</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">4. Hiệu ứng Tức thì vs. Dài hạn</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-yellow-900 bg-yellow-50 px-2 py-1 rounded">Bản chất:</span> Bạn không cần chờ vài tháng mới thấy kết quả. Lợi ích của việc vận động xảy ra ngay ở giây phút bạn hoàn thành bài tập.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Một lần tập kéo dài tâm trạng tốt và sự tập trung cao độ lên đến 2 giờ (ngắn hạn). Nếu tập liên tục, bạn thay đổi vĩnh viễn cấu trúc giải phẫu của não (dài hạn).</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ẩn dụ:</span> Tập 1 buổi giống như uống 1 cốc cà phê xịn (tỉnh táo ngay lập tức). Nhưng tập 1 năm giống như nâng cấp toàn bộ hệ điều hành (chạy mượt mà mãi mãi).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-red-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">🪑</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">5. Kẻ thù số 1: Lối sống tĩnh tại</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-red-900 bg-red-50 px-2 py-1 rounded">Bản chất:</span> Ngồi một chỗ quá lâu (Sedentary lifestyle) không chỉ làm to vòng bụng, mà nó đang âm thầm "bỏ đói" não bộ của bạn.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Thiếu vận động làm giảm sút lưu lượng máu giàu oxy lên não. Các kết nối thần kinh không được kích thích sẽ dần suy yếu, tăng nguy cơ teo não sớm.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ẩn dụ:</span> Chiếc ghế văn phòng êm ái của bạn thực chất giống như một cái "kẹp" đang siết chặt ống truyền dinh dưỡng lên bộ não.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">🛡️</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">6. Lá chắn Sa sút Trí tuệ</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-indigo-900 bg-indigo-50 px-2 py-1 rounded">Bản chất:</span> Tập thể dục không "chữa khỏi" hoàn toàn Alzheimer/Dementia nếu nó đã phát, nhưng nó có thể đẩy lùi thời điểm phát bệnh đi nhiều năm.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Bằng cách làm cho hồi hải mã to nhất, mạnh nhất có thể từ khi bạn còn trẻ. Khi căn bệnh đến tàn phá, nó mất nhiều thời gian hơn để làm hỏng một bộ não "dày dặn" so với một bộ não yếu ớt.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ẩn dụ:</span> Bạn xây một bức tường thành (Trí nhớ). Alzheimer là giặc ngoại xâm. Nếu tường bạn mỏng, nó đập phát sập luôn. Tập thể dục là cách xây tường dày gấp 5 lần bình thường.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-teal-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">🚶‍♀️</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">7. Liều lượng tối thiểu hiệu quả</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-teal-900 bg-teal-50 px-2 py-1 rounded">Bản chất:</span> Bạn KHÔNG cần phải tập như một vận động viên Olympic hay người mẫu fitness để cứu lấy não mình. Liều lượng nhỏ cũng có tác dụng.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Miễn là bạn làm nhịp tim tăng lên một chút (hoạt động hiếu khí - Aerobic). Đi bộ nhanh, hút bụi nhà cửa cường độ cao, hoặc leo cầu thang đều kích hoạt được cơ chế tiết BDNF.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ví dụ:</span> Tiến sĩ Suzuki khuyên: Chỉ cần 3-4 lần một tuần, mỗi lần 30-45 phút đi bộ nhanh (thấy hơi thở gấp, đổ mồ hôi nhẹ) là đủ để tạo ra sự kỳ diệu.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-pink-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">🎭</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">8. Gột rửa Tâm trạng & Căng thẳng</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-pink-900 bg-pink-50 px-2 py-1 rounded">Bản chất:</span> Vận động là liều thuốc chống trầm cảm tự nhiên, an toàn và hoàn toàn miễn phí, hiệu quả gần như ngay lập tức.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Khi tập, não giải phóng một "ly cocktail hạnh phúc" gồm Dopamine (động lực, phần thưởng), Serotonin (bình tĩnh) và Endorphin (giảm đau, sảng khoái), đồng thời dọn dẹp Cortisol (hormone stress).</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ẩn dụ:</span> Khi đầu óc bạn giống như một nồi súp đặc quánh đầy những suy nghĩ tiêu cực, chạy bộ 20 phút chính là hành động xả vòi nước trong vắt vào để rửa sạch nồi súp đó.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-slate-200 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="text-4xl mb-4">🛌</div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-800">9. Giấc ngủ: Đối tác của Vận động</h3>
+                    <div class="space-y-4 text-sm">
+                        <p><span class="font-semibold text-slate-900 bg-slate-200 px-2 py-1 rounded">Bản chất:</span> Bạn có tập luyện vất vả đến đâu mà thiếu ngủ, thì công sức cũng đổ sông đổ bể. Giấc ngủ là lúc não thực sự "tiêu hóa" lợi ích của vận động.</p>
+                        <p><span class="font-semibold text-slate-700 border-b border-slate-300">Cơ chế:</span> Hệ thống Glymphatic trong não chỉ mở ra khi bạn ngủ sâu, giúp xả trôi các protein độc hại (Amyloid beta - tác nhân gây Alzheimer). Tập luyện giúp bạn ngủ sâu hơn, tạo vòng lặp tích cực.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-2 border-slate-300 text-slate-600 italic">
+                            💡 <span class="font-semibold not-italic text-slate-700">Ẩn dụ:</span> Tập thể dục giống như việc bạn tổ chức một bữa tiệc lớn. Giấc ngủ chính là đội dọn dẹp đến vào ban đêm để rửa bát và quét rác. Thiếu đội dọn dẹp, nhà bạn sẽ thành bãi rác.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="action-playbook" class="mb-24">
+            <div class="section-decorator dec-purple"></div>
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <span class="text-4xl mr-3">🚀</span> [Action Playbook] Sổ tay Thực chiến
+            </h2>
+            <p class="text-slate-600 mb-8 text-lg">Đừng lý thuyết nữa, đây là cách mang khoa học áp dụng vào cuộc sống bận rộn của bạn ngay hôm nay.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- If-Then Scenarios -->
+                <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+                    <h3 class="text-xl font-bold mb-6 text-purple-900 border-b pb-2"><i class="fa-solid fa-code-branch mr-2"></i>Kịch bản "Nếu - Thì" (Hành vi thay thế)</h3>
+                    <ul class="space-y-6">
+                        <li class="flex">
+                            <div class="flex-shrink-0 mt-1"><i class="fa-solid fa-circle-exclamation text-orange-500 text-lg"></i></div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-slate-800">NẾU bạn bế tắc ý tưởng, ngồi nhìn màn hình vô hồn...</p>
+                                <p class="text-purple-700 mt-1 font-medium"><i class="fa-solid fa-arrow-right mr-2"></i>THÌ hãy đứng dậy, đi bộ nhanh quanh tòa nhà hoặc hành lang đúng 10 phút. (Dopamine sẽ kích hoạt sự sáng tạo).</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 mt-1"><i class="fa-solid fa-circle-exclamation text-orange-500 text-lg"></i></div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-slate-800">NẾU bạn quá bận, không có liền 45 phút để đi tập gym...</p>
+                                <p class="text-purple-700 mt-1 font-medium"><i class="fa-solid fa-arrow-right mr-2"></i>THÌ hãy chia nhỏ: 10 phút leo cầu thang buổi sáng + 10 phút đi dạo sau bữa trưa + 10 phút vươn vai buổi tối. Tác dụng cộng dồn là tương đương!</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 mt-1"><i class="fa-solid fa-circle-exclamation text-orange-500 text-lg"></i></div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-slate-800">NẾU bạn đang buồn bực, giận dữ muốn cãi nhau với ai đó...</p>
+                                <p class="text-purple-700 mt-1 font-medium"><i class="fa-solid fa-arrow-right mr-2"></i>THÌ hãy thực hiện 20 cái bật nhảy (Jumping Jacks) hoặc hít đất ngay lập tức để xả Cortisol trước khi mở miệng.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl p-8 shadow-sm border border-purple-100">
+                    <h3 class="text-xl font-bold mb-6 text-indigo-900 border-b border-indigo-200 pb-2"><i class="fa-solid fa-bolt mr-2"></i>Hành động Micro (Làm ngay trong 24h)</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-indigo-500 flex items-start">
+                            <div class="bg-indigo-100 text-indigo-700 p-2 rounded-lg mr-4"><i class="fa-solid fa-shoe-prints"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Bẫy thị giác</h4>
+                                <p class="text-sm text-slate-600 mt-1">Đêm nay trước khi ngủ, đặt đôi giày thể thao và bộ quần áo tập ngay lối đi hoặc cạnh mép giường. Sáng dậy bạn phải bước qua nó.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-purple-500 flex items-start">
+                            <div class="bg-purple-100 text-purple-700 p-2 rounded-lg mr-4"><i class="fa-regular fa-clock"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Báo thức Bắt buộc</h4>
+                                <p class="text-sm text-slate-600 mt-1">Cài báo thức điện thoại mỗi 45 phút một lần trong giờ làm việc. Khi chuông reo, BẮT BUỘC phải đứng lên khỏi ghế và vươn vai uống nước trong 1 phút.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-pink-500 flex items-start">
+                            <div class="bg-pink-100 text-pink-700 p-2 rounded-lg mr-4"><i class="fa-solid fa-headphones"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Ghép nối thói quen (Temptation Bundling)</h4>
+                                <p class="text-sm text-slate-600 mt-1">Chỉ cho phép bản thân nghe Podcast/Audiobook yêu thích nhất KHI ĐANG đi bộ hoặc dọn dẹp nhà cửa. Không đi bộ = Không nghe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reality-check" class="mb-24">
+            <div class="section-decorator dec-red"></div>
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <span class="text-4xl mr-3">⚠️</span> [Reality Check] Nhận diện Cạm bẫy & Kỷ luật
+            </h2>
+            <p class="text-slate-600 mb-8 text-lg">Biết thì dễ, làm mới khó. Đây là lý do tại sao 90% mọi người bỏ cuộc giữa chừng và cách khắc phục.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-red-50 rounded-3xl p-8 border border-red-100">
+                    <h3 class="text-xl font-bold mb-6 text-red-800 flex items-center">
+                        <i class="fa-solid fa-flag text-red-500 mr-3"></i> Bẫy Vô Hình (Red Flags)
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-slate-800 text-lg mb-2">🚩 Bẫy 1: Chờ đợi "Động lực" giáng xuống</h4>
+                        <p class="text-slate-700 text-sm mb-2">Chúng ta thường nghĩ: "Tôi mệt quá, tôi không có hứng tập". Thực tế khoa học là: Động lực không đến trước hành động. Động lực (Dopamine) được sinh ra SAU KHI bạn đã bắt đầu tập được vài phút.</p>
+                        <p class="text-sm text-red-700 bg-red-100 p-2 rounded italic">Ví dụ thất bại: Ngồi lướt TikTok trên sofa chờ "mood" tập gym tới. Kết quả là lướt hết 2 tiếng và đi ngủ.</p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-lg mb-2">🚩 Bẫy 2: Ảo tưởng "Khổ luyện mới có kết quả"</h4>
+                        <p class="text-slate-700 text-sm mb-2">Ám ảnh bởi những người mẫu Fitness trên mạng, bạn nghĩ tập là phải nâng tạ nặng, đổ mồ hôi đầm đìa, đau nhức toàn thân. Khi quá đau đớn ở buổi 1, não bạn sợ hãi và từ chối đi tập buổi 2.</p>
+                        <p class="text-sm text-red-700 bg-red-100 p-2 rounded italic">Sự thật: Đi bộ vung tay nhịp độ nhanh đã đủ để não tiết ra "phân bón" BDNF.</p>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 text-slate-200 shadow-xl">
+                    <h3 class="text-xl font-bold mb-6 text-white flex items-center">
+                        <i class="fa-solid fa-shield-halved text-emerald-400 mr-3"></i> Chốt chặn Kỷ luật (Guardrails)
+                    </h3>
+                    
+                    <p class="text-slate-400 text-sm mb-6">Đừng dựa vào ý chí. Hãy tạo ra các rào cản vật lý buộc bạn phải tuân thủ.</p>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="text-emerald-400 text-2xl mt-1"><i class="fa-solid fa-lock"></i></div>
+                            <div>
+                                <h4 class="font-bold text-white text-lg">Luật 5 Phút Thần Thánh</h4>
+                                <p class="text-slate-300 text-sm mt-1">Khi não bộ chống đối việc đi tập, hãy cam kết với nó: "Tôi CHỈ thay đồ, xỏ giày và đi bộ đúng 5 phút thôi. Sau 5 phút nếu vẫn mệt thì được quyền quay về ngủ tiếp". 99% trường hợp sau 5 phút bạn sẽ tiếp tục tập, vì quán tính đã được phá vỡ.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="text-emerald-400 text-2xl mt-1"><i class="fa-solid fa-house-circle-xmark"></i></div>
+                            <div>
+                                <h4 class="font-bold text-white text-lg">Quy tắc "Không chạm Sofa"</h4>
+                                <p class="text-slate-300 text-sm mt-1">Khi vừa đi làm về, thiết lập quy luật môi trường nghiêm ngặt: Tuyệt đối không được ngồi xuống ghế sofa, không bật TV khi chưa hoàn thành 20 phút vận động. Sofa là hố đen nuốt chửng năng lượng cuối ngày của bạn.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="active-recall" class="mb-24">
+            <div class="section-decorator dec-yellow"></div>
+            <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="text-4xl mr-3">🃏</span> [Active Recall] Trạm Ôn tập
+            </h2>
+            <p class="text-slate-600 mb-8 text-lg">Đọc qua thì dễ quên. Hãy quét mắt qua các thẻ Flashcard này để in sâu kiến thức vào não bạn.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Flashcard 1 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 1</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Tính khả dẻo của não (Neuroplasticity) là gì?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Khả năng của não tự tái tạo và sắp xếp lại các mạng lưới nơ-ron liên tục suốt đời.
+                    </div>
+                </div>
+
+                <!-- Flashcard 2 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 2</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">BDNF là viết tắt của gì và nó đóng vai trò gì?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Brain-Derived Neurotrophic Factor. Nó là "phân bón" giúp tế bào não phát triển và tồn tại.
+                    </div>
+                </div>
+
+                <!-- Flashcard 3 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 3</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Hồi hải mã (Hippocampus) quản lý chức năng nào?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Tạo ra, lưu trữ ký ức (trí nhớ) dài hạn và khả năng tưởng tượng.
+                    </div>
+                </div>
+
+                <!-- Flashcard 4 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 4</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Mối quan hệ giữa vận động và Alzheimer?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Vận động làm to hồi hải mã, tạo "lớp khiên" làm chậm quá trình Alzheimer tàn phá não bộ.
+                    </div>
+                </div>
+
+                <!-- Flashcard 5 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 5</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Tác dụng tức thời của 1 buổi tập là gì?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Cải thiện tâm trạng và tăng sự tập trung cao độ lên đến khoảng 2 giờ đồng hồ.
+                    </div>
+                </div>
+
+                <!-- Flashcard 6 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 6</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">3 hóa chất nào tiết ra khi tập giúp bạn hạnh phúc?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Dopamine (phần thưởng), Serotonin (bình tĩnh) và Endorphin (giảm đau, sảng khoái).
+                    </div>
+                </div>
+
+                <!-- Flashcard 7 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 7</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Có cần phải tập cường độ cao (HIIT) mới tốt não?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Không. Chỉ cần hoạt động Aerobic (hiếu khí) làm tăng nhịp tim như đi bộ nhanh là đủ.
+                    </div>
+                </div>
+
+                <!-- Flashcard 8 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 8</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Lối sống tĩnh tại (Ngồi nhiều) gây hại gì?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Giảm máu lên não, làm suy yếu kết nối thần kinh, gây teo não sớm.
+                    </div>
+                </div>
+                
+                <!-- Flashcard 9 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 9</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Tần suất tập luyện lý tưởng theo Dr. Suzuki?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Khoảng 3-4 lần/tuần, mỗi lần tối thiểu 30 phút hoạt động tăng nhịp tim.
+                    </div>
+                </div>
+
+                <!-- Flashcard 10 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 10</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Tại sao Giấc ngủ là đối tác của Vận động?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Ngủ sâu mở hệ thống Glymphatic rửa sạch độc tố não. Tập luyện giúp ngủ sâu hơn.
+                    </div>
+                </div>
+                
+                <!-- Flashcard 11 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 11</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Luật 5 phút là gì?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Chỉ cam kết tập 5 phút để vượt qua sức ỳ tâm lý ban đầu. Sau đó thường bạn sẽ tập tiếp.
+                    </div>
+                </div>
+
+                <!-- Flashcard 12 -->
+                <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">Câu hỏi 12</div>
+                    <p class="font-semibold text-slate-800 mb-4 h-16">Sofa sau giờ làm việc đại diện cho điều gì?</p>
+                    <div class="bg-yellow-50 p-3 rounded-lg text-sm text-slate-700 border-l-2 border-yellow-400">
+                        Là "hố đen" môi trường cản trở việc tập. Cần quy tắc không chạm sofa trước khi tập.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="bg-slate-900 text-slate-300 h-[128px] flex items-center justify-center border-t border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 w-full flex flex-col md:flex-row justify-between items-center h-full py-4">
+            
+            <!-- Thông tin Text -->
+            <div class="text-center md:text-left mb-4 md:mb-0 max-w-2xl">
+                <p class="font-semibold text-white mb-1">Cập nhật kiến thức thực chiến nhất</p>
+                <p class="text-xs text-slate-400">Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+            
+            <!-- Social Links -->
+            <div class="flex space-x-4">
+                <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-red-600 flex items-center justify-center transition-colors shadow-lg group">
+                    <i class="fa-brands fa-youtube text-white text-lg group-hover:scale-110 transition-transform"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-black flex items-center justify-center transition-colors shadow-lg group">
+                    <i class="fa-brands fa-tiktok text-white text-lg group-hover:scale-110 transition-transform"></i>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-blue-600 flex items-center justify-center transition-colors shadow-lg group">
+                    <i class="fa-brands fa-facebook-f text-white text-lg group-hover:scale-110 transition-transform"></i>
+                </a>
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        // Khởi tạo Mermaid
+        document.addEventListener("DOMContentLoaded", function() {
+            // Chức năng Zoom cho Mindmap
+            const zoomContainer = document.getElementById('mermaid-zoom-container');
+            const btnZoomIn = document.getElementById('zoom-in');
+            const btnZoomOut = document.getElementById('zoom-out');
+            
+            let currentScale = 1;
+            const minScale = 0.5;
+            const maxScale = 2.5;
+            const step = 0.15;
+
+            function updateZoom() {
+                zoomContainer.style.transform = `scale(${currentScale})`;
+            }
+
+            btnZoomIn.addEventListener('click', () => {
+                if (currentScale < maxScale) {
+                    currentScale += step;
+                    updateZoom();
+                }
+            });
+
+            btnZoomOut.addEventListener('click', () => {
+                if (currentScale > minScale) {
+                    currentScale -= step;
+                    updateZoom();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
