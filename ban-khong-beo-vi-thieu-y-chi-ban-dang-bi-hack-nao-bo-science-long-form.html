@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ tay Cố vấn: Giải mã Ma trận Thực phẩm Siêu chế biến (UPF)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#166534', // Xanh lá đậm khoa học
+                        accent: '#dc2626', // Đỏ cảnh báo
+                        surface: '#f8fafc',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* Abstract Art CSS Backgrounds */
+        .abstract-blob {
+            position: absolute;
+            filter: blur(60px);
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        
+        .blob-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: #22c55e; border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; animation: morph 15s ease-in-out infinite alternate; }
+        .blob-2 { top: 20%; right: -5%; width: 350px; height: 350px; background: #ef4444; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: morph 20s ease-in-out infinite alternate; }
+        .blob-3 { bottom: -10%; left: 20%; width: 500px; height: 500px; background: #3b82f6; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; animation: morph 25s ease-in-out infinite alternate; }
+
+        @keyframes morph {
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: rotate(10deg) scale(1.1); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+
+        .flashcard-content {
+            border-left: 4px solid #166534;
+        }
+
+        /* Mindmap controls */
+        #mindmap-container {
+            overflow: hidden;
+            position: relative;
+            background: white;
+            border-radius: 1rem;
+            cursor: grab;
+            border: 1px solid #e2e8f0;
+        }
+        #mindmap-container:active { cursor: grabbing; }
+        #mermaid-wrapper {
+            transform-origin: 0 0;
+            transition: transform 0.2s ease;
+        }
+        
+        .nav-button {
+            transition: all 0.2s ease;
+        }
+        .nav-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden relative">
+    <!-- Abstract Backgrounds -->
+    <div class="abstract-blob blob-1"></div>
+    <div class="abstract-blob blob-2"></div>
+    <div class="abstract-blob blob-3"></div>
+
+    <main class="max-w-4xl mx-auto px-4 py-12 relative z-10">
+        
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center justify-center space-x-2 bg-red-100 text-red-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-6">
+                <i class="ph-fill ph-warning-circle text-lg"></i>
+                <span>Cảnh báo: Giải mã Ma trận Thực phẩm</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+                Bạn không béo vì thiếu ý chí. <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">Bạn đang bị "Hack" não bộ.</span>
+            </h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto font-serif italic">
+                Sổ tay Cố vấn trích xuất từ cuộc trò chuyện thay đổi tư duy giữa Steven Bartlett & Tiến sĩ Chris Van Tulleken.
+            </p>
+        </header>
+
+        <!-- 1. The Big Idea -->
+        <section class="mb-20">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                <i class="ph-fill ph-target text-3xl mr-3 text-red-500"></i>
+                1. [The Big Idea] Bức tranh Toàn cảnh
+            </h2>
+            <div class="glass-card rounded-2xl p-8 mb-8 border-l-4 border-l-red-500">
+                <p class="text-xl text-slate-800 font-semibold leading-relaxed">
+                    "Thực phẩm siêu chế biến (UPF) không phải là thức ăn. Nó là một loại <span class="text-red-600 bg-red-50 px-1 rounded">chất hóa học ăn được sản xuất công nghiệp</span>, được tối ưu hóa tinh vi bởi ma trận thuật toán lợi nhuận để vượt qua tín hiệu báo no của cơ thể và khiến bạn nghiện."
+                </p>
+                <p class="mt-4 text-slate-600">
+                    Sự thừa cân hay bệnh tật không phải là do bạn lười biếng hay thiếu kỷ luật. Nó là kết quả tất yếu của một hệ thống môi trường được thiết kế hoàn hảo để bào mòn sức khỏe của bạn đổi lấy lợi nhuận thương mại.
+                </p>
+            </div>
+
+            <!-- Mindmap Container -->
+            <div class="relative bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6 group">
+                <div class="absolute top-4 right-4 z-20 flex space-x-2 bg-white/90 p-1.5 rounded-lg shadow-sm border border-slate-100 backdrop-blur-sm">
+                    <button onclick="zoomMindmap(0.2)" class="nav-button w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md">
+                        <i class="ph ph-magnifying-glass-plus text-lg"></i>
+                    </button>
+                    <button onclick="zoomMindmap(-0.2)" class="nav-button w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md">
+                        <i class="ph ph-magnifying-glass-minus text-lg"></i>
+                    </button>
+                </div>
+                <div id="mindmap-container" class="w-full h-[400px] overflow-hidden" onmousedown="startDrag(event)" onmousemove="drag(event)" onmouseup="stopDrag()" onmouseleave="stopDrag()">
+                    <div id="mermaid-wrapper" class="w-full h-full p-8 flex items-center justify-center">
+                        <pre class="mermaid">
+                            graph LR
+                                %% Colors & Styles
+                                classDef root fill:#dc2626,stroke:#7f1d1d,stroke-width:2px,color:#fff,rx:10px,ry:10px,font-weight:bold;
+                                classDef branch fill:#fef2f2,stroke:#ef4444,stroke-width:2px,color:#991b1b,rx:8px,ry:8px;
+                                classDef leaf fill:#ffffff,stroke:#e2e8f0,stroke-width:1px,color:#334155,rx:5px,ry:5px;
+                                
+                                ROOT(("Bản đồ<br>UPF")):::root
+                                
+                                ROOT --> B(Bản Chất Thực Sự):::branch
+                                ROOT --> C(Cơ Chế Gây Nghiện):::branch
+                                ROOT --> D(Bẫy Tâm Lý):::branch
+                                ROOT --> E(Lối Thoát):::branch
+                                
+                                B --> B1[Không phải thức ăn tự nhiên]:::leaf
+                                B --> B2[Hóa chất công nghiệp ăn được]:::leaf
+                                B --> B3[Chi phối bởi lợi nhuận Cty]:::leaf
+                                
+                                C --> C1[Mềm xốp -> Nhai nuốt quá nhanh]:::leaf
+                                C --> C2[Hương liệu hack não bộ]:::leaf
+                                C --> C3[Khóa công tắc báo no Hormone]:::leaf
+                                
+                                D --> D1[Lời nói dối về 'Ý chí']:::leaf
+                                D --> D2[Lầm tưởng 'Tập bù ăn']:::leaf
+                                D --> D3[Mù quáng vì Nhãn Healthy]:::leaf
+                                
+                                E --> E1[Hiểu biết sinh ra Ghê tởm]:::leaf
+                                E --> E2[Kiểm toán Môi trường sống]:::leaf
+                                E --> E3[Ngừng cằn nhằn người thân]:::leaf
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Youtube Button -->
+            <div class="text-center">
+                <a href="https://youtu.be/dzUDhstqXbg" target="_blank" class="inline-flex items-center px-6 py-3 bg-[#FF0000] hover:bg-red-700 text-white font-medium rounded-full transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                    <i class="ph-fill ph-youtube-logo text-2xl mr-2"></i>
+                    Bác sĩ thức ăn rác: "Thực phẩm này còn tệ hơn hút thuốc!"
+                </a>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section class="mb-20">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                <i class="ph-fill ph-brain text-3xl mr-3 text-primary"></i>
+                2. [Deep Insights] 9 Trụ cột Tri thức
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Insight 1 -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">1</div>
+                    <h3 class="text-lg font-bold mb-2">Thực phẩm Siêu chế biến (UPF) là gì?</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất (Core Logic):</strong> Dinh dưỡng có 3 cấp: Cấp 1 là nguyên bản (táo, thịt). Cấp 2 là chế biến truyền thống (sữa thành bơ, lên men). Cấp 3 là UPF: Họ lấy nguyên liệu rẻ tiền (ngô, đậu nành), nghiền thành bột, chiết xuất các chất, trộn với phụ gia nhân tạo để tạo ra thứ có hình dáng giống thức ăn.</p>
+                        <p><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> Mục tiêu của UPF là kéo dài thời hạn sử dụng vô tận và tối đa hóa biên độ lợi nhuận.</p>
+                        <p class="bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200">
+                            <strong>💡 Ví dụ:</strong> Một bắp ngô bán luộc thì lãi rất ít. Nhưng nếu chiết xuất nó thành tinh bột biến tính, siro ngô, dầu ngô... bạn có thành phần để làm ra hàng vạn loại snack gây nghiện với giá trên trời.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">2</div>
+                    <h3 class="text-lg font-bold mb-2">Sự lừa dối vĩ đại mang tên "Ý chí" (Willpower)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất:</strong> Ý chí không phải là một loại cơ bắp đạo đức. Bạn không béo vì bạn kém cỏi. "Ý chí" thực chất chỉ là tấm bình phong che đậy cho sự bất bình đẳng về môi trường sống và tài chính.</p>
+                        <p><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> Môi trường thực phẩm bủa vây bạn 24/7 bằng biển quảng cáo, mùi hương, sự tiện lợi. Chống lại nó bằng "ý chí" giống như việc bạn cố nhịn thở dưới nước vậy - bạn sẽ phải bỏ cuộc.</p>
+                        <p class="bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200">
+                            <strong>💡 Ví dụ:</strong> Bài test "Kẹo dẻo" (Marshmallow) nổi tiếng thực chất không đo lường ý chí, nó đo lường... sự nghèo khó. Đứa trẻ ăn kẹo ngay thường xuất thân từ gia đình thiếu thốn, nơi cơ hội bị tước đoạt liên tục, nên chúng học được cách "có gì phải ăn ngay".
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">3</div>
+                    <h3 class="text-lg font-bold mb-2">Diet Coke & Cú lừa từ Chất tạo ngọt</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất:</strong> Bạn nghĩ uống Diet (không đường) sẽ giúp giảm cân? Sai lầm. Chất tạo ngọt nhân tạo không giúp giảm cân, thậm chí còn gây rối loạn trao đổi chất.</p>
+                        <p><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> Khi lưỡi nếm vị ngọt, nó báo cho não "Đường đang đến, chuẩn bị tiết Insulin!". Nhưng khi chất lỏng đi vào dạ dày, không có phân tử đường nào cả. Sự dối trá dinh dưỡng này khiến hệ trao đổi chất bị bối rối và làm rối loạn hệ vi sinh đường ruột.</p>
+                        <p class="bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200">
+                            <strong>💡 Ví dụ:</strong> Uống đồ Diet giống như bạn bấm chuông báo động cháy giả liên tục trong tòa nhà cơ thể. Đến một ngày, hệ thống phản ứng rối loạn hoàn toàn.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">4</div>
+                    <h3 class="text-lg font-bold mb-2">Hương liệu & Sự đánh cắp "Cảm giác no"</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất:</strong> Trong tự nhiên, hương vị báo hiệu thành phần dinh dưỡng. Trong UPF, hương vị bị "hack" để lừa não bộ.</p>
+                        <p><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> UPF được thiết kế rất mềm, xốp, và khô. Mềm để bạn nuốt cực nhanh. Khô để chứa lượng calo khổng lồ. Vì nuốt quá nhanh, hệ thống Hormone (như Leptin báo no) không có thời gian để kích hoạt. Bạn ăn vượt ngưỡng no mà không hề hay biết.</p>
+                        <p class="bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200">
+                            <strong>💡 Ví dụ:</strong> Đứa trẻ 6 tuổi của Chris có thể ngấu nghiến lượng ngũ cốc bữa sáng bằng 5 người lớn trong 20 phút. Nhưng đứa trẻ đó không bao giờ có thể ăn nổi khối lượng tương đương nếu đó là yến mạch nguyên hạt hay táo cắn dở.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">5</div>
+                    <h3 class="text-lg font-bold mb-2">Fixed Energy: Tập gym không "chuộc lỗi" được cho cái miệng</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất:</strong> Bạn không thể "chạy bộ" để bù đắp cho một chiếc bánh pizza UPF. Việc tập thể dục rất tốt, nhưng nó KHÔNG đốt nhiều calo tổng thể như bạn tưởng.</p>
+                        <p><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> Cơ thể hoạt động theo "Mô hình Năng lượng Cố định". Nếu bạn dùng 500 calo để tập gym, cơ thể sẽ tự động "cắt giảm" 500 calo từ các hoạt động chìm khác (như viêm nhiễm, căng thẳng). Tổng lượng calo đốt đi mỗi ngày hiếm khi thay đổi lớn.</p>
+                        <p class="bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200">
+                            <strong>💡 Ví dụ:</strong> Người thợ săn bộ lạc Hadza chạy bộ 15km/ngày thực chất đốt lượng calo bằng đúng một nhân viên văn phòng ngồi máy lạnh. Cơ thể họ chỉ đơn giản là phân bổ năng lượng cực kỳ hiệu quả.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">6</div>
+                    <h3 class="text-lg font-bold mb-2">Thực phẩm không có nhãn "Healthy" mới là khỏe nhất</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất:</strong> Một nguyên tắc vàng: Bất cứ sản phẩm nào quảng cáo rầm rộ là "Tốt cho sức khỏe", "Nhiều Vitamin D", "Giảm Cholesterol" trên bao bì... hầu như đều là UPF.</p>
+                        <p><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> Các công ty rút hết chất xơ và dinh dưỡng ra để tăng hạn sử dụng, sau đó bơm vitamin tổng hợp ngược vào để có cớ in chữ "Healthy" lên vỏ hộp.</p>
+                        <p class="bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200">
+                            <strong>💡 Ví dụ:</strong> Bạn đã bao giờ thấy củ súp lơ, miếng thịt bò hay quả táo in tem "Giàu Vitamin, tốt cho hệ miễn dịch" chưa? Không. Chỉ có vỏ hộp ngũ cốc siêu đường mới cần những dòng chữ đó để tẩy trắng.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">7</div>
+                    <h3 class="text-lg font-bold mb-2">Chuyển hóa từ "Khao khát" sang "Ghê tởm"</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất:</strong> Để cai nghiện UPF, đừng cấm đoán bản thân. Hãy dùng sự hiểu biết để thay đổi góc nhìn, khiến não bộ tự cảm thấy "kinh tởm" những hóa chất đó.</p>
+                        <p><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> Khi bạn vừa nhai vội vã miếng gà rán bọc bột công nghiệp, vừa lật nhãn thành phần ra đọc to các hóa chất tẩy rửa bên trong, sự nhận thức sẽ phá vỡ ảo giác vị giác. Bạn đưa món ăn vào "Thung lũng kỳ lạ" (Uncanny Valley) - nó giống thức ăn nhưng bạn biết đó không phải thức ăn.</p>
+                        <p class="bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200">
+                            <strong>💡 Ví dụ:</strong> Giống hệt cách cuốn sách "Dễ dàng cai thuốc lá" khuyên bạn: Cứ hút thuốc đi, nhưng hãy rít thật sâu và tập trung cảm nhận vị đắng khét tàn phá cổ họng bạn. Sự ghê tởm sẽ tự giết chết cơn thèm.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">8</div>
+                    <h3 class="text-lg font-bold mb-2">Bản năng cơ thể thông minh hơn bạn nghĩ</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất:</strong> Không cần đong đếm macro (đạm, béo, carb) đau đầu. Nếu được đặt trong một môi trường toàn thực phẩm nguyên bản, cơ thể bạn sẽ tự động nạp lượng dinh dưỡng hoàn hảo nhất.</p>
+                        <p><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> Trí tuệ tiến hóa hàng triệu năm đã trang bị cho chúng ta hệ thống cảm nhận vi chất cực nhạy bén, miễn là nó không bị UPF làm nhiễu sóng.</p>
+                        <p class="bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200">
+                            <strong>💡 Ví dụ:</strong> Thí nghiệm của Clara Davis năm 1920: Để những đứa trẻ tự chọn món từ 34 khay thức ăn nguyên bản. Đứa bé bị bệnh còi xương tự động tu ừng ực dầu gan cá tuyết mỗi ngày. Đúng ngày xương bé lành lại, bé vĩnh viễn không bao giờ uống món đó nữa.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card p-6 rounded-2xl md:col-span-2">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold mb-4">9</div>
+                    <h3 class="text-lg font-bold mb-2">Nghịch lý của sự cằn nhằn (Ngừng "dạy dỗ" người thân)</h3>
+                    <div class="space-y-3 text-sm flex flex-col md:flex-row gap-6">
+                        <div class="flex-1">
+                            <p><strong><i class="ph ph-code text-primary mr-1"></i> Bản chất:</strong> Việc bạn nhắc nhở người thân "Đừng ăn nữa, giảm cân đi" không hề giúp họ, mà biến bạn thành "kẻ sở hữu" rắc rối của họ, tước đoạt quyền tự chủ của họ.</p>
+                            <p class="mt-2"><strong><i class="ph ph-gear text-slate-500 mr-1"></i> Cơ chế:</strong> Khi bị cằn nhằn, con người rơi vào trạng thái phòng thủ, sinh ra hormone căng thẳng (Cortisol). Và trớ trêu thay, Cortisol lại kích hoạt cơn thèm... thức ăn UPF. Bạn càng chê, họ càng ăn vụng nhiều hơn.</p>
+                        </div>
+                        <div class="flex-1 bg-amber-50 p-3 rounded-lg text-amber-900 italic border border-amber-200 flex items-center">
+                            <p>
+                                <strong>💡 Ví dụ thực tế từ Chris:</strong> Chris liên tục cằn nhằn người em trai sinh đôi (Zand) về cân nặng. Chuyên gia tâm lý nói với Chris: "Tôi không cần chữa cho em cậu. Tôi cần chữa cho cậu. Cậu chính là rào cản ngăn cậu ấy giảm cân." Khi Chris buông bỏ, ngừng phán xét, Zand tự khắc giảm cân thành công.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section class="mb-20">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                <i class="ph-fill ph-rocket-launch text-3xl mr-3 text-orange-500"></i>
+                3. [Action Playbook] Sổ tay Thực chiến
+            </h2>
+            
+            <div class="bg-slate-900 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
+                <!-- BG Elements inside dark card -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500 opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+                
+                <h3 class="text-xl font-semibold mb-6 text-orange-400 border-b border-slate-700 pb-2">Kịch bản "Nếu - Thì" (Hành động phản xạ)</h3>
+                <div class="space-y-4 mb-8">
+                    <div class="flex items-start bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                        <div class="bg-slate-700 p-2 rounded-lg mr-4"><i class="ph ph-cookie text-orange-400 text-xl"></i></div>
+                        <div>
+                            <p class="font-semibold text-slate-200">NẾU bạn bóc một gói bim bim/kẹo và nhận ra mình sắp ăn hết không phanh...</p>
+                            <p class="text-slate-400 mt-1">👉 <span class="text-emerald-400 font-medium">THÌ hãy dừng lại 10 giây, lật mặt sau, đọc to từng thành phần hóa học lên.</span> Tưởng tượng bạn đang ăn chất dẻo công nghiệp. Để sự ghê tởm làm nhiệm vụ của nó. Không cần ép cất đi ngay, cứ ăn nếu muốn, nhưng phải ăn trong "chánh niệm kinh tởm".</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                        <div class="bg-slate-700 p-2 rounded-lg mr-4"><i class="ph ph-user-list text-orange-400 text-xl"></i></div>
+                        <div>
+                            <p class="font-semibold text-slate-200">NẾU bạn khó chịu vì người thân lười biếng và cứ nhét đồ rác vào mồm...</p>
+                            <p class="text-slate-400 mt-1">👉 <span class="text-emerald-400 font-medium">THÌ khóa chặt miệng bạn lại, tuyệt đối không bình phẩm.</span> Việc duy nhất bạn được làm là: Lặng lẽ mua nhiều trái cây tươi, các loại hạt, nấu những bữa ăn Whole-food và đặt sẵn trên bàn. Thay đổi môi trường, đừng thay đổi con người.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-6 text-emerald-400 border-b border-slate-700 pb-2">Micro-Actions (Bắt tay làm trong 24h tới)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-emerald-900/30 border border-emerald-800/50 p-5 rounded-xl">
+                        <h4 class="font-bold text-emerald-300 flex items-center mb-2"><i class="ph-fill ph-magnifying-glass mr-2"></i> Cuộc thanh trừng Tủ lạnh</h4>
+                        <p class="text-sm text-slate-300">Trong tối nay, mở tủ lạnh ra. Gom toàn bộ đồ uống đóng chai Diet, các loại xốt chế biến sẵn có chữ "hương liệu", "chất bảo quản", "màu e150d" vào một góc. Nhìn chằm chằm vào chúng và tự nhủ: "Đây là hóa chất, không phải thức ăn".</p>
+                    </div>
+                    <div class="bg-orange-900/30 border border-orange-800/50 p-5 rounded-xl">
+                        <h4 class="font-bold text-orange-300 flex items-center mb-2"><i class="ph-fill ph-drop mr-2"></i> Luật 1 Tùy chọn Uống</h4>
+                        <p class="text-sm text-slate-300">Đừng thay thế loại nước ngọt này bằng nước ngọt khác. Bắt đầu từ ngày mai, hãy thiết lập nguyên tắc: Chất lỏng duy nhất được đi vào cơ thể là Nước lọc, Cà phê đen (tự pha) hoặc Trà nguyên bản. Chấm hết.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section class="mb-20">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                <i class="ph-fill ph-warning-octagon text-3xl mr-3 text-red-600"></i>
+                4. [Reality Check] Nhận diện Cạm bẫy & Chốt chặn
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-red-50 rounded-2xl p-6 border border-red-100">
+                    <h3 class="text-red-700 font-bold text-lg mb-4 flex items-center">
+                        <i class="ph-fill ph-flag-banner text-xl mr-2"></i> Cờ Đỏ & Điểm mù
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="ph-fill ph-x-circle text-red-500 mt-1 mr-2 text-lg"></i>
+                            <div>
+                                <strong class="text-slate-800 block">Bẫy vô hình: Mắc mưu Siêu thị</strong>
+                                <p class="text-sm text-slate-600 mt-1">Đừng tưởng vào gian hàng "Organic" hay "Vegan" là an toàn. Xúc xích thuần chay hay Sữa chua hữu cơ thêm đường vẫn là UPF tinh vi. Nếu trên bao bì có tuyên bố về sức khỏe (Health claim), nó 99% là UPF.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="ph-fill ph-x-circle text-red-500 mt-1 mr-2 text-lg"></i>
+                            <div>
+                                <strong class="text-slate-800 block">Sự ảo tưởng: "Ăn xong sẽ tập Gym bù"</strong>
+                                <p class="text-sm text-slate-600 mt-1">Sai lầm chí mạng! Người ta nuốt cái bánh ngọt 400 calo rồi tự nhủ sẽ chạy máy 30 phút. Nhưng cơ thể sẽ bù trừ năng lượng bằng cách khiến bạn lười vận động cả ngày hôm đó. Thất bại thảm hại về toán học.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-100">
+                    <h3 class="text-emerald-700 font-bold text-lg mb-4 flex items-center">
+                        <i class="ph-fill ph-shield-check text-xl mr-2"></i> Chốt chặn Kỷ luật Vật lý
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="ph-fill ph-check-circle text-emerald-500 mt-1 mr-2 text-lg"></i>
+                            <div>
+                                <strong class="text-slate-800 block">Quy tắc "Biên giới Cửa nhà"</strong>
+                                <p class="text-sm text-slate-600 mt-1">Đừng dùng "ý chí" để đấu tranh với chai nước ngọt để trong tủ lạnh phòng bếp. Ý chí là rác rưởi. Chốt chặn cứng: KHÔNG MUA MANG VỀ NHÀ. Muốn ăn rác? Hãy bước ra đường mà ăn. Ở nhà phải tuyệt đối "vùng an toàn".</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="ph-fill ph-check-circle text-emerald-500 mt-1 mr-2 text-lg"></i>
+                            <div>
+                                <strong class="text-slate-800 block">Quy tắc Nấu nướng Nguyên thủy</strong>
+                                <p class="text-sm text-slate-600 mt-1">Đừng mua những món chỉ cần xé vỏ ra là nhai được liền. Bắt buộc mọi món ăn nạp vào mồm phải qua ít nhất 1 thao tác chế biến vật lý: Rửa, Cắt xén, Đun nấu. Ma sát (sự lười biếng) sẽ cứu bạn.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall (Flashcards) -->
+        <section class="mb-20">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                <i class="ph-fill ph-cards text-3xl mr-3 text-blue-500"></i>
+                5. [Active Recall] Trạm Ôn tập
+            </h2>
+            <p class="text-slate-600 mb-6">Đọc và tự ngẫm câu trả lời để khắc sâu kiến thức. (Chữ xanh đậm là key insight).</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Sinh 15 câu Q&A -->
+                <script>
+                    const flashcards = [
+                        { q: "UPF (Thực phẩm siêu chế biến) thực chất là gì?", a: "Là <span class='text-blue-700 font-semibold'>hóa chất công nghiệp ăn được</span>, tạo ra từ nguyên liệu siêu rẻ để tối đa lợi nhuận." },
+                        { q: "Tại sao ý chí không giúp bạn giảm cân?", a: "Vì môi trường thực phẩm bủa vây bạn 24/7. Ý chí thực chất thường là tấm bình phong đo lường <span class='text-blue-700 font-semibold'>sự nghèo khó/tài nguyên</span>." },
+                        { q: "Chất tạo ngọt Diet có giúp giảm cân không?", a: "Không. Nó gây <span class='text-blue-700 font-semibold'>rối loạn sinh lý</span> vì lưỡi báo có đường nhưng dạ dày lại không nhận được." },
+                        { q: "Mô hình Fixed Energy chỉ ra điều gì về việc tập thể dục?", a: "Tập gym rất tốt, nhưng <span class='text-blue-700 font-semibold'>không thay đổi đáng kể tổng calo tiêu thụ mỗi ngày</span>. Bạn không thể 'tập bù' cho việc ăn tồi." },
+                        { q: "Cách nhận biết nhanh một món đồ là UPF?", a: "Nếu trên bao bì có <span class='text-blue-700 font-semibold'>dòng chữ quảng cáo về sức khỏe</span> (vd: tốt cho tim, giàu vitamin), 99% nó là UPF." },
+                        { q: "UPF lừa não bộ không cảm thấy no bằng cách nào?", a: "Được thiết kế rất <span class='text-blue-700 font-semibold'>mềm, xốp</span> để bạn nuốt quá nhanh trước khi hormone đói kịp gửi tín hiệu 'No'." },
+                        { q: "Tại sao UPF thường có rất nhiều hương liệu?", a: "Hương liệu nhân tạo phá vỡ cầu nối tự nhiên: khiến <span class='text-blue-700 font-semibold'>vị giác bị đánh lừa</span> và không phản ánh đúng dinh dưỡng thực tế." },
+                        { q: "Cách tốt nhất để tự cai nghiện UPF là gì?", a: "Vừa ăn vừa <span class='text-blue-700 font-semibold'>đọc thành phần hóa học</span> để chuyển hóa sự khao khát thành cảm giác 'kinh tởm'." },
+                        { q: "Thí nghiệm Clara Davis (1920) chứng minh điều gì ở trẻ em?", a: "Nếu cho trẻ một môi trường toàn thực phẩm nguyên bản, cơ thể chúng sẽ <span class='text-blue-700 font-semibold'>tự động chọn chế độ ăn cân bằng dinh dưỡng</span>." },
+                        { q: "Sai lầm lớn nhất khi giúp người thân giảm cân?", a: "Là <span class='text-blue-700 font-semibold'>cằn nhằn họ</span>. Việc đó tước đoạt quyền tự chủ và tạo Cortisol kích thích họ ăn nhiều UPF hơn." },
+                        { q: "Thực phẩm được chia thành mấy cấp độ?", a: "3 cấp: Nguyên bản (Whole), Chế biến (Processed - như bơ/phô mai), và <span class='text-blue-700 font-semibold'>Siêu chế biến (Ultra-processed)</span>." },
+                        { q: "Sự bùng nổ béo phì trên toàn cầu bắt đầu vào khoảng thập kỷ nào?", a: "Giữa những năm <span class='text-blue-700 font-semibold'>1970</span>, trùng với sự xuất hiện ồ ạt của thực phẩm công nghiệp Mỹ." },
+                        { q: "Khoảng bao nhiêu % calo toàn cầu bị kiểm soát bởi các đại công ty thực phẩm?", a: "Gần <span class='text-blue-700 font-semibold'>75%</span> lượng calo trên thế giới đến từ vỏn vẹn khoảng 6 công ty siêu khổng lồ." },
+                        { q: "Tại sao ngành thực phẩm đưa các phụ gia phế liệu (như sợi cam chanh) vào thức ăn?", a: "Để thêm giá trị <span class='text-blue-700 font-semibold'>sở hữu trí tuệ (IP)</span> vào món ăn rác, biến đồ bỏ đi thành nguyên liệu mác 'Healthy'." },
+                        { q: "Giải pháp gốc rễ để thay đổi sức khỏe của bạn là gì?", a: "Tập trung thay đổi <span class='text-blue-700 font-semibold'>môi trường sống và nguồn cung thức ăn</span> xung quanh bạn, thay vì dằn vặt ý chí." }
+                    ];
+
+                    document.write(flashcards.map((card, i) => `
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flashcard-content hover:shadow-md transition-shadow">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Thẻ ${i+1}</span>
+                            <p class="font-bold text-slate-800 text-sm mb-3 pb-3 border-b border-slate-100">${card.q}</p>
+                            <p class="text-sm text-slate-600 leading-relaxed bg-slate-50 p-2 rounded">${card.a}</p>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 h-[128px] w-full flex items-center relative z-20">
+        <div class="max-w-6xl mx-auto px-4 w-full flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-sm max-w-md text-center md:text-left">
+                <p class="font-bold text-slate-200">Cập nhật kiến thức thực chiến nhất</p>
+                <p class="text-xs text-slate-500 mt-1">Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-800 hover:bg-red-600 hover:text-white transition-colors duration-300">
+                    <i class="ph-fill ph-youtube-logo text-xl"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-800 hover:bg-black hover:text-white transition-colors duration-300">
+                    <i class="ph-fill ph-tiktok-logo text-xl"></i>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-800 hover:bg-blue-600 hover:text-white transition-colors duration-300">
+                    <i class="ph-fill ph-facebook-logo text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Khởi tạo Mermaid & Logic Zoom -->
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontFamily: 'Inter',
+            }
+        });
+
+        // Zoom logic cho Mindmap
+        let currentScale = 1;
+        const mermaidWrapper = document.getElementById('mermaid-wrapper');
+        
+        function zoomMindmap(delta) {
+            currentScale += delta;
+            if(currentScale < 0.4) currentScale = 0.4;
+            if(currentScale > 2.5) currentScale = 2.5;
+            mermaidWrapper.style.transform = `scale(${currentScale})`;
+        }
+
+        // Drag logic
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+        const container = document.getElementById('mindmap-container');
+
+        function startDrag(e) {
+            isDragging = true;
+            startX = e.pageX - container.offsetLeft;
+            startY = e.pageY - container.offsetTop;
+            scrollLeft = container.scrollLeft;
+            scrollTop = container.scrollTop;
+        }
+
+        function stopDrag() {
+            isDragging = false;
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const y = e.pageY - container.offsetTop;
+            const walkX = (x - startX) * 2;
+            const walkY = (y - startY) * 2;
+            container.scrollLeft = scrollLeft - walkX;
+            container.scrollTop = scrollTop - walkY;
+        }
+    </script>
+</body>
+</html>
