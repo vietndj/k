@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Kiến Trúc Não Bộ | Dr. Tommy Wood</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brain: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            900: '#14532d',
+                        },
+                        neuro: {
+                            500: '#6366f1',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+
+    <style>
+        body { background-color: #f8fafc; color: #1e293b; }
+        
+        /* Mermaid Zoom Container */
+        .mindmap-wrapper {
+            overflow: hidden;
+            border-radius: 1rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            height: 500px;
+            cursor: grab;
+        }
+        .mindmap-wrapper:active { cursor: grabbing; }
+        #mermaid-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-origin: center center;
+            transition: transform 0.2s ease-out;
+        }
+
+        /* Abstract Art CSS for Cards */
+        .art-box {
+            height: 120px;
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            background: #f1f5f9;
+        }
+        /* Art 1: Connections */
+        .art-connections { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); }
+        .art-connections::before, .art-connections::after {
+            content: ''; position: absolute; border: 2px solid #6366f1; border-radius: 50%;
+        }
+        .art-connections::before { width: 40px; height: 40px; top: 20px; left: 30px; }
+        .art-connections::after { width: 60px; height: 60px; bottom: 10px; right: 20px; border-color: #818cf8; }
+        .art-line { position: absolute; width: 80px; height: 2px; background: #6366f1; top: 50px; left: 50px; transform: rotate(20deg); }
+
+        /* Art 2: Layers */
+        .art-layers { background: #dcfce7; }
+        .layer { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 0.5rem; background: #22c55e; opacity: 0.2; }
+        .layer-1 { width: 80%; height: 40px; bottom: 10px; }
+        .layer-2 { width: 60%; height: 40px; bottom: 30px; }
+        .layer-3 { width: 40%; height: 40px; bottom: 50px; }
+
+        /* Art 3: Waves (Sleep) */
+        .art-waves { background: #1e1b4b; overflow: hidden;}
+        .wave { position: absolute; width: 200%; height: 200%; background: #4f46e5; border-radius: 40%; bottom: -150%; left: -50%; opacity: 0.5; }
+        .wave-2 { background: #818cf8; bottom: -160%; left: -40%; }
+
+        /* Art 4: Abstract Blocks */
+        .art-blocks { background: #fef2f2; }
+        .block { position: absolute; background: #ef4444; border-radius: 4px; }
+        .block-1 { width: 40px; height: 40px; top: 20px; left: 20px; opacity: 0.8; transform: rotate(15deg); }
+        .block-2 { width: 60px; height: 30px; bottom: 20px; right: 30px; opacity: 0.5; transform: rotate(-10deg); }
+
+        /* Flashcards */
+        .flashcard {
+            background: white; border-left: 4px solid #6366f1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-neuro-900 tracking-tight flex items-center gap-2">
+                🧠 <span class="bg-clip-text text-transparent bg-gradient-to-r from-neuro-500 to-brain-500">NeuroMastery</span>
+            </div>
+            <div class="text-sm font-medium text-slate-500 hidden sm:block">Định hình lại tâm trí của bạn</div>
+        </div>
+    </header>
+
+    <!-- Intro -->
+    <section class="max-w-4xl mx-auto px-6 py-12 mt-8 text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brain-100 text-brain-900 text-sm font-semibold mb-6">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brain-500 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-brain-600"></span>
+            </span>
+            Khoa học Tuổi thọ Não bộ
+        </div>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+            Nắm giữ chìa khóa sinh học <br/>để <span class="text-neuro-500">não bộ không bao giờ già đi.</span>
+        </h1>
+        <p class="text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            Chào bạn, mentor của bạn đây 🌱. Xã hội luôn ám thị rằng tuổi già đi kèm với sự suy giảm trí tuệ tất yếu. Nhưng Tiến sĩ Thần kinh học Tommy Wood đã chứng minh điều ngược lại. Dưới đây là cuốn cẩm nang giải phẫu lại cách bạn ăn, ngủ, tập luyện và suy nghĩ để kiến tạo một bộ não "chống đạn". Bắt đầu nào!
+        </p>
+    </section>
+
+    <!-- 1. The Big Idea -->
+    <section class="max-w-5xl mx-auto px-6 py-12">
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-brain-50 rounded-bl-full -z-10"></div>
+            
+            <h2 class="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                <i class="fa-solid fa-bullseye text-red-500"></i> [The Big Idea] Bức Tranh Toàn Cảnh
+            </h2>
+            
+            <div class="bg-slate-50 border-l-4 border-neuro-500 p-5 rounded-r-lg mb-8">
+                <p class="text-lg text-slate-700 font-medium">
+                    "Tâm trí không phải là một chiếc bình để chờ sứt mẻ theo thời gian, nó là một <b class="text-neuro-900">cơ bắp</b>. Ít nhất 45% đến 70% các ca sa sút trí tuệ (dementia) hoàn toàn có thể phòng ngừa được nếu chúng ta chủ động thiết kế đúng <b class="text-brain-600">Kích thích (Stimulus)</b>, cung cấp đủ <b class="text-brain-600">Nguyên liệu (Supply)</b> và bảo vệ bằng <b class="text-brain-600">Sự phục hồi (Support)</b>."
+                </p>
+            </div>
+
+            <!-- Mindmap Container -->
+            <div class="mb-6 relative">
+                <div class="absolute top-4 right-4 z-10 flex flex-col gap-2 bg-white p-1 rounded-lg shadow-md border border-slate-200">
+                    <button id="zoomIn" class="w-8 h-8 flex justify-center items-center rounded bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition"><i class="fa-solid fa-plus"></i></button>
+                    <button id="zoomOut" class="w-8 h-8 flex justify-center items-center rounded bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition"><i class="fa-solid fa-minus"></i></button>
+                </div>
+                
+                <div class="mindmap-wrapper bg-slate-50" id="dragContainer">
+                    <div id="mermaid-container">
+<pre class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'fontFamily': 'Inter', 'primaryColor': '#ffffff', 'primaryBorderColor': '#6366f1', 'lineColor': '#94a3b8', 'tertiaryColor': '#f1f5f9' }, 'flowchart': {'curve': 'basis'}}}%%
+graph LR
+    Root("🧠 CẤU TRÚC<br/>NÃO BỘ") --> S1("⚡ STIMULUS<br/>(Kích thích)")
+    Root --> S2("🍎 SUPPLY<br/>(Cung cấp)")
+    Root --> S3("🛡️ SUPPORT<br/>(Hỗ trợ)")
+
+    S1 --> S1a("Học kỹ năng mới<br/>(Chấp nhận sai lầm)")
+    S1 --> S1b("Vận động phức hợp<br/>(Võ thuật, Khiêu vũ)")
+    S1 --> S1c("Tương tác xã hội sâu")
+
+    S2 --> S2a("Năng lượng<br/>(Đường huyết ổn định)")
+    S2 --> S2b("Oxy & Lưu lượng máu<br/>(Sức khỏe Tim mạch)")
+    S2 --> S2c("Dưỡng chất cốt lõi<br/>(Omega-3, B-Vitamins)")
+
+    S3 --> S3a("Giấc ngủ<br/>(Dọn dẹp mảng bám Amyloid)")
+    S3 --> S3b("Tâm lý<br/>(Sự tự trắc ẩn, giảm Stress)")
+    S3 --> S3c("Tránh độc tố<br/>(Cồn, Thuốc an thần)")
+
+    style Root fill:#6366f1,stroke:#312e81,stroke-width:2px,color:#fff,rx:10,ry:10
+    style S1 fill:#dcfce7,stroke:#22c55e,stroke-width:2px,rx:10,ry:10
+    style S2 fill:#fee2e2,stroke:#ef4444,stroke-width:2px,rx:10,ry:10
+    style S3 fill:#e0e7ff,stroke:#6366f1,stroke-width:2px,rx:10,ry:10
+    
+    style S1a rx:8,ry:8
+    style S1b rx:8,ry:8
+    style S1c rx:8,ry:8
+    style S2a rx:8,ry:8
+    style S2b rx:8,ry:8
+    style S2c rx:8,ry:8
+    style S3a rx:8,ry:8
+    style S3b rx:8,ry:8
+    style S3c rx:8,ry:8
+</pre>
+                    </div>
+                </div>
+                <p class="text-xs text-center text-slate-400 mt-2">Sử dụng nút +/- để thu phóng sơ đồ. Sơ đồ dạng rễ cây từ trái qua phải.</p>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="https://youtu.be/_EMgGhGbMLk?si=X0ReNcAWccMZb9zT" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-full transition shadow-lg shadow-red-500/30 hover:-translate-y-0.5">
+                    <i class="fa-brands fa-youtube text-lg"></i>
+                    Video Gốc: Cảnh báo từ nhà Khoa học Thần kinh về rủi ro sa sút trí tuệ
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Deep Insights -->
+    <section class="max-w-5xl mx-auto px-6 py-12 bg-slate-50 rounded-3xl mb-12">
+        <h2 class="text-3xl font-extrabold text-slate-900 mb-2 text-center">🧠 [Deep Insights] Trụ cột Tri thức</h2>
+        <p class="text-slate-500 text-center mb-10 max-w-2xl mx-auto">10 Bài học sâu sắc nhất được bóc tách bằng lăng kính tư duy cốt lõi, không dùng thuật ngữ hàn lâm.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Insight 1 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box art-connections">
+                    <div class="art-line"></div>
+                </div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">1. Não bộ là Cỗ máy Dự đoán (Lỗi sai = Tiến hóa)</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Trẻ em học nhanh vì chúng không sợ sai. Người lớn não chậm lại vì ta rúc vào vùng an toàn. Lỗi sai chính là nhiên liệu sinh học để tạo nếp nhăn mới.</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Khi bạn làm sai một việc mới, não tiết ra stress hormones (Dopamine giảm, Noradrenaline tăng). Sự khó chịu này là tín hiệu báo động: "Hệ thống cũ không hiệu quả, phải mở đường nối dây thần kinh mới ngay!" (Neuroplasticity).</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ví dụ:</b> Tới lớp võ Jiu-Jitsu khi đã 50 tuổi. Việc bạn lóng ngóng và bị vật ngã liên tục trên thảm tập chính là "bài tập tạ" kinh khủng và hiệu quả nhất cho các nơ-ron thần kinh của bạn.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 2 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box art-layers">
+                    <div class="layer layer-1"></div><div class="layer layer-2"></div><div class="layer layer-3"></div>
+                </div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">2. Nghịch lý Đa nhiệm (Multitasking Trap)</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Làm nhiều việc một lúc không biến bạn thành siêu nhân, nó biến não bạn thành một cái rổ thủng không biết giữ lại nước.</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Não không thể chia đôi sự tập trung. Khi đa nhiệm, não phải "tắt" khả năng lọc nhiễu ngoại vi để đón nhận mọi thứ. Hậu quả là bạn mất hẳn khả năng làm việc sâu (Deep Work) và trở nên cực kỳ dễ bị xao nhãng.</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ví dụ:</b> Vừa lướt Instagram, vừa xem Netflix, vừa tham gia họp Zoom. Bạn nghĩ mình đang tối ưu thời gian, nhưng thực chất bạn đang "tự hack" não mình để trở nên kém cỏi trong mọi việc đòi hỏi tư duy sâu.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 3 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box art-blocks">
+                    <div class="block block-1"></div><div class="block block-2"></div>
+                </div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">3. Phân quyền Thể dục (Chất xám vs. Chất trắng)</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Không phải cứ đổ mồ hôi là tốt đều. Các bài tập khác nhau sẽ nâng cấp phần cứng khác nhau của não bộ.</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Cardio (chạy bộ) nuôi vùng Hippocampus (Chất xám - định vị và trí nhớ). Tập tạ/kháng lực củng cố mạng lưới (Chất trắng - sự sắc bén, chức năng ra quyết định).</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ẩn dụ:</b> Bộ não giống như một chiếc siêu xe. Chạy bộ giúp nâng cấp hệ thống định vị (GPS), còn tập tạ giúp hệ thống truyền động và bánh lái bám đường, xử lý khúc cua nhạy bén hơn. Bạn cần cả hai!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 4 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box art-waves">
+                    <div class="wave"></div><div class="wave wave-2"></div>
+                </div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">4. Ảo ảnh Giấc ngủ Nhân tạo</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Thuốc ngủ hay cồn không mang lại giấc ngủ, chúng chỉ đánh ngất bạn.</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Giấc ngủ thật sự (đặc biệt là sóng chậm và REM) có nhiệm vụ dọn dẹp mảng bám Amyloid và củng cố ký ức. Rượu cồn và thuốc an thần (Ambien) chặn đứng kiến trúc giấc ngủ tự nhiên này, gây ra sự thiếu hụt phục hồi nghiêm trọng lâu dài.</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ẩn dụ:</b> Dùng rượu để dễ ngủ giống như việc bạn đánh thuốc mê người bảo vệ tòa nhà (não bộ). Tòa nhà có vẻ im ắng, nhưng bọn trộm (mảng bám độc hại) đang lộng hành bên trong vì người bảo vệ không thể làm nhiệm vụ dọn dẹp.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 5 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box" style="background: linear-gradient(45deg, #fef3c7, #fde68a); display: flex; justify-content: center; align-items: center; font-size: 3rem;">⚡⚖️</div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">5. Bóng ma "Khả dụng Năng lượng"</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Não teo lại khi bạn ăn quá thừa mứa, VÀ cả khi bạn nhịn đói cực đoan để "sống thọ".</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Năng lượng dư thừa (đường huyết cao, kháng insulin) gây viêm và tắc nghẽn mạch máu não. Ngược lại, những người ăn kiêng khắc nghiệt kéo dài khiến cơ thể thiếu hụt trầm trọng (RED-S), buộc cơ thể phải thu hẹp kích thước não để tiết kiệm calo.</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ví dụ:</b> Bạn nhịn ăn cực đoan vì nghe giới "longevity" bảo vậy, nhưng thực chất cơ thể bạn đang tự tắt các công tắc ở não bộ để ưu tiên giữ nhịp tim và hơi thở.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 6 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box" style="background: #e0f2fe; display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #0ea5e9; margin-right: 10px;"></div>
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: transparent; border: 4px dashed #0ea5e9;"></div>
+                </div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">6. AI: Cái Nạng hay Chân Giả?</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Công nghệ không xấu. Vấn đề là bạn dùng nó để nâng cấp mình, hay dùng nó để thoái hóa tư duy.</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Nạng (Orthotics) hỗ trợ bạn bước đi tốt hơn. Chân giả (Prosthetics) thay thế hoàn toàn phần cơ thể bị mất. Nếu bạn ném mọi thứ cho AI làm hộ từ đầu, nếp nhăn xử lý logic của bạn sẽ phẳng lỳ theo thời gian vì không được kích thích.</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ví dụ thực tế:</b> Sinh viên viết bài luận thủ công trước, SAU ĐÓ dùng AI để tìm điểm mù và nâng cấp bài viết (Dùng như Nạng) sẽ giỏi lên. Sinh viên copy paste đề bài cho AI viết hộ ngay từ đầu (Dùng như Chân giả) sẽ dần mất khả năng tư duy mạch lạc.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 7 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box" style="background: #fdf4ff; text-align: center; line-height: 120px; font-size: 2rem;">❤️‍🩹💊</div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">7. Tự trắc ẩn (Self-Compassion) là Thuốc</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Kỷ luật mù quáng và thói quen đay nghiến bản thân độc hại cho não hơn cả một bữa ăn rác (junk food).</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Cảm giác "tội lỗi" và áp lực phải hoàn hảo tiết ra cortisol (hormone căng thẳng) rỉ rả ngày này qua ngày khác, phá hủy trực tiếp cấu trúc não bộ. Những vận động viên đỉnh cao nhất thực chất lại là những người bao dung với thất bại của mình nhất để có thể phục hồi nhanh chóng.</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ẩn dụ:</b> Trượt một buổi tập tạ không làm bạn mất cơ. Nhưng việc dằn vặt bản thân cả đêm vì trượt buổi tập đó thì đang ngầm thiêu rụi nơ-ron thần kinh của bạn. Hãy bao dung để bắt đầu lại vào ngày mai.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 8 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box" style="background: #ecfdf5; display: flex; gap: 10px; justify-content: center; align-items: center;">
+                    <span style="display:inline-block; width: 20px; height: 20px; background:#10b981; border-radius: 50%;"></span>
+                    <span style="display:inline-block; width: 30px; height: 30px; background:#34d399; border-radius: 50%;"></span>
+                    <span style="display:inline-block; width: 40px; height: 40px; background:#6ee7b7; border-radius: 50%;"></span>
+                </div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">8. Ảo tưởng của Viên nang Bổ sung</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Thuốc bổ không thể vá lỗi cho một lối sống thảm họa.</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Các dưỡng chất cần "đồng đội" để kích hoạt nhau. Bạn nốc Omega-3 đắt tiền nhưng sẽ vô dụng nếu cơ thể thiếu Vitamin B. Thực phẩm toàn phần (Whole foods) chứa "Vật chất tối dinh dưỡng" (Nutritional dark matter) - hàng ngàn vi chất tương tác với nhau mà khoa học chưa gọi tên hết.</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ẩn dụ:</b> Uống một vốc thực phẩm chức năng khi hàng ngày ăn đồ ăn nhanh và ngồi lỳ một chỗ, giống hệt như việc bạn xịt một chai nước hoa đắt tiền lên một đống rác chưa được dọn.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 9 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="art-box" style="background: #faf5ff; display: flex; align-items:center; justify-content:center;">
+                    <div style="font-size: 3rem; transform: rotate(-10deg);">🐟🫐</div>
+                </div>
+                <h3 class="text-lg font-bold text-neuro-900 mb-3">9. Combo Hủy Diệt: Cá Mòi & Việt Quất</h3>
+                <div class="space-y-3 text-sm">
+                    <p><b><i class="fa-solid fa-seedling text-brain-500"></i> Bản chất:</b> Không cần tìm kiếm "siêu thực phẩm" thần bí ở rừng Amazon, giải pháp tốt nhất nằm ở siêu thị gần nhà bạn.</p>
+                    <p><b><i class="fa-solid fa-microscope text-slate-500"></i> Cơ chế:</b> Hải sản (Đặc biệt là Cá mòi - Sardines) chứa Omega-3 toàn phần cùng kẽm, asaxanthin. Quả mọng màu sậm (Việt quất - Blueberries) chứa polyphenols - chất chống oxy hóa mạnh dọn dẹp gốc tự do trong não.</p>
+                    <div class="bg-slate-50 p-3 rounded text-slate-600 italic">
+                        <b>💡 Ví dụ:</b> Thêm một hộp cá mòi (rất rẻ và tiện lợi) và một nắm quả việt quất vào thực đơn tuần này là bạn đã tiêm một liều vaccine tự nhiên bảo vệ não bộ khỏi sự suy thoái.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 3. Action Playbook -->
+    <section class="max-w-5xl mx-auto px-6 py-12">
+        <h2 class="text-3xl font-extrabold text-slate-900 mb-8 flex items-center gap-3">
+            <i class="fa-solid fa-rocket text-blue-500"></i> [Action Playbook] Sổ tay Thực chiến
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- If - Then Scenarios -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">🔄 Kịch Bản "Nếu - Thì"</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3">
+                        <span class="bg-amber-100 text-amber-700 p-2 rounded shrink-0"><i class="fa-solid fa-laptop"></i></span>
+                        <div>
+                            <p class="font-semibold">NẾU bạn bị chôn chân ở bàn làm việc 8 tiếng:</p>
+                            <p class="text-slate-600 text-sm mt-1">THÌ hãy dùng kỹ thuật "Snack Vận động" (Exercise Snacks). Cứ mỗi 1 giờ, đứng dậy làm 1 phút Jumping Jack, Squat hoặc đi bộ nhanh lấy nước. Một phút ngắt quãng này đủ để bơm máu làm mới não.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="bg-amber-100 text-amber-700 p-2 rounded shrink-0"><i class="fa-solid fa-mobile-screen"></i></span>
+                        <div>
+                            <p class="font-semibold">NẾU bạn cảm thấy quá tải và vô thức mở MXH:</p>
+                            <p class="text-slate-600 text-sm mt-1">THÌ hãy sử dụng nó như một "Trạm sạc tâm lý". Chỉ lướt trong 5 phút xem nội dung hài hước (vd: chó mèo), tuyệt đối KHÔNG đọc tin tức toxic, tranh cãi hay xem những người thành công hơn để rồi sinh ra đố kỵ.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Micro Actions -->
+            <div class="bg-gradient-to-br from-neuro-500 to-neuro-700 p-6 rounded-2xl shadow-md text-white">
+                <h3 class="text-xl font-bold mb-4 border-b border-neuro-400 pb-2">⚡ Hành Động Micro (Làm ngay trong 24h)</h3>
+                <p class="text-neuro-100 mb-4 text-sm">Đừng chờ đợi một kế hoạch hoàn hảo. Hãy tạo ra đà tâm lý (momentum) bằng hành động nhỏ nhất:</p>
+                <div class="space-y-4">
+                    <div class="bg-white/10 p-4 rounded-lg flex items-center gap-4">
+                        <div class="bg-white text-neuro-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</div>
+                        <p class="text-sm"><b>Thử thách não bộ mini:</b> Dùng tay KHÔNG THUẬN để đánh răng hoặc ăn cơm vào tối nay. Bạn sẽ cảm nhận rõ sự lóng ngóng (stress nhẹ) - đó chính là nơ-ron đang mọc rễ.</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-lg flex items-center gap-4">
+                        <div class="bg-white text-neuro-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</div>
+                        <p class="text-sm"><b>Đi siêu thị có ý thức:</b> Trong lần mua sắm tiếp theo, hãy thả vào giỏ hàng một hộp cá mòi (Sardines) hoặc một khay việt quất.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Reality Check -->
+    <section class="max-w-5xl mx-auto px-6 py-12 bg-red-50 rounded-3xl my-12 border border-red-100">
+        <h2 class="text-3xl font-extrabold text-slate-900 mb-8 flex items-center gap-3">
+            <i class="fa-solid fa-triangle-exclamation text-red-500"></i> [Reality Check] Nhận diện Cạm bẫy
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-lg font-bold text-red-700 mb-4 flex items-center gap-2"><i class="fa-regular fa-flag"></i> Bẫy Vô Hình (Red Flags)</h3>
+                <div class="bg-white p-5 rounded-xl border border-red-200 shadow-sm">
+                    <p class="font-bold text-slate-800 mb-2">Hội chứng "Orthosomnia" (Ám ảnh sức khỏe giấc ngủ)</p>
+                    <p class="text-sm text-slate-600 mb-3">Bạn đeo Apple Watch, Oura Ring đo giấc ngủ mỗi đêm. Sáng dậy thấy app báo điểm REM thấp, bạn lập tức lo âu, stress cả ngày dù thực tế cơ thể vẫn đang thấy khỏe khoắn bình thường.</p>
+                    <div class="text-xs bg-red-100 text-red-800 p-2 rounded">
+                        <b>Hậu quả:</b> Căng thẳng vì kỳ vọng điểm số thiết bị đã tước đi sự bình an của não bộ, gây hại nhiều hơn bản thân việc ngủ thiếu 30 phút.
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-brain-700 mb-4 flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> Chốt Chặn Kỷ Luật (Guardrails)</h3>
+                <div class="bg-white p-5 rounded-xl border border-brain-200 shadow-sm space-y-4">
+                    <p class="text-sm text-slate-600">Ý chí là tài nguyên có hạn, môi trường mới là thứ quyết định. Hãy thiết lập chốt chặn vật lý:</p>
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-ban text-red-500 mt-1"></i>
+                        <p class="text-sm"><b>Cai nghiện Dopamine buổi tối:</b> Mua một cái đồng hồ báo thức cơ học. BẮT BUỘC để cục sạc điện thoại ở phòng khách (hoặc phòng tắm). Không mang điện thoại vào phòng ngủ để tránh "lướt cố" trong vô thức.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-ban text-red-500 mt-1"></i>
+                        <p class="text-sm"><b>Quy tắc Bếp 80/20:</b> KHÔNG BAO GIỜ trữ đồ ăn vặt tinh chế (khoai tây chiên, bánh kẹo ngọt) trong tủ bếp. Muốn ăn? Bắt buộc phải xỏ giày đi bộ ra cửa hàng tiện lợi cách nhà 500m.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Active Recall -->
+    <section class="max-w-5xl mx-auto px-6 py-12">
+        <h2 class="text-3xl font-extrabold text-slate-900 mb-2 text-center">🃏 [Active Recall] Trạm Ôn Tập</h2>
+        <p class="text-slate-500 text-center mb-8">Không ôn tập = Quên 80% sau 24h. Hãy lướt qua 15 câu hỏi trọng tâm này.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Flashcards -->
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Có bao nhiêu % ca bệnh sa sút trí tuệ có thể phòng ngừa?</p>
+                <p class="text-slate-600">A: Từ 45% đến 70% thông qua các can thiệp lối sống.</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Mô hình 3S cho bộ não là gì?</p>
+                <p class="text-slate-600">A: Stimulus (Kích thích), Supply (Cung cấp năng lượng/dưỡng chất), Support (Hỗ trợ phục hồi).</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Vì sao người lớn khó học kỹ năng mới hơn trẻ em?</p>
+                <p class="text-slate-600">A: Vì sợ sai. Lỗi sai tạo ra khó chịu, nhưng đó lại là tác nhân thúc đẩy sự dẻo dai thần kinh (neuroplasticity).</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Chạy bộ (Cardio) có tác dụng gì cho não?</p>
+                <p class="text-slate-600">A: Bảo vệ vùng Hippocampus (Chất xám) - trung tâm chịu trách nhiệm cho trí nhớ.</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Tập tạ (Kháng lực) ảnh hưởng thế nào đến não?</p>
+                <p class="text-slate-600">A: Tăng cường Chất trắng - quyết định vận tốc xử lý thông tin và chức năng điều hành.</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Uống rượu hoặc dùng thuốc an thần để đi ngủ có tốt không?</p>
+                <p class="text-slate-600">A: Không. Nó chỉ gây bất tỉnh, ngăn cản não đi vào giấc ngủ sâu để dọn dẹp mảng bám Amyloid (tác nhân Alzheimer).</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Đa nhiệm (Multitasking) ảnh hưởng gì đến não?</p>
+                <p class="text-slate-600">A: Phá hủy khả năng lọc nhiễu, làm mất khả năng tập trung sâu (Deep work).</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Chỉ số máu Homocysteine cao cảnh báo điều gì?</p>
+                <p class="text-slate-600">A: Cảnh báo não bộ đang thiếu hụt trầm trọng các Vitamin nhóm B (B12, folate, B6).</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: 2 loại thực phẩm "ngôi sao" cho não là gì?</p>
+                <p class="text-slate-600">A: Cá mòi (Sardines) và Quả việt quất (Blueberries).</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Tại sao uống Omega-3 đôi khi không tác dụng?</p>
+                <p class="text-slate-600">A: Nếu cơ thể đang thiếu Vitamin B, Omega-3 sẽ không thể hoạt động hiệu quả.</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Nên coi AI là Nạng hay Chân giả?</p>
+                <p class="text-slate-600">A: Là Nạng. Hãy tự tư duy làm khung sườn trước, sau đó dùng AI để nâng cấp, đừng để nó suy nghĩ hộ từ A-Z.</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Sự Tự trắc ẩn (Self-compassion) liên quan gì đến não?</p>
+                <p class="text-slate-600">A: Giúp giảm Cortisol (hormone stress). Sự dằn vặt thù ghét bản thân tàn phá cấu trúc não kinh khủng hơn đồ ăn rác.</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: "Khả dụng năng lượng" ảnh hưởng não thế nào?</p>
+                <p class="text-slate-600">A: Ăn quá nhiều (viêm mạch máu) hay nhịn đói cực đoan (não thu hẹp để tiết kiệm năng lượng) đều làm teo não.</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Exercise Snacks (Snack vận động) là gì?</p>
+                <p class="text-slate-600">A: Hoạt động mạnh 1-2 phút ngắt quãng giữa nhiều giờ ngồi lỳ, giúp bơm oxy làm mới não bộ ngay lập tức.</p>
+            </div>
+            <div class="flashcard p-4 rounded text-sm">
+                <p class="font-semibold text-slate-800 mb-1">Q: Điều quan trọng nhất khi đánh giá giấc ngủ?</p>
+                <p class="text-slate-600">A: Cảm giác sảng khoái và tỉnh táo của bạn vào sáng hôm sau, chứ không phải điểm số trên các thiết bị đeo.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Footer -->
+    <footer class="bg-slate-900 text-slate-300">
+        <div class="max-w-5xl mx-auto px-6 h-[128px] flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left py-6">
+            <div class="text-sm max-w-lg">
+                <p class="font-semibold text-white mb-1">Cập nhật kiến thức thực chiến nhất</p>
+                <p class="text-slate-400 text-xs leading-relaxed">Về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+            
+            <div class="flex items-center gap-5">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-red-600 hover:text-white transition transform hover:scale-110">
+                    <i class="fa-brands fa-youtube text-lg"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-black hover:text-white transition transform hover:scale-110">
+                    <i class="fa-brands fa-tiktok text-lg"></i>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition transform hover:scale-110">
+                    <i class="fa-brands fa-facebook-f text-lg"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Zoom Script for Mindmap -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('mermaid-container');
+            const btnIn = document.getElementById('zoomIn');
+            const btnOut = document.getElementById('zoomOut');
+            let scale = 1;
+
+            btnIn.addEventListener('click', () => {
+                scale += 0.15;
+                container.style.transform = `scale(${scale})`;
+            });
+
+            btnOut.addEventListener('click', () => {
+                if(scale > 0.4) {
+                    scale -= 0.15;
+                    container.style.transform = `scale(${scale})`;
+                }
+            });
+            
+            // Simple drag implementation for the container
+            const dragContainer = document.getElementById('dragContainer');
+            let isDragging = false;
+            let startX, startY, translateX = 0, translateY = 0;
+
+            dragContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                container.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            });
+        });
+    </script>
+</body>
+</html>
