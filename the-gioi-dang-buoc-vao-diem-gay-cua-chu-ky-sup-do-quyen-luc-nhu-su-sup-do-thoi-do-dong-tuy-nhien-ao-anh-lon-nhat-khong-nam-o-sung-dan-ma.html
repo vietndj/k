@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến Trúc Sinh Tồn: Giải Mã Kỷ Nguyên Hỗn Loạn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* deep slate 900 */
+            color: #e2e8f0;
+        }
+        /* CSS Abstract Art Components */
+        .art-blob {
+            position: absolute;
+            filter: blur(40px);
+            opacity: 0.15;
+            z-index: 0;
+            border-radius: 50%;
+            animation: pulse 8s infinite alternate;
+        }
+        .art-blob-1 { top: -10%; left: -10%; width: 300px; height: 300px; background: #3b82f6; }
+        .art-blob-2 { bottom: -10%; right: -10%; width: 250px; height: 250px; background: #f59e0b; }
+        .card-art {
+            position: absolute;
+            top: 0; right: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .card-content { position: relative; z-index: 1; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        /* Hide scrollbar for clean UI */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    </style>
+</head>
+<body class="antialiased overflow-x-hidden relative selection:bg-amber-500 selection:text-slate-900">
+
+    <!-- Abstract Background -->
+    <div class="art-blob art-blob-1"></div>
+    <div class="art-blob art-blob-2 fixed"></div>
+
+    <main class="max-w-6xl mx-auto px-4 py-12 relative z-10">
+
+        <!-- HEADER -->
+        <header class="text-center mb-16 space-y-4">
+            <div class="inline-block px-3 py-1 border border-amber-500/30 bg-amber-500/10 text-amber-400 rounded-full text-sm font-semibold tracking-wide uppercase mb-4 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                🌍 Bản Đồ Địa Chính Trị & Nhận Thức
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                Giải Mã Kỷ Nguyên <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-500">Hỗn Loạn</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto">
+                Bóc tách sự dịch chuyển của các đế chế, bản chất của thực tại và cuốn cẩm nang để bạn đứng vững khi trật tự thế giới lung lay.
+            </p>
+        </header>
+
+        <!-- SECTION 1: THE BIG IDEA -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-2 border-b border-slate-700 pb-2">
+                🎯 1. The Big Idea
+            </h2>
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 md:p-8 rounded-2xl shadow-xl relative overflow-hidden">
+                <div class="card-art"></div>
+                <div class="card-content space-y-6">
+                    <p class="text-xl font-medium text-amber-100 leading-relaxed border-l-4 border-amber-500 pl-4">
+                        "Thế giới đang bước vào điểm gãy của chu kỳ sụp đổ quyền lực (như sự sụp đổ thời Đồ Đồng). Tuy nhiên, ảo ảnh lớn nhất không nằm ở súng đạn, mà nằm ở tâm trí. Sự sống còn thực sự bắt đầu khi bạn bước ra khỏi 'Hang động của Plato' và học cách xây dựng vòng tròn cộng đồng tự cường."
+                    </p>
+
+                    <!-- Mermaid Mindmap Container -->
+                    <div class="mt-8 border border-slate-600 rounded-xl bg-slate-900/80 overflow-hidden relative group">
+                        <div class="absolute top-3 right-3 z-20 flex gap-2">
+                            <button id="zoom-in" class="bg-slate-700 hover:bg-amber-600 text-white w-8 h-8 rounded shadow flex items-center justify-center transition-colors font-bold text-lg" aria-label="Phóng to">+</button>
+                            <button id="zoom-out" class="bg-slate-700 hover:bg-amber-600 text-white w-8 h-8 rounded shadow flex items-center justify-center transition-colors font-bold text-lg" aria-label="Thu nhỏ">−</button>
+                        </div>
+                        <div id="mindmap-wrapper" class="w-full h-[450px] flex items-center justify-center transform transition-transform duration-300 origin-center">
+                            <div class="mermaid">
+                                graph LR
+                                    A((TRẬT TỰ<br>THẾ GIỚI)) --> B[Sự Sụp Đổ Đế Chế]
+                                    A --> C[Ảo Ảnh Nhận Thức]
+                                    
+                                    B --> B1(Chiến tranh tiêu hao)
+                                    B --> B2(Nút thắt hàng hải)
+                                    B --> B3(Kiểm soát AI/Kinh tế)
+                                    
+                                    C --> C1(Hang động Plato)
+                                    C --> C2(Ma trận Tiền tệ & Media)
+                                    
+                                    B1 --> D{Hệ Quả}
+                                    B2 --> D
+                                    B3 --> D
+                                    C1 --> D
+                                    
+                                    D --> E((GIẢI PHÁP<br>SINH TỒN))
+                                    E --> E1(Tự cường cá nhân)
+                                    E --> E2(Xây dựng cộng đồng)
+                                    E --> E3(Kiểm soát tâm trí)
+                                    
+                                    style A fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#fff
+                                    style E fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-slate-400 italic text-center">Sơ đồ: Cấu trúc quyền lực và lối thoát sinh tồn. Nhấn +/- để thu phóng.</div>
+
+                    <!-- YouTube Button -->
+                    <div class="flex justify-center mt-6">
+                        <a href="https://youtu.be/BTJGr78-zyw" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-red-600/10 border border-red-500 text-red-400 hover:bg-red-600 hover:text-white px-5 py-2.5 rounded-full transition-all shadow-[0_0_10px_rgba(220,38,38,0.2)] font-medium text-sm">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                            Professor Jiang: World War 3 Is About To Begin, Let Me Explain!
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DEEP INSIGHTS -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-2 border-b border-slate-700 pb-2">
+                🧠 2. Deep Insights (Các Trụ Cột Tri Thức)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Insight 1 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">1. Ảo ảnh quyền lực & Hang động Plato</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Những gì chúng ta tin là "hiện thực" (tiền tệ, luật lệ, xã hội) thực chất chỉ là "cái bóng" được chiếu lên tường bởi tầng lớp tinh hoa.</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Giới tinh hoa tài chính kiểm soát tiền tệ, dùng truyền thông và giáo dục để hợp thức hóa nó, biến chúng ta thành những tù nhân tự nguyện yêu lấy xiềng xích của mình.</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Giống như xem một bộ phim truyền hình Hàn Quốc dài tập. Ban đầu bạn thấy nó vô lý, nhưng xem đến tập 20, bạn bị nghiện và coi những rắc rối trong phim là có thật.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">2. Trò Chơi Vương Quyền (Game Theory)</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Không có đúng/sai tuyệt đối trong địa chính trị. Mọi quốc gia hành động thuần túy dựa trên bộ quy tắc lợi ích và điểm yếu của đối thủ.</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Mỹ dùng USD và không quân; Nga dùng pháo binh, diện tích và hạm đội bóng tối; Trung Quốc dùng năng lực sản xuất. Tất cả chỉ là những nước đi trên một bàn cờ lớn.</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Giống như bàn cờ vua. Bạn không tiêu diệt Mỹ bằng cách xâm lược, mà bằng cách tạo ra sự phân cực cực đoan bên trong (kích động nội chiến) để "tướng" tự ngã.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">3. Quyền Lực Yết Hầu (Choke Points)</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Kẻ mạnh nhất không phải là kẻ có nhiều đất nhất, mà là kẻ kiểm soát các cánh cửa hẹp mà toàn bộ thế giới phải đi qua.</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Năng lượng, phân bón và hàng hóa đi qua các eo biển nhỏ (Hormuz, Malacca). Ai chặn được các eo biển này, người đó có thể bắt nền kinh tế toàn cầu làm con tin.</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Giống như một trạm thu phí duy nhất trên cao tốc. Mỹ đưa tàu chiến đến eo biển để thu "phí bảo kê", cắt đứt nguồn sống của đối thủ mà tốn rất ít viên đạn.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">4. Chiến Tranh Tiêu Hao (War of Attrition)</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Chiến tranh hiện đại không phải để tiêu diệt ngay lập tức, mà là để vắt kiệt tài nguyên và ý chí của đối phương cho đến khi họ bỏ cuộc.</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Thay vì đánh xáp lá cà, họ đánh vào nhà máy lọc dầu, cắt đường ống nước, phá trạm điện. Mục tiêu là tạo ra sự phẫn nộ từ bên trong để chính người dân lật đổ chính phủ.</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Trò chơi "Say Uncle" (chịu thua) của trẻ con. Hai đứa bẻ tay nhau, không ai có đủ lực bẻ gãy tay người kia ngay, nhưng tạo ra đủ sự đau đớn từ từ khiến đối phương phải thốt lên "Tôi bỏ cuộc".
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">5. Chu Kỳ Sụp Đổ Của Đế Chế</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Mọi cấu trúc quyền lực, dù lớn đến đâu, cũng có tuổi thọ sinh học (thường là 200 năm). Chúng tự sụp đổ vì chính sức nặng của mình.</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Khi một đế chế in quá nhiều tiền, nợ nần phình to, tinh hoa tham nhũng và người dân mất niềm tin, một cuộc khủng hoảng nhỏ cũng đủ gây ra hiệu ứng domino sụp đổ.</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Sự sụp đổ của Thời đại Đồ Đồng. Những nền văn minh vĩ đại rớt đài không chỉ vì một cuộc xâm lược, mà vì một cơn bão hoàn hảo: động đất, hạn hán, lạm phát và người tị nạn (Sea Peoples).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">6. Kỷ Nguyên Giám Sát Bằng AI</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Khi hệ thống quyền lực lung lay, chúng sẽ phản ứng bằng cách tăng cường kiểm soát độc đoán thông qua công nghệ.</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Sử dụng ID kỹ thuật số và tiền tệ kỹ thuật số (CBDC) để ghi lại mọi hành vi online. AI sẽ phân tích dữ liệu để dự đoán và khóa tài khoản/quyền lợi nếu bạn không tuân thủ.</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Mọi thứ bạn mua đều bị ghi lại. Hệ thống có thể lập trình tiền của bạn: "Bạn không được mua thịt đỏ hôm nay vì bạn đã vượt hạn mức carbon", dập tắt tự do dưới danh nghĩa "tiến bộ".
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">7. Chiến Lược Phân Tán (Mosaic Strategy)</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Cách duy nhất để chống lại một kẻ địch có vũ khí và công nghệ giám sát tối tân là phi tập trung hóa hoàn toàn cấu trúc của bạn.</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Cắt nhỏ quân đội thành hàng chục nhóm tự trị, ẩn nấp dưới địa hình phức tạp. Không có "đầu não" duy nhất để đối phương có thể tung đòn "cắt đầu rắn".</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Pháo đài núi của Iran. Thay vì xây dựng một thủ đô tập trung, họ giấu các bệ phóng tên lửa sâu trong núi với 31 nhánh quân đội độc lập. Giết một tướng không làm chết cả đạo quân.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">8. Quy Luật Phân Dạng (Hermeticism)</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Chúng ta không vô hình trung bị cuốn theo thế giới, thế giới là tấm gương phản chiếu nhận thức của chúng ta. (As above, so below).</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Thực tại cấu tạo từ năng lượng. Mỗi cá nhân là một mẩu phân dạng (fractal) của vũ trụ. Bằng cách thay đổi năng lượng bên trong (sự tử tế, lòng dũng cảm), bạn đang trực tiếp sửa chữa thế giới vĩ mô.</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Những du khách đứng ngắm biển không chỉ là con người, họ chính là những "mảnh vỡ của ý thức vũ trụ" đang tự khám phá chính mình.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 relative overflow-hidden group hover:border-amber-500 transition-colors">
+                    <div class="card-art opacity-50"></div>
+                    <div class="card-content">
+                        <h3 class="text-xl font-bold text-white mb-3">9. Phao Cứu Sinh Cộng Đồng</h3>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-emerald-400">Bản chất:</strong> Khi trật tự vĩ mô sụp đổ (kinh tế, năng lượng), chính quyền sẽ không thể cứu bạn. Sự sống sót phụ thuộc vào kỹ năng và mạng lưới lưới cục bộ.</p>
+                        <p class="text-sm text-slate-300 mb-4"><strong class="text-blue-400">Cơ chế:</strong> Cấu trúc càng lớn càng dễ gãy gục dưới khủng hoảng. Nhưng một nhóm 100 người hàng xóm biết cách hợp tác sẽ luôn tìm ra nguồn nước, thức ăn và sự bảo vệ.</p>
+                        <p class="text-sm text-slate-400 italic bg-slate-900/50 p-3 rounded-lg border-l-2 border-amber-500">
+                            💡 <strong>Ví dụ:</strong> Nếu xảy ra mất điện diện rộng, thay vì trùm chăn hoảng sợ chờ chính phủ, người sống sót là người dám ra ngoài gõ cửa từng căn hộ, gom mọi người lại để bàn cách giải quyết.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: ACTION PLAYBOOK -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-2 border-b border-slate-700 pb-2">
+                🚀 3. Sổ Tay Thực Chiến (Action Playbook)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- If/Then -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-xl border border-blue-500/30">
+                    <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">🔄 Kịch Bản Nếu - Thì</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-800/80 rounded-lg border border-slate-700">
+                            <span class="text-rose-400 font-bold">NẾU:</span> Bạn cảm thấy lo âu, choáng ngợp trước những tin tức chiến tranh, suy thoái, lạm phát trên mạng xã hội...<br><br>
+                            <span class="text-emerald-400 font-bold">THÌ:</span> Hãy coi nó là "bóng trên vách hang động". Lập tức tắt màn hình và dồn năng lượng đó vào việc học một kỹ năng thực tế (nấu ăn, sửa chữa điện, sơ cứu) - những thứ không bao giờ mất giá trị.
+                        </div>
+                        <div class="p-4 bg-slate-800/80 rounded-lg border border-slate-700">
+                            <span class="text-rose-400 font-bold">NẾU:</span> Chi phí sinh hoạt tăng cao và bạn lo sợ mất việc làm...<br><br>
+                            <span class="text-emerald-400 font-bold">THÌ:</span> Thay vì hoảng loạn mua vàng hay Crypto vô tội vạ, hãy đầu tư vào "nguồn vốn xã hội". Xây dựng mối quan hệ sâu sắc với 5 người hàng xóm hoặc đồng nghiệp có kỹ năng chéo với bạn.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-xl border border-amber-500/30">
+                    <h3 class="text-xl font-bold text-amber-400 mb-4 flex items-center gap-2">⚡ Micro-Actions (Làm ngay trong 24h)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex gap-3">
+                            <div class="bg-amber-500/20 p-2 rounded-full h-fit"><svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+                            <div>
+                                <strong class="text-white block">Gõ cửa làm quen 1 người hàng xóm</strong>
+                                <span class="text-slate-400 text-sm">Chỉ cần mang một đĩa trái cây, hoặc một câu chào hỏi đơn giản. Bắt đầu xây dựng "vòng tròn sinh tồn" của bạn ngay hôm nay.</span>
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <div class="bg-amber-500/20 p-2 rounded-full h-fit"><svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+                            <div>
+                                <strong class="text-white block">Kiểm kê 3 kỹ năng "Sinh tồn cơ bản"</strong>
+                                <span class="text-slate-400 text-sm">Lấy giấy bút ghi ra 3 thứ bạn có thể làm bằng tay nếu AI hoặc hệ thống máy tính sập hoàn toàn. Nếu chưa có, chọn 1 kỹ năng để bắt đầu học trên YouTube tối nay.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: REALITY CHECK -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-2 border-b border-slate-700 pb-2">
+                ⚠️ 4. Reality Check (Nhận Diện Cạm Bẫy)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Red Flags -->
+                <div class="bg-rose-950/30 p-6 rounded-xl border border-rose-500/50">
+                    <h3 class="text-xl font-bold text-rose-400 mb-4 flex items-center gap-2">🚩 Bẫy Vô Hình (Tư Duy Sai Lầm)</h3>
+                    <div class="space-y-4 text-slate-300 text-sm">
+                        <p><strong>Ảo tưởng Cứu Thế:</strong> Tin rằng sẽ có một vị tổng thống, một tỷ phú (như Elon Musk) hoặc một phe phái chính trị nào đó "chiến thắng" và mang lại hòa bình vĩnh cửu. Bản chất họ đều là người chơi bảo vệ lợi ích cá nhân trên bàn cờ. Đợi họ cứu là tự sát.</p>
+                        <p><strong>Sợ hãi tê liệt:</strong> Nghe tin chiến tranh sụp đổ, bạn rút hết tiền, hoảng loạn mua dự trữ mì tôm và xây hầm trú ẩn. Bẫy ở đây là bạn đang tự cô lập mình. Sự sống sót phụ thuộc vào MẠNG LƯỚI, không phải BẤT ĐỘNG SẢN ngầm.</p>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-emerald-950/30 p-6 rounded-xl border border-emerald-500/50">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">🛡️ Chốt Chặn Kỷ Luật (Bảo Vệ Tâm Trí)</h3>
+                    <div class="space-y-4 text-slate-300 text-sm">
+                        <p><strong>1. Quy tắc "Detox Hang Động":</strong> Không tin tưởng vào sức mạnh ý chí của bạn. Hãy chặn đứng sự nhồi sọ của Media bằng cách dùng App Blocker: Chỉ cho phép bản thân xem tin tức đúng 15 phút/ngày. Xóa app Tiktok/News khỏi điện thoại, chỉ xem trên máy tính.</p>
+                        <p><strong>2. Quy tắc Tài chính Cơ học:</strong> Thiết lập một tài khoản tiết kiệm tự động trích 15% thu nhập mỗi tháng vào một ngân hàng MÀ BẠN KHÔNG CÀI APP TRÊN ĐIỆN THOẠI. Ngăn chặn triệt để hành động hoảng loạn bán tháo/đu đỉnh khi thị trường biến động.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: ACTIVE RECALL -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-2 border-b border-slate-700 pb-2">
+                🃏 5. Trạm Ôn Tập Tương Tác (Flashcards)
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Thuyết "Hang động của Plato" ngụ ý gì trong xã hội hiện đại?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Chúng ta đang sống trong một thực tại được dàn dựng (cái bóng trên tường) do giới tinh hoa tài chính và truyền thông tạo ra, khiến ta tin đó là sự thật.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Theo Lý thuyết Trò chơi, chiến lược của Nga là gì?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: "Third Rome Strategy" - Kết nối Á-Âu, sử dụng lãnh thổ rộng lớn, pháo binh và tinh thần tôn giáo để chống lại sự kiểm soát biển của Mỹ.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Chiến tranh tiêu hao (Game of Uncle) hoạt động ra sao?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Không dùng lực để tiêu diệt đối phương ngay, mà đánh vào các điểm yếu kinh tế, cơ sở hạ tầng để tạo ra đủ đau đớn buộc đối thủ phải đầu hàng.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Vì sao eo biển Hormuz hay Malacca lại quan trọng?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Chúng là các "yết hầu" (choke points) hàng hải. Ai kiểm soát được nó sẽ khống chế dòng chảy năng lượng và thương mại của cả thế giới.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Sự kiện "Bronze Age Collapse" mang ý nghĩa gì?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Là bài học lịch sử cho thấy các đế chế mạnh nhất cũng sẽ sụp đổ khi phải đối mặt với một chuỗi khủng hoảng (nợ, khí hậu, tị nạn) cùng lúc.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: AI đang thúc đẩy chính phủ đi về hướng nào?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Chuyển hướng sang một kỷ nguyên độc đoán giám sát, dùng Digital ID và tiền kỹ thuật số để kiểm soát và điều hướng hành vi công dân.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: "Mosaic Strategy" (Chiến lược Phân tán) là gì?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Là việc chia nhỏ quân đội/hệ thống thành nhiều mảnh tự trị để chống lại sức mạnh giám sát và tiêu diệt đầu não của kẻ thù tối tân hơn.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Theo Hermeticism, bản chất của thực tại là gì?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Mọi thứ đều là năng lượng/nhận thức. Chúng ta là mảnh ghép của vũ trụ; thay đổi bên trong chính mình là thay đổi thế giới.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Giải pháp thực tế nhất khi hệ thống vĩ mô suy đổ?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Trở thành những "nhà tiên phong cộng đồng" - kết nối hàng xóm, hợp lực chia sẻ kỹ năng và tài nguyên cơ bản (nước, thực phẩm, an ninh).</p>
+                </div>
+                
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Tại sao Mỹ muốn kiểm soát Tây Bán Cầu (Monroe Doctrine)?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Để tạo ra "Pháo đài Châu Mỹ", độc quyền năng lượng và buộc cả thế giới phải trả "phí cống nạp" nếu muốn giao thương tại khu vực này.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Điểm yếu lớn nhất của nền dân chủ là gì?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Sự phân cực tột độ. Kẻ thù không cần xâm lược, chỉ cần kích động nội chiến để các phe phái tinh hoa tự tiêu diệt lẫn nhau.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: "Hạm đội Bóng tối" (Shadow Fleet) là công cụ của ai?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Là hàng ngàn tàu chở dầu né lệnh trừng phạt, hoạt động như lực lượng hải quân kinh tế ngầm của Nga nhằm duy trì dòng tiền năng lượng.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Tại sao giới trẻ dần từ chối "Cái bóng trên tường"?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Sự kết nối internet và truyền thông độc lập giúp họ thấy hệ thống bóc lột và ảo tưởng, khiến hệ thống cũ lung lay và phải tăng cường kiểm duyệt.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Petrodollar (Tiền dầu mỏ) đóng vai trò gì cho Mỹ?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Là mỏ neo quyền lực, buộc toàn cầu dùng USD mua năng lượng, cho phép Mỹ kiểm soát tài chính thế giới và tài trợ cho quân đội của mình.</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 hover:border-blue-400 transition-all group">
+                    <p class="text-blue-400 font-bold mb-2 text-sm uppercase tracking-wide">Q: Bài học cao nhất rút ra từ cuộc khủng hoảng là gì?</p>
+                    <div class="w-full h-px bg-slate-700 my-2"></div>
+                    <p class="text-slate-300 text-sm group-hover:text-white transition-colors">A: Mọi thứ vĩ mô ngoài tầm kiểm soát của bạn. Sức mạnh thực sự nằm ở Lòng Tốt, Khả năng Sáng tạo và Tình yêu thương gia đình/cộng đồng.</p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 h-[128px] relative z-20 flex items-center">
+        <div class="max-w-6xl mx-auto w-full px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <p class="text-slate-300 font-semibold text-sm">Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng,</p>
+                <p class="text-slate-400 text-xs mt-1">Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <!-- Youtube -->
+                <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-500 transition-colors" aria-label="YouTube">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <!-- Tiktok -->
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-white transition-colors" aria-label="TikTok">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.64-5.46-.05-1.15.14-2.31.57-3.38.48-1.2 1.25-2.28 2.24-3.08 1.4-1.12 3.2-1.63 4.96-1.54v4.06c-.66-.02-1.32.1-1.92.36-.93.39-1.67 1.18-1.93 2.14-.14.53-.16 1.1-.03 1.64.18.84.77 1.58 1.54 1.95.84.42 1.83.47 2.72.2.9-.27 1.63-.94 2.01-1.8.18-.4.27-.84.28-1.28.02-3.92.01-7.84.01-11.76.01-.01.01-.02.02-.03z"/></svg>
+                </a>
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-500 transition-colors" aria-label="Facebook">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script for interactive zooming of Mindmap -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.getElementById('mindmap-wrapper');
+            const btnIn = document.getElementById('zoom-in');
+            const btnOut = document.getElementById('zoom-out');
+            let currentScale = 1;
+            const step = 0.2;
+
+            btnIn.addEventListener('click', () => {
+                currentScale += step;
+                wrapper.style.transform = `scale(${currentScale})`;
+            });
+
+            btnOut.addEventListener('click', () => {
+                currentScale = Math.max(0.5, currentScale - step); // limit zoom out
+                wrapper.style.transform = `scale(${currentScale})`;
+            });
+        });
+    </script>
+</body>
+</html>
