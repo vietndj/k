@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến Trúc Cơ Thể Tinh Tế</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        space: {
+                            900: '#0B0B1A',
+                            800: '#151530',
+                            700: '#2A2A55',
+                        },
+                        gold: {
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                        },
+                        mystic: '#8B5CF6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B0B1A;
+            color: #E2E8F0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+        }
+        /* CSS Abstract Art: Vesica Piscis */
+        .vesica-piscis {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.1;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .vesica-circle {
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            border: 2px solid #8B5CF6;
+            top: -100px;
+        }
+        .vesica-circle:nth-child(1) { left: calc(50% - 400px); }
+        .vesica-circle:nth-child(2) { left: calc(50% - 200px); }
+
+        /* Mindmap container limits */
+        #mindmap-container {
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+        }
+        #mindmap-container:active { cursor: grabbing; }
+        #zoom-wrapper {
+            transition: transform 0.3s ease;
+            transform-origin: left center;
+        }
+
+        /* Flashcard flip effect */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .flashcard-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+        .flashcard:hover .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(21, 21, 48, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #FBBF24, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-mystic selection:text-white">
+
+    <!-- CSS Abstract Art Background -->
+    <div class="vesica-piscis hidden md:block">
+        <div class="vesica-circle"></div>
+        <div class="vesica-circle"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="py-16 px-6 text-center max-w-4xl mx-auto">
+        <h2 class="text-mystic font-semibold tracking-widest uppercase text-sm mb-4">Masterclass Analysis</h2>
+        <h1 class="text-4xl md:text-6xl font-serif font-bold text-white leading-tight mb-6">
+            Kiến Trúc <span class="gradient-text">Cơ Thể Tinh Tế</span> & Hình Học Thiêng Liêng
+        </h1>
+        <p class="text-gray-400 text-lg md:text-xl font-light">
+            Bóc tách những bài học sâu sắc từ Dr. Robert Gilbert qua góc nhìn của một Mentor thực chiến.
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 md:px-8 pb-20 space-y-24">
+
+        <!-- 1. The Big Idea & Mindmap -->
+        <section id="big-idea" class="relative">
+            <div class="glass-panel rounded-3xl p-8 md:p-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-3xl">🎯</span>
+                    <h2 class="text-3xl font-serif font-bold text-white">The Big Idea</h2>
+                </div>
+                <p class="text-xl md:text-2xl text-gray-300 font-light leading-relaxed border-l-4 border-gold-400 pl-6 mb-10">
+                    Mọi suy nghĩ, cảm xúc và hành động của bạn không chỉ biến mất vào hư không. Chúng đang trực tiếp <strong>"xây gạch" tạo nên cấu trúc Cơ thể Tinh tế (Subtle Body)</strong> của bạn – thứ tài sản duy nhất bạn có thể mang theo sau cánh cửa tử thần. Cuộc sống này là một cơ hội giới hạn để bạn thiết kế hình học thiêng liêng cho linh hồn mình.
+                </p>
+
+                <!-- Mindmap -->
+                <div class="bg-space-800 rounded-2xl p-4 border border-gray-700 relative">
+                    <div class="absolute top-6 right-6 z-10 flex gap-2">
+                        <button onclick="zoomMindmap(0.2)" class="w-10 h-10 bg-mystic text-white rounded-full flex items-center justify-center hover:bg-purple-500 shadow-lg font-bold text-xl transition-colors" title="Phóng to">[+]</button>
+                        <button onclick="zoomMindmap(-0.2)" class="w-10 h-10 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-500 shadow-lg font-bold text-xl transition-colors" title="Thu nhỏ">[-]</button>
+                    </div>
+                    
+                    <div id="mindmap-container" class="w-full h-[500px] bg-space-900 rounded-xl">
+                        <div id="zoom-wrapper" class="w-full h-full flex items-center justify-center">
+                            <pre class="mermaid">
+                                graph LR
+                                    A((Cơ Thể Tinh Tế)) --> B(Nền Tảng Nội Tâm)
+                                    A --> C(Hình Học Thiêng Liêng)
+                                    A --> D(Hành Động Trái Đất)
+                                    
+                                    B --> B1[Quan sát: Nghĩ - Cảm - Làm]
+                                    B --> B2[Cân bằng: Chủ động & Thụ động]
+                                    B --> B3[Ôn tập ngược - Backward Review]
+                                    
+                                    C --> C1[Trường Torus - Dòng Năng Lượng]
+                                    C --> C2[Hình Cầu - Chứa Đựng Mọi Thứ]
+                                    C --> C3[Dodecahedron - Sức Mạnh Sự Sống]
+                                    
+                                    D --> D1[Tìm Sứ Mệnh - Vì Sao Tôi Ở Đây?]
+                                    D --> D2[Không Gian Tầm Nhìn - Lắng Nghe]
+                                    D --> D3[12 Nhóm Sức Mạnh - Thay Đổi Thế Giới]
+
+                                    style A fill:#8B5CF6,stroke:#fff,stroke-width:2px,color:#fff
+                                    style B fill:#2A2A55,stroke:#8B5CF6,color:#fff
+                                    style C fill:#2A2A55,stroke:#8B5CF6,color:#fff
+                                    style D fill:#2A2A55,stroke:#8B5CF6,color:#fff
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <a href="https://youtu.be/jB9UGRzoSl8?si=Sx4QzedqpsmexXKv" target="_blank" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-full transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)]">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        Bí mật Rosicrucian, Hình học thiêng liêng & Cơ thể tinh tế | Dr. Robert Gilbert
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section id="deep-insights">
+            <div class="flex items-center gap-3 mb-10">
+                <span class="text-3xl">🧠</span>
+                <h2 class="text-3xl font-serif font-bold text-white">Deep Insights - Các Trụ Cột Tri Thức</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Insight 1 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">1. Kiến thức vs. Sự hóa thân</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Việc tích lũy kiến thức tâm linh chỉ để lấp đầy tâm trí sẽ làm cạn kiệt linh hồn. Kiến thức phải được chuyển hóa thành lý tưởng và hành động để nuôi dưỡng năng lượng sống.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Khi học thuần túy bằng lý trí vật chất, nó không chạm vào kết cấu của "cơ thể tinh tế". Bạn chỉ đang nạp dữ liệu vào một ổ cứng vật lý sẽ bị tiêu hủy khi chết.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Nó giống như việc bạn đọc 100 cuốn sách về tập gym nhưng không bao giờ nhấc tạ. Cơ bắp (cơ thể tinh tế) của bạn không hề thay đổi.
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">2. Ăng-ten Trên Đỉnh Đầu</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Hệ thống luân xa không dừng lại ở đỉnh đầu. Có những trạm thu sóng năng lượng điện áp cao nằm ngoài cơ thể vật lý, chạy dọc lên trên giống như một cột trụ.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Cơ thể vật lý sẽ bị "cháy mạch" nếu chứa dòng điện áp quá cao này. Việc kết nối với tâm trí bậc cao đòi hỏi ta phải dời điểm chú ý từ não bộ lên các trung tâm phía trên.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ví dụ:</strong> Giống như tivi không tự sản xuất ra chương trình. Nó phải nâng ăng-ten (Crown Center) lên cao để bắt sóng vô tuyến từ các vệ tinh phi vật lý.
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">3. Nhịp Thở Của Thiền Định</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Sự phát triển tâm linh hoàn thiện đòi hỏi cả thiền thụ động (làm rỗng tâm trí) và thiền chủ động (hình dung sáng tạo, định hình suy nghĩ).</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Mọi thứ trong vũ trụ hoạt động theo nguyên lý phân cực (Polarity). Chỉ thực hành một bên sẽ tạo ra sự mất cân bằng trong trường năng lượng, dẫn đến việc bị đứt gãy kết nối với thế giới thực tế.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Bạn không thể chỉ hít vào (thụ động nhận lấy) mà không thở ra (chủ động kiến tạo). Hoặc không thể đi bộ mà chỉ bước bằng chân trái.
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">4. Cuộc Dạo Chơi Của Những Kẻ Mộng Du</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Hầu hết con người đang sống trong trạng thái vô thức, phản ứng tự động theo thói quen và sự dẫn dắt của xã hội thay vì sống với mục đích của linh hồn.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> 95% suy nghĩ của chúng ta lặp lại ngày hôm qua. Sự quen thuộc tạo ra rãnh mòn thần kinh, đóng băng ý chí tự do và tước đi quyền làm chủ số phận.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ví dụ từ diễn giả:</strong> "Sự khủng khiếp của tình thế" là nhận ra thế giới giống như đàn chuột Lemming đang vô thức nối đuôi nhau đi thẳng xuống vực thẳm.
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">5. Không Gian Tầm Nhìn (Vision Space)</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Việc định kỳ tách mình hoàn toàn khỏi công việc, con người và công nghệ là bắt buộc để tái kết nối với "chỉ thị" từ bản ngã bậc cao.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Thế giới vật chất tạo ra tiếng ồn nền (noise) làm nhiễu sóng tín hiệu tinh tế. Sự cô lập vật lý làm triệt tiêu tạp âm, cho phép tần số cao đi vào nhận thức.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Giống như bạn đang cố nghe một bản nhạc cổ điển tinh tế (tiếng nói linh hồn) giữa một công trường đang đập phá ầm ĩ. Bạn phải bước vào phòng cách âm mới nghe được.
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">6. Cỗ Máy Thời Gian Trước Giờ Ngủ</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Thực hành ôn lại các sự kiện trong ngày theo trình tự ngược lại (Backward Review) trước khi ngủ để phá vỡ ảo giác về nhân - quả thông thường.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Xem lại ngược chiều giúp bóc tách lớp vỏ cảm xúc, hiển thị rõ ràng những nghiệp quả vô tình tạo ra, những cái bẫy giao tiếp, hoặc những thiên thần hộ mệnh lướt qua mà ta đã bỏ lỡ.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ví dụ:</strong> Giống như việc tua ngược cuốn băng camera an ninh. Bạn không bị cuốn vào cốt truyện nữa, mà sẽ nhìn thấy rất rõ ai là người đã lén đặt cái túi (sự kiện) vào phòng bạn.
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">7. Trạm Cửa Khẩu Của Những Giấc Mơ</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Khoảng thời gian 15 phút ngay sau khi thức dậy (Twilight State) là thời điểm quý giá nhất để tải thông tin từ thế giới tiềm thức/giấc mơ về ý thức.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Lúc này bộ não vẫn đang ở sóng Theta/Alpha. Nếu bạn vồ lấy điện thoại ngay lập tức, sóng Beta (tỉnh táo, căng thẳng) sẽ kích hoạt và xóa sạch dữ liệu vừa được truyền tải.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Bạn vừa đi thuyền từ Đảo Giấc Mơ về bờ. Những dấu chân ẩm ướt (ký ức) trên cát sẽ bốc hơi ngay lập tức nếu mặt trời (sự bận rộn vật chất) chiếu thẳng vào.
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">8. Hình Học Thiêng Liêng (Ngôn Ngữ Thượng Đế)</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Mọi thứ trong vũ trụ - từ hạt nguyên tử đến dải ngân hà, từ cơ thể bệnh đến cơ thể khỏe mạnh - đều tuân theo các hình khối hình học nhất định (Sphere, Torus...).</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> "Năng lượng được đưa vào Hình dáng sẽ tạo ra Chức năng". Hình học không phải toán học khô khan, nó là tần số rung động bị đông đặc lại dưới dạng vật chất.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ví dụ từ diễn giả:</strong> Cốt lõi của quả bom hạt nhân đầu tiên (dự án Manhattan) thực chất mang hình khối Dodecahedron - một hình học thiêng liêng cổ đại mang sức mạnh hủy diệt nếu dùng sai cách.
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">9. Khối Rubik Của Sự Thật (Sức mạnh số 12)</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Để thực sự hiểu một khái niệm/sự vật ở cõi vật lý, bạn không thể nhìn nó từ một phía. Bạn phải xoay quanh nó và nhìn qua 12 góc độ (perspectives) khác nhau.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Đây là nguyên lý của 12 cung hoàng đạo, 12 vị tông đồ. Sự thật là một khối đa diện. Một người không thể ôm trọn sự thật vũ trụ mà cần sức mạnh cộng hưởng.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Giống như câu chuyện thầy bói xem voi. Người mù sờ vòi nghĩ voi như con đỉa, sờ chân nghĩ voi như cột đình. Cần 12 người mù ghép lăng kính lại mới thấy được "Con Voi" thật sự.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section id="action-playbook" class="bg-space-800 rounded-3xl p-8 md:p-12 border border-mystic shadow-[0_0_30px_rgba(139,92,246,0.15)] relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-mystic rounded-full mix-blend-screen filter blur-[100px] opacity-20"></div>
+            
+            <div class="flex items-center gap-3 mb-10 relative z-10">
+                <span class="text-3xl">🚀</span>
+                <h2 class="text-3xl font-serif font-bold text-white">Action Playbook - Sổ Tay Thực Chiến</h2>
+            </div>
+
+            <div class="space-y-8 relative z-10">
+                <div>
+                    <h3 class="text-xl font-bold text-gold-400 border-b border-gray-700 pb-2 mb-4">Kịch Bản Nếu - Thì (If - Then)</h3>
+                    <ul class="space-y-4">
+                        <li class="bg-space-900 p-4 rounded-xl border border-gray-700 flex flex-col md:flex-row gap-4 items-start md:items-center">
+                            <span class="bg-gray-800 text-gray-300 px-3 py-1 rounded text-sm font-bold min-w-max">NẾU BẠN</span>
+                            <p class="text-gray-300">Cảm thấy hoang mang, mất kết nối, làm việc như một cái máy nhưng cuối ngày cảm thấy rỗng tuếch...</p>
+                            <span class="bg-mystic text-white px-3 py-1 rounded text-sm font-bold min-w-max ml-auto">THÌ HÃY</span>
+                            <p class="text-gray-300 font-semibold text-gold-400">Thực hành "Backward Review" (Tua ngược) ngay khi nhắm mắt trên giường. Chỉ xem lại như một cuốn phim, không phán xét.</p>
+                        </li>
+                        <li class="bg-space-900 p-4 rounded-xl border border-gray-700 flex flex-col md:flex-row gap-4 items-start md:items-center">
+                            <span class="bg-gray-800 text-gray-300 px-3 py-1 rounded text-sm font-bold min-w-max">NẾU BẠN</span>
+                            <p class="text-gray-300">Thường xuyên quên mục tiêu tâm linh và bị cuốn vào sự tức giận, phản ứng độc hại với đồng nghiệp/gia đình...</p>
+                            <span class="bg-mystic text-white px-3 py-1 rounded text-sm font-bold min-w-max ml-auto">THÌ HÃY</span>
+                            <p class="text-gray-300 font-semibold text-gold-400">Thực hiện bước "Quan sát thuần túy". Nhìn cơn giận của mình như đang xem một đứa trẻ chạy loạn. Sự quan sát lập tức vô hiệu hóa tính phản ứng.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-gold-400 border-b border-gray-700 pb-2 mb-4">Hành Động Micro (Làm ngay trong 24h tới)</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="glass-panel p-5 rounded-xl border-l-4 border-l-gold-500">
+                            <h4 class="font-bold text-white mb-2">1. Cài Đặt Báo Thức "Twilight"</h4>
+                            <p class="text-gray-400 text-sm">Chỉnh báo thức sáng mai sớm hơn 15 phút. Khi chuông reo, hãy nằm yên tại chỗ nhắm mắt lại. Không chạm vào điện thoại. Hãy để ký ức giấc mơ và trực giác tuôn chảy vào tâm trí bạn.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-xl border-l-4 border-l-mystic">
+                            <h4 class="font-bold text-white mb-2">2. Lên Lịch "Vision Space"</h4>
+                            <p class="text-gray-400 text-sm">Mở Calendar ngay bây giờ. Block đúng 30 phút vào cuối tuần này: Không điện thoại, không nhạc, không người khác. Chỉ ngồi tĩnh lặng ở một không gian kín để lắng nghe "ăng-ten" của bạn.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section id="reality-check">
+            <div class="flex items-center gap-3 mb-10">
+                <span class="text-3xl">⚠️</span>
+                <h2 class="text-3xl font-serif font-bold text-white">Reality Check - Cạm Bẫy & Kỷ Luật</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-red-900/20 border border-red-500/30 rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-red-400 flex items-center gap-2 mb-6">
+                        <span class="text-2xl">🚩</span> Bẫy Vô Hình (Red Flags)
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex gap-3">
+                            <span class="text-red-500 mt-1">✗</span>
+                            <div>
+                                <strong class="text-white">Lạm phát Bản ngã Tâm linh (Spiritual Ego Inflation):</strong> 
+                                <p class="text-sm text-gray-400 mt-1">Nghĩ rằng mình đã "giác ngộ" hoặc cao cấp hơn người khác chỉ vì đọc vài cuốn sách hay biết thuật ngữ luân xa. <br><em class="text-gray-500">Ví dụ: Đi phán xét cách sống của người nhà bằng giọng điệu trịch thượng thay vì dùng tình thương. Sự kiêu ngạo này lập tức làm chệch hướng trường năng lượng của bạn.</em></p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-red-500 mt-1">✗</span>
+                            <div>
+                                <strong class="text-white">Thăng thiên rỗng (Ascension without Grounding):</strong> 
+                                <p class="text-sm text-gray-400 mt-1">Cố gắng mở các luân xa đỉnh đầu, kết nối vũ trụ nhưng bỏ bê cơ thể, tài chính và công việc thực tại. Nhớ rằng: Mọi quá trình vươn lên đều phải đi kèm sức mạnh cắm rễ tương đương.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-green-900/20 border border-green-500/30 rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-green-400 flex items-center gap-2 mb-6">
+                        <span class="text-2xl">🛡️</span> Chốt Chặn Kỷ Luật (Guardrails)
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex gap-3">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <div>
+                                <strong class="text-white">Quy tắc Vật lý cho Giấc ngủ:</strong> 
+                                <p class="text-sm text-gray-400 mt-1">Đừng tự dặn bản thân "phải tỉnh táo giữ 15 phút Twilight". Não bạn rất yếu đuối lúc mới dậy. <br><strong class="text-green-300">Chốt chặn:</strong> Để bộ sạc điện thoại ở ngoài phòng ngủ. Dùng đồng hồ báo thức cơ học. Việc không có điện thoại ở cạnh giường là giới hạn vật lý cắt đứt cám dỗ nạp dopamine buổi sáng.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <div>
+                                <strong class="text-white">Kiểm toán Lời nói:</strong> 
+                                <p class="text-sm text-gray-400 mt-1">Bạn muốn "sống trong Sự Thật" (Living in Truth). <br><strong class="text-green-300">Chốt chặn:</strong> Đeo một chiếc vòng nịt (chun) ở cổ tay. Mỗi lần bạn phóng đại sự thật một chút để khoe khoang, hoặc nói dối xã giao không cần thiết, hãy búng dây chun một cái để bộ não ghi nhận sự chệch hướng.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall (Flashcards) -->
+        <section id="active-recall">
+            <div class="flex items-center gap-3 mb-10 text-center justify-center">
+                <span class="text-3xl">🃏</span>
+                <h2 class="text-3xl font-serif font-bold text-white">Trạm Ôn Tập Tương Tác</h2>
+            </div>
+            <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">Chạm hoặc di chuột qua từng thẻ để lật xem đáp án. Việc chủ động nhớ lại (Active Recall) sẽ giúp kiến trúc vật lý thần kinh của bạn thay đổi.</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:grid-cols-5 gap-4">
+                <!-- Script will populate these -->
+                <script>
+                    const qas = [
+                        {q: "Thứ duy nhất ta mang theo sau khi chết?", a: "Cấu trúc của Cơ thể tinh tế (Subtle Body)."},
+                        {q: "Hai dạng thiền nào phải đi đôi với nhau?", a: "Thiền thụ động (nhận) và thiền chủ động (kiến tạo)."},
+                        {q: "Tác dụng của thực hành Backward Review?", a: "Phá vỡ ảo giác nhân - quả, nhìn rõ góc khuất hành vi."},
+                        {q: "Thời gian Twilight State quan trọng thế nào?", a: "15 phút sáng sớm để lấy thông tin từ tiềm thức/giấc mơ."},
+                        {q: "Ý nghĩa của câu 'Hình học thiêng liêng'?", a: "Năng lượng đi vào một hình dáng cụ thể sẽ tạo ra chức năng."},
+                        {q: "Sai lầm phổ biến khi 'Thăng thiên'?", a: "Chỉ vươn lên luân xa trên mà không cắm rễ (Grounding) xuống đất."},
+                        {q: "Không Gian Tầm Nhìn (Vision Space) là gì?", a: "Sự cô lập để triệt tiêu tiếng ồn, nghe tiếng nói của linh hồn."},
+                        {q: "Quy luật cốt lõi tạo nên thế giới thực tại?", a: "Mọi thứ đều có một kiểu hình mẫu (pattern/hình học) đứng sau."},
+                        {q: "Vì sao cần sự kết nối của số 12?", a: "12 góc nhìn tạo ra sự thấu hiểu hoàn chỉnh (như 12 cung hoàng đạo)."},
+                        {q: "Điều gì sẽ cản trở những sinh thể cao cấp đến giúp ta?", a: "Sự nói dối, bóp méo sự thật, và lạm phát bản ngã."},
+                        {q: "3 yếu tố nền tảng cần Quan sát & Điều hướng?", a: "Thinking (Suy nghĩ), Feeling (Cảm xúc), Willing (Ý chí)."},
+                        {q: "Cột ăng-ten năng lượng nằm ở đâu?", a: "Vượt ra ngoài và kéo dài thẳng lên trên đỉnh đầu."},
+                        {q: "Điều gì xảy ra nếu kiến thức không thành lý tưởng?", a: "Nó sẽ tiêu diệt một lực lượng (sự sống) trong linh hồn bạn."},
+                        {q: "Tại sao nên để bản thân đối diện sự thật tàn nhẫn?", a: "Để tỉnh giấc khỏi trạng thái mộng du như bầy Lemming."},
+                        {q: "Mục đích tối thượng của nhiều kiếp luân hồi?", a: "Trở thành thực thể siêu ý thức, hoạt động độc lập không cần thân xác."}
+                    ];
+
+                    qas.forEach((item, index) => {
+                        document.write(`
+                            <div class="flashcard bg-transparent h-40 rounded-xl perspective-1000 cursor-pointer group">
+                                <div class="flashcard-inner relative w-full h-full text-center transform-style-3d duration-500">
+                                    <!-- Front -->
+                                    <div class="absolute w-full h-full backface-hidden bg-space-700 border border-mystic/30 rounded-xl p-4 flex flex-col items-center justify-center shadow-lg">
+                                        <span class="text-xs text-gold-400 font-bold mb-2">Q${index + 1}</span>
+                                        <p class="text-sm font-semibold text-gray-200">${item.q}</p>
+                                    </div>
+                                    <!-- Back -->
+                                    <div class="absolute w-full h-full backface-hidden bg-mystic rounded-xl p-4 flex flex-col items-center justify-center rotate-y-180 shadow-[0_0_15px_rgba(139,92,246,0.5)]">
+                                        <p class="text-sm font-bold text-white">${item.a}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                </script>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. Footer -->
+    <footer class="bg-[#05050f] border-t border-gray-800 h-[128px] w-full flex flex-col justify-center items-center px-4">
+        <div class="max-w-4xl mx-auto w-full flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <p class="text-gold-400 font-bold text-sm tracking-wide">KIẾN THỨC THỰC CHIẾN MỚI NHẤT</p>
+                <p class="text-gray-500 text-xs mt-1">Kỹ năng Quay Dựng, Xây kênh Niche & Phân tích Thuật toán MXH Kỷ nguyên mới.</p>
+            </div>
+            
+            <!-- Social Icons -->
+            <div class="flex items-center gap-6">
+                <!-- YouTube -->
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="text-gray-400 hover:text-red-500 transition-colors" title="YouTube">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <!-- TikTok -->
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-gray-400 hover:text-white transition-colors" title="TikTok">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                </a>
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="text-gray-400 hover:text-blue-500 transition-colors" title="Facebook">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
+
+        // Logic Phóng to / Thu nhỏ cho sơ đồ tư duy không dùng cuộn chuột
+        let currentScale = 1;
+        const zoomWrapper = document.getElementById('zoom-wrapper');
+        const container = document.getElementById('mindmap-container');
+        
+        // Ngăn chặn cuộn chuột tự do trên container của sơ đồ
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault(); 
+        }, { passive: false });
+
+        function zoomMindmap(step) {
+            currentScale += step;
+            // Giới hạn zoom
+            if (currentScale < 0.5) currentScale = 0.5;
+            if (currentScale > 2) currentScale = 2;
+            
+            zoomWrapper.style.transform = `scale(${currentScale})`;
+        }
+
+        // Kéo thả sơ đồ (Pan)
+        let isDown = false;
+        let startX;
+        let startY;
+        let scrollLeft;
+        let scrollTop;
+
+        container.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - container.offsetLeft;
+            startY = e.pageY - container.offsetTop;
+            scrollLeft = container.scrollLeft;
+            scrollTop = container.scrollTop;
+        });
+        container.addEventListener('mouseleave', () => { isDown = false; });
+        container.addEventListener('mouseup', () => { isDown = false; });
+        container.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const y = e.pageY - container.offsetTop;
+            const walkX = (x - startX) * 2;
+            const walkY = (y - startY) * 2;
+            container.scrollLeft = scrollLeft - walkX;
+            container.scrollTop = scrollTop - walkY;
+        });
+    </script>
+</body>
+</html> <!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến Trúc Cơ Thể Tinh Tế</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        space: {
+                            900: '#0B0B1A',
+                            800: '#151530',
+                            700: '#2A2A55',
+                        },
+                        gold: {
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                        },
+                        mystic: '#8B5CF6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B0B1A;
+            color: #E2E8F0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+        }
+        /* CSS Abstract Art: Vesica Piscis */
+        .vesica-piscis {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.1;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .vesica-circle {
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            border: 2px solid #8B5CF6;
+            top: -100px;
+        }
+        .vesica-circle:nth-child(1) { left: calc(50% - 400px); }
+        .vesica-circle:nth-child(2) { left: calc(50% - 200px); }
+
+        /* Mindmap container limits */
+        #mindmap-container {
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+        }
+        #mindmap-container:active { cursor: grabbing; }
+        #zoom-wrapper {
+            transition: transform 0.3s ease;
+            transform-origin: left center;
+        }
+
+        /* Flashcard flip effect */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .flashcard-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+        .flashcard:hover .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(21, 21, 48, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #FBBF24, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-mystic selection:text-white">
+
+    <!-- CSS Abstract Art Background -->
+    <div class="vesica-piscis hidden md:block">
+        <div class="vesica-circle"></div>
+        <div class="vesica-circle"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="py-16 px-6 text-center max-w-4xl mx-auto">
+        <h2 class="text-mystic font-semibold tracking-widest uppercase text-sm mb-4">Masterclass Analysis</h2>
+        <h1 class="text-4xl md:text-6xl font-serif font-bold text-white leading-tight mb-6">
+            Kiến Trúc <span class="gradient-text">Cơ Thể Tinh Tế</span> & Hình Học Thiêng Liêng
+        </h1>
+        <p class="text-gray-400 text-lg md:text-xl font-light">
+            Bóc tách những bài học sâu sắc từ Dr. Robert Gilbert qua góc nhìn của một Mentor thực chiến.
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 md:px-8 pb-20 space-y-24">
+
+        <!-- 1. The Big Idea & Mindmap -->
+        <section id="big-idea" class="relative">
+            <div class="glass-panel rounded-3xl p-8 md:p-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-3xl">🎯</span>
+                    <h2 class="text-3xl font-serif font-bold text-white">The Big Idea</h2>
+                </div>
+                <p class="text-xl md:text-2xl text-gray-300 font-light leading-relaxed border-l-4 border-gold-400 pl-6 mb-10">
+                    Mọi suy nghĩ, cảm xúc và hành động của bạn không chỉ biến mất vào hư không. Chúng đang trực tiếp <strong>"xây gạch" tạo nên cấu trúc Cơ thể Tinh tế (Subtle Body)</strong> của bạn – thứ tài sản duy nhất bạn có thể mang theo sau cánh cửa tử thần. Cuộc sống này là một cơ hội giới hạn để bạn thiết kế hình học thiêng liêng cho linh hồn mình.
+                </p>
+
+                <!-- Mindmap -->
+                <div class="bg-space-800 rounded-2xl p-4 border border-gray-700 relative">
+                    <div class="absolute top-6 right-6 z-10 flex gap-2">
+                        <button onclick="zoomMindmap(0.2)" class="w-10 h-10 bg-mystic text-white rounded-full flex items-center justify-center hover:bg-purple-500 shadow-lg font-bold text-xl transition-colors" title="Phóng to">[+]</button>
+                        <button onclick="zoomMindmap(-0.2)" class="w-10 h-10 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-500 shadow-lg font-bold text-xl transition-colors" title="Thu nhỏ">[-]</button>
+                    </div>
+                    
+                    <div id="mindmap-container" class="w-full h-[500px] bg-space-900 rounded-xl">
+                        <div id="zoom-wrapper" class="w-full h-full flex items-center justify-center">
+                            <pre class="mermaid">
+                                graph LR
+                                    A((Cơ Thể Tinh Tế)) --> B(Nền Tảng Nội Tâm)
+                                    A --> C(Hình Học Thiêng Liêng)
+                                    A --> D(Hành Động Trái Đất)
+                                    
+                                    B --> B1[Quan sát: Nghĩ - Cảm - Làm]
+                                    B --> B2[Cân bằng: Chủ động & Thụ động]
+                                    B --> B3[Ôn tập ngược - Backward Review]
+                                    
+                                    C --> C1[Trường Torus - Dòng Năng Lượng]
+                                    C --> C2[Hình Cầu - Chứa Đựng Mọi Thứ]
+                                    C --> C3[Dodecahedron - Sức Mạnh Sự Sống]
+                                    
+                                    D --> D1[Tìm Sứ Mệnh - Vì Sao Tôi Ở Đây?]
+                                    D --> D2[Không Gian Tầm Nhìn - Lắng Nghe]
+                                    D --> D3[12 Nhóm Sức Mạnh - Thay Đổi Thế Giới]
+
+                                    style A fill:#8B5CF6,stroke:#fff,stroke-width:2px,color:#fff
+                                    style B fill:#2A2A55,stroke:#8B5CF6,color:#fff
+                                    style C fill:#2A2A55,stroke:#8B5CF6,color:#fff
+                                    style D fill:#2A2A55,stroke:#8B5CF6,color:#fff
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <a href="https://youtu.be/jB9UGRzoSl8?si=Sx4QzedqpsmexXKv" target="_blank" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-full transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)]">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        Bí mật Rosicrucian, Hình học thiêng liêng & Cơ thể tinh tế | Dr. Robert Gilbert
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section id="deep-insights">
+            <div class="flex items-center gap-3 mb-10">
+                <span class="text-3xl">🧠</span>
+                <h2 class="text-3xl font-serif font-bold text-white">Deep Insights - Các Trụ Cột Tri Thức</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Insight 1 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">1. Kiến thức vs. Sự hóa thân</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Việc tích lũy kiến thức tâm linh chỉ để lấp đầy tâm trí sẽ làm cạn kiệt linh hồn. Kiến thức phải được chuyển hóa thành lý tưởng và hành động để nuôi dưỡng năng lượng sống.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Khi học thuần túy bằng lý trí vật chất, nó không chạm vào kết cấu của "cơ thể tinh tế". Bạn chỉ đang nạp dữ liệu vào một ổ cứng vật lý sẽ bị tiêu hủy khi chết.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Nó giống như việc bạn đọc 100 cuốn sách về tập gym nhưng không bao giờ nhấc tạ. Cơ bắp (cơ thể tinh tế) của bạn không hề thay đổi.
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">2. Ăng-ten Trên Đỉnh Đầu</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Hệ thống luân xa không dừng lại ở đỉnh đầu. Có những trạm thu sóng năng lượng điện áp cao nằm ngoài cơ thể vật lý, chạy dọc lên trên giống như một cột trụ.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Cơ thể vật lý sẽ bị "cháy mạch" nếu chứa dòng điện áp quá cao này. Việc kết nối với tâm trí bậc cao đòi hỏi ta phải dời điểm chú ý từ não bộ lên các trung tâm phía trên.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ví dụ:</strong> Giống như tivi không tự sản xuất ra chương trình. Nó phải nâng ăng-ten (Crown Center) lên cao để bắt sóng vô tuyến từ các vệ tinh phi vật lý.
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">3. Nhịp Thở Của Thiền Định</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Sự phát triển tâm linh hoàn thiện đòi hỏi cả thiền thụ động (làm rỗng tâm trí) và thiền chủ động (hình dung sáng tạo, định hình suy nghĩ).</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Mọi thứ trong vũ trụ hoạt động theo nguyên lý phân cực (Polarity). Chỉ thực hành một bên sẽ tạo ra sự mất cân bằng trong trường năng lượng, dẫn đến việc bị đứt gãy kết nối với thế giới thực tế.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Bạn không thể chỉ hít vào (thụ động nhận lấy) mà không thở ra (chủ động kiến tạo). Hoặc không thể đi bộ mà chỉ bước bằng chân trái.
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">4. Cuộc Dạo Chơi Của Những Kẻ Mộng Du</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Hầu hết con người đang sống trong trạng thái vô thức, phản ứng tự động theo thói quen và sự dẫn dắt của xã hội thay vì sống với mục đích của linh hồn.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> 95% suy nghĩ của chúng ta lặp lại ngày hôm qua. Sự quen thuộc tạo ra rãnh mòn thần kinh, đóng băng ý chí tự do và tước đi quyền làm chủ số phận.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ví dụ từ diễn giả:</strong> "Sự khủng khiếp của tình thế" là nhận ra thế giới giống như đàn chuột Lemming đang vô thức nối đuôi nhau đi thẳng xuống vực thẳm.
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">5. Không Gian Tầm Nhìn (Vision Space)</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Việc định kỳ tách mình hoàn toàn khỏi công việc, con người và công nghệ là bắt buộc để tái kết nối với "chỉ thị" từ bản ngã bậc cao.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Thế giới vật chất tạo ra tiếng ồn nền (noise) làm nhiễu sóng tín hiệu tinh tế. Sự cô lập vật lý làm triệt tiêu tạp âm, cho phép tần số cao đi vào nhận thức.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Giống như bạn đang cố nghe một bản nhạc cổ điển tinh tế (tiếng nói linh hồn) giữa một công trường đang đập phá ầm ĩ. Bạn phải bước vào phòng cách âm mới nghe được.
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">6. Cỗ Máy Thời Gian Trước Giờ Ngủ</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Thực hành ôn lại các sự kiện trong ngày theo trình tự ngược lại (Backward Review) trước khi ngủ để phá vỡ ảo giác về nhân - quả thông thường.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Xem lại ngược chiều giúp bóc tách lớp vỏ cảm xúc, hiển thị rõ ràng những nghiệp quả vô tình tạo ra, những cái bẫy giao tiếp, hoặc những thiên thần hộ mệnh lướt qua mà ta đã bỏ lỡ.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ví dụ:</strong> Giống như việc tua ngược cuốn băng camera an ninh. Bạn không bị cuốn vào cốt truyện nữa, mà sẽ nhìn thấy rất rõ ai là người đã lén đặt cái túi (sự kiện) vào phòng bạn.
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">7. Trạm Cửa Khẩu Của Những Giấc Mơ</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Khoảng thời gian 15 phút ngay sau khi thức dậy (Twilight State) là thời điểm quý giá nhất để tải thông tin từ thế giới tiềm thức/giấc mơ về ý thức.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Lúc này bộ não vẫn đang ở sóng Theta/Alpha. Nếu bạn vồ lấy điện thoại ngay lập tức, sóng Beta (tỉnh táo, căng thẳng) sẽ kích hoạt và xóa sạch dữ liệu vừa được truyền tải.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Bạn vừa đi thuyền từ Đảo Giấc Mơ về bờ. Những dấu chân ẩm ướt (ký ức) trên cát sẽ bốc hơi ngay lập tức nếu mặt trời (sự bận rộn vật chất) chiếu thẳng vào.
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">8. Hình Học Thiêng Liêng (Ngôn Ngữ Thượng Đế)</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Mọi thứ trong vũ trụ - từ hạt nguyên tử đến dải ngân hà, từ cơ thể bệnh đến cơ thể khỏe mạnh - đều tuân theo các hình khối hình học nhất định (Sphere, Torus...).</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> "Năng lượng được đưa vào Hình dáng sẽ tạo ra Chức năng". Hình học không phải toán học khô khan, nó là tần số rung động bị đông đặc lại dưới dạng vật chất.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ví dụ từ diễn giả:</strong> Cốt lõi của quả bom hạt nhân đầu tiên (dự án Manhattan) thực chất mang hình khối Dodecahedron - một hình học thiêng liêng cổ đại mang sức mạnh hủy diệt nếu dùng sai cách.
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-mystic transition-colors flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gold-400 mb-4">9. Khối Rubik Của Sự Thật (Sức mạnh số 12)</h3>
+                    <div class="flex-grow space-y-3">
+                        <p class="text-sm text-gray-300"><strong class="text-white">Bản chất:</strong> Để thực sự hiểu một khái niệm/sự vật ở cõi vật lý, bạn không thể nhìn nó từ một phía. Bạn phải xoay quanh nó và nhìn qua 12 góc độ (perspectives) khác nhau.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Cơ chế:</strong> Đây là nguyên lý của 12 cung hoàng đạo, 12 vị tông đồ. Sự thật là một khối đa diện. Một người không thể ôm trọn sự thật vũ trụ mà cần sức mạnh cộng hưởng.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-space-800 rounded-lg text-sm border-l-2 border-mystic">
+                        💡 <strong class="text-mystic">Ẩn dụ:</strong> Giống như câu chuyện thầy bói xem voi. Người mù sờ vòi nghĩ voi như con đỉa, sờ chân nghĩ voi như cột đình. Cần 12 người mù ghép lăng kính lại mới thấy được "Con Voi" thật sự.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section id="action-playbook" class="bg-space-800 rounded-3xl p-8 md:p-12 border border-mystic shadow-[0_0_30px_rgba(139,92,246,0.15)] relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-mystic rounded-full mix-blend-screen filter blur-[100px] opacity-20"></div>
+            
+            <div class="flex items-center gap-3 mb-10 relative z-10">
+                <span class="text-3xl">🚀</span>
+                <h2 class="text-3xl font-serif font-bold text-white">Action Playbook - Sổ Tay Thực Chiến</h2>
+            </div>
+
+            <div class="space-y-8 relative z-10">
+                <div>
+                    <h3 class="text-xl font-bold text-gold-400 border-b border-gray-700 pb-2 mb-4">Kịch Bản Nếu - Thì (If - Then)</h3>
+                    <ul class="space-y-4">
+                        <li class="bg-space-900 p-4 rounded-xl border border-gray-700 flex flex-col md:flex-row gap-4 items-start md:items-center">
+                            <span class="bg-gray-800 text-gray-300 px-3 py-1 rounded text-sm font-bold min-w-max">NẾU BẠN</span>
+                            <p class="text-gray-300">Cảm thấy hoang mang, mất kết nối, làm việc như một cái máy nhưng cuối ngày cảm thấy rỗng tuếch...</p>
+                            <span class="bg-mystic text-white px-3 py-1 rounded text-sm font-bold min-w-max ml-auto">THÌ HÃY</span>
+                            <p class="text-gray-300 font-semibold text-gold-400">Thực hành "Backward Review" (Tua ngược) ngay khi nhắm mắt trên giường. Chỉ xem lại như một cuốn phim, không phán xét.</p>
+                        </li>
+                        <li class="bg-space-900 p-4 rounded-xl border border-gray-700 flex flex-col md:flex-row gap-4 items-start md:items-center">
+                            <span class="bg-gray-800 text-gray-300 px-3 py-1 rounded text-sm font-bold min-w-max">NẾU BẠN</span>
+                            <p class="text-gray-300">Thường xuyên quên mục tiêu tâm linh và bị cuốn vào sự tức giận, phản ứng độc hại với đồng nghiệp/gia đình...</p>
+                            <span class="bg-mystic text-white px-3 py-1 rounded text-sm font-bold min-w-max ml-auto">THÌ HÃY</span>
+                            <p class="text-gray-300 font-semibold text-gold-400">Thực hiện bước "Quan sát thuần túy". Nhìn cơn giận của mình như đang xem một đứa trẻ chạy loạn. Sự quan sát lập tức vô hiệu hóa tính phản ứng.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-gold-400 border-b border-gray-700 pb-2 mb-4">Hành Động Micro (Làm ngay trong 24h tới)</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="glass-panel p-5 rounded-xl border-l-4 border-l-gold-500">
+                            <h4 class="font-bold text-white mb-2">1. Cài Đặt Báo Thức "Twilight"</h4>
+                            <p class="text-gray-400 text-sm">Chỉnh báo thức sáng mai sớm hơn 15 phút. Khi chuông reo, hãy nằm yên tại chỗ nhắm mắt lại. Không chạm vào điện thoại. Hãy để ký ức giấc mơ và trực giác tuôn chảy vào tâm trí bạn.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-xl border-l-4 border-l-mystic">
+                            <h4 class="font-bold text-white mb-2">2. Lên Lịch "Vision Space"</h4>
+                            <p class="text-gray-400 text-sm">Mở Calendar ngay bây giờ. Block đúng 30 phút vào cuối tuần này: Không điện thoại, không nhạc, không người khác. Chỉ ngồi tĩnh lặng ở một không gian kín để lắng nghe "ăng-ten" của bạn.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section id="reality-check">
+            <div class="flex items-center gap-3 mb-10">
+                <span class="text-3xl">⚠️</span>
+                <h2 class="text-3xl font-serif font-bold text-white">Reality Check - Cạm Bẫy & Kỷ Luật</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-red-900/20 border border-red-500/30 rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-red-400 flex items-center gap-2 mb-6">
+                        <span class="text-2xl">🚩</span> Bẫy Vô Hình (Red Flags)
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex gap-3">
+                            <span class="text-red-500 mt-1">✗</span>
+                            <div>
+                                <strong class="text-white">Lạm phát Bản ngã Tâm linh (Spiritual Ego Inflation):</strong> 
+                                <p class="text-sm text-gray-400 mt-1">Nghĩ rằng mình đã "giác ngộ" hoặc cao cấp hơn người khác chỉ vì đọc vài cuốn sách hay biết thuật ngữ luân xa. <br><em class="text-gray-500">Ví dụ: Đi phán xét cách sống của người nhà bằng giọng điệu trịch thượng thay vì dùng tình thương. Sự kiêu ngạo này lập tức làm chệch hướng trường năng lượng của bạn.</em></p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-red-500 mt-1">✗</span>
+                            <div>
+                                <strong class="text-white">Thăng thiên rỗng (Ascension without Grounding):</strong> 
+                                <p class="text-sm text-gray-400 mt-1">Cố gắng mở các luân xa đỉnh đầu, kết nối vũ trụ nhưng bỏ bê cơ thể, tài chính và công việc thực tại. Nhớ rằng: Mọi quá trình vươn lên đều phải đi kèm sức mạnh cắm rễ tương đương.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-green-900/20 border border-green-500/30 rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-green-400 flex items-center gap-2 mb-6">
+                        <span class="text-2xl">🛡️</span> Chốt Chặn Kỷ Luật (Guardrails)
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex gap-3">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <div>
+                                <strong class="text-white">Quy tắc Vật lý cho Giấc ngủ:</strong> 
+                                <p class="text-sm text-gray-400 mt-1">Đừng tự dặn bản thân "phải tỉnh táo giữ 15 phút Twilight". Não bạn rất yếu đuối lúc mới dậy. <br><strong class="text-green-300">Chốt chặn:</strong> Để bộ sạc điện thoại ở ngoài phòng ngủ. Dùng đồng hồ báo thức cơ học. Việc không có điện thoại ở cạnh giường là giới hạn vật lý cắt đứt cám dỗ nạp dopamine buổi sáng.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <div>
+                                <strong class="text-white">Kiểm toán Lời nói:</strong> 
+                                <p class="text-sm text-gray-400 mt-1">Bạn muốn "sống trong Sự Thật" (Living in Truth). <br><strong class="text-green-300">Chốt chặn:</strong> Đeo một chiếc vòng nịt (chun) ở cổ tay. Mỗi lần bạn phóng đại sự thật một chút để khoe khoang, hoặc nói dối xã giao không cần thiết, hãy búng dây chun một cái để bộ não ghi nhận sự chệch hướng.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall (Flashcards) -->
+        <section id="active-recall">
+            <div class="flex items-center gap-3 mb-10 text-center justify-center">
+                <span class="text-3xl">🃏</span>
+                <h2 class="text-3xl font-serif font-bold text-white">Trạm Ôn Tập Tương Tác</h2>
+            </div>
+            <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">Chạm hoặc di chuột qua từng thẻ để lật xem đáp án. Việc chủ động nhớ lại (Active Recall) sẽ giúp kiến trúc vật lý thần kinh của bạn thay đổi.</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:grid-cols-5 gap-4">
+                <!-- Script will populate these -->
+                <script>
+                    const qas = [
+                        {q: "Thứ duy nhất ta mang theo sau khi chết?", a: "Cấu trúc của Cơ thể tinh tế (Subtle Body)."},
+                        {q: "Hai dạng thiền nào phải đi đôi với nhau?", a: "Thiền thụ động (nhận) và thiền chủ động (kiến tạo)."},
+                        {q: "Tác dụng của thực hành Backward Review?", a: "Phá vỡ ảo giác nhân - quả, nhìn rõ góc khuất hành vi."},
+                        {q: "Thời gian Twilight State quan trọng thế nào?", a: "15 phút sáng sớm để lấy thông tin từ tiềm thức/giấc mơ."},
+                        {q: "Ý nghĩa của câu 'Hình học thiêng liêng'?", a: "Năng lượng đi vào một hình dáng cụ thể sẽ tạo ra chức năng."},
+                        {q: "Sai lầm phổ biến khi 'Thăng thiên'?", a: "Chỉ vươn lên luân xa trên mà không cắm rễ (Grounding) xuống đất."},
+                        {q: "Không Gian Tầm Nhìn (Vision Space) là gì?", a: "Sự cô lập để triệt tiêu tiếng ồn, nghe tiếng nói của linh hồn."},
+                        {q: "Quy luật cốt lõi tạo nên thế giới thực tại?", a: "Mọi thứ đều có một kiểu hình mẫu (pattern/hình học) đứng sau."},
+                        {q: "Vì sao cần sự kết nối của số 12?", a: "12 góc nhìn tạo ra sự thấu hiểu hoàn chỉnh (như 12 cung hoàng đạo)."},
+                        {q: "Điều gì sẽ cản trở những sinh thể cao cấp đến giúp ta?", a: "Sự nói dối, bóp méo sự thật, và lạm phát bản ngã."},
+                        {q: "3 yếu tố nền tảng cần Quan sát & Điều hướng?", a: "Thinking (Suy nghĩ), Feeling (Cảm xúc), Willing (Ý chí)."},
+                        {q: "Cột ăng-ten năng lượng nằm ở đâu?", a: "Vượt ra ngoài và kéo dài thẳng lên trên đỉnh đầu."},
+                        {q: "Điều gì xảy ra nếu kiến thức không thành lý tưởng?", a: "Nó sẽ tiêu diệt một lực lượng (sự sống) trong linh hồn bạn."},
+                        {q: "Tại sao nên để bản thân đối diện sự thật tàn nhẫn?", a: "Để tỉnh giấc khỏi trạng thái mộng du như bầy Lemming."},
+                        {q: "Mục đích tối thượng của nhiều kiếp luân hồi?", a: "Trở thành thực thể siêu ý thức, hoạt động độc lập không cần thân xác."}
+                    ];
+
+                    qas.forEach((item, index) => {
+                        document.write(`
+                            <div class="flashcard bg-transparent h-40 rounded-xl perspective-1000 cursor-pointer group">
+                                <div class="flashcard-inner relative w-full h-full text-center transform-style-3d duration-500">
+                                    <!-- Front -->
+                                    <div class="absolute w-full h-full backface-hidden bg-space-700 border border-mystic/30 rounded-xl p-4 flex flex-col items-center justify-center shadow-lg">
+                                        <span class="text-xs text-gold-400 font-bold mb-2">Q${index + 1}</span>
+                                        <p class="text-sm font-semibold text-gray-200">${item.q}</p>
+                                    </div>
+                                    <!-- Back -->
+                                    <div class="absolute w-full h-full backface-hidden bg-mystic rounded-xl p-4 flex flex-col items-center justify-center rotate-y-180 shadow-[0_0_15px_rgba(139,92,246,0.5)]">
+                                        <p class="text-sm font-bold text-white">${item.a}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                </script>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. Footer -->
+    <footer class="bg-[#05050f] border-t border-gray-800 h-[128px] w-full flex flex-col justify-center items-center px-4">
+        <div class="max-w-4xl mx-auto w-full flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <p class="text-gold-400 font-bold text-sm tracking-wide">KIẾN THỨC THỰC CHIẾN MỚI NHẤT</p>
+                <p class="text-gray-500 text-xs mt-1">Kỹ năng Quay Dựng, Xây kênh Niche & Phân tích Thuật toán MXH Kỷ nguyên mới.</p>
+            </div>
+            
+            <!-- Social Icons -->
+            <div class="flex items-center gap-6">
+                <!-- YouTube -->
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="text-gray-400 hover:text-red-500 transition-colors" title="YouTube">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <!-- TikTok -->
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-gray-400 hover:text-white transition-colors" title="TikTok">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                </a>
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="text-gray-400 hover:text-blue-500 transition-colors" title="Facebook">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
+
+        // Logic Phóng to / Thu nhỏ cho sơ đồ tư duy không dùng cuộn chuột
+        let currentScale = 1;
+        const zoomWrapper = document.getElementById('zoom-wrapper');
+        const container = document.getElementById('mindmap-container');
+        
+        // Ngăn chặn cuộn chuột tự do trên container của sơ đồ
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault(); 
+        }, { passive: false });
+
+        function zoomMindmap(step) {
+            currentScale += step;
+            // Giới hạn zoom
+            if (currentScale < 0.5) currentScale = 0.5;
+            if (currentScale > 2) currentScale = 2;
+            
+            zoomWrapper.style.transform = `scale(${currentScale})`;
+        }
+
+        // Kéo thả sơ đồ (Pan)
+        let isDown = false;
+        let startX;
+        let startY;
+        let scrollLeft;
+        let scrollTop;
+
+        container.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - container.offsetLeft;
+            startY = e.pageY - container.offsetTop;
+            scrollLeft = container.scrollLeft;
+            scrollTop = container.scrollTop;
+        });
+        container.addEventListener('mouseleave', () => { isDown = false; });
+        container.addEventListener('mouseup', () => { isDown = false; });
+        container.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const y = e.pageY - container.offsetTop;
+            const walkX = (x - startX) * 2;
+            const walkY = (y - startY) * 2;
+            container.scrollLeft = scrollLeft - walkX;
+            container.scrollTop = scrollTop - walkY;
+        });
+    </script>
+</body>
+</html>
