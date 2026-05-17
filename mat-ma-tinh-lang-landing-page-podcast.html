@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mật Mã Tĩnh Lặng - Landing Page</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --color-bg: #f9f8f3;
+            --color-primary: #5c715e;
+            --color-secondary: #b5c1a4;
+            --color-text: #2d3748;
+            --color-card: #ffffff;
+            --color-accent: #e6b981;
+        }
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .font-serif {
+            font-family: 'Noto Serif', serif;
+        }
+        
+        /* Typography & Theme */
+        h1, h2, h3, h4 { color: var(--color-primary); }
+        .bg-theme-primary { background-color: var(--color-primary); }
+        .text-theme-primary { color: var(--color-primary); }
+        .border-theme-accent { border-color: var(--color-accent); }
+
+        /* Abstract CSS Art for Cards */
+        .insight-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: var(--color-card);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .insight-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(92, 113, 94, 0.2);
+        }
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background: var(--color-secondary);
+            border-radius: 50%;
+            opacity: 0.2;
+            z-index: 0;
+            transition: transform 0.5s ease;
+        }
+        .insight-card:hover::before {
+            transform: scale(1.5);
+        }
+        .insight-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background: var(--color-accent);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            opacity: 0.15;
+            z-index: 0;
+            transition: transform 0.5s ease;
+        }
+        .insight-card:hover::after {
+            transform: rotate(45deg);
+        }
+        .insight-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Flashcard Styling */
+        .flashcard {
+            background-color: var(--color-card);
+            border-left: 4px solid var(--color-secondary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Mindmap Container Constraints */
+        #mindmap-container {
+            width: 100%;
+            height: 500px;
+            overflow: hidden; /* No free scrolling */
+            position: relative;
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.05);
+            cursor: grab;
+        }
+        #mindmap-container:active { cursor: grabbing; }
+        
+        #mermaid-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        .btn-zoom {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s, background 0.2s;
+        }
+        .btn-zoom:hover { transform: scale(1.1); background: #4a5c4b; }
+        .btn-zoom:active { transform: scale(0.95); }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header / Hero Section -->
+    <header class="pt-20 pb-12 px-6 text-center max-w-4xl mx-auto">
+        <div class="inline-block px-4 py-1 rounded-full bg-green-100 text-green-800 text-sm font-semibold tracking-wide mb-6">
+            🌱 KHOA HỌC CHỮA LÀNH & TÂM TRÍ
+        </div>
+        <h1 class="text-4xl md:text-5xl font-serif font-bold leading-tight mb-6">
+            Giải mã Căn bệnh "Nghiện Suy Nghĩ" & Nghệ thuật Cầm lái Cuộc đời
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 font-light max-w-2xl mx-auto">
+            Khám phá cách Yoga và Thiền thực sự hoạt động dưới góc nhìn khoa học thần kinh để thanh lọc tâm trí, giải phóng năng lượng sáng tạo và sống cuộc đời nguyên bản.
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-24">
+
+        <!-- 1. The Big Idea -->
+        <section id="big-idea" class="space-y-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold flex items-center justify-center gap-2">
+                    <span>🎯</span> Bức tranh Toàn cảnh
+                </h2>
+                <div class="w-24 h-1 bg-theme-primary mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-gray-100">
+                <p class="text-xl md:text-2xl text-gray-800 font-serif leading-relaxed text-center font-medium italic">
+                    "Hầu hết những rắc rối của chúng ta bắt nguồn từ việc ta đang bị 'nghiện' chính những dòng suy nghĩ của mình. Yoga và Thiền không phải là việc uốn dẻo cơ thể, mà là những công cụ vật lý để ép tâm trí dừng lại, lọc bỏ cặn bẩn vô thức và trao lại cho bạn quyền cầm lái số phận."
+                </p>
+            </div>
+
+            <!-- Mindmap -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                    🧠 Khung Xương Tri Thức (Sơ đồ tư duy)
+                </h3>
+                <div id="mindmap-container" class="relative group">
+                    <div id="mermaid-wrapper">
+                        <div class="mermaid">
+                            %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f9f8f3', 'primaryTextColor': '#2d3748', 'primaryBorderColor': '#5c715e', 'lineColor': '#b5c1a4', 'tertiaryColor': '#e6b981'}}}%%
+                            graph LR
+                                A[Trạng thái vô thức] -->|Bị kiểm soát| B(Nghiện Suy Nghĩ)
+                                A -->|Bị kiểm soát| C(Phản ứng theo cảm xúc)
+                                B --> D{Công cụ Tỉnh thức}
+                                C --> D
+                                D -->|Quan sát cơ thể| E[Asana / Thể chất]
+                                D -->|Quan sát hệ thần kinh| F[Thiền / Hơi thở]
+                                E --> G(Làm khuấy động tâm trí)
+                                F --> G
+                                G -->|Bóc tách tổn thương cũ| H[Samskaras trồi lên]
+                                H -->|Dùng Tâm Xả - Equanimity| I[Thanh lọc Cặn bẩn]
+                                I --> J((Làm chủ Năng lượng & Sáng tạo))
+                        </div>
+                    </div>
+                    <!-- Zoom Controls -->
+                    <div class="controls opacity-50 group-hover:opacity-100 transition-opacity duration-300">
+                        <button class="btn-zoom" id="zoom-out" title="Thu nhỏ">[-]</button>
+                        <button class="btn-zoom" id="zoom-in" title="Phóng to">[+]</button>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 text-center italic">Bạn có thể click và kéo thả để di chuyển bản đồ. Dùng nút [+] [-] để thu phóng.</p>
+            </div>
+
+            <!-- Video Button -->
+            <div class="flex justify-center mt-8">
+                <a href="https://youtu.be/HkAjBzyxjm8?si=096BojFCOvdeqLNB" target="_blank" class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6 rounded-full transition-all hover:shadow-lg transform hover:-translate-y-1">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                    Khám phá Sức mạnh Tâm linh & Bình yên Nội tại qua Yoga
+                </a>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section id="insights" class="space-y-10">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold flex items-center justify-center gap-2">
+                    <span>🧠</span> Các Trụ Cột Tri Thức
+                </h2>
+                <div class="w-24 h-1 bg-theme-primary mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Insight 1 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">🌀</div>
+                        <h3 class="text-xl font-bold">1. Căn Bệnh "Nghiện Suy Nghĩ"</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Chúng ta không chỉ suy nghĩ nhiều, mà thực sự đang "nghiện" hóa chất do những luồng suy nghĩ quen thuộc tiết ra trong não bộ. Việc bảo bạn ngừng nghĩ cũng khó như bảo người nghiện bỏ thuốc.</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Khi bạn cố tĩnh lặng, não không chịu nổi sự buồn chán nên bắt đầu tạo ra các "hội chứng cai nghiện" (bồn chồn, ngứa ngáy, lo âu) để kéo bạn về thói quen cũ.</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
+                            <p class="text-sm text-blue-900">💡 <strong>Ví dụ:</strong> Ngồi im 5 phút không lướt điện thoại, bạn sẽ thấy tâm trí mình vùng vẫy hệt như một cơn vật thuốc. Đó chính là lúc sự chữa lành bắt đầu.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">🛞</div>
+                        <h3 class="text-xl font-bold">2. Chữ "Yoke" - Giành Lại Vô Lăng</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Nhiều người nghĩ Yoga là tập vóc dáng, nhưng từ gốc "Yoke" nghĩa là "Cầm lái/Kiểm soát". Mục tiêu tối thượng của nó là cầm cương con thú hoang mang tên "Tâm Trí".</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Bằng cách ép cơ thể vào các tư thế vật lý (Asana) khó khăn và kiểm soát hơi thở ở đó, bạn đang huấn luyện não bộ cách giữ bình tĩnh giữa nghịch cảnh thực tế.</p>
+                        </div>
+                        <div class="bg-amber-50 p-3 rounded-lg border-l-4 border-amber-400">
+                            <p class="text-sm text-amber-900">💡 <strong>Ẩn dụ:</strong> Cơ thể bạn là cỗ xe ngựa, các giác quan là những chú ngựa điên. Yoga chính là việc bạn học cách kéo dây cương.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">🧈</div>
+                        <h3 class="text-xl font-bold">3. Nấu Bơ Ghee & Sự Thanh Lọc</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Những tổn thương sâu thẳm (Samskaras) nằm im lìm trong bạn. Cần một áp lực/nhiệt lượng đủ lớn (qua thiền sâu hoặc tập luyện) để ép chúng trồi lên.</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Khi ký ức đau buồn trồi lên, thay vì phản ứng lại, bạn giữ sự xả ly (Equanimity) chỉ quan sát. Nó sẽ mất sức mạnh và tan biến.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
+                            <p class="text-sm text-yellow-900">💡 <strong>Ví dụ gốc:</strong> Người Ấn Độ làm bơ Ghee bằng cách đun bơ lên. Các cặn bẩn, lactose trồi lên mặt, người nấu lấy thìa hớt bỏ đi để lại phần bơ trong vắt. Thiền chính là quá trình "đun sôi" tâm trí.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">🫁</div>
+                        <h3 class="text-xl font-bold">4. Cơ Thể Là Bản Đồ Thần Kinh</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Không thể nắm bắt suy nghĩ vì nó quá trừu tượng, nhưng bạn có thể cảm nhận hơi thở. Hơi thở và cảm giác cơ thể chính là hình hài vật lý của hệ thần kinh.</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Suy nghĩ tức giận sinh ra nhịp tim đập nhanh, toát mồ hôi. Bằng cách quan sát và điều hòa hơi thở lúc đó, bạn can thiệp trực tiếp vào gốc rễ của cơn giận.</p>
+                        </div>
+                        <div class="bg-rose-50 p-3 rounded-lg border-l-4 border-rose-400">
+                            <p class="text-sm text-rose-900">💡 <strong>Ví dụ:</strong> Đợi đến khi nhận ra mình tức giận thì thường bạn đã ném vỡ cái ly. Nhưng nếu quan sát "cảm giác nóng rang ở ngực", bạn ngắt được ngòi nổ quả bom.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">⚖️</div>
+                        <h3 class="text-xl font-bold">5. Tâm Xả (Equanimity)</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Bí mật lớn nhất không phải là né tránh sự khó chịu hay thèm khát khoái lạc, mà là khả năng "Quan sát mà KHÔNG PHẢN ỨNG".</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Mọi cảm giác đều tuân theo luật vô thường (Impermanence) - sinh ra rồi diệt đi. Càng phản ứng, bạn càng tiếp năng lượng cho nó sống lâu hơn.</p>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg border-l-4 border-slate-400">
+                            <p class="text-sm text-slate-900">💡 <strong>Ẩn dụ:</strong> Vết bùn dính trên mặt hồ. Nếu bạn dùng tay cố vớt, nước càng đục. Tâm xả là ngồi yên bên bờ, để cặn bùn tự lắng xuống đáy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">🔋</div>
+                        <h3 class="text-xl font-bold">6. Quản Trị Prana (Năng Lượng)</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Những người xuất chúng không quản lý lịch trình thời gian 24h, họ quản lý mức độ năng lượng (Prana) nạp vào và tiêu hao.</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Có những việc mất 5 phút nhưng rút cạn năng lượng cả ngày (như tranh cãi MXH). Có những việc mất 1 tiếng nhưng sạc đầy pin (tập Yoga, tắm nước lạnh, thiền).</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg border-l-4 border-green-400">
+                            <p class="text-sm text-green-900">💡 <strong>Ví dụ:</strong> Thay vì xếp lịch làm việc 8 tiếng liền, hãy thiết kế các "Nghi thức Prana" xen kẽ (10 phút đi dạo không điện thoại) để sức bền được nhân lên gấp 10.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">🎧</div>
+                        <h3 class="text-xl font-bold">7. Sáng Tạo Là Bản Remix</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Đừng áp lực phải tạo ra thứ gì độc nhất vô nhị. Mọi tác phẩm đều là sự kết hợp từ những ảnh hưởng có sẵn cộng với trải nghiệm cá nhân của bạn.</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Hấp thụ thật sâu kiến thức từ người đi trước, ném bỏ những thứ không hợp với mình, nhào nặn phần còn lại bằng ngọn lửa đam mê. Đó là Authenticity (Sự chân thực).</p>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded-lg border-l-4 border-purple-400">
+                            <p class="text-sm text-purple-900">💡 <strong>Ví dụ:</strong> Ngay cả Jonah Kest cũng lấy kỹ thuật của người cha, nhịp điệu của Hip-hop và phong cách nhiếp ảnh hiện đại để mix lại thành bản sắc yoga cá nhân.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">🧱</div>
+                        <h3 class="text-xl font-bold">8. Đặc Quyền Của Kẻ Chơi Nhỏ</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Khi mới bắt đầu, bạn rất tệ và không ai quan tâm. Đó không phải bi kịch, đó là đặc quyền tự do lớn nhất để rèn luyện trong bóng tối.</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Những gì bạn âm thầm mài giũa trong bóng tối sẽ tỏa sáng dưới ánh đèn sân khấu. Một thành công "sau 1 đêm" luôn tốn 10 năm đẫm mồ hôi.</p>
+                        </div>
+                        <div class="bg-teal-50 p-3 rounded-lg border-l-4 border-teal-400">
+                            <p class="text-sm text-teal-900">💡 <strong>Ví dụ:</strong> André từng là một cậu nhóc nói lắp bắp trên video năm 16 tuổi. Thay vì bỏ cuộc, anh biến những video thảm họa đó thành gạch xây nền móng làm Podcaster chuyên nghiệp.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="insight-card p-6 rounded-2xl">
+                    <div class="insight-content space-y-4">
+                        <div class="text-3xl">🏔️</div>
+                        <h3 class="text-xl font-bold">9. Bổ Sung Bằng Cách Loại Trừ</h3>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Bản chất</p>
+                            <p class="text-gray-700 text-sm">Sự trưởng thành thật sự không phải là nhồi nhét thêm kỹ năng mới, đồ đạc mới, mà là dọn dẹp bớt rác rưởi tinh thần (Addition by subtraction).</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Cơ chế</p>
+                            <p class="text-gray-700 text-sm">Tâm trí chúng ta giống như căn phòng chứa đầy đồ cũ. Muốn mang luồng gió mới sáng tạo vào, việc đầu tiên là phải mở cửa sổ và vứt đi sự định kiến.</p>
+                        </div>
+                        <div class="bg-orange-50 p-3 rounded-lg border-l-4 border-orange-400">
+                            <p class="text-sm text-orange-900">💡 <strong>Ẩn dụ:</strong> Tạc tượng không phải là đắp thêm đất sét, mà là đục bỏ những mảng đá thừa để lộ ra bức tượng tuyệt mỹ đã có sẵn bên trong.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section id="action" class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold flex items-center justify-center gap-2">
+                    <span>🚀</span> Sổ Tay Thực Chiến
+                </h2>
+                <p class="text-gray-500 mt-2">Biến lý thuyết thành hành động ngay trong ngày hôm nay.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- If-Then Scenarios -->
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-gray-800 border-b pb-3 border-gray-100">Kịch bản "Nếu - Thì"</h3>
+                    
+                    <div class="bg-gray-50 p-5 rounded-xl">
+                        <p class="font-semibold text-theme-primary mb-2">🤔 NẾU bạn đang đứng trước cơn bùng nổ cảm xúc (cãi vã, mất tiền)...</p>
+                        <p class="text-gray-700 flex items-start gap-2">
+                            <span class="mt-1">👉</span>
+                            <span><strong>THÌ:</strong> Đừng phân tích xem ai đúng ai sai. Ngay lập tức chuyển sự tập trung xuống lòng bàn chân tiếp đất và cảm nhận 3 hơi thở vào ra. Đợi 90 giây cho luồng hóa chất thần kinh tan biến trước khi mở miệng.</span>
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-5 rounded-xl">
+                        <p class="font-semibold text-theme-primary mb-2">🤔 NẾU bạn cảm thấy mình đang thụt lùi, công việc mới dở tệ...</p>
+                        <p class="text-gray-700 flex items-start gap-2">
+                            <span class="mt-1">👉</span>
+                            <span><strong>THÌ:</strong> Kích hoạt "Quyền năng bóng tối". Tự nhắc bản thân: Lúc này không ai phán xét mình, hãy cho phép mình làm ra những thứ rác rưởi để học kỹ năng. Lặp lại việc đó mỗi ngày.</span>
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-5 rounded-xl">
+                        <p class="font-semibold text-theme-primary mb-2">🤔 NẾU bạn thấy kiệt sức dù mới làm việc 3 tiếng...</p>
+                        <p class="text-gray-700 flex items-start gap-2">
+                            <span class="mt-1">👉</span>
+                            <span><strong>THÌ:</strong> Bạn đang rò rỉ Prana (năng lượng). Tắt wifi 30 phút, đi bộ ra ngoài ngắm bầu trời, không mang theo điện thoại để "reset" bộ não.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Micro-Actions -->
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800 border-b pb-3 border-gray-100 mb-6">Hành động Micro (Micro-actions)</h3>
+                    <p class="text-sm text-gray-500 mb-6">Chỉ mất chưa đến 5 phút, hãy cam kết làm trong 24h tới:</p>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-4 p-4 border border-green-100 bg-green-50/30 rounded-xl">
+                            <div class="bg-green-100 text-green-600 p-2 rounded-lg text-xl">🧘‍♂️</div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Cài đặt báo thức "Tĩnh Không"</h4>
+                                <p class="text-gray-600 text-sm mt-1">Sáng mai, đặt báo thức sớm hơn 5 phút. Khi nó reo, ngồi yên tại giường, nhắm mắt và chỉ đếm hơi thở từ 1 đến 30. Không suy nghĩ về công việc trong ngày.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4 p-4 border border-amber-100 bg-amber-50/30 rounded-xl mt-4">
+                            <div class="bg-amber-100 text-amber-600 p-2 rounded-lg text-xl">📝</div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Thiết kế 1 "Nghi thức Prana"</h4>
+                                <p class="text-gray-600 text-sm mt-1">Viết ra giấy 1 hoạt động nhỏ nhất giúp bạn nạp năng lượng (VD: uống ly nước lọc chầm chậm, rửa mặt nước lạnh) và chèn nó vào giữa giờ làm việc lúc 15h00.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section id="reality-check" class="space-y-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold flex items-center justify-center gap-2">
+                    <span>⚠️</span> Nhận Diện Cạm Bẫy
+                </h2>
+                <div class="w-24 h-1 bg-red-400 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Red Flags -->
+                <div class="bg-white border-t-4 border-red-500 rounded-xl p-8 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span>🚩</span> Bẫy Vô Hình (Red Flags)
+                    </h3>
+                    <ul class="space-y-5">
+                        <li>
+                            <p class="font-bold text-gray-800">1. Ám ảnh "Phải không có suy nghĩ"</p>
+                            <p class="text-gray-600 text-sm mt-1">Nhiều người bỏ thiền vì nghĩ "tôi ngồi mà trong đầu vẫn toàn suy nghĩ, tôi thiền sai rồi".<br>
+                            <strong class="text-red-500">Sai lầm:</strong> Não có chức năng sản xuất suy nghĩ. Thành công không phải là dập tắt não, mà là nhìn thấy suy nghĩ trồi lên và không để nó cuốn đi.</p>
+                        </li>
+                        <li>
+                            <p class="font-bold text-gray-800">2. Đợi khi "rảnh" mới rèn luyện</p>
+                            <p class="text-gray-600 text-sm mt-1">"Bao giờ tôi mua được nhà, tôi sẽ tìm hiểu tâm linh". <br>
+                            <strong class="text-red-500">Sự thật:</strong> Nếu không gieo mầm tĩnh tại khi giông bão, bạn sẽ không bao giờ có nó. Quá trình làm giàu và tĩnh tâm phải diễn ra song song.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="bg-white border-t-4 border-slate-700 rounded-xl p-8 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span>🛡️</span> Chốt Chặn Kỷ Luật (Guardrails)
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-5 italic">Sức mạnh ý chí luôn cạn kiệt. Hãy dùng vật lý & môi trường để thiết lập kỷ luật.</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-500 mt-1">✔️</span>
+                            <div>
+                                <p class="font-semibold text-gray-800">Khu vực Cấm Thiết Bị (No-Tech Zone)</p>
+                                <p class="text-gray-600 text-sm mt-1">Quy định phòng ngủ là nơi không có màn hình. Mua đồng hồ báo thức cơ học và để điện thoại sạc ngoài phòng khách. Chặn đứng cơn nghiện dopamine ngay khi vừa mở mắt.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 mt-4">
+                            <span class="text-green-500 mt-1">✔️</span>
+                            <div>
+                                <p class="font-semibold text-gray-800">Quy tắc "2 phút bắt đầu"</p>
+                                <p class="text-gray-600 text-sm mt-1">Thay vì ép bản thân tập Yoga 1 tiếng, hãy thiết lập chốt: "Chỉ cần trải thảm ra và nằm đó 2 phút". Môi trường sẽ tự kích hoạt cơ thể bạn muốn vận động.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall -->
+        <section id="flashcards" class="space-y-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold flex items-center justify-center gap-2">
+                    <span>🃏</span> Trạm Ôn Tập (Flashcards)
+                </h2>
+                <div class="w-24 h-1 bg-theme-primary mx-auto mt-4 rounded-full"></div>
+                <p class="text-gray-500 mt-4 text-sm max-w-xl mx-auto">Đọc lướt bộ câu hỏi dưới đây. Nếu bạn trả lời được ngay, kiến thức đã ghim vào nơ-ron thần kinh của bạn.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Generate 15 cards -->
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Chúng ta đang bị nghiện điều gì lớn nhất mà không nhận ra?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Nghiện chính những suy nghĩ lặp đi lặp lại của mình (hóa chất quen thuộc não tiết ra).</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Định nghĩa từ gốc của Yoga ("Yoke") là gì?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Nghĩa là Cầm lái, định hướng, kiểm soát sự chú ý để kiến tạo thực tại.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Asana (Tư thế vật lý) có ý nghĩa thực sự là gì?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Gốc của Asana là "ngồi yên". Thể chất chỉ là cánh cửa để kiểm tra khả năng tĩnh tại của não.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Samskaras là gì?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Là những dấu ấn tâm lý, chấn thương cũ nằm ở tầng sâu vô thức.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Tại sao phải mượn hình ảnh "Nấu bơ Ghee" để tả thiền?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Thiền nung nóng tâm trí để cặn bẩn trồi lên, giúp ta vớt bỏ để lại sự thanh khiết.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Làm sao để "nhìn thấy" hệ thần kinh trừu tượng?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Thông qua việc theo dõi nhịp điệu của Hơi thở và Cảm giác vật lý trên cơ thể.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Equanimity (Tâm xả) là làm gì với cảm xúc tiêu cực?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Chỉ quan sát nó đến và đi, tuyệt đối không phản ứng (không ghét bỏ, không bám chấp).</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Cảm xúc sống được bao lâu nếu ta không phản ứng?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Rất ngắn (khoảng 90 giây). Mọi thứ đều tuân theo luật vô thường.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Năng suất thực sự không nằm ở Quản lý Thời gian, mà ở đâu?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Nằm ở khả năng Quản trị Prana (Năng lượng sống) nạp vào và xả ra.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Khái niệm "Authenticity" (Sự chân thực) trong sáng tạo là gì?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Không phải tự đẻ ra cái mới 100%, mà là Remix khéo léo những gì tinh túy kết hợp chất riêng.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Lợi thế lớn nhất khi mới bắt đầu khởi nghiệp/sáng tạo là gì?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Không ai chú ý. Bạn có không gian bóng tối tĩnh lặng để thử sai mà không bị phán xét.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Phép toán cốt lõi của sự phát triển tâm linh là gì?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Addition by Subtraction - Làm đầy bằng cách trừ bớt đi những nhiễu nhương.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Chuyện gì xảy ra nếu cố ép bộ não ngưng suy nghĩ?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Sẽ tạo ra phản ứng dội ngược, sinh ra căng thẳng và lo âu tột độ hơn.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Thiền Vipassana thực chất mang tính chất của môn học nào?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Khoa học thực nghiệm - Dùng sự quan sát khách quan để nghiên cứu thực tại bên trong.</p>
+                </div>
+                <div class="flashcard p-4 rounded-lg">
+                    <p class="font-bold text-sm text-gray-800 mb-2">Q: Ý nghĩa của "Mỗi hơi thở là một cơ hội để bắt đầu lại"?</p>
+                    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">A: Không quan trọng bạn đã phóng tâm bao xa, chỉ cần nhận thức lại hơi thở là bạn đã thiết lập lại (Reset) hiện tại.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. Footer -->
+    <footer class="bg-gray-900 text-white flex flex-col justify-center items-center px-6 h-[128px]">
+        <p class="text-sm md:text-base text-gray-300 font-light text-center max-w-2xl mb-4">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="flex items-center gap-6">
+            <!-- YouTube -->
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="text-gray-400 hover:text-red-500 transition-colors">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+            </a>
+            <!-- TikTok -->
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v7.2c0 1.96-.5 3.96-1.82 5.36-1.5 1.59-3.8 2.2-5.91 1.76-1.91-.4-3.52-1.99-4.11-3.87-.63-2-.25-4.28.96-5.95 1.3-1.8 3.52-2.73 5.67-2.6v3.98c-1.07.16-2.18.67-2.77 1.59-.57.88-.63 2.06-.11 2.97.48.86 1.48 1.34 2.45 1.34 1.63 0 2.9-1.43 2.9-3.11V2.05c-.01-.68-.02-1.35-.02-2.03z"/></svg>
+            </a>
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="text-gray-400 hover:text-blue-500 transition-colors">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Init Mermaid
+        mermaid.initialize({ startOnLoad: true });
+
+        // Logic for Zooming Mindmap without mouse scroll (Prevent jumpiness)
+        document.addEventListener("DOMContentLoaded", () => {
+            const wrapper = document.getElementById('mermaid-wrapper');
+            const container = document.getElementById('mindmap-container');
+            const btnZoomIn = document.getElementById('zoom-in');
+            const btnZoomOut = document.getElementById('zoom-out');
+            
+            let scale = 1;
+            const SCALE_STEP = 0.2;
+            const MAX_SCALE = 3;
+            const MIN_SCALE = 0.5;
+
+            let isDragging = false;
+            let startX, startY, translateX = 0, translateY = 0;
+
+            // Zoom functionality
+            btnZoomIn.addEventListener('click', () => {
+                if (scale < MAX_SCALE) {
+                    scale += SCALE_STEP;
+                    updateTransform();
+                }
+            });
+
+            btnZoomOut.addEventListener('click', () => {
+                if (scale > MIN_SCALE) {
+                    scale -= SCALE_STEP;
+                    updateTransform();
+                }
+            });
+
+            function updateTransform() {
+                wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            }
+
+            // Panning functionality (Click & Drag)
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateTransform();
+            });
+            
+            // Prevent mouse wheel zooming on container entirely
+            container.addEventListener('wheel', (e) => {
+                // Do nothing, let page scroll normally OR prevent default to lock. 
+                // We keep it natural so user can scroll page past it.
+            }, { passive: true });
+        });
+    </script>
+</body>
+</html>
