@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh Thức Tâm Thức Kiến Tạo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Mermaid -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        healing: {
+                            900: '#064e3b',
+                            800: '#065f46',
+                            700: '#047857',
+                            600: '#059669',
+                            500: '#10b981',
+                            400: '#34d399',
+                            300: '#6ee7b7',
+                        },
+                        night: {
+                            950: '#020617',
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a; /* night-900 */
+            color: #f8fafc;
+            line-height: 1.6;
+        }
+        
+        /* Abstract Art Backgrounds */
+        .abstract-bg {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            background: rgba(30, 41, 59, 0.5); /* night-800 with opacity */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .abstract-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            z-index: -1;
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        /* Mermaid Container */
+        .mindmap-container {
+            width: 100%;
+            height: 500px;
+            overflow: hidden; /* Hide scrollbars, strictly controlled by buttons */
+            position: relative;
+            background: #020617; /* night-950 */
+            border-radius: 1rem;
+            cursor: grab;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mindmap-container:active {
+            cursor: grabbing;
+        }
+        
+        #mermaid-svg-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            transition: transform 0.2s ease-out;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #34d399, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Flashcard simple styling */
+        .flashcard {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+        .flashcard-q {
+            color: #6ee7b7;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+        .flashcard-a {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-healing-500 selection:text-white">
+
+    <!-- Header / Hero -->
+    <header class="relative pt-20 pb-16 px-6 lg:px-8 max-w-7xl mx-auto text-center z-10">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-healing-500/20 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-night-800/80 border border-white/10 text-sm font-medium text-healing-300 mb-6">
+            <i class="ph-fill ph-plant"></i> Trị liệu Tâm trí & Chữa lành
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+            Đánh Thức <br class="hidden md:block"/><span class="gradient-text">"Tâm Thức Kiến Tạo"</span>
+        </h1>
+        
+        <!-- The Big Idea -->
+        <div class="max-w-3xl mx-auto mb-10 abstract-bg rounded-2xl p-6 md:p-8 text-left">
+            <h2 class="flex items-center gap-2 text-2xl font-bold text-white mb-4">
+                <i class="ph-fill ph-target text-healing-400"></i> Bức Tranh Toàn Cảnh (The Big Idea)
+            </h2>
+            <p class="text-lg md:text-xl text-slate-300 leading-relaxed">
+                Bạn không phải là nạn nhân bị dòng đời xô đẩy, mà là người cầm bút viết lại kịch bản. Chìa khóa nằm ở việc <strong>nhận trách nhiệm 100%</strong>, ngắt mạch các tổn thương mắc kẹt trong hệ viền não bộ bằng hơi thở, và can đảm bước qua "cái chết của bản ngã" để tái thiết lập một hiện thực trọn vẹn hơn.
+            </p>
+            <div class="mt-6 flex justify-center md:justify-start">
+                <a href="https://youtu.be/LWjYrgiNKPM?si=ZvXXopWygPTpcLrJ" target="_blank" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors shadow-lg shadow-red-900/20">
+                    <i class="ph-fill ph-youtube-logo text-2xl"></i>
+                    Xem Video Gốc: Bí Quyết Đánh Thức "Tâm Thức Kiến Tạo"
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mindmap Section -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-8 mb-24">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-3xl font-bold flex items-center gap-3">
+                <i class="ph-fill ph-tree-structure text-healing-400"></i> Bản Đồ Tâm Trí
+            </h2>
+            <div class="flex gap-2">
+                <button id="zoom-out" class="w-10 h-10 rounded-full bg-night-800 hover:bg-healing-600 flex items-center justify-center transition-colors border border-white/10" aria-label="Thu nhỏ">
+                    <i class="ph ph-minus text-xl"></i>
+                </button>
+                <button id="zoom-in" class="w-10 h-10 rounded-full bg-night-800 hover:bg-healing-600 flex items-center justify-center transition-colors border border-white/10" aria-label="Phóng to">
+                    <i class="ph ph-plus text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="mindmap-container shadow-2xl shadow-black/50" id="mindmap-container">
+            <div id="mermaid-svg-wrapper">
+                <pre class="mermaid">
+                    graph LR
+                        %% Styling
+                        classDef rootNode fill:#065f46,stroke:#34d399,stroke-width:2px,color:#fff,rx:10,ry:10,font-weight:bold;
+                        classDef branch1 fill:#1e293b,stroke:#0ea5e9,stroke-width:1.5px,color:#fff,rx:8,ry:8;
+                        classDef branch2 fill:#1e293b,stroke:#f59e0b,stroke-width:1.5px,color:#fff,rx:8,ry:8;
+                        classDef branch3 fill:#1e293b,stroke:#ec4899,stroke-width:1.5px,color:#fff,rx:8,ry:8;
+                        classDef branch4 fill:#1e293b,stroke:#8b5cf6,stroke-width:1.5px,color:#fff,rx:8,ry:8;
+                        classDef leafNode fill:#0f172a,stroke:#475569,stroke-width:1px,color:#cbd5e1,rx:5,ry:5;
+
+                        %% Nodes
+                        A(TÂM THỨC<br/>KIẾN TẠO) ::: rootNode
+
+                        B(Nhận Diện<br/>Lối Mòn) ::: branch1
+                        C(Cơ Chế<br/>Hệ Thần Kinh) ::: branch2
+                        D(Công Cụ<br/>Chuyển Hóa) ::: branch3
+                        E(Hành Động<br/>Đồng Điệu) ::: branch4
+
+                        B1(Rời bỏ vai Nạn Nhân) ::: leafNode
+                        B2(Nhận diện bẫy Phán xét) ::: leafNode
+                        B3(Dám đối diện Bản Ngã) ::: leafNode
+
+                        C1(Hệ viền phi thời gian) ::: leafNode
+                        C2(Tổn thương mắc kẹt) ::: leafNode
+                        C3(Cơn nghiện là lớp vỏ bọc) ::: leafNode
+
+                        D1(Breathwork - Hơi thở) ::: leafNode
+                        D2(Ngắt Mạch - Pattern Interrupt) ::: leafNode
+                        D3(Diễn tập Tâm Trí) ::: leafNode
+
+                        E1(Bảo vệ năng lượng) ::: leafNode
+                        E2(Chịu trách nhiệm 100%) ::: leafNode
+                        E3(Kiên nhẫn với quy trình) ::: leafNode
+
+                        %% Connections
+                        A --> B
+                        A --> C
+                        A --> D
+                        A --> E
+
+                        B -.-> B1
+                        B -.-> B2
+                        B -.-> B3
+
+                        C -.-> C1
+                        C -.-> C2
+                        C -.-> C3
+
+                        D -.-> D1
+                        D -.-> D2
+                        D -.-> D3
+
+                        E -.-> E1
+                        E -.-> E2
+                        E -.-> E3
+                </pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep Insights -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-8 mb-24">
+        <h2 class="text-3xl font-bold flex items-center gap-3 mb-10">
+            <i class="ph-fill ph-brain text-healing-400"></i> Các Trụ Cột Tri Thức (Deep Insights)
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Insight 1 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">🎭</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">1. Nạn Nhân vs. Kiến Tạo</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Bạn không thể thay đổi những gì đã xảy ra, nhưng bạn nắm 100% quyền kiểm soát cách bạn phản hồi lại nó. Đổ lỗi là nhường quyền lực cho người khác.</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> Khi đóng vai nạn nhân, não bộ ở trạng thái "sinh tồn", liên tục dò tìm mối đe dọa. Nhận trách nhiệm giúp chuyển hệ thần kinh sang trạng thái "kiến tạo", mở khóa tư duy giải pháp.</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Lukis từng sống buông thả để trốn tránh nỗi đau cha tự sát. Anh chỉ đổi đời khi tự nhủ: "Mình phải tự xoay chuyển vô lăng, nếu không sẽ lao xuống vực giống hệt cha mình".</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 2 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">⏳</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">2. Hệ Viền Phi Thời Gian</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Trí óc có thể biết sự việc đã qua 10 năm, nhưng cơ thể bạn thì không. Cảm xúc cũ chưa được xử lý vẫn luôn sống ở thì hiện tại.</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> Hệ viền (Limbic system) - nơi xử lý cảm xúc, hoạt động phi tuyến tính. Một kích hoạt nhỏ (trigger) ở hiện tại có thể lập tức kích hoạt chuông báo động y hệt sự kiện sang chấn trong quá khứ.</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Giống như một chiếc máy tính kẹt ở phần mềm cũ. Chạm nhầm một nút, toàn màn hình lại báo lỗi y chang sự cố của cả chục năm trước.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 3 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">🌬️</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">3. Hơi Thở: Chiếc Điều Khiển Từ Xa</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Bạn không thể dùng suy nghĩ để vượt qua hoảng loạn. Hơi thở là công cụ vật lý duy nhất can thiệp trực tiếp vào tiềm thức.</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> Nhịp thở sâu kích hoạt hệ thần kinh phó giao cảm (Rest & Digest), gửi tín hiệu "Tôi an toàn" đến não bộ, ngay lập tức tắt trạng thái "Chiến đấu hay bỏ chạy".</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Khi bạn đang chới với chìm dần giữa biển khơi hoảng loạn, hơi thở có ý thức chính là chiếc phao cứu sinh vật lý được ném xuống để bạn bám vào.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 4 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">🍔</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">4. Cơn Nghiện Là Lớp Vỏ Bọc</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Nghiện (ăn uống, mua sắm, lướt mạng) không phải là sự yếu kém kỷ luật. Nó là nỗ lực tuyệt vọng của cơ thể để tìm kiếm cảm giác an toàn và chạm đất (grounding).</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> Khi nỗi đau tâm lý quá khó đối mặt, ta mạo hiểm tạo ra một khủng hoảng "có thể kiểm soát" (như đầy bụng do ăn quá nhiều) để làm phân tâm não bộ.</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Hồi nhỏ, Lukis ăn uống vô độ vì anh quá nhạy cảm với năng lượng tiêu cực xung quanh. Đồ ăn là thứ duy nhất tạo ra ranh giới vật lý khiến anh thấy "kiểm soát được".</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 5 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">🎬</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">5. Diễn Tập Tâm Trí (Mental Rehearsal)</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Tương lai được lập trình từ hiện tại. Nếu bạn hình dung rõ nét bạn muốn gì, cơ thể sẽ chuẩn bị sẵn sàng cho điều đó.</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> Não bộ không phân biệt được một trải nghiệm thực tế và một tưởng tượng sống động kèm cảm xúc mạnh. Việc hình dung lặp đi lặp lại sẽ xây dựng lộ trình thần kinh mới.</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Lukis đã "sống" trong viễn cảnh thành công, cảm nhận niềm vui được giúp đỡ người khác từ rất lâu trước khi các khách hàng nổi tiếng thực sự gõ cửa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 6 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">⚡</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">6. Chiến Lược Ngắt Mạch</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Bạn không cần phải chống lại vòng lặp tiêu cực, bạn chỉ cần bẻ gãy nhịp điệu của nó.</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> (Pattern Interference) Khi một thói quen cũ kích hoạt, việc lập tức đổi trạng thái vật lý (đứng lên, thở mạnh, vỗ tay) sẽ đánh lừa xung thần kinh, buộc não phải reset trạng thái tạm thời.</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Giống như việc rút phích cắm điện của một chiếc Tivi đang chiếu phim kinh dị. Hình ảnh tắt phụp, bạn ngay lập tức thoát khỏi nỗi sợ.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 7 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">💀</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">7. Cái Chết Của Bản Ngã (Ego Death)</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Để trở thành phiên bản vĩ đại hơn, con người cũ của bạn bắt buộc phải "chết đi". Sự kháng cự chỉ sinh ra đau khổ.</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> Bản ngã được tạo ra để bảo vệ bạn trong quá khứ. Việc gỡ bỏ nó khiến tâm trí hoảng loạn vì mất đi lớp áo giáp quen thuộc, tạo ra các "Đêm Đen Của Linh Hồn".</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Hãy nghĩ về loài cua. Để lớn lên, nó phải đập vỡ lớp vỏ cứng, chịu đựng giai đoạn trần trụi, mềm yếu và đầy rủi ro trước khi lớp vỏ mới to lớn hơn hình thành.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 8 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">🛡️</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">8. Bảo Vệ Lõi Năng Lượng</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Năng lượng là tài sản quý nhất. Ai hút năng lượng của bạn, họ đang đánh cắp tương lai của bạn.</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> Đối phó với người độc hại khiến cơ thể liên tục tiết cortisol để phòng thủ. Năng lượng này lẽ ra phải được dùng cho phần vỏ não trước trán để sáng tạo và giải quyết vấn đề.</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Việc cấy một hạt mầm quý giá vào một bãi đất toàn cỏ dại là vô nghĩa. Cỏ dại sẽ hút cạn dưỡng chất. Bạn phải bứng cây sang chậu khác.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 9 -->
+            <div class="abstract-bg rounded-2xl p-6 card-hover flex flex-col h-full">
+                <div class="w-12 h-12 rounded-full bg-night-800 flex items-center justify-center mb-4 border border-white/10">
+                    <span class="text-2xl">⚖️</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">9. Kiên Nhẫn Khâu Vết Thương</h3>
+                <div class="space-y-3 text-sm flex-grow">
+                    <p><strong class="text-healing-300">Bản chất:</strong> Chữa lành không phải là cuộc đua. Ép bản thân bứt tốc khi chưa sẵn sàng sẽ dẫn đến tái chấn thương nghiêm trọng.</p>
+                    <p><strong class="text-healing-300">Cơ chế:</strong> Hệ thần kinh cần thời gian để dung nạp và làm quen với tần số mới. Thúc ép "Kỷ luật thép" mọi lúc sẽ làm sập hệ thống điều hòa cảm xúc.</p>
+                    <div class="mt-4 p-3 bg-night-900/50 rounded-lg border-l-2 border-amber-500">
+                        <p class="italic text-slate-400"><i class="ph-fill ph-lightbulb text-amber-500"></i> <strong>Ví dụ:</strong> Sẽ có ngày bạn cần ý chí sắt đá kiểu David Goggins. Nhưng có ngày, điều mạnh mẽ nhất bạn có thể làm là ôm lấy mình và cho phép bản thân được gục ngã nghỉ ngơi.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Action Playbook -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-8 mb-24 relative">
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+        <h2 class="text-3xl font-bold flex items-center gap-3 mb-10">
+            <i class="ph-fill ph-rocket-launch text-healing-400"></i> Sổ Tay Thực Chiến (Action Playbook)
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-healing-300 border-b border-white/10 pb-2">Kịch bản "Nếu - Thì" (Hành vi thường ngày)</h3>
+                
+                <div class="bg-night-800 border border-slate-700 rounded-xl p-5">
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 font-bold">NẾU</div>
+                        <p class="text-slate-300 pt-2">Bạn bắt đầu cảm thấy lồng ngực thắt lại, lo âu ập đến mịt mù do áp lực công việc hoặc hồi tưởng quá khứ...</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-700 flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-healing-500/20 text-healing-400 flex items-center justify-center shrink-0 font-bold">THÌ</div>
+                        <p class="text-white pt-2">Lập tức <strong>áp dụng kỹ thuật Ngắt Mạch:</strong> Dừng mọi việc, hít thật sâu trong 4s, giữ 4s, và thở ra từ từ qua miệng trong 6s. Làm 3 nhịp để kéo bản thân về thực tại.</p>
+                    </div>
+                </div>
+
+                <div class="bg-night-800 border border-slate-700 rounded-xl p-5">
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 font-bold">NẾU</div>
+                        <p class="text-slate-300 pt-2">Bạn nhận được sự phán xét, chê bai cực kỳ tiêu cực từ một ai đó khiến bạn muốn xù lông bảo vệ cái tôi...</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-700 flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-healing-500/20 text-healing-400 flex items-center justify-center shrink-0 font-bold">THÌ</div>
+                        <p class="text-white pt-2">Nhẩm câu thần chú: <em>"Họ đang ném vào mình rác rưởi chưa được xử lý trong tâm hồn họ. Đó là sự dự phóng của họ, không phải hiện thực của mình."</em> Mỉm cười và lờ đi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-semibold text-healing-300 border-b border-white/10 pb-2 mb-6">Micro-actions (Hành động nhỏ trong 24h tới)</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-4 abstract-bg p-4 rounded-xl">
+                        <div class="bg-healing-500 rounded p-2 text-night-950 mt-1"><i class="ph-bold ph-check"></i></div>
+                        <div>
+                            <h4 class="font-bold text-lg">Cuộc hẹn 5 phút buổi sáng</h4>
+                            <p class="text-slate-400 text-sm mt-1">Sáng mai khi vừa thức dậy, tuyệt đối khoan cầm điện thoại. Ngồi tại giường, nhắm mắt và chỉ quan sát hơi thở tự nhiên trong 5 phút. Hãy để trí não được "trống rỗng" trước khi nạp dữ liệu thế giới.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4 abstract-bg p-4 rounded-xl">
+                        <div class="bg-healing-500 rounded p-2 text-night-950 mt-1"><i class="ph-bold ph-check"></i></div>
+                        <div>
+                            <h4 class="font-bold text-lg">Mũi tiêm "Diễn tập tâm trí"</h4>
+                            <p class="text-slate-400 text-sm mt-1">Lấy một tờ giấy, viết đúng 1 câu về phiên bản mạnh mẽ nhất của bạn (Ví dụ: Tôi tự do tài chính và bình an). Nhắm mắt lại 1 phút, mường tượng và <strong>cố gắng cảm nhận nụ cười hạnh phúc</strong> như thể nó đã xảy ra rồi.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reality Check -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-8 mb-24">
+        <h2 class="text-3xl font-bold flex items-center gap-3 mb-10 text-rose-400">
+            <i class="ph-fill ph-warning-octagon"></i> Nhận Diện Cạm Bẫy & Kỷ Luật (Reality Check)
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Red Flags -->
+            <div class="bg-night-900 border border-rose-900/50 rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-rose-300">
+                    <i class="ph-fill ph-flag-banner text-2xl"></i> Cờ Đỏ & Bẫy Ảo Tưởng
+                </h3>
+                <div class="space-y-4 text-slate-300 text-sm">
+                    <p><strong>🚨 Bẫy "Chữa lành siêu tốc":</strong> Nghĩ rằng chỉ cần tham gia một khóa thiền hay tập thở vài lần là đời đổi thay. Sự nôn nóng ép hệ thần kinh tiêu hóa quá nhiều tổn thương một lúc sẽ gây phản tác dụng (tái chấn thương).</p>
+                    <p><strong>🚨 Bẫy "Tích cực độc hại":</strong> Cố gắng gạt bỏ mọi cảm xúc buồn bã, chối bỏ bóng tối và dán lên nụ cười giả tạo. Quét rác xuống gầm thảm không làm nhà sạch hơn.</p>
+                    <div class="mt-4 p-4 bg-rose-950/30 rounded-lg">
+                        <p class="text-rose-200"><em>Ví dụ thất bại:</em> Một người đang bị kiệt quệ tâm lý nhưng lại cố ép bản thân dậy lúc 4h sáng, chạy bộ 10km mỗi ngày theo phong cách "Hustle". Kết cục: Hệ thần kinh quá tải dẫn đến trầm cảm nặng hơn và nằm bẹp hàng tháng trời.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guardrails -->
+            <div class="bg-night-900 border border-blue-900/50 rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-blue-300">
+                    <i class="ph-fill ph-shield-check text-2xl"></i> Chốt Chặn Kỷ Luật Sinh Học
+                </h3>
+                <div class="space-y-6 text-slate-300 text-sm">
+                    <div>
+                        <h4 class="font-bold text-white text-base">🛡️ Quy tắc "Môi trường chân không" 9 PM</h4>
+                        <p class="mt-1">Thay vì dặn lòng "tối nay sẽ đi ngủ sớm", hãy thiết lập chốt chặn vật lý: Cài phần mềm khóa tự động mạng xã hội trên điện thoại lúc 9h tối. Đặt sạc điện thoại ở phòng khách, không mang vào phòng ngủ.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-base">🛡️ Quy tắc "Bức tường 24 Giờ"</h4>
+                        <p class="mt-1">Để tránh việc cả nể và tự vắt kiệt sức mình (Self-abandonment), luật cứng là: <strong>Tuyệt đối không gật đầu đồng ý bất cứ yêu cầu nhờ vả nào ngay lập tức.</strong> Câu cửa miệng mới của bạn phải là: <em>"Cảm ơn, để mình check lại lịch và trả lời bạn vào ngày mai nhé."</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Active Recall (Flashcards) -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-8 mb-24">
+        <h2 class="text-3xl font-bold flex items-center gap-3 mb-10 text-purple-400">
+            <i class="ph-fill ph-cards"></i> Trạm Ôn Tập Tương Tác (Active Recall)
+        </h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Cards -->
+            <div class="flashcard">
+                <div class="flashcard-q">1. Điểm khác biệt lớn nhất giữa Nạn nhân và Nhà kiến tạo là gì?</div>
+                <div class="flashcard-a">Sự chịu trách nhiệm 100%. Nạn nhân đổ lỗi, Nhà kiến tạo giành lại quyền kiểm soát phản ứng.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">2. Hệ viền (Limbic system) xử lý thời gian như thế nào?</div>
+                <div class="flashcard-a">Nó phi thời gian. Quá khứ, hiện tại và tương lai với nó là một.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">3. Công cụ vật lý tốt nhất để truy cập vào hệ thần kinh vô thức?</div>
+                <div class="flashcard-a">Hơi thở (Breathwork).</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">4. Tại sao con người lại sinh ra các cơn nghiện (như ăn uống vô độ)?</div>
+                <div class="flashcard-a">Đó là cơ chế phòng vệ để tìm kiếm sự an toàn, đánh lạc hướng khỏi sự hoảng loạn bên trong.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">5. "Ngắt mạch" (Pattern Interference) nghĩa là gì?</div>
+                <div class="flashcard-a">Lập tức thay đổi trạng thái vật lý (hít thở sâu) khi nhận ra mình đang lọt vào vòng lặp tiêu cực.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">6. Diễn tập tâm trí cần yếu tố gì để não bộ tin đó là sự thật?</div>
+                <div class="flashcard-a">Sự tưởng tượng sống động kết hợp với Cảm xúc mãnh liệt (Joy, Gratefulness).</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">7. "Đêm đen của linh hồn" thường xảy ra khi nào?</div>
+                <div class="flashcard-a">Khi bản ngã cũ đang "chết đi" nhưng phiên bản mới chưa kịp hình thành.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">8. Vì sao không nên ép mình chữa lành quá nhanh?</div>
+                <div class="flashcard-a">Vì hệ thần kinh cần sự chậm rãi (Titration) để làm quen. Quá nhanh sẽ gây tái chấn thương.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">9. Cách đối phó với "Ma cà rồng năng lượng"?</div>
+                <div class="flashcard-a">Thiết lập ranh giới cứng rắn, ngắt tương tác vật lý để bảo vệ lõi năng lượng của mình.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">10. Trạng thái "Chiến đấu hay Bỏ chạy" tiêu hao gì nhất?</div>
+                <div class="flashcard-a">Năng lượng sinh học (Vital Life Force) lẽ ra được dùng để sáng tạo.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">11. Ai là người chữa lành thực sự cho bạn?</div>
+                <div class="flashcard-a">Chính bạn. Chuyên gia chỉ là người giữ không gian và cung cấp công cụ.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">12. Trước khi thêm thói quen mới, ta cần làm gì?</div>
+                <div class="flashcard-a">Nhận diện và cắt bỏ những hành vi cũ đang gây "rò rỉ" năng lượng.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">13. Cảm giác sợ hãi khi thay đổi là dấu hiệu của điều gì?</div>
+                <div class="flashcard-a">Hệ thống phòng vệ nguyên thủy đang cố níu kéo bạn lại vùng an toàn cũ.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">14. Từ khóa nào thay thế cho sự tự phê bình hà khắc?</div>
+                <div class="flashcard-a">Self-parenting (Tự làm cha mẹ của chính mình), nuôi dưỡng đứa trẻ bên trong bằng lòng trắc ẩn.</div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-q">15. Điều kiện tối thượng để Luật hấp dẫn (co-create) hoạt động?</div>
+                <div class="flashcard-a">Trạng thái bên trong phải tĩnh lặng, rõ ràng mục đích (Why) và sẵn sàng hành động liên kết (Aligned Action).</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-night-950 border-t border-white/10 h-32 flex flex-col items-center justify-center text-center px-6">
+        <p class="text-sm md:text-base text-slate-400 mb-4 max-w-2xl">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="flex gap-6">
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="text-slate-400 hover:text-red-500 transition-colors" title="YouTube">
+                <i class="ph-fill ph-youtube-logo text-3xl"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-slate-400 hover:text-white transition-colors" title="TikTok">
+                <i class="ph-fill ph-tiktok-logo text-3xl"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="text-slate-400 hover:text-blue-500 transition-colors" title="Facebook">
+                <i class="ph-fill ph-facebook-logo text-3xl"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Script for Mermaid & Zoom -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize Mermaid
+            mermaid.initialize({ 
+                startOnLoad: true,
+                theme: 'dark',
+                themeVariables: {
+                    fontFamily: 'Plus Jakarta Sans',
+                    primaryColor: '#0f172a',
+                    primaryTextColor: '#fff',
+                    primaryBorderColor: '#34d399',
+                    lineColor: '#cbd5e1',
+                    secondaryColor: '#1e293b',
+                    tertiaryColor: '#020617'
+                }
+            });
+
+            // Zoom logic
+            const wrapper = document.getElementById('mermaid-svg-wrapper');
+            const btnIn = document.getElementById('zoom-in');
+            const btnOut = document.getElementById('zoom-out');
+            
+            let scale = 1;
+            const SCALE_STEP = 0.2;
+            const MAX_SCALE = 3;
+            const MIN_SCALE = 0.5;
+
+            function updateTransform() {
+                wrapper.style.transform = `scale(${scale})`;
+            }
+
+            btnIn.addEventListener('click', () => {
+                if (scale < MAX_SCALE) {
+                    scale += SCALE_STEP;
+                    updateTransform();
+                }
+            });
+
+            btnOut.addEventListener('click', () => {
+                if (scale > MIN_SCALE) {
+                    scale -= SCALE_STEP;
+                    updateTransform();
+                }
+            });
+
+            // Make the container draggable for panning
+            const container = document.getElementById('mindmap-container');
+            let isDragging = false;
+            let startX, startY, translateX = 0, translateY = 0;
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            container.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+        });
+    </script>
+</body>
+</html>
