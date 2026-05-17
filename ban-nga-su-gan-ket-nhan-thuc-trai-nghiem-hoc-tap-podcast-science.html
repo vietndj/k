@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản ngã, Sự gắn kết & Nhận thức - Trải nghiệm học tập</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        },
+                        dark: '#0f172a',
+                    },
+                    fontFamily: {
+                        serif: ['Merriweather', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Abstract Art CSS - MWe Concept */
+        .abstract-art {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .circle-me {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(45, 212, 191, 0.4);
+            filter: blur(20px);
+            transform: translateX(-40px);
+            animation: float 6s ease-in-out infinite;
+        }
+        .circle-we {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.4);
+            filter: blur(20px);
+            transform: translateX(40px);
+            animation: float 6s ease-in-out infinite reverse;
+        }
+        .circle-hub {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(250, 204, 21, 0.5);
+            filter: blur(15px);
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0% { transform: translate(-40px, 0); }
+            50% { transform: translate(-20px, 20px); }
+            100% { transform: translate(-40px, 0); }
+        }
+
+        /* Mindmap controls */
+        #mindmap-container {
+            overflow: hidden;
+            position: relative;
+            touch-action: none; /* Prevent browser handling of gestures */
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        #mindmap-svg-wrapper {
+            transform-origin: 0 0;
+            transition: transform 0.2s ease-out;
+            cursor: grab;
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #mindmap-svg-wrapper:active {
+            cursor: grabbing;
+        }
+        .mindmap-controls {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 20;
+        }
+        .mindmap-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .mindmap-btn:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        /* Flashcard CSS */
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .flashcard {
+            perspective: 1000px;
+            height: 220px;
+            cursor: pointer;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border-radius: 1rem;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border-radius: 1rem;
+        }
+        .flashcard-front {
+            background-color: white;
+            color: #1e293b;
+            border: 2px solid #e2e8f0;
+        }
+        .flashcard-back {
+            background-color: #0f766e;
+            color: white;
+            transform: rotateY(180deg);
+        }
+        
+        /* Custom Footer exactly 128px */
+        .custom-footer {
+            height: 128px;
+            background-color: #0f172a;
+            color: #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header / Nav -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="font-serif font-bold text-xl text-brand-700 flex items-center gap-2">
+                <i class="fa-solid fa-brain text-brand-500"></i> MindSpace Mentor
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-12 space-y-24">
+
+        <!-- 1. The Big Idea & Mindmap -->
+        <section id="big-idea" class="space-y-8">
+            <div class="text-center max-w-4xl mx-auto space-y-6">
+                <div class="inline-block px-4 py-1 rounded-full bg-brand-100 text-brand-800 font-semibold text-sm tracking-wide">
+                    🎯 THE BIG IDEA
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight text-dark">
+                    Giải Mã Cái 'Tôi' Độc Lập & Đánh Thức Tư Duy MWe
+                </h1>
+                <p class="text-xl text-slate-600 leading-relaxed font-light">
+                    Bản ngã của bạn không phải là một danh từ cố định bị nhốt trong cơ thể. Nó là một động từ liên tục mở rộng. Đau khổ sinh ra từ ảo tưởng "tách biệt", và sự tự do đích thực nằm ở khả năng tích hợp: <strong class="text-brand-600">Tôi (Me) + Chúng ta (We) = MWe.</strong>
+                </p>
+                
+                <a href="https://youtu.be/4Cnit70nLo4?si=x6C-CVgXPFnbUCvT" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 px-6 py-3 rounded-full font-medium transition-colors shadow-sm border border-red-100">
+                    <i class="fa-brands fa-youtube text-xl"></i>
+                    Xem video gốc: The Nature of Self, Identity & Belonging | Dr. Daniel Siegel
+                </a>
+            </div>
+
+            <!-- Mindmap Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-12">
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="abstract-art shadow-inner">
+                        <div class="circle-me"></div>
+                        <div class="circle-we"></div>
+                        <div class="circle-hub"></div>
+                        <span class="absolute text-brand-800 font-serif font-bold text-2xl z-20 mix-blend-overlay">MWe</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                        <h3 class="text-lg font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-map text-brand-500"></i> Bản đồ Nhận thức</h3>
+                        <p class="text-slate-600 text-sm">Sơ đồ này là "khung xương" toàn bộ triết lý của Tiến sĩ Daniel Siegel. Gốc rễ bắt đầu từ "Bản chất trải nghiệm", tỏa ra các cơ chế xử lý của não bộ, cách ta gắn kết trong tuổi thơ, và cách ta tái thiết lập danh tính để đạt được sự "Tích hợp" (Khỏe mạnh về tâm trí).</p>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-8">
+                    <div id="mindmap-container" class="border border-slate-200">
+                        <div id="mindmap-svg-wrapper" class="cursor-move">
+                            <pre class="mermaid">
+                                graph LR
+                                    %% Cấu hình style
+                                    classDef root fill:#0f766e,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:10px,ry:10px;
+                                    classDef node fill:#f0fdfa,stroke:#2dd4bf,stroke-width:2px,color:#0f766e,rx:8px,ry:8px;
+                                    classDef leaf fill:#fff,stroke:#cbd5e1,stroke-width:1px,color:#475569,rx:5px,ry:5px;
+
+                                    ROOT[Bản Chất Thực Tại]:::root
+                                    
+                                    ROOT --> XULY(Cơ Chế Xử Lý Não Bộ):::node
+                                    XULY --> TD(Top-Down: Bộ lọc định kiến & Niềm tin):::leaf
+                                    XULY --> BU(Bottom-Up: Cảm giác thuần túy hiện tại):::leaf
+                                    
+                                    ROOT --> DANHTINH(Định Hình Danh Tính):::node
+                                    DANHTINH --> SOLO(Solo Self: Cái tôi tách biệt - Gây bệnh tật tâm lý):::leaf
+                                    DANHTINH --> MWE(MWe: Intra-connected - Tính nhất thể):::leaf
+                                    
+                                    ROOT --> GANKET(Mô Hình Gắn Kết - Attachment):::node
+                                    GANKET --> ANTOAN(An Toàn: Nguồn lực phục hồi hồi):::leaf
+                                    GANKET --> KANTOAN(Kém an toàn: Né tránh / Lo âu / Vô tổ chức):::leaf
+                                    
+                                    ROOT --> TICHHOP(Sự Tích Hợp - Integration):::node
+                                    TICHHOP --> KHOEMANH(Dòng chảy sức khỏe: Khác biệt + Liên kết):::leaf
+                                    TICHHOP --> BENHLY(Khối nghẽn: Hỗn loạn hoặc Cứng nhắc):::leaf
+                            </pre>
+                        </div>
+                        <div class="mindmap-controls">
+                            <button class="mindmap-btn" onclick="zoomMindmap(0.1)" aria-label="Phóng to"><i class="fa-solid fa-plus"></i></button>
+                            <button class="mindmap-btn" onclick="zoomMindmap(-0.1)" aria-label="Thu nhỏ"><i class="fa-solid fa-minus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section id="deep-insights" class="space-y-10">
+            <div class="text-center">
+                <div class="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold text-sm tracking-wide mb-4">
+                    🧠 DEEP INSIGHTS
+                </div>
+                <h2 class="text-3xl font-bold text-dark">Các Trụ Cột Tri Thức Bẻ Gãy Tư Duy Cũ</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Lesson 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">🦠</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">1. Căn Bệnh "Cái Tôi Tách Biệt" (Solo Self)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Văn hóa hiện đại dạy ta rằng "Tôi" chỉ gói gọn trong ranh giới của làn da này. Bất cứ thứ gì ngoài cơ thể đều là "kẻ khác".</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Khi tin mình là một cá thể tách biệt hoàn toàn, não bộ tự động bật chế độ "Sinh tồn" (tìm kiếm sự chắc chắn, tích trữ vật chất) dẫn đến cô đơn và cạn kiệt.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ví dụ:</strong> Tế bào ung thư chính là một dạng "Solo Self" của cơ thể. Nó ngừng hợp tác với các tế bào khác, phát triển quá mức tính cá biệt (differentiating) và cuối cùng phá hủy toàn bộ hệ thống.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lesson 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">🌳</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">2. Intra-connected (Tính Nhất Thể)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Đừng dùng từ "Inter-connected" (Kết nối lẫn nhau) vì nó vẫn ngụ ý bạn và thế giới là 2 thực thể rời rạc. Hãy dùng "Intra-connected" (Kết nối nội tại) - Bạn LÀ một phần của toàn thể.</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Khi nhận ra "Me" (Tôi) và "We" (Chúng ta/Tự nhiên) chỉ là 2 mặt của một đồng xu, hệ thần kinh ngừng phòng thủ và bắt đầu cảm nhận tình yêu thương thực sự.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ví dụ:</strong> Trong kỳ tu thiền giữa rừng, Dan Siegel nhận ra: Ông không phải đang "kết nối với" cái cây. Ông CHÍNH LÀ cái cây, dòng suối, và bầu trời. Ranh giới vật lý chỉ là ảo ảnh.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lesson 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">👓</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">3. Xử Lý Top-Down (Bộ Lọc Định Kiến)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Là cách não bộ dùng những gì đã học trong quá khứ, những cái tên (danh từ), niềm tin để áp đặt lên hiện tại.</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Nó giúp ta sinh tồn nhanh (nhìn là biết ngay cái cốc để uống nước), nhưng nó "đánh cắp" sự tươi mới. Ta nhìn đời qua định kiến: "Ta tin gì, ta thấy nấy".</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ví dụ:</strong> Gặp lại một người từng làm bạn buồn. Top-down lập tức bật lên chữ "Kẻ thù" và bạn thấy chán ghét trước cả khi người ta kịp mở miệng.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lesson 4 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">👶</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">4. Xử Lý Bottom-Up (Cảm Giác Thuần Túy)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Là trải nghiệm thế giới đúng như những gì các giác quan đang thu nhận ngay giây phút này, không có ngôn từ hay nhãn mác đánh giá.</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Khi loại bỏ được màng lọc danh từ, não bộ tiếp nhận dòng chảy năng lượng thô (ánh sáng, âm thanh, xúc giác) tạo ra "Tâm Trí Người Mới Bắt Đầu" (Beginner's Mind) tràn ngập niềm vui.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ví dụ:</strong> Sau tai nạn ngã ngựa tổn thương vùng ngôn ngữ, Dan Siegel nhìn ly nước không còn là "ly nước" (tên gọi). Ông bật cười khúc khích vì thấy ánh sáng nhảy múa xuyên qua một vật thể trong suốt tuyệt đẹp.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lesson 5 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">🕊️</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">5. Sự Không Chắc Chắn = Tự Do</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Chúng ta điên cuồng bám víu vào sự chắc chắn (tiền tài, chức vụ, một danh tính cố định) để thấy an toàn, nhưng đời sống bản chất là vô thường.</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Khi ta ép mình vào sự "chắc chắn", ta tự xây nhà tù cho chính mình. Sự không chắc chắn không phải là mối đe dọa, mà đồng nghĩa với "Hàng ngàn khả năng có thể xảy ra".</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ví dụ:</strong> Một họa sĩ thốt lên: "Khi khám phá ra sự chắc chắn chỉ là một ảo tưởng mỏng manh, tôi quyết định cho phép mình tự do lang thang."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lesson 6 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">🥗</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">6. Sự Tích Hợp (Integration)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Sức khỏe tâm lý cốt lõi nằm ở "Sự Tích Hợp" - khả năng cân bằng giữa việc giữ được Bản sắc riêng (Differentiation) và Sự liên kết với mọi người (Linkage).</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Nếu mất đi bản sắc cá nhân ta bị hòa tan. Nếu mất đi liên kết ta bị cô lập. Tích hợp là việc hệ thần kinh hài hòa cả hai chức năng này.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ẩn dụ:</strong> Tích hợp giống như một đĩa "Salad hoa quả" (bạn vẫn thấy rõ vị nho, táo, dâu nhưng chúng hòa quyện thành 1 đĩa ngon lành). Chứ nó không phải là "Sinh tố" (bị xay nhuyễn mất đi đặc trưng ban đầu).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lesson 7 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">⚖️</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">7. Khối Nghẽn Tâm Lý: Hỗn Loạn & Cứng Nhắc</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Mọi triệu chứng bệnh lý tâm thần (trầm cảm, lo âu, rối loạn...) đều quy về 2 cực khi dòng chảy "Tích Hợp" bị tắc nghẽn.</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Nếu bạn không tích hợp được cảm xúc, bạn sẽ bị cuốn phăng vào "Sự Hỗn Loạn" (Chaos - cảm xúc ngập lụt vô tổ chức), hoặc kẹt cứng trong "Sự Cứng Nhắc" (Rigidity - kiểm soát quá mức, chai sạn).</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ẩn dụ:</strong> Sông có 2 bờ. Dòng nước ở giữa là dòng chảy Tích hợp (khỏe mạnh, linh hoạt). Bờ trái là Hỗn loạn, Bờ phải là Cứng nhắc. Bạn mắc kẹt ở bờ nào cũng gây ra đau khổ.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lesson 8 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">🧱</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">8. Mô Hình Gắn Kết Không Tạo Ra Tính Cách</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Khoa học hiện tại hiểu sai rằng tuổi thơ tạo ra toàn bộ tính cách. Thực ra Tính khí (Temperament) là do sinh học bẩm sinh.</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Những sang chấn hay sự thiếu thốn gắn kết tuổi thơ không sinh ra tính cách, mà nó làm tính khí bẩm sinh trở nên cực đoan, biến não bộ thành "nhà tù" thay vì "sân chơi".</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ví dụ:</strong> Nếu bạn bẩm sinh thích sự kết nối, nhưng lớn lên bị bỏ rơi. Bạn không biến thành người khác, bạn chỉ đẩy sự thèm khát kết nối thành một phiên bản lo âu, phụ thuộc cực đoan.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lesson 9 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">🎡</div>
+                    <h3 class="text-xl font-bold text-dark mb-3">9. Bánh Xe Nhận Thức (Wheel of Awareness)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-brand-600">Bản chất:</strong> Công cụ thực chiến để tách biệt "Kẻ đang quan sát" và "Thứ bị quan sát".</p>
+                        <p><strong class="text-slate-700">Cơ chế:</strong> Vành bánh xe chứa mọi thứ: Âm thanh, xúc giác, suy nghĩ lo âu. Trục (Hub) là nơi chứa sự nhận thức thuần túy (sự tĩnh lặng trống rỗng nhưng chứa mọi tiềm năng). Thay vì kẹt ngoài vành, hãy đưa tâm trí lui về Trục.</p>
+                        <p class="bg-slate-50 p-3 rounded-lg border-l-4 border-brand-400 italic text-slate-600">
+                            💡 <strong class="not-italic">Ví dụ:</strong> Đừng nói "Tôi TỨC GIẬN". Hãy lùi về Trục nhận thức và thấy rằng: "Cơn tức giận đang nằm ngoài vành bánh xe, và tôi đang ở Trục bình an quan sát nó".
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section id="action-playbook" class="bg-slate-800 text-slate-100 rounded-3xl p-8 lg:p-12 shadow-xl relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-brand-500 rounded-full mix-blend-overlay filter blur-3xl opacity-50"></div>
+            
+            <div class="relative z-10 space-y-10">
+                <div class="text-center">
+                    <div class="inline-block px-4 py-1 rounded-full bg-brand-900 text-brand-300 font-semibold text-sm tracking-wide border border-brand-700 mb-4">
+                        🚀 ACTION PLAYBOOK
+                    </div>
+                    <h2 class="text-3xl font-bold text-white">Sổ Tay Thực Chiến - Ứng Dụng Trong 24h</h2>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- If Then -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-semibold border-b border-slate-600 pb-2 text-brand-300"><i class="fa-solid fa-code-branch"></i> Kịch Bản "Nếu - Thì"</h3>
+                        
+                        <div class="bg-slate-700 p-5 rounded-xl border border-slate-600 space-y-2">
+                            <p class="text-red-300 font-medium"><i class="fa-solid fa-triangle-exclamation"></i> NẾU: Bạn đang trong tranh cãi và muốn chỉ trích một nhóm người khác (Chủ nghĩa bộ lạc - In-group/Out-group)...</p>
+                            <p class="text-brand-300"><i class="fa-solid fa-arrow-right"></i> THÌ: Hít một hơi thật sâu để kích hoạt mạn sườn (Cortical override). Mở rộng "Lăng kính danh tính" (Identity Lens): Tự nhủ người kia không phải kẻ thù, họ là một phần của hệ thống thiên nhiên cùng với bạn đang bị tổn thương.</p>
+                        </div>
+
+                        <div class="bg-slate-700 p-5 rounded-xl border border-slate-600 space-y-2">
+                            <p class="text-red-300 font-medium"><i class="fa-solid fa-triangle-exclamation"></i> NẾU: Bạn thấy kiệt sức, tuyệt vọng vì phải đối mặt với vô vàn áp lực từ công việc (Trạng thái Threat)...</p>
+                            <p class="text-brand-300"><i class="fa-solid fa-arrow-right"></i> THÌ: Thay vì đóng vai nạn nhân phải "chiến đấu", hãy xoay trục góc nhìn sang Trạng thái Thử thách (Challenge). Tự hỏi: "Bản nhạc của hôm nay là gì? Vậy mình sẽ nhảy điệu Cha-cha hay Tango với rắc rối này?".</p>
+                        </div>
+                    </div>
+
+                    <!-- Micro Actions -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-semibold border-b border-slate-600 pb-2 text-amber-300"><i class="fa-solid fa-bolt"></i> Hành Động Micro (Micro-actions)</h3>
+                        
+                        <div class="bg-slate-700 p-5 rounded-xl border border-slate-600">
+                            <h4 class="font-bold text-amber-400 mb-2">1. Bài tập 60 giây "Tắt Nhãn Mác" (Train Bottom-Up)</h4>
+                            <p class="text-sm text-slate-300">Ngay hôm nay, hãy cầm một ly nước hoặc một chiếc lá lên. Trong đúng 60 giây, cấm não bộ dùng từ ngữ (không gọi nó là lá, là màu xanh, là tĩnh mạch lá). Chỉ tập trung vào ánh sáng phản chiếu, độ nhám, cảm giác mát mẻ. Đây là cách rèn luyện tháo màng lọc định kiến nhanh nhất.</p>
+                        </div>
+
+                        <div class="bg-slate-700 p-5 rounded-xl border border-slate-600">
+                            <h4 class="font-bold text-amber-400 mb-2">2. Đổi mật khẩu thành "MWe"</h4>
+                            <p class="text-sm text-slate-300">Đổi một mật khẩu máy tính/điện thoại thường dùng có chứa cụm từ <code>Intr@connected</code> hoặc <code>Me+We=Mwe</code>. Việc gõ nó 10 lần mỗi ngày là cách lập trình lại hệ thống thần kinh ngôn ngữ (Top-down) để nhắc nhở bản thân không sống cô lập.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section id="reality-check" class="space-y-10 border-4 border-red-50 rounded-3xl p-8 lg:p-12">
+            <div class="text-center">
+                <div class="inline-block px-4 py-1 rounded-full bg-red-100 text-red-800 font-semibold text-sm tracking-wide mb-4">
+                    ⚠️ REALITY CHECK
+                </div>
+                <h2 class="text-3xl font-bold text-dark">Nhận Diện Cạm Bẫy Tâm Lý Thực Tế</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-red-600 flex items-center gap-2">
+                        <i class="fa-solid fa-flag"></i> Bẫy Vô Hình (Red Flags)
+                    </h3>
+                    <div class="bg-white p-5 rounded-xl border-l-4 border-red-500 shadow-sm">
+                        <h4 class="font-bold text-slate-800">Cơn nghiện sự "Chắc chắn" (Certainty) bằng Vật Chất</h4>
+                        <p class="text-sm text-slate-600 mt-2">Chúng ta tin rằng bản thân (Self) chỉ nằm trong cơ thể này, nên ta cảm thấy bé nhỏ và cần "thu thập" để an toàn. Ta mua 20 món đồ, vẫn thấy thiếu. Lên 40 món đồ, tạo ra quy trình bắt người khác mua đồ của mình... Đó là một vòng lặp tuyệt vọng vô tận. Mưu cầu sự chắc chắn tuyệt đối chính là tự sát tâm lý.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border-l-4 border-red-500 shadow-sm">
+                        <h4 class="font-bold text-slate-800">Hiểu sai về "Self-love" (Yêu bản thân)</h4>
+                        <p class="text-sm text-slate-600 mt-2">Xã hội bảo bạn "hãy yêu lấy bản thân đi". Nhưng đó lại là cái bẫy tách biệt bạn và thế giới ra làm 2 (Kẻ đi yêu và Thứ được yêu). Sự thật bừng tỉnh là: Bạn không cần yêu bản thân, bạn cần nhận ra <strong class="text-red-500">Bản ngã CỦA BẠN CHÍNH LÀ Tình Yêu (Your self IS love).</strong></p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-brand-600 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved"></i> Chốt Chặn Kỷ Luật (Guardrails)
+                    </h3>
+                    <div class="bg-white p-5 rounded-xl border-l-4 border-brand-500 shadow-sm">
+                        <h4 class="font-bold text-slate-800">Luật Cấm: Danh Từ Hóa Bản Thân (Nounification)</h4>
+                        <p class="text-sm text-slate-600 mt-2">Cấm tuyệt đối việc sử dụng cấu trúc "Tôi là [một danh từ tồi tệ]". Đừng nói "Tôi là một kẻ thất bại", "Tôi là đứa trầm cảm". Khi dùng danh từ, bạn đóng đinh sự thay đổi. <br><br><strong>Quy tắc cứng:</strong> Chỉ được dùng Động Từ. "Tôi đang trải nghiệm cảm giác thất bại", "Cơ thể tôi đang phản ứng bằng sự trì trệ". Động từ mang tính dòng chảy và dễ dàng lướt qua.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border-l-4 border-brand-500 shadow-sm">
+                        <h4 class="font-bold text-slate-800">Môi Trường Chặn Sự Chia Rẽ</h4>
+                        <p class="text-sm text-slate-600 mt-2">Bản chất của linh trưởng (primate) là phân chia Bầy đàn (In-group / Out-group). Không thể ép não bộ dừng việc này bằng suy nghĩ. <br><br><strong>Quy tắc cứng:</strong> Chặn thuật toán MXH. Hủy theo dõi (Unfollow) ngay lập tức những Fanpage, Kênh nội dung chuyên mạt sát cá nhân, soi mói drama hoặc kích động thù hằn vùng miền/chính trị. Khóa ngay cái "ngòi nổ" sinh học này lại từ môi trường ngoài.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall (Flashcards) -->
+        <section id="active-recall" class="space-y-10">
+            <div class="text-center">
+                <div class="inline-block px-4 py-1 rounded-full bg-purple-100 text-purple-800 font-semibold text-sm tracking-wide mb-4">
+                    🃏 ACTIVE RECALL
+                </div>
+                <h2 class="text-3xl font-bold text-dark">Trạm Ôn Tập Tương Tác</h2>
+                <p class="text-slate-600 mt-2">Click vào thẻ để kiểm tra độ hiểu sâu của bạn về Triết lý của Dr. Siegel.</p>
+            </div>
+
+            <div class="flashcard-grid">
+                <!-- Card 1 -->
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <span class="text-brand-500 text-2xl mb-2"><i class="fa-regular fa-circle-question"></i></span>
+                            <h3 class="font-bold text-lg text-center">Solo Self là gì?</h3>
+                            <span class="text-xs text-slate-400 mt-4">Click để xem đáp án</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Là niềm tin cốt lõi của xã hội hiện đại rằng Bản ngã (Tôi) tách biệt hoàn toàn và bị nhốt trong ranh giới của cơ thể. Bác sĩ Siegel gọi đây là "Căn bệnh ung thư" của văn hóa.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <span class="text-brand-500 text-2xl mb-2"><i class="fa-regular fa-circle-question"></i></span>
+                            <h3 class="font-bold text-lg text-center">Khái niệm "MWe" nghĩa là gì?</h3>
+                            <span class="text-xs text-slate-400 mt-4">Click để xem đáp án</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Là sự kết hợp giữa Me (Tôi - Cơ thể nội tại) + We (Chúng ta - Mối liên kết vạn vật). Nhấn mạnh rằng ta không cần bỏ đi cái tôi cá nhân để hòa nhập, mà ta là sự Tích hợp của cả 2.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <span class="text-brand-500 text-2xl mb-2"><i class="fa-regular fa-circle-question"></i></span>
+                            <h3 class="font-bold text-lg text-center">Sự khác nhau giữa Inter-connected và Intra-connected?</h3>
+                            <span class="text-xs text-slate-400 mt-4">Click để xem đáp án</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Inter-connected ám chỉ 2 vật tách biệt đang nối với nhau bằng 1 sợi dây. Intra-connected (Kết nối nội tại) ám chỉ bạn chính là cái cây, bầu trời, dòng suối, không hề có ranh giới.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <span class="text-brand-500 text-2xl mb-2"><i class="fa-regular fa-circle-question"></i></span>
+                            <h3 class="font-bold text-lg text-center">Top-down processing là gì?</h3>
+                            <span class="text-xs text-slate-400 mt-4">Click để xem đáp án</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Cơ chế não bộ dùng kinh nghiệm, nhãn mác ngôn ngữ, định kiến trong quá khứ để lọc và áp đặt lên cách ta nhìn nhận một sự việc ở hiện tại (Ta thấy điều ta tin).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <span class="text-brand-500 text-2xl mb-2"><i class="fa-regular fa-circle-question"></i></span>
+                            <h3 class="font-bold text-lg text-center">Bottom-up processing mang lại điều gì?</h3>
+                            <span class="text-xs text-slate-400 mt-4">Click để xem đáp án</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Tiếp nhận mọi thứ thô sơ thuần túy qua ngũ quan, không phán xét, không định kiến. Mang lại "Tâm trí người mới bắt đầu" tràn ngập sự tươi mới và niềm vui.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <span class="text-brand-500 text-2xl mb-2"><i class="fa-regular fa-circle-question"></i></span>
+                            <h3 class="font-bold text-lg text-center">Integration (Sự tích hợp) cần sự cân bằng của 2 yếu tố nào?</h3>
+                            <span class="text-xs text-slate-400 mt-4">Click để xem đáp án</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">1. Differentiation (Sự phân hóa/Bản sắc riêng).<br>2. Linkage (Sự liên kết/Gắn kết). <br>Giống như món Salad trái cây: Vẫn giữ vị từng loại quả nhưng tổng thể quyện lại với nhau.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <span class="text-brand-500 text-2xl mb-2"><i class="fa-regular fa-circle-question"></i></span>
+                            <h3 class="font-bold text-lg text-center">2 Cực đối lập xảy ra khi mất đi "Sự Tích Hợp" là gì?</h3>
+                            <span class="text-xs text-slate-400 mt-4">Click để xem đáp án</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Chaos (Hỗn loạn - bị cảm xúc nhấn chìm vô tổ chức) HOẶC Rigidity (Cứng nhắc - kiểm soát thái quá, chai sạn cảm xúc). Mọi bệnh tâm lý đều rơi vào 1 trong 2 bờ này.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <span class="text-brand-500 text-2xl mb-2"><i class="fa-regular fa-circle-question"></i></span>
+                            <h3 class="font-bold text-lg text-center">Wheel of Awareness (Bánh xe nhận thức) hoạt động thế nào?</h3>
+                            <span class="text-xs text-slate-400 mt-4">Click để xem đáp án</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-sm">Phân tách: Vành bánh xe chứa vạn vật (âm thanh, suy nghĩ, lo âu...). Trục trung tâm (Hub) là nơi tĩnh lặng của sự nhận biết thuần túy. Ta cần lui về trục thay vì kẹt ở vành.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. Footer -->
+    <footer class="custom-footer mt-16">
+        <p class="text-sm font-medium mb-4 max-w-2xl">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="flex gap-6 text-xl">
+            <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" class="hover:text-red-500 transition-colors" aria-label="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors" aria-label="TikTok">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition-colors" aria-label="Facebook">
+                <i class="fa-brands fa-facebook"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Khởi tạo Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // Xử lý tính năng Zoom cho Mindmap
+        let currentScale = 1;
+        const svgWrapper = document.getElementById('mindmap-svg-wrapper');
+        const container = document.getElementById('mindmap-container');
+        
+        function zoomMindmap(step) {
+            currentScale += step;
+            // Giới hạn zoom
+            if(currentScale < 0.5) currentScale = 0.5;
+            if(currentScale > 2) currentScale = 2;
+            
+            svgWrapper.style.transform = `scale(${currentScale})`;
+        }
+
+        // Chặn cuộn chuột tự do trên Mindmap để tránh giật trang
+        container.addEventListener('wheel', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        // Cho phép kéo thả (Pan) trên màn hình (Desktop)
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+
+        svgWrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if(!isDragging) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            svgWrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+        });
+        
+    </script>
+</body>
+</html>
