@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải Mã Trạng Thái Flow - Sổ Tay Thực Chiến</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e0f2fe',
+                primaryTextColor: '#0c4a6e',
+                primaryBorderColor: '#0ea5e9',
+                lineColor: '#38bdf8',
+                secondaryColor: '#f0f9ff',
+                tertiaryColor: '#fff'
+            },
+            flowchart: {
+                curve: 'basis'
+            }
+        });
+    </script>
+    <style>
+        /* Abstract CSS Art Elements */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 300px; height: 300px; background: #38bdf8; }
+        .blob-2 { bottom: -10%; right: -10%; width: 250px; height: 250px; background: #818cf8; }
+        .blob-3 { top: 40%; left: 50%; width: 350px; height: 350px; background: #c084fc; transform: translate(-50%, -50%); opacity: 0.3; }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed relative overflow-x-hidden">
+
+    <!-- Background Abstract Arts -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="relative z-10 pt-16 pb-12 px-6 max-w-5xl mx-auto text-center">
+        <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-4 tracking-wide uppercase">🧠 Masterclass Tóm Tắt</span>
+        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">Giải Mã Trạng Thái <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Flow</span></h1>
+        <p class="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">Làm thế nào để người bình thường làm được những điều phi thường? Khám phá khoa học thần kinh đằng sau điểm rơi phong độ tối đa cùng chuyên gia Steven Kotler.</p>
+    </header>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pb-24 space-y-24">
+
+        <!-- 1. The Big Idea -->
+        <section id="big-idea" class="space-y-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-200">🎯</div>
+                <h2 class="text-3xl font-bold text-slate-900">Bức Tranh Toàn Cảnh</h2>
+            </div>
+            
+            <div class="glass-card rounded-2xl p-6 md:p-8 border-l-4 border-l-blue-500">
+                <p class="text-xl text-slate-700 font-medium italic">
+                    "Flow không phải là một phép màu ngẫu nhiên. Nó là một trạng thái thần kinh (neurobiology) có thể kích hoạt có chủ đích, một chu trình 4 bước giúp giải phóng toàn bộ tiềm năng não bộ để bạn học nhanh hơn 500% và sáng tạo đột phá."
+                </p>
+            </div>
+
+            <!-- Mindmap Container -->
+            <div class="glass-card rounded-2xl p-4 md:p-6">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Sơ đồ tư duy cốt lõi</h3>
+                <div class="relative overflow-hidden w-full h-[400px] border border-slate-200 rounded-xl bg-white shadow-inner">
+                    <!-- Controls -->
+                    <div class="absolute top-4 right-4 z-20 flex gap-2">
+                        <button onclick="zoomMindmap(0.2)" class="w-10 h-10 bg-white border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition flex items-center justify-center font-bold text-xl" title="Phóng to">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button onclick="zoomMindmap(-0.2)" class="w-10 h-10 bg-white border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition flex items-center justify-center font-bold text-xl" title="Thu nhỏ">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    </div>
+                    <!-- Mermaid Wrapper -->
+                    <div id="mindmap-wrapper" class="w-full h-full flex items-center justify-center transition-transform duration-300 origin-center cursor-move" style="transform: scale(1.2);">
+                        <div class="mermaid">
+                            graph LR
+                            A[ĐẠT HIỆU SUẤT TỐI ĐA] --> B(Động Lực Nội Tại)
+                            A --> C(Chu Kỳ Flow 4 Bước)
+                            A --> D(Bảo Vệ Môi Trường)
+
+                            B --> B1(1. Tò Mò)
+                            B1 --> B2(2. Đam Mê)
+                            B2 --> B3(3. Mục Đích)
+                            B3 --> B4(4. Tự Chủ)
+                            B4 --> B5(5. Tinh Thông)
+
+                            C --> C1[1. Struggle <br>Vật lộn/Khởi động]
+                            C1 --> C2[2. Release <br>Buông bỏ/Thư giãn]
+                            C2 --> C3[3. FLOW <br>Trạng thái dòng chảy]
+                            C3 --> C4[4. Recovery <br>Phục hồi/Ngủ]
+
+                            D --> D1(Quản lý xao nhãng)
+                            D --> D2(Chặn mạng xã hội)
+                            D --> D3(Không gian mới lạ)
+
+                            classDef default fill:#f8fafc,stroke:#cbd5e1,stroke-width:2px,rx:10,ry:10,color:#334155,font-family:sans-serif,font-weight:bold;
+                            classDef root fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff;
+                            classDef phase fill:#eff6ff,stroke:#60a5fa,stroke-width:2px;
+                            
+                            class A root;
+                            class C1,C2,C3,C4 phase;
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <a href="https://youtu.be/_o9KWyI7Kik" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-200">
+                    <i class="fa-brands fa-youtube text-xl"></i>
+                    <span>Xem video gốc: Achieve Peak Performance, Find FLOW & Do The Impossible</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section id="deep-insights" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xl shadow-lg shadow-indigo-200">🧠</div>
+                <h2 class="text-3xl font-bold text-slate-900">9 Trụ Cột Tri Thức Sâu Sắc</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Insight 1 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">1. Cú Lừa Của Sự Trì Hoãn</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Trì hoãn không phải vì bạn lười. Đó là tín hiệu cảnh báo của não bộ rằng ranh giới giữa <i>Thử thách</i> và <i>Kỹ năng</i> của bạn đang bị lệch lạc.</p>
+                        <p><strong>Cơ chế:</strong> Bạn thường trì hoãn vì 2 lý do: Nhiệm vụ quá chán (thiếu kích thích dopamine) hoặc quá khó (gây lo âu, stress). Não tự động "né" để bảo tồn năng lượng.</p>
+                        <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 mt-2">
+                            <span class="text-indigo-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Ví dụ thực tế:</span> 
+                            Khi Steven chán ngấy việc viết một bài báo khô khan, ông tự tăng độ khó để chống chán: <i>"Thử viết bài báo về dữ liệu đám mây nhưng bằng văn phong của tiểu thuyết gia Charles Dickens xem sao!"</i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">2. Đam Mê Không Phải Là Tia Sét</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Đừng ngồi đợi đam mê giáng xuống đầu. Đam mê thực chất là sự tích tiểu thành đại của những "Sự tò mò" nhỏ lẻ đan xen vào nhau.</p>
+                        <p><strong>Cơ chế:</strong> Tò mò cho bạn sự tập trung miễn phí. Khi nhiều sự tò mò kết hợp lại và được rèn luyện, nó tiết ra Dopamine và Norepinephrine liên tục, tạo thành thứ ta gọi là "Đam mê".</p>
+                        <div class="bg-purple-50 p-3 rounded-lg border border-purple-100 mt-2">
+                            <span class="text-purple-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Phép ẩn dụ:</span> 
+                            Đam mê lúc mới bắt đầu trông không giống Michael Jordan úp rổ hoành tráng. Nó giống hình ảnh một đứa trẻ lóng ngóng ném bóng vào rổ ở sân sau nhà và tò mò tự hỏi: "Mình có ném trúng được không nhỉ?".
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">3. Sức Nặng Của "Mục Đích"</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Mục đích sống (Purpose) không làm đời bạn nhẹ nhàng hơn, nó làm bạn sẵn sàng gánh vác sự nặng nhọc mà không oán thán.</p>
+                        <p><strong>Cơ chế:</strong> Khi đam mê cá nhân phục vụ cộng đồng, não tiết ra Oxytocin và Serotonin. Nó tạo ra động lực khổng lồ, nhưng cũng đi kèm với thực tế phũ phàng là mục đích lớn thì hiếm khi hoàn thành trọn vẹn.</p>
+                        <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 mt-2">
+                            <span class="text-emerald-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Ví dụ thực tế:</span> 
+                            Steven và vợ lập trại cứu hộ chó suốt 20 năm, không đi du lịch, cứu được 800 con. Nhưng nước Mỹ an tử 10 triệu con chó mỗi năm. Mục đích là một cuộc chạy bộ không có đích đến, nhưng bạn tự nguyện làm.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-orange-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">4. Giai Đoạn "Vật Lộn" Bắt Buộc</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Bạn không thể nhảy thẳng vào vùng "Chill" (Flow). Bạn BẮT BUỘC phải đi qua sự khó chịu, cọ xát ban đầu.</p>
+                        <p><strong>Cơ chế:</strong> Bước đầu tiên của Flow là Struggle (Vật lộn). Não bộ cần ép bản thân nạp thông tin có ý thức. Đôi khi bạn cần kích hoạt cả phản ứng "Fight or Flight" (Chiến đấu hay Bỏ chạy) để dồn toàn bộ sự chú ý.</p>
+                        <div class="bg-orange-50 p-3 rounded-lg border border-orange-100 mt-2">
+                            <span class="text-orange-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Phép ẩn dụ:</span> 
+                            Đạp xe leo núi mạo hiểm. Nếu bạn mong đợi một chuyến đi "chill" ngay từ đầu, bạn sẽ chấn thương nhập viện. Bạn phải mang tâm thế hung hăng tấn công ngọn núi, chính sự cọ xát đó mới đẩy bạn vào Flow.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-rose-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">5. Nghị Lực (Grit) Là Lá Chắn Cuối</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Đừng dùng "sự cố gắng cắn răng chịu đựng" như công cụ đầu tiên khi làm việc. Nó sẽ dẫn đến kiệt sức (burnout).</p>
+                        <p><strong>Cơ chế:</strong> Ý chí (Willpower) là bình xăng có hạn, sẽ cạn dần về cuối ngày. Những người đạt hiệu suất đỉnh cao ưu tiên dùng 5 động lực nội tại (Tò mò, đam mê, tự chủ...) trước, chỉ dùng Nghị lực khi không còn cách nào khác.</p>
+                        <div class="bg-rose-50 p-3 rounded-lg border border-rose-100 mt-2">
+                            <span class="text-rose-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Phép ẩn dụ:</span> 
+                            Bạn có thể dùng ý chí nhịn ăn kiêng cả ngày, nhưng đến 8h tối, khi "bình xăng ý chí" cạn sạch, bạn sẽ lao vào ăn ngấu nghiến một hộp kem lạnh. Đừng lạm dụng ý chí.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">6. Quyền Năng Của Sự Tách Biệt</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Flow cực kỳ mỏng manh và nhạy cảm. Chỉ một tiếng "Ting" thông báo cũng đủ giết chết nó.</p>
+                        <p><strong>Cơ chế:</strong> Flow đòi hỏi toàn bộ băng thông sự chú ý. Sự xao nhãng kéo bạn ra khỏi trạng thái này và tiêu tốn một lượng năng lượng khổng lồ để não bộ thiết lập lại sự tập trung từ đầu.</p>
+                        <div class="bg-cyan-50 p-3 rounded-lg border border-cyan-100 mt-2">
+                            <span class="text-cyan-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Thực trạng thực tế:</span> 
+                            Các nghiên cứu trên lập trình viên chỉ ra: Khi bị cắt ngang dòng suy nghĩ, họ mất ít nhất 15 phút chỉ để quay lại trạng thái Flow (nếu may mắn còn vào lại được).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">7. Học Tập Xóa Bỏ Bản Ngã</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Sự phán xét bản thân và kỳ vọng là kẻ thù số một của việc học hỏi và tiến vào Flow.</p>
+                        <p><strong>Cơ chế:</strong> Khi bạn lo sợ bị đánh giá, phần não trước (Prefrontal cortex) hoạt động mạnh để bảo vệ cái tôi (Ego). Mà để vào Flow, phần não này buộc phải tắt đi (quên đi bản thể).</p>
+                        <div class="bg-amber-50 p-3 rounded-lg border border-amber-100 mt-2">
+                            <span class="text-amber-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Ví dụ thực tế:</span> 
+                            Steven tự học vẽ 250 bức tranh trong 7 tháng. Hầu hết đều rất tệ, nhưng ông không phán xét. Ông coi mỗi nét vẽ sai là một dữ liệu. Sự vô tư (như đang chơi đùa) giúp ông trải nghiệm Micro-flow mỗi ngày.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-teal-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">8. Nghệ Thuật Buông Bỏ (Release)</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Bạn không thể nghĩ ra giải pháp khi cứ dán mắt vào vấn đề. Bạn phải chuyển giao nhiệm vụ cho Tiềm thức.</p>
+                        <p><strong>Cơ chế:</strong> Sau pha nạp dữ liệu mệt mỏi (Struggle), bạn phải bước vào pha "Release". Làm một việc tay chân lặp lại, ít tốn não để ý thức được nghỉ ngơi, nhường chỗ cho tiềm thức sắp xếp lại các mảnh ghép thần kinh.</p>
+                        <div class="bg-teal-50 p-3 rounded-lg border border-teal-100 mt-2">
+                            <span class="text-teal-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Hoạt động thực tế:</span> 
+                            Việc đi dạo một vòng, lắp ráp mô hình lego, hoặc tưới cây là cách hoàn hảo để "Release". Nhưng xem TV/Tiktok thì không! Nó làm thay đổi sóng não và phá hủy chu trình Flow.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-fuchsia-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b border-slate-200 pb-3">9. Sức Mạnh Flow Nhóm</h3>
+                    <div class="space-y-3 text-slate-700 text-sm">
+                        <p><strong>Bản chất:</strong> Group Flow (Flow Nhóm) không chỉ là cộng dồn sức mạnh, nó là sự khuếch đại theo cấp số nhân sự sáng tạo.</p>
+                        <p><strong>Cơ chế:</strong> Khi cả nhóm cùng rơi vào trạng thái đỉnh cao, não bộ đạt mức đồng bộ hóa. Mỗi cá nhân có khả năng sáng tạo 360 độ, kết hợp lại tạo ra những giải pháp đột phá mà một cá nhân độc lập vĩnh viễn không nghĩ ra được.</p>
+                        <div class="bg-fuchsia-50 p-3 rounded-lg border border-fuchsia-100 mt-2">
+                            <span class="text-fuchsia-600 font-bold"><i class="fa-regular fa-lightbulb"></i> Phép ẩn dụ:</span> 
+                            Một ban nhạc Jazz ngẫu hứng. Không có kịch bản rập khuôn. Họ bắt nhịp vào âm thanh của nhau, vượt qua giới hạn của bản thân và tạo ra thứ âm nhạc chưa từng tồn tại trước đó.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section id="action-playbook" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center text-xl shadow-lg shadow-orange-200">🚀</div>
+                <h2 class="text-3xl font-bold text-slate-900">Sổ Tay Thực Chiến</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- If-Then -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-code-branch text-orange-500"></i> Thuật Toán Kịch Bản "Nếu - Thì"
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-slate-300 pl-4 py-1">
+                            <p class="font-bold text-slate-700"><span class="text-orange-500">NẾU</span> bạn đang nhìn chằm chằm vào màn hình vì chán nản nhiệm vụ...</p>
+                            <p class="text-slate-600 mt-1"><span class="text-blue-500 font-bold">THÌ</span> hãy tự hack game bằng cách tăng độ khó/kỳ quặc. <i>(VD: Tôi sẽ làm cái báo cáo này nhanh nhất có thể bằng phím tắt, hoặc viết email này bằng phong cách của một triết gia).</i></p>
+                        </div>
+                        <div class="border-l-4 border-slate-300 pl-4 py-1">
+                            <p class="font-bold text-slate-700"><span class="text-orange-500">NẾU</span> bạn đang hoảng loạn, bồn chồn vì khối lượng công việc quá lớn...</p>
+                            <p class="text-slate-600 mt-1"><span class="text-blue-500 font-bold">THÌ</span> hãy ngay lập tức "băm nhỏ" nó ra (chunking). Đừng nghĩ đến việc hoàn thiện dự án, hãy nghĩ đến việc viết xong đoạn văn đầu tiên trong 10 phút tới.</p>
+                        </div>
+                        <div class="border-l-4 border-slate-300 pl-4 py-1">
+                            <p class="font-bold text-slate-700"><span class="text-orange-500">NẾU</span> bạn vừa trải qua một buổi làm việc 3 tiếng cực kỳ tập trung đỉnh cao...</p>
+                            <p class="text-slate-600 mt-1"><span class="text-blue-500 font-bold">THÌ</span> tối nay cấm được thức khuya. Bạn phải ngủ đủ 7-8 tiếng, vì đây là lúc não bộ đóng gói kiến thức vào bộ nhớ dài hạn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro-actions -->
+                <div class="bg-slate-800 rounded-2xl shadow-lg p-6 md:p-8 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 opacity-10 text-9xl transform translate-x-1/4 -translate-y-1/4"><i class="fa-solid fa-bolt"></i></div>
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-stopwatch text-yellow-400"></i> Micro-Actions (Làm ngay trong 24h)
+                    </h3>
+                    <ul class="space-y-5">
+                        <li class="flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center shrink-0 font-bold text-yellow-400">1</div>
+                            <div>
+                                <p class="font-bold text-lg">Nghi thức "Đoạn tuyệt xao nhãng"</p>
+                                <p class="text-slate-300 text-sm mt-1">Sáng mai, chọn ra khối thời gian 90 phút. Tắt WiFi điện thoại, cất nó vào ngăn kéo phòng khác. Tắt toàn bộ tab trình duyệt không liên quan. Đắm chìm 100% vào một nhiệm vụ duy nhất.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center shrink-0 font-bold text-yellow-400">2</div>
+                            <div>
+                                <p class="font-bold text-lg">Tìm lại "Đứa trẻ bên trong"</p>
+                                <p class="text-slate-300 text-sm mt-1">Dành đúng 2 tiếng cuối tuần này để thực hiện "Primary flow activity" - cái thú vui hồi bé mà bạn làm quên cả ăn (chơi game trí tuệ, lắp ráp, vẽ vời, thể thao). Không mang công việc theo.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section id="reality-check" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center text-xl shadow-lg shadow-red-200">⚠️</div>
+                <h2 class="text-3xl font-bold text-slate-900">Nhận Diện Điểm Mù & Kỷ Luật</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Red Flags -->
+                <div class="border border-red-200 bg-red-50/50 rounded-2xl p-6 md:p-8">
+                    <h3 class="text-lg font-bold text-red-700 mb-4 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-flag text-red-500"></i> Ảo Tưởng Phổ Biến (Red Flags)
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-red-100">
+                            <p class="font-bold text-slate-800 mb-1">❌ Ảo tưởng: "Mình sẽ tìm thấy đam mê vào một ngày đẹp trời"</p>
+                            <p class="text-sm text-slate-600">Thực tế: Không có tia sét đam mê nào cả. Đam mê phải được vun đắp chậm rãi từ những sự tò mò nhỏ nhặt. Tìm kiếm "đam mê ăn liền" chỉ dẫn đến bỏ cuộc nhanh chóng.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-red-100">
+                            <p class="font-bold text-slate-800 mb-1">❌ Ảo tưởng: "Flow luôn mang lại cảm giác thoải mái bay bổng"</p>
+                            <p class="text-sm text-slate-600">Thực tế: Giai đoạn đầu tiên của Flow là Struggle (Vật lộn). Nó cực kỳ bực bội, khó chịu và tốn não. Nếu bạn từ bỏ ngay lúc thấy khó, bạn sẽ vĩnh viễn không chạm tới Flow.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="border border-slate-700 bg-slate-800 rounded-2xl p-6 md:p-8">
+                    <h3 class="text-lg font-bold text-slate-100 mb-4 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-emerald-400"></i> Chốt Chặn Kỷ Luật (Guardrails)
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
+                            <p class="font-bold text-emerald-300 mb-1">🛡️ Giới hạn Vật lý: Trại cai nghiện Dopamine ngắn</p>
+                            <p class="text-sm text-slate-300">Quy tắc cứng: Khi làm việc sâu, không dựa vào "ý chí" để không lướt web. Dùng ứng dụng khóa các trang mạng xã hội (Freedom, Cold Turkey) hoặc nhờ người giữ điện thoại.</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
+                            <p class="font-bold text-emerald-300 mb-1">🛡️ Chốt chặn Tâm lý: Nghi thức Hạ cánh (Recovery)</p>
+                            <p class="text-sm text-slate-300">Không Flow liên tục quá chu kỳ sinh học. Quy định rõ: Sau 90-120 phút tập trung sâu, BẮT BUỘC phải đứng lên, nhìn ra xa, vươn vai hoặc làm việc tay chân (Release) để reset hệ thần kinh.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Active Recall -->
+        <section id="active-recall" class="space-y-8">
+            <div class="flex items-center gap-3 mb-8 text-center justify-center">
+                <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xl shadow-lg shadow-purple-200">🃏</div>
+                <h2 class="text-3xl font-bold text-slate-900">Trạm Ôn Tập Siêu Tốc (Flashcards)</h2>
+            </div>
+            
+            <p class="text-center text-slate-600 mb-8 max-w-2xl mx-auto">Kiến thức chỉ thành của bạn khi bạn cố gắng nhớ lại nó. Hãy lướt nhanh qua các thẻ ghi nhớ cốt lõi dưới đây.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Flashcards generation -->
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Flow thực chất là gì?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Một trạng thái nhận thức tối ưu, nơi chúng ta cảm thấy tuyệt nhất và đạt hiệu suất cao nhất. Cái tôi biến mất, thời gian bị bóp méo.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: 2 lý do gốc rễ của sự Trì hoãn?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Nhiệm vụ quá NHÀM CHÁN (thiếu kích thích) hoặc quá KHÓ/ÁP LỰC (vượt ranh giới kỹ năng hiện tại).</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Tại sao "Đam mê" lại không phù hợp cho đường dài?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Đam mê mang tính cá nhân (ích kỷ). Khi gặp chướng ngại vật lớn, nó dễ biến thành sự ám ảnh độc hại hoặc dễ bị bỏ cuộc.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Thứ gì giữ ta đi đường dài bền bỉ nhất?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Mục đích (Purpose) - Gắn đam mê vào một sứ mệnh lớn hơn bản thân để kích hoạt hoóc-môn kết nối xã hội (Oxytocin).</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Ý Chí/Nghị Lực (Grit) có đặc điểm gì?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Là nguồn năng lượng có hạn, cạn dần trong ngày. Nó là giải pháp cuối cùng để dùng, không phải công cụ đầu tiên.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Giai đoạn 1 của Flow là gì?</p>
+                    <p class="text-slate-600 text-sm">Đáp: STRUGGLE (Vật lộn) - Ép não bộ nạp thông tin có ý thức, thường đi kèm bực bội và khó chịu.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Làm thế nào để bước vào giai đoạn RELEASE?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Rời mắt khỏi công việc, làm việc tay chân nhẹ nhàng (đi bộ, tắm, rửa bát) để chuyển vấn đề cho tiềm thức xử lý.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Giai đoạn 4 (Recovery) quan trọng ra sao?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Vô cùng quan trọng. Cần ngủ đủ giấc để đưa kiến thức học được trong Flow vào bộ nhớ dài hạn.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Mất bao lâu để lấy lại Flow khi bị phân tâm?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Mất ít nhất 15 phút chỉ để thiết lập lại vùng tập trung thần kinh.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Kẻ thù lớn nhất trong đầu cản trở Flow?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Sự phán xét bản thân (Ego/Bản ngã) và kỳ vọng quá mức.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Group Flow (Flow nhóm) giải quyết được gì?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Tối đa hóa sự sáng tạo và linh hoạt. Mở rộng khả năng giải quyết vấn đề dưới góc nhìn 360 độ của nhiều bộ não đồng bộ.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Một môi trường làm việc tệ nhất cho Flow?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Không gian văn phòng mở (Open Office) vì chứa quá nhiều tác nhân gây xao nhãng đột ngột.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Thời lượng hoàn hảo cho một block làm việc Flow?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Từ 90 đến 120 phút, phù hợp với chu kỳ hoạt động sinh học tự nhiên của não bộ.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Tác dụng phụ khi ta chìm vào Flow?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Quét sạch các hoóc-môn căng thẳng khỏi cơ thể, reset hệ thần kinh, hạnh phúc và sáng tạo hơn.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <p class="text-purple-700 font-bold text-sm mb-2">Hỏi: Cách chống kiệt sức (Burnout) hiệu quả nhất?</p>
+                    <p class="text-slate-600 text-sm">Đáp: Dành 3-4 tiếng mỗi tuần quay lại chơi "Hoạt động Flow nguyên thủy" của bạn (thể thao, nghệ thuật, âm nhạc,...).</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. Footer -->
+    <footer class="bg-slate-900 text-slate-300 h-[128px] w-full flex flex-col items-center justify-center px-4 relative z-20">
+        <p class="text-center text-sm md:text-base mb-4 max-w-3xl font-medium">
+            "Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới."
+        </p>
+        <div class="flex gap-6 text-2xl">
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="text-slate-400 hover:text-red-500 transition-colors" title="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-slate-400 hover:text-white transition-colors" title="TikTok">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="text-slate-400 hover:text-blue-500 transition-colors" title="Facebook">
+                <i class="fa-brands fa-facebook"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Custom Script for Mindmap Zooming -->
+    <script>
+        let currentScale = 1.2; // Start slightly zoomed in for readability
+        const mindmapWrapper = document.getElementById('mindmap-wrapper');
+
+        function zoomMindmap(step) {
+            currentScale += step;
+            // Guardrails for zoom limits
+            if (currentScale < 0.5) currentScale = 0.5;
+            if (currentScale > 2.5) currentScale = 2.5;
+            
+            mindmapWrapper.style.transform = `scale(${currentScale})`;
+        }
+
+        // Optional: Add simple drag to pan logic since we disabled scrolling
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+
+        mindmapWrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            mindmapWrapper.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            mindmapWrapper.style.cursor = 'move';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            // Apply both translate and scale
+            mindmapWrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+        });
+    </script>
+</body>
+</html>
