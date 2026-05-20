@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay: Ma Trận Đường</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+Vietnamese:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Vietnamese', 'sans-serif'],
+                    },
+                    colors: {
+                        medical: {
+                            900: '#064e3b',
+                            800: '#065f46',
+                            500: '#10b981',
+                            400: '#34d399',
+                        }
+                    }
+                }
+            }
+        }
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', fontFamily: 'Inter' });
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        /* CSS Abstract Art Blobs */
+        .blob {
+            position: absolute;
+            filter: blur(60px);
+            z-index: -1;
+            opacity: 0.3;
+            animation: pulse 8s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.1) translate(20px, -20px); }
+        }
+        /* Mindmap Container */
+        .mindmap-wrapper {
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+        }
+        .mindmap-wrapper:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body class="antialiased relative">
+
+    <!-- Abstract Background Art -->
+    <div class="blob bg-emerald-600 w-96 h-96 rounded-full top-0 left-[-10%] mix-blend-screen"></div>
+    <div class="blob bg-teal-800 w-[500px] h-[500px] rounded-full top-[20%] right-[-10%] mix-blend-multiply"></div>
+    <div class="blob bg-rose-900 w-80 h-80 rounded-full bottom-[20%] left-[10%] mix-blend-screen opacity-20"></div>
+
+    <header class="max-w-5xl mx-auto pt-20 pb-12 px-6 text-center relative z-10">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-emerald-400 text-sm font-semibold mb-6 uppercase tracking-wider border-emerald-500/30">
+            <i class="ph-fill ph-brain text-xl"></i> Phân tích Y khoa Thực chiến
+        </div>
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 via-teal-200 to-white">
+            Sự Thật Tàn Khốc Về Đường & Những Siêu Thực Phẩm "Gắn Mác" Khỏe Mạnh
+        </h1>
+        <p class="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+            Chào bạn, tôi ở đây để cùng bạn bóc tách những lầm tưởng sinh học nguy hiểm nhất. Đã đến lúc chúng ta ngừng đổ lỗi cho "ý chí kém" và bắt đầu nhìn sâu vào cơ chế vận hành của cơ thể. Sẵn sàng phá vỡ ma trận ảo giác này chưa?
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-24 pb-20 relative z-10">
+
+        <!-- 1. THE BIG IDEA -->
+        <section id="big-idea">
+            <div class="flex items-center gap-3 mb-8 border-b border-slate-700 pb-4">
+                <i class="ph-fill ph-target text-4xl text-teal-400"></i>
+                <h2 class="text-3xl font-bold">1. The Big Idea: Bức Tranh Toàn Cảnh</h2>
+            </div>
+            
+            <div class="glass-card rounded-2xl p-8 mb-8 border-l-4 border-l-teal-500 relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-teal-500/10 rounded-bl-full blur-2xl"></div>
+                <p class="text-xl font-medium leading-relaxed italic text-teal-50">
+                    "Vấn đề cốt lõi không nằm ở chỗ bạn lười biếng, mà là bạn đang nạp vào cơ thể những thực phẩm đánh lừa hệ thống sinh học, biến hormone Insulin từ một 'người gác cổng' mẫn cán thành một cỗ máy tích tụ mỡ độc hại."
+                </p>
+            </div>
+
+            <!-- Mindmap -->
+            <div class="glass-card rounded-2xl p-2 relative">
+                <div class="absolute top-4 right-4 z-20 flex gap-2">
+                    <button onclick="zoomMindmap('in')" class="w-10 h-10 flex items-center justify-center bg-slate-700/80 hover:bg-teal-600 rounded-lg text-white transition backdrop-blur-sm border border-slate-600">
+                        <i class="ph ph-magnifying-glass-plus text-xl"></i>
+                    </button>
+                    <button onclick="zoomMindmap('out')" class="w-10 h-10 flex items-center justify-center bg-slate-700/80 hover:bg-teal-600 rounded-lg text-white transition backdrop-blur-sm border border-slate-600">
+                        <i class="ph ph-magnifying-glass-minus text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="mindmap-wrapper bg-slate-900 rounded-xl w-full min-h-[500px] flex items-center justify-center" id="mindmap-wrapper">
+                    <div id="mermaid-container" class="transition-transform duration-300 origin-center">
+                        <div class="mermaid">
+                            graph LR
+                                Root([Cuộc Khủng Hoảng Trao Đổi Chất]) 
+                                
+                                Root --> B([Cơ chế Sinh học])
+                                Root --> C([Ảo giác Nhãn mác])
+                                Root --> D([Tâm lý & Hành vi])
+                                
+                                B --> B1([Dư lượng Đường])
+                                B1 --> B2([Insulin kháng cự])
+                                B2 --> B3([Gan nhiễm mỡ âm thầm])
+                                
+                                C --> C1([Tinh bột = Đường ngụy trang])
+                                C --> C2([Sinh tố/Nước ép = Bom đường])
+                                C --> C3([Bánh mì nâu = Cú lừa])
+                                
+                                D --> D1([Càng ăn ngọt càng đói])
+                                D --> D2([Carb Creep: Tích tụ rỉ rả])
+                                D --> D3([Thay đổi bằng Mô hình GRIN])
+                                
+                                classDef root fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff,rx:10px,ry:10px;
+                                classDef branch fill:#1e293b,stroke:#475569,stroke-width:1px,color:#cbd5e1,rx:8px,ry:8px;
+                                
+                                class Root root;
+                                class B,C,D,B1,B2,B3,C1,C2,C3,D1,D2,D3 branch;
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-center">
+                <a href="https://youtu.be/zc8Nh4TMB1s?si=ydwTUIp5Q8iVpz79" target="_blank" class="group flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full font-semibold transition shadow-lg shadow-red-900/30">
+                    <i class="ph-fill ph-youtube-logo text-2xl group-hover:scale-110 transition-transform"></i>
+                    Xem Nguồn: Cảnh báo của Bác sĩ về Thực phẩm "Khỏe mạnh" (Dr David Unwin)
+                </a>
+            </div>
+        </section>
+
+        <!-- 2. DEEP INSIGHTS -->
+        <section id="deep-insights">
+            <div class="flex items-center gap-3 mb-8 border-b border-slate-700 pb-4">
+                <i class="ph-fill ph-brain text-4xl text-emerald-400"></i>
+                <h2 class="text-3xl font-bold">2. Deep Insights: Trụ Cột Tri Thức</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Insight 1 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/20 rounded-full blur-xl group-hover:bg-emerald-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-emerald-300">1. Tinh bột = "Đường Nắm Tay Nhau"</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Tinh bột trong cơm, bánh mì không có vị ngọt, nhưng về bản chất hóa học, chúng là hàng loạt phân tử Glucose liên kết với nhau.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Khi vào miệng và dạ dày, enzyme Amylase sẽ cắt đứt những "cái nắm tay" này, lập tức giải phóng đường tự do ồ ạt vào máu.</p>
+                        <p class="p-3 bg-emerald-900/30 rounded-lg border border-emerald-800/50">
+                            <strong class="text-emerald-400 block mb-1">💡 Ví dụ thực tế:</strong> Giống như trò ảo thuật. Bạn nhai một lát bánh mì nhạt đủ lâu, một lúc sau bạn sẽ thấy vị ngọt lịm. Đó là lúc phép thuật (enzyme) bẻ gãy tinh bột thành đường ngay trong miệng.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-yellow-500/20 rounded-full blur-xl group-hover:bg-yellow-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-yellow-300">2. Lời Kêu Cứu Của Lá Gan</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Gan nhiễm mỡ không chỉ do rượu bia, mà nguyên nhân khổng lồ hiện nay đến từ việc ăn quá nhiều Carbohydrate.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Insulin lôi đường dư thừa ra khỏi mạch máu (để bảo vệ thành mạch). Nó nhét số đường này vào tế bào cơ, nhưng cơ đã đầy, thế là nó bắt gan phải chuyển đường thành mỡ và lưu trữ lại ngay tại gan.</p>
+                        <p class="p-3 bg-yellow-900/30 rounded-lg border border-yellow-800/50">
+                            <strong class="text-yellow-400 block mb-1">💡 Ẩn dụ thực tế:</strong> Gan giống như một cái nhà kho nhỏ. Bạn liên tục đẩy hàng (đường) vào, bắt thủ kho (Insulin) phải nhồi nhét. Khi kho đầy ứ mỡ, nó sẽ "kháng cự", thủ kho gào thét bất lực. Đó là Kháng Insulin.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/20 rounded-full blur-xl group-hover:bg-red-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-red-300">3. Nghịch Lý: Ăn Ngọt Lại Càng Đói</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Bạn ăn một cái bánh ngọt để hết đói, nhưng chỉ 1 tiếng sau bạn lại thèm ăn cồn cào bứt rứt hơn cả lúc trước.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Đồ ngọt làm đường huyết phóng lên như tên lửa. Tuyến tụy hoảng hốt bơm ra lượng lớn Insulin để dập tắt. Insulin quá mạnh làm đường huyết cắm đầu sụt giảm sâu xuống dưới mức nền, tạo ra cơn "đói giả" và cảm giác bủn rủn.</p>
+                        <p class="p-3 bg-red-900/30 rounded-lg border border-red-800/50">
+                            <strong class="text-red-400 block mb-1">💡 Ẩn dụ thực tế:</strong> Giống như dùng xăng dập lửa. Ngọn lửa (năng lượng) bùng lên một giây rồi tắt ngấm, để lại sự kiệt quệ và bạn lại phải đi tìm xăng (bánh kẹo) tiếp.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/20 rounded-full blur-xl group-hover:bg-blue-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-blue-300">4. Quy Tắc "1 Thìa Cà Phê" Sinh Mệnh</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Sự mong manh của hệ thống mạch máu người trước cơn bão đường hiện đại.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Cơ thể con người trưởng thành có khoảng 5 lít máu. Để đường huyết ở mức khỏe mạnh bình thường, tổng lượng đường lơ lửng trong toàn bộ 5 lít máu đó chỉ ĐÚNG BẰNG 1 THÌA CÀ PHÊ.</p>
+                        <p class="p-3 bg-blue-900/30 rounded-lg border border-blue-800/50">
+                            <strong class="text-blue-400 block mb-1">💡 Ví dụ thực tế:</strong> Bạn ăn 1 quả chuối chín lớn (chứa khoảng 6 thìa đường). Hệ thống phòng thủ của bạn phải làm việc điên cuồng để dọn dẹp phần dư thừa, nếu không thành mạch sẽ bị "đóng cặn" và hư hỏng chỉ trong 6 tiếng!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/20 rounded-full blur-xl group-hover:bg-orange-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-orange-300">5. Quả Bom Nước Ép & Sinh Tố</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Uống nước ép trái cây không hề "healthy" như quảng cáo. Nó là việc nạp thẳng si-rô đường vào tĩnh mạch.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Trái cây nguyên quả có ma trận chất xơ bọc lấy đường, khiến cơ thể mất thời gian tiêu hóa, đường ngấm từ từ. Khi bạn ép hoặc xay nát, màng xơ bị phá vỡ hoàn toàn, đường ập vào máu với tốc độ ánh sáng.</p>
+                        <p class="p-3 bg-orange-900/30 rounded-lg border border-orange-800/50">
+                            <strong class="text-orange-400 block mb-1">💡 Ẩn dụ thực tế:</strong> Ăn táo nguyên quả giống như trả góp không lãi suất. Uống nước ép táo giống như vay nặng lãi: bạn nhận được đống tiền (năng lượng) ngay lập tức, nhưng tụy và gan của bạn phải trả cái giá cắt cổ.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-teal-500/20 rounded-full blur-xl group-hover:bg-teal-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-teal-300">6. Bánh Mì Nâu: Cú Lừa Ngọt Ngào</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Nhãn mác "nguyên cám" không làm thay đổi bản chất nó vẫn là một khối tinh bột đặc.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Dù là bánh mì trắng hay nâu, hàm lượng Carbohydrate vẫn cực kỳ cao (chỉ khác nhau đôi chút về tốc độ hấp thụ). Nếu bạn đã bị kháng Insulin (có mỡ bụng), insulin của bạn đã yếu, nó sẽ không xử lý nổi lượng tinh bột khổng lồ này.</p>
+                        <p class="p-3 bg-teal-900/30 rounded-lg border border-teal-800/50">
+                            <strong class="text-teal-400 block mb-1">💡 Ví dụ thực tế:</strong> Chuyển từ bánh mì trắng sang nâu khi đã mắc bệnh chuyển hóa giống như việc bạn chuyển từ hút thuốc lá đầu lọc trắng sang đầu lọc nâu. Nó vẫn độc hại đối với hệ thống của bạn.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/20 rounded-full blur-xl group-hover:bg-purple-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-purple-300">7. Tâm Lý GRIN: Kích Hoạt Động Lực</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Không thể thay đổi hành vi bằng cách tự sỉ nhục bản thân hay dùng kỷ luật thép một cách khô khan.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Mô hình G.R.I.N (Goals - Nguồn lực - Bước nhỏ - Ghi nhận) chuyển hướng não bộ từ việc tập trung vào "Cái sai" sang việc nuôi dưỡng "Tương lai tích cực".</p>
+                        <p class="p-3 bg-purple-900/30 rounded-lg border border-purple-800/50">
+                            <strong class="text-purple-400 block mb-1">💡 Ví dụ thực tế:</strong> Thay vì nói "Tôi phải nhịn ăn vì tôi quá mập" -> Hãy thiết lập GRIN: Mục tiêu là cùng leo núi với con trai ở Bali (G). Tôi có nhóm bạn đi tập cùng (R). Hôm nay tôi chỉ cần tập 15 phút (I). Cảm giác toát mồ hôi thật sảng khoái (N).
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Insight 8 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-pink-500/20 rounded-full blur-xl group-hover:bg-pink-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-pink-300">8. Siêu Chế Biến: Ma Túy Hợp Pháp</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Đừng tự trách mình yếu kém khi không cưỡng lại được bịch bim bim hay gói bánh. Bạn đang đối đầu với các kỹ sư thực phẩm.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Thực phẩm siêu chế biến được tính toán chi li tỷ lệ Muối - Đường - Béo (Bliss point) để hack thẳng vào hệ thống Dopamine của não bộ, gây ra cơn nghiện vật lý y hệt như chất cấm.</p>
+                        <p class="p-3 bg-pink-900/30 rounded-lg border border-pink-800/50">
+                            <strong class="text-pink-400 block mb-1">💡 Ví dụ thực tế:</strong> Câu chuyện về người bệnh thức dậy lúc 4h sáng, bới thùng rác để ăn mẩu bánh mì dù vợ đã xịt cả nước tẩy rửa lên đó. Đó không phải "hơi thèm ăn", đó là cơn nghiện vật lý tàn khốc.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card rounded-2xl p-6 hover:-translate-y-1 transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-500/20 rounded-full blur-xl group-hover:bg-indigo-400/30 transition"></div>
+                    <h3 class="text-xl font-bold mb-4 text-indigo-300">9. Carb Creep: Kẻ Cắp Âm Thầm</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><strong class="text-white text-base">🧬 Bản chất:</strong> Bạn nghĩ "Chỉ ăn một miếng nhỏ thì không sao", nhưng cơ thể không nghĩ vậy.</p>
+                        <p><strong class="text-white text-base">⚙️ Cơ chế:</strong> Sự dung túng rỉ rả mỗi ngày (một cái kẹo vặt, một ngụm trà sữa) khiến đường huyết luôn trong trạng thái biến động nhẹ, không bao giờ cho tuyến tụy và gan cơ hội nghỉ ngơi để reset lại độ nhạy Insulin.</p>
+                        <p class="p-3 bg-indigo-900/30 rounded-lg border border-indigo-800/50">
+                            <strong class="text-indigo-400 block mb-1">💡 Ẩn dụ thực tế:</strong> Carb creep giống như rò rỉ ống nước ngầm. Ban đầu bạn không thấy gì, nhưng sau 10 năm, nó làm sập cả móng nhà (bệnh nhân phải cưa ngón chân chỉ vì tặc lưỡi ăn vặt mỗi ngày).
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. ACTION PLAYBOOK -->
+        <section id="action-playbook">
+            <div class="flex items-center gap-3 mb-8 border-b border-slate-700 pb-4">
+                <i class="ph-fill ph-rocket-launch text-4xl text-sky-400"></i>
+                <h2 class="text-3xl font-bold">3. Action Playbook: Sổ Tay Thực Chiến</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- If-Then Scenarios -->
+                <div class="glass-card rounded-2xl p-8 border-t-4 border-t-sky-500">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-white">
+                        <i class="ph-fill ph-arrows-split text-sky-400"></i> Kịch bản "NẾU - THÌ"
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <strong class="text-sky-300 block mb-2">🔴 NẾU bạn buồn ngủ díp mắt sau bữa trưa:</strong>
+                            <p class="text-slate-300 text-sm">🟢 <strong class="text-white">THÌ:</strong> Bữa trưa của bạn quá nhiều tinh bột. Ngày mai, hãy thử ăn ngược: Ăn Rau trước -> Đạm/Thịt thứ 2 -> Tinh bột cuối cùng. Hoặc mạnh dạn thay nửa phần cơm bằng trứng/ức gà.</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <strong class="text-sky-300 block mb-2">🔴 NẾU bạn bước vào siêu thị chọn mua "đồ ăn vặt kiêng":</strong>
+                            <p class="text-slate-300 text-sm">🟢 <strong class="text-white">THÌ:</strong> Tuyệt đối bỏ qua dòng chữ to đùng "No Added Sugar" (Không thêm đường). Hãy lật mặt sau, nhìn thẳng vào chỉ số <strong class="text-yellow-400">Total Carbohydrate</strong>. Mỗi 4 gram Carb tương đương 1 thìa đường vào máu!</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <strong class="text-sky-300 block mb-2">🔴 NẾU bạn luôn đói cồn cào lúc 3h chiều:</strong>
+                            <p class="text-slate-300 text-sm">🟢 <strong class="text-white">THÌ:</strong> Tuyệt đối không ăn bánh quy hay trái cây sấy. Hãy uống 1 cốc nước lọc lớn, ăn 1 nắm hạt (hạnh nhân/óc chó) hoặc 1 quả trứng luộc để nạp chất béo tốt và đạm, dập tắt cơn đói giả ngay lập tức.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="glass-card rounded-2xl p-8 border-t-4 border-t-orange-500 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-white">
+                            <i class="ph-fill ph-lightning text-orange-400"></i> Micro-Actions (Làm ngay trong 24h)
+                        </h3>
+                        <p class="text-slate-400 text-sm mb-6">Đừng đặt mục tiêu "Giảm 5kg", não bạn sẽ sợ hãi. Hãy làm 2 hành động siêu nhỏ nhắn này ngay hôm nay:</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex gap-4 items-start">
+                                <div class="w-10 h-10 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0 font-bold">1</div>
+                                <div>
+                                    <h4 class="text-white font-semibold">Bài Test Sợi Dây (Tối nay)</h4>
+                                    <p class="text-slate-400 text-sm">Cắt một sợi dây thừng/ruy băng dài đúng bằng chiều cao của bạn. Gập đôi sợi dây lại. Cố gắng quấn quanh vòng bụng (chỗ béo nhất). Nếu không quấn vừa, bạn đã ở mức BÁO ĐỘNG về mỡ nội tạng & Kháng insulin.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <div class="w-10 h-10 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0 font-bold">2</div>
+                                <div>
+                                    <h4 class="text-white font-semibold">Thanh trừng tủ lạnh (Ngày mai)</h4>
+                                    <p class="text-slate-400 text-sm">Tìm đúng 1 loại nước chấm/sốt (như BBQ, Tương cà) hoặc 1 bịch bánh bạn yêu thích nhất trong bếp. Đọc nhãn carbohydrate. Nếu nó cao hơn 15g/khẩu phần -> Vứt thẳng tay vào sọt rác không thương tiếc.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 p-4 bg-orange-950/40 rounded-xl border border-orange-900 border-dashed text-center">
+                        <i class="ph-fill ph-clock-countdown text-2xl text-orange-400 mb-2"></i>
+                        <p class="text-sm font-semibold text-orange-200">Động lực rất rẻ, Kỷ luật mới đắt. Hãy hành động ngay!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. REALITY CHECK -->
+        <section id="reality-check">
+            <div class="flex items-center gap-3 mb-8 border-b border-slate-700 pb-4">
+                <i class="ph-fill ph-warning-circle text-4xl text-rose-500"></i>
+                <h2 class="text-3xl font-bold">4. Reality Check: Bẫy Tâm Lý & Chốt Chặn</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <!-- Red Flags -->
+                <div class="lg:col-span-3 glass-card rounded-2xl p-8 border-l-4 border-rose-500 relative overflow-hidden">
+                    <div class="absolute right-[-10%] bottom-[-10%] text-[150px] opacity-5"><i class="ph-fill ph-flag-banner"></i></div>
+                    <h3 class="text-xl font-bold mb-6 text-rose-400 flex items-center gap-2">
+                        <i class="ph-fill ph-flag text-2xl"></i> Red Flags: Bẫy vô hình giết chết nỗ lực
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-white font-bold text-lg mb-1">🚩 Ảo tưởng "Ý chí của tôi rất mạnh"</h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">Sai lầm lớn nhất là mua bánh kẹo, kem cất đầy tủ lạnh và tự nhủ "Mình để dành cho khách" hoặc "Mình chỉ ăn một miếng nhỏ". Sinh học (hormone thèm ăn) luôn đánh bại Ý chí. Gã bệnh nhân lục sùng thùng rác lúc 4h sáng không hề thiểu năng, ông ấy bị thâu tóm bởi hệ thống não bộ phần con (Reptilian brain) do đường kích hoạt.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg mb-1">🚩 Bẫy Từ Khóa "Healthy/Tự nhiên"</h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">Nhà sản xuất in chữ "Trái cây tự nhiên 100%" (như mứt, trái cây sấy, snack sấy khô). Bản chất: Lượng nước và một phần chất xơ đã bị bòn rút, cô đặc lại thành viên kẹo 70% là đường fructose. Ăn mứt sấy healthy thực ra là đang ăn đường bọc màu.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="lg:col-span-2 glass-card rounded-2xl p-8 border-l-4 border-indigo-500 bg-indigo-950/20">
+                    <h3 class="text-xl font-bold mb-6 text-indigo-400 flex items-center gap-2">
+                        <i class="ph-fill ph-shield-check text-2xl"></i> Guardrails: Chốt Chặn Kỷ Luật
+                    </h3>
+                    <p class="text-slate-400 text-sm mb-6 italic">Thiết lập môi trường vật lý khiến việc làm sai trở nên KHÓ KHĂN.</p>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex gap-3">
+                            <i class="ph-fill ph-lock-key text-indigo-400 text-xl shrink-0 mt-1"></i>
+                            <div>
+                                <strong class="text-white block">Tẩy chay khỏi tầm mắt</strong>
+                                <p class="text-slate-300 text-sm">Tuyệt đối không dự trữ thức ăn vặt, mì gói, bánh kẹo trong nhà. Muốn ăn? Bắt buộc phải thay quần áo, đi bộ ra cửa hàng tiện lợi. Khoảng ma sát (friction) đó đủ để não logic kịp can thiệp dập tắt cơn thèm.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <i class="ph-fill ph-sneaker-move text-indigo-400 text-xl shrink-0 mt-1"></i>
+                            <div>
+                                <strong class="text-white block">Đồng minh im lặng</strong>
+                                <p class="text-slate-300 text-sm">Nói với người nhà (nếu họ hiểu chuyện): "Con đang thử cai đường, xin đừng mua đồ ngọt về nhà". TUYỆT ĐỐI không ép người yêu/người nhà giám sát mình, vì nó sẽ sinh ra tâm lý đối phó, ăn giấu ăn lén.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ACTIVE RECALL -->
+        <section id="active-recall">
+            <div class="flex items-center gap-3 mb-8 border-b border-slate-700 pb-4">
+                <i class="ph-fill ph-cards text-4xl text-fuchsia-400"></i>
+                <h2 class="text-3xl font-bold">5. Active Recall: Trạm Ôn Tập (Flashcards)</h2>
+            </div>
+            
+            <p class="text-slate-400 mb-8 text-center">Đọc câu hỏi trước, thử trả lời trong đầu, sau đó liếc xuống đáp án. Lặp lại để ghim sâu vào não bộ.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Flashcards 1 to 15 -->
+                <!-- JS loop or hardcoded -->
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q1: Lượng đường tự nhiên trôi nổi trong toàn bộ 5 lít máu của cơ thể khỏe mạnh là bao nhiêu?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Đúng 1 thìa cà phê (~4 gram).</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q2: Tinh bột thực chất là gì dưới góc độ cấu trúc sinh học?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Là các phân tử đường (glucose) "nắm tay nhau". Sẽ bị bẻ gãy và hấp thụ cực nhanh.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q3: Dư thừa đường sẽ tàn phá cơ quan nội tạng nào đầu tiên một cách âm thầm?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Gan. Insulin biến đường dư thành mỡ, gây Gan nhiễm mỡ.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q4: Một bát cơm trắng 150g tương đương khoảng bao nhiêu thìa đường nạp vào cơ thể?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Khoảng 10 thìa cà phê đường.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q5: Sô-cô-la trắng "ngây thơ" chứa khoảng bao nhiêu phần trăm là đường?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Gần 70% là đường trắng cô đặc.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q6: Bài test "Sợi dây thừng" đo lường mức độ nguy hiểm của Kháng Insulin quy định như thế nào?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Vòng bụng phải NHỎ HƠN 1/2 chiều cao cơ thể.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q7: Tại sao uống nước ép hoa quả lại tệ hơn ăn nguyên quả?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Vì đã vứt bỏ chất xơ - màng chắn giúp làm chậm quá trình đường hấp thụ ồ ạt vào máu.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q8: Bánh mì nâu/nguyên cám có thực sự là giải pháp cho người bị kháng insulin?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Không. Nó vẫn là Tinh Bột (Carbohydrate), cuối cùng vẫn chuyển thành lượng đường khổng lồ.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q9: Hiện tượng "Carb Creep" (Đường rỉ rả) là gì?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Là thói quen dung túng ăn mỗi lúc 1 ít đồ ngọt, khiến Tụy không bao giờ được nghỉ ngơi.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q10: Tại sao càng ăn kẹo ngọt, một lúc sau bạn lại càng đói bủn rủn?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Do đường huyết tăng quá nhanh -> Insulin xả ồ ạt -> Kéo sập đường huyết xuống mức siêu thấp.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q11: Chỉ số GL (Glycemic Load) khắc phục nhược điểm gì của chỉ số GI?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">GI chỉ đo tốc độ, GL đo lường tác động thực tế của TỔNG lượng ăn vào (tính cả khối lượng).</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q12: Chữ G và R trong mô hình thay đổi hành vi G.R.I.N nghĩa là gì?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Goals (Mục tiêu cá nhân hóa sâu sắc) & Resources (Nguồn lực bạn có).</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q13: Chữ I và N trong mô hình G.R.I.N nghĩa là gì?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Increments (Những bước hành động cực nhỏ) & Notice (Ghi nhận/Quan sát sự thay đổi tốt lên).</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q14: Ăn đồ ăn siêu chế biến không phải do thiếu ý chí, mà thực chất là gì?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Là một dạng Nghiện Vật Lý học (Food Addiction), thao túng trực tiếp hệ Dopamine.</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <h4 class="font-bold text-white mb-4 leading-snug">Q15: Sai lầm trong việc giúp người nhà cai nghiện đường là gì?</h4>
+                    <div class="pt-3 border-t border-slate-700/50 mt-auto">
+                        <span class="text-fuchsia-300 font-semibold">Là làm "cảnh sát" giám sát họ gay gắt, điều này sinh ra sự dối trá và ăn lén lút.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 h-[128px] w-full flex items-center justify-center relative z-20">
+        <div class="max-w-6xl mx-auto px-6 w-full flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-center md:text-left">
+                <p class="text-sm font-semibold text-white mb-1">Cập nhật kiến thức thực chiến nhất</p>
+                <p class="text-xs text-slate-500 max-w-sm">Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+            </div>
+            
+            <div class="flex gap-4">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-slate-700 transition duration-300" title="YouTube Channel">
+                    <i class="ph-fill ph-youtube-logo text-2xl"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition duration-300" title="TikTok Channel">
+                    <i class="ph-fill ph-tiktok-logo text-2xl"></i>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-blue-500 hover:bg-slate-700 transition duration-300" title="Facebook Page">
+                    <i class="ph-fill ph-facebook-logo text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Zoom Script cho Mermaid -->
+    <script>
+        let currentScale = 1;
+        const container = document.getElementById('mermaid-container');
+        const wrapper = document.getElementById('mindmap-wrapper');
+        
+        function zoomMindmap(direction) {
+            if (direction === 'in') {
+                currentScale = Math.min(currentScale + 0.15, 2.5);
+            } else if (direction === 'out') {
+                currentScale = Math.max(currentScale - 0.15, 0.4);
+            }
+            container.style.transform = `scale(${currentScale})`;
+        }
+
+        // Mouse Drag to pan (Panning effect for mindmap)
+        let isDown = false;
+        let startX;
+        let startY;
+        let scrollLeft;
+        let scrollTop;
+
+        wrapper.addEventListener('mousedown', (e) => {
+            isDown = true;
+            wrapper.classList.add('active');
+            startX = e.pageX - wrapper.offsetLeft;
+            startY = e.pageY - wrapper.offsetTop;
+            scrollLeft = wrapper.scrollLeft;
+            scrollTop = wrapper.scrollTop;
+        });
+        wrapper.addEventListener('mouseleave', () => {
+            isDown = false;
+            wrapper.classList.remove('active');
+        });
+        wrapper.addEventListener('mouseup', () => {
+            isDown = false;
+            wrapper.classList.remove('active');
+        });
+        wrapper.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - wrapper.offsetLeft;
+            const y = e.pageY - wrapper.offsetTop;
+            const walkX = (x - startX) * 1.5; 
+            const walkY = (y - startY) * 1.5;
+            wrapper.scrollLeft = scrollLeft - walkX;
+            wrapper.scrollTop = scrollTop - walkY;
+        });
+    </script>
+</body>
+</html>
