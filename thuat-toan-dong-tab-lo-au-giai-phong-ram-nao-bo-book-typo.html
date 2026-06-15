@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-hacking the Brain: Thuật toán đóng Tab lo âu & Giải phóng RAM não bộ</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            950: '#090514',
+                        },
+                        neon: {
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e',
+                            indigo: '#6366f1'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #03000a;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom Neon Glows */
+        .neon-border-cyan {
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+        .neon-border-rose {
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+        .neon-border-violet {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .neon-border-emerald {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .glass-panel {
+            background: rgba(15, 10, 25, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        /* Glowing Orbs in Background */
+        .bg-orb-violet {
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+        }
+        .bg-orb-cyan {
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, rgba(0,0,0,0) 70%);
+        }
+        .bg-orb-rose {
+            background: radial-gradient(circle, rgba(244, 63, 94, 0.1) 0%, rgba(0,0,0,0) 70%);
+        }
+        /* Abstract CSS Art Animations */
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        @keyframes rotate-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 6s infinite ease-in-out;
+        }
+        .animate-rotate-slow {
+            animation: rotate-slow 20s infinite linear;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-brand-500 selection:text-white">
+
+    <!-- Decorative Ambient Background Orbs -->
+    <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-orb-violet -z-10 pointer-events-none"></div>
+    <div class="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-orb-cyan -z-10 pointer-events-none"></div>
+    <div class="absolute bottom-1/4 left-10 w-[700px] h-[700px] bg-orb-rose -z-10 pointer-events-none"></div>
+    <div class="absolute bottom-5 right-10 w-[500px] h-[500px] bg-orb-violet -z-10 pointer-events-none"></div>
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 w-full border-b border-white/10 glass-panel">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-neon-cyan flex items-center justify-center shadow-lg shadow-brand-500/20">
+                    <span class="code-font font-bold text-white text-lg">GAP</span>
+                </div>
+                <div>
+                    <span class="text-white font-extrabold tracking-wider text-sm sm:text-base">MINDFUL GAP</span>
+                    <span class="block text-xs text-neon-cyan font-mono tracking-tight">BIO-HACKING PORTAL</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-400">
+                <a href="#bio-hacking" class="hover:text-white transition-colors">5 Phương Pháp Bio-Hacking</a>
+                <a href="#rule-5s" class="hover:text-white transition-colors">Quy Tắc 5 Giây</a>
+                <a href="#deep-dive" class="hover:text-white transition-colors">Giải Mã Khoa Học</a>
+                <a href="#matrix" class="hover:text-white transition-colors">Ma Trận Vũ Khí</a>
+                <a href="#flashcards" class="hover:text-white transition-colors">25 Flashcards Ôn Tập</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <span class="text-xs px-3 py-1.5 rounded-full border border-neon-cyan/30 text-neon-cyan code-font bg-neon-cyan/10 animate-pulse">
+                    SYS: ONLINE
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero / Lead Section -->
+    <section class="relative pt-12 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <!-- Left Column: Content -->
+            <div class="lg:col-span-7 space-y-8">
+                <div class="inline-flex items-center space-x-2 bg-brand-500/10 border border-brand-500/30 rounded-full px-4 py-1.5 text-xs text-brand-100 font-mono">
+                    <span class="w-2 h-2 rounded-full bg-neon-rose animate-ping"></span>
+                    <span>HỆ THẦN KINH & BẢN NĂNG SINH TỒN</span>
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                    Bẻ Gãy Vòng Lặp <br/>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-500 via-neon-cyan to-neon-emerald">
+                        Cãi Nhã Giả Lập
+                    </span>
+                </h1>
+                
+                <!-- 100% Raw Text Block 1 -->
+                <div class="text-lg text-gray-300 leading-relaxed space-y-4 border-l-4 border-brand-500 pl-6 bg-brand-500/5 py-4 rounded-r-2xl pr-4">
+                    <p class="italic font-light">
+                        "Thực tế, việc bạn có thể lùi lại để "chỉ quan sát và mỉm cười" chứng tỏ bạn đã xây dựng được một Mindful Gap (khoảng hở nhận thức) rất vững chắc. Bạn không bị chìm vào cơn giận, bạn chỉ đang xem bộ não mình "diễn kịch". Đó là một tiến bộ khổng lồ."
+                    </p>
+                    <p class="text-sm text-gray-400">
+                        Tuy nhiên, lý do nó vẫn tiếp tục "bật popup" là vì bạn đang dùng phần mềm (ý thức) để chống lại phần cứng (bản năng sinh tồn). Dưới góc độ tiến hóa học, não bộ đánh đồng "thất bại trong giao tiếp xã hội" (bị chửi mắng, cãi thua) với "suy giảm vị thế trong bầy đàn", đồng nghĩa với cái chết. Do đó, Amygdala (hạch hạnh nhân) liên tục bơm tín hiệu cảnh báo, ép mạng lưới DMN phải chạy giả lập để tìm ra một "kịch bản thắng" nhằm cập nhật lại mô hình sinh tồn.
+                    </p>
+                    <p class="text-sm text-neon-cyan font-mono">
+                        Khi việc "nhận biết và mỉm cười" không đủ để dập tắt luồng xung điện này, bạn cần những cách can thiệp vật lý và nhận thức mạnh tay hơn (bio-hacking). Dưới đây là 5 phương pháp bẻ gãy cơ chế này, đi kèm bằng chứng khoa học.
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <a href="#bio-hacking" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold shadow-lg shadow-brand-500/20 transition-all transform hover:-translate-y-0.5">
+                        Khám phá 5 phương pháp
+                    </a>
+                    <a href="#rule-5s" class="px-6 py-3 rounded-xl border border-white/10 hover:border-white/30 text-gray-300 hover:text-white font-semibold transition-all">
+                        Quy tắc 5 giây (kill -9)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Column: CSS Abstract Art (Mindful Gap Visualizer) -->
+            <div class="lg:col-span-5 flex justify-center">
+                <div class="relative w-80 h-80 sm:w-96 sm:h-96">
+                    <!-- Outer Glowing Ring -->
+                    <div class="absolute inset-0 rounded-full border border-brand-500/30 animate-rotate-slow"></div>
+                    <div class="absolute inset-4 rounded-full border border-dashed border-neon-cyan/20 animate-spin" style="animation-duration: 30s;"></div>
+                    <div class="absolute inset-10 rounded-full bg-gradient-to-tr from-brand-950/80 to-slate-900 border border-white/10 flex items-center justify-center overflow-hidden">
+                        
+                        <!-- Abstract Neural Art Core -->
+                        <div class="absolute w-48 h-48 bg-brand-500/10 rounded-full filter blur-xl animate-pulse-slow"></div>
+                        <div class="absolute w-36 h-36 bg-neon-cyan/5 rounded-full filter blur-lg" style="animation-delay: 2s;"></div>
+                        
+                        <!-- Intersecting SVG Lines representing neural pathways and Mindful Gap -->
+                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Circular DMN loop (Chaotic background) -->
+                            <path d="M50 100 C 50 60, 150 60, 150 100 C 150 140, 50 140, 50 100" stroke="rgba(244, 63, 94, 0.3)" stroke-width="2" stroke-dasharray="4 4" class="animate-pulse"/>
+                            <path d="M70 100 C 70 80, 130 80, 130 100 C 130 120, 70 120, 70 100" stroke="rgba(139, 92, 246, 0.4)" stroke-width="1.5"/>
+                            
+                            <!-- Sharp TPN interrupt line -->
+                            <line x1="20" y1="20" x2="180" y2="180" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" stroke-dasharray="160" stroke-dashoffset="0" class="transition-all duration-1000">
+                                <animate attributeName="stroke-dashoffset" values="160;0" dur="4s" repeatCount="indefinite" />
+                            </line>
+                            
+                            <!-- Hạch hạnh nhân indicator -->
+                            <circle cx="140" cy="140" r="8" fill="#f43f5e" class="animate-ping"/>
+                            <circle cx="140" cy="140" r="5" fill="#f43f5e"/>
+                            
+                            <!-- Mindful Gap safe zone -->
+                            <circle cx="100" cy="100" r="20" stroke="#10b981" stroke-width="2" fill="rgba(16, 185, 129, 0.1)"/>
+                        </svg>
+                        
+                        <!-- Overlay Text info -->
+                        <div class="z-10 text-center space-y-1">
+                            <span class="block code-font text-xs text-neon-rose tracking-wider">AMYGDALA ON</span>
+                            <span class="block font-bold text-lg tracking-widest text-white">MINDFUL GAP</span>
+                            <span class="block code-font text-[10px] text-neon-emerald">DMN DAMPENING</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Decorative floating nodes -->
+                    <div class="absolute top-8 left-12 w-3 h-3 rounded-full bg-neon-cyan shadow-lg shadow-neon-cyan/50 animate-bounce"></div>
+                    <div class="absolute bottom-12 right-8 w-4 h-4 rounded-full bg-brand-500 shadow-lg shadow-brand-500/50" style="animation: bounce 4s infinite 1s;"></div>
+                    <div class="absolute top-1/2 -right-4 w-2 h-2 rounded-full bg-neon-amber animate-ping"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 1: 5 Phương Pháp Bio-hacking -->
+    <section id="bio-hacking" class="py-24 border-t border-white/5 bg-slate-950/40 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+                <span class="code-font text-xs font-bold uppercase tracking-widest text-brand-500">SYSTEM ARCHITECTURE</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    5 Phương Pháp Bẻ Gãy Cơ Chế Thần Kinh
+                </h2>
+                <p class="text-sm sm:text-base text-gray-400">
+                    Sử dụng các giao thức can thiệp sinh lý và nhận thức mạnh mẽ thay vì chỉ ngồi im và hy vọng.
+                </p>
+            </div>
+
+            <!-- Vertical Stream of Blocks (All text included exactly) -->
+            <div class="space-y-16">
+                
+                <!-- Method 1 -->
+                <div class="glass-panel p-8 sm:p-12 rounded-3xl neon-border-violet grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-full filter blur-2xl"></div>
+                    <!-- CSS Abstract Art Column -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="w-48 h-48 rounded-2xl bg-gradient-to-br from-brand-950 to-purple-950 border border-brand-500/30 relative flex items-center justify-center overflow-hidden">
+                            <!-- Geometric Abstract representation of TPN pushing down DMN -->
+                            <div class="absolute inset-2 border border-brand-500/20 rounded-xl"></div>
+                            <!-- Balanced Split Waves -->
+                            <div class="w-full h-1/2 bg-brand-500/10 absolute bottom-0 flex items-center justify-center">
+                                <span class="code-font text-[10px] text-brand-100 tracking-widest uppercase">TPN (ACTIVE)</span>
+                            </div>
+                            <div class="w-full h-1/2 bg-slate-900 absolute top-0 border-b border-brand-500/40 flex items-center justify-center opacity-40">
+                                <span class="code-font text-[10px] text-gray-500 tracking-widest uppercase">DMN (MUTED)</span>
+                            </div>
+                            <!-- Cross-line -->
+                            <div class="absolute w-full h-[2px] bg-neon-cyan transform rotate-45"></div>
+                            <div class="absolute w-full h-[2px] bg-neon-cyan transform -rotate-45"></div>
+                        </div>
+                    </div>
+                    <!-- Content Column (100% Word-for-Word Text) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl font-bold font-mono text-brand-500">01</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">Kích hoạt chéo TPN bằng Tải lượng Nhận thức (Cognitive Load)</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            Bộ não không thể làm hai việc cùng lúc ở cấp độ mạng lưới. Mạng lưới DMN (suy nghĩ miên man, giả lập quá khứ) và mạng lưới TPN (Task-Positive Network - tập trung xử lý tác vụ) có tính chất đối nghịch (anti-correlated). Khi cái này bật, cái kia buộc phải tắt.
+                        </p>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-white/5 space-y-2">
+                            <h4 class="text-xs font-semibold text-brand-500 uppercase font-mono">Bằng chứng khoa học:</h4>
+                            <p class="text-xs text-gray-300">
+                                Các nghiên cứu fMRI chỉ ra rằng bạn không thể "tắt" DMN bằng cách ra lệnh "đừng nghĩ nữa" (điều này chỉ làm nó hoạt động mạnh hơn). Bạn phải bật TPN để hút cạn máu và oxy khỏi DMN.
+                            </p>
+                        </div>
+                        <div class="bg-brand-950/30 p-4 rounded-xl border border-brand-500/20 space-y-2">
+                            <h4 class="text-xs font-semibold text-neon-cyan uppercase font-mono">Cách thực thi:</h4>
+                            <p class="text-xs text-gray-300">
+                                Khi hình ảnh cãi nhau hiện lên lúc đang đi bộ, hãy ép não làm một bài toán logic khó hoặc một chuỗi trí nhớ. Ví dụ: Đếm ngược từ 100, trừ đi 7 (100, 93, 86, 79...). Việc tính toán này bắt buộc vùng Vỏ não trước trán (PFC) phải làm việc với công suất cao, lập tức cắt đứt nguồn năng lượng của DMN. Kịch bản cãi vã sẽ sập nguồn ngay lập tức.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Method 2 -->
+                <div class="glass-panel p-8 sm:p-12 rounded-3xl neon-border-cyan grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-neon-cyan/5 rounded-full filter blur-2xl"></div>
+                    <!-- CSS Abstract Art Column -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="w-48 h-48 rounded-2xl bg-gradient-to-br from-slate-950 to-cyan-950 border border-neon-cyan/30 relative flex items-center justify-center overflow-hidden">
+                            <!-- Abstract Breathing Wave Diagram -->
+                            <svg class="w-full h-full p-4" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Double Inhale Curve (Sigh) -->
+                                <path d="M10 50 Q 25 20, 35 30 T 50 25 T 90 80" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" class="animate-pulse-slow"/>
+                                <circle cx="35" cy="30" r="4" fill="#10b981"/>
+                                <circle cx="50" cy="25" r="4" fill="#10b981"/>
+                                <!-- Gentle Exhale dotted line -->
+                                <path d="M50 25 Q 70 85, 90 80" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="2 2"/>
+                                <text x="12" y="85" fill="rgba(255,255,255,0.6)" font-size="6" class="code-font">INHALE x2</text>
+                                <text x="60" y="85" fill="#06b6d4" font-size="6" class="code-font">EXHALE x2 LONG</text>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Content Column (100% Word-for-Word Text) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl font-bold font-mono text-neon-cyan">02</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">Can thiệp Sinh lý học bằng Hơi thở kép (Physiological Sigh)</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            Khi DMN chạy giả lập một cuộc cãi vã, cơ thể bạn không phân biệt được thật giả. Nó vẫn bơm Cortisol và Adrenaline, nhịp tim tăng, hơi thở nông. Bạn không thể "nghĩ" cho nhịp tim chậm lại, bạn phải dùng cơ bắp để điều khiển nó.
+                        </p>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-white/5 space-y-2">
+                            <h4 class="text-xs font-semibold text-neon-cyan uppercase font-mono">Bằng chứng khoa học:</h4>
+                            <p class="text-xs text-gray-300">
+                                Nhà khoa học thần kinh Andrew Huberman tại Stanford đã chứng minh "Physiological Sigh" (Hơi thở thở dài kép) là cơ chế nhanh nhất (trong thời gian thực) để kích hoạt hệ thần kinh phó giao cảm (Parasympathetic), gửi tín hiệu trực tiếp đến não bộ rằng "không có mối đe dọa nào ở đây cả".
+                            </p>
+                        </div>
+                        <div class="bg-cyan-950/30 p-4 rounded-xl border border-neon-cyan/20 space-y-2">
+                            <h4 class="text-xs font-semibold text-neon-emerald uppercase font-mono">Cách thực thi:</h4>
+                            <p class="text-xs text-gray-300">
+                                Hít vào một hơi thật sâu bằng mũi. Khi phổi đã gần đầy, hít thêm một hơi ngắn và gắt nữa bằng mũi để làm phồng các phế nang bị xẹp. Sau đó, thở ra từ từ bằng miệng, kéo dài thời gian thở ra gấp đôi thời gian hít vào. Làm từ 1-3 lần. Lúc này, van sinh lý học bị đóng lại, hóa chất căng thẳng bị khóa, não sẽ tự động bỏ qua cuộc tranh cãi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Method 3 -->
+                <div class="glass-panel p-8 sm:p-12 rounded-3xl neon-border-rose grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-neon-rose/5 rounded-full filter blur-2xl"></div>
+                    <!-- CSS Abstract Art Column -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="w-48 h-48 rounded-2xl bg-gradient-to-br from-slate-950 to-rose-950 border border-neon-rose/30 relative flex items-center justify-center overflow-hidden">
+                            <!-- Abstract Pattern Interrupt Visual -->
+                            <div class="absolute w-24 h-24 border-2 border-white/10 rounded-full animate-pulse-slow"></div>
+                            <!-- Cold/Hot impact lightning symbol -->
+                            <svg class="absolute w-20 h-20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M50 10 L45 50 L65 50 L50 90 L55 50 L35 50 Z" fill="#f43f5e" class="animate-bounce"/>
+                            </svg>
+                            <span class="absolute bottom-3 text-[9px] code-font text-neon-rose tracking-wider">MAMMALIAN DIVE REFLEX</span>
+                        </div>
+                    </div>
+                    <!-- Content Column (100% Word-for-Word Text) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl font-bold font-mono text-neon-rose">03</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">Sốc Vật lý / Đứt gãy Mô thức (Pattern Interrupt)</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            Nếu bạn đang ở trong trạng thái "Dopamine nền" thả lỏng (như đi bộ hay tắm) và bị DMN tấn công, hãy thay đổi trạng thái vật lý một cách đột ngột để tạo ra một cú sốc ưu tiên cao hơn.
+                        </p>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-white/5 space-y-2">
+                            <h4 class="text-xs font-semibold text-neon-rose uppercase font-mono">Bằng chứng khoa học:</h4>
+                            <p class="text-xs text-gray-300">
+                                Cơ chế Mammalian Dive Reflex (Phản xạ lặn của động vật có vú) và hiện tượng Sensory Gating (Cổng giác quan). Khi cơ thể đối mặt với một thay đổi vật lý đột ngột mang tính sinh tồn (ví dụ: nước lạnh buốt hoặc tăng tốc nhịp tim đột ngột), toàn bộ tài nguyên não bộ phải dồn về vùng thân não để giữ thân nhiệt và nhịp thở. Các suy nghĩ trừu tượng bị quét sạch khỏi RAM.
+                            </p>
+                        </div>
+                        <div class="bg-rose-950/30 p-4 rounded-xl border border-neon-rose/20 space-y-2">
+                            <h4 class="text-xs font-semibold text-white uppercase font-mono">Cách thực thi:</h4>
+                            <p class="text-xs text-gray-300">
+                                Nếu đang đứng dưới vòi sen ấm và nghĩ về cảnh cãi vã, hãy gạt vòi sang nước lạnh buốt trong đúng 10 giây. Nếu đang đi bộ thong thả trên máy Walking Pad, hãy tăng tốc độ lên mức chạy nước rút trong 30 giây. Cú sốc vật lý này sẽ reset hoàn toàn trạng thái thần kinh.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Method 4 -->
+                <div class="glass-panel p-8 sm:p-12 rounded-3xl neon-border-violet grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-full filter blur-2xl"></div>
+                    <!-- CSS Abstract Art Column -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="w-48 h-48 rounded-2xl bg-gradient-to-br from-slate-950 to-purple-950 border border-brand-500/30 relative flex items-center justify-center overflow-hidden">
+                            <!-- External Storage / Dump SVG Art -->
+                            <div class="absolute inset-4 rounded-lg bg-black/40 flex flex-col justify-between p-3 border border-white/5">
+                                <div class="flex justify-between items-center">
+                                    <span class="w-2 h-2 rounded-full bg-neon-emerald animate-ping"></span>
+                                    <span class="code-font text-[9px] text-gray-400">MEM_DUMP.SH</span>
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="h-1 bg-neon-cyan w-full rounded"></div>
+                                    <div class="h-1 bg-neon-cyan w-4/5 rounded"></div>
+                                    <div class="h-1 bg-neon-rose w-2/3 rounded animate-pulse"></div>
+                                </div>
+                                <div class="flex justify-between items-center text-[8px] code-font text-neon-emerald">
+                                    <span>[RAM -> DISK]</span>
+                                    <span>OK 100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Content Column (100% Word-for-Word Text) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl font-bold font-mono text-brand-500">04</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">Ngoại hiện hóa để "Đóng vòng lặp" (Externalization)</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            Bạn càng cố lờ đi một suy nghĩ chưa có hồi kết, não càng bám lấy nó.
+                        </p>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-white/5 space-y-2">
+                            <h4 class="text-xs font-semibold text-brand-500 uppercase font-mono">Bằng chứng khoa học:</h4>
+                            <p class="text-xs text-gray-300">
+                                Đây là Hiệu ứng Zeigarnik (não ưu tiên ghi nhớ các tác vụ dang dở). Não bạn lặp lại cuộc cãi vã vì nó coi đó là một "Open Loop" chưa được giải quyết. Khi bạn viết nó ra, bạn chuyển dữ liệu từ "Bộ nhớ làm việc" (Working Memory) sang "Lưu trữ ngoài" (External Storage).
+                            </p>
+                        </div>
+                        <div class="bg-brand-950/30 p-4 rounded-xl border border-brand-500/20 space-y-2">
+                            <h4 class="text-xs font-semibold text-neon-cyan uppercase font-mono">Cách thực thi:</h4>
+                            <p class="text-xs text-gray-300">
+                                Mở ngay điện thoại hoặc một tờ giấy, gõ đúng câu chửi/phản biện sát thủ nhất mà bạn vừa nghĩ ra. Gõ xong, lưu lại (hoặc xé đi). Hành động "xuất file" này đánh lừa bộ não rằng "Tác vụ đã hoàn thành, ta đã có vũ khí", và vùng Amygdala sẽ ngừng gửi yêu cầu chạy giả lập.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Method 5 -->
+                <div class="glass-panel p-8 sm:p-12 rounded-3xl neon-border-emerald grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-neon-emerald/5 rounded-full filter blur-2xl"></div>
+                    <!-- CSS Abstract Art Column -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="w-48 h-48 rounded-2xl bg-gradient-to-br from-slate-950 to-emerald-950 border border-neon-emerald/30 relative flex items-center justify-center overflow-hidden">
+                            <!-- Abstract Biological Primate Neural Grid -->
+                            <svg class="w-full h-full p-4" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="30" stroke="#10b981" stroke-width="1.5" stroke-dasharray="2 4"/>
+                                <circle cx="50" cy="50" r="10" stroke="#f43f5e" stroke-width="1.5"/>
+                                <path d="M20 50 H80" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                <path d="M50 20 V80" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                <text x="54" y="46" fill="#f43f5e" font-size="5" class="code-font font-bold">MONKEY BRAIN 300K Y.O</text>
+                                <text x="15" y="85" fill="#10b981" font-size="5" class="code-font">rvlPFC OVERRIDE</text>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Content Column (100% Word-for-Word Text) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl font-bold font-mono text-neon-emerald">05</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">Dán nhãn Cấu trúc Tiến hóa (Deep Affect Labeling)</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            Chỉ quan sát thôi có thể dẫn đến việc "khoanh tay đứng nhìn" não bộ tự cắn xé. Bạn cần một kỹ thuật gọi là Dán nhãn (Labeling), nhưng không phải dán nhãn cảm xúc ("tôi đang tức giận"), mà là dán nhãn bản chất sinh học.
+                        </p>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-white/5 space-y-2">
+                            <h4 class="text-xs font-semibold text-neon-emerald uppercase font-mono">Bằng chứng khoa học:</h4>
+                            <p class="text-xs text-gray-300">
+                                Nghiên cứu của Matthew Lieberman (UCLA) về Affect Labeling. Việc gọi tên chính xác hiện tượng đang xảy ra sẽ giảm tải hoạt động của Amygdala và đẩy máu về lại vùng não logic rvlPFC (Right Ventrolateral Prefrontal Cortex).
+                            </p>
+                        </div>
+                        <div class="bg-emerald-950/30 p-4 rounded-xl border border-neon-emerald/20 space-y-2">
+                            <h4 class="text-xs font-semibold text-white uppercase font-mono">Cách thực thi:</h4>
+                            <p class="text-xs text-gray-300">
+                                Khi não chiếu lại cảnh cãi nhau, đừng mỉm cười chung chung. Hãy mỉm cười và tự nói thầm một câu mang tính giải phẫu học: "À, bộ não linh trưởng 300 ngàn năm tuổi của mình lại đang đòi tăng điểm vị thế xã hội đây mà. Tội nghiệp, một sự hao phí ATP vô ích". Bằng cách gọi đích danh cơ chế tiến hóa, bạn tách bản ngã (cái tôi) ra khỏi sự việc, biến mình thành một nhà khoa học đang quan sát một con khỉ trong lồng. Sự tức giận sẽ xẹp xuống thành sự buồn cười.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Quy tắc 5 giây (The 5-Second Rule) -->
+    <section id="rule-5s" class="py-24 border-t border-white/5 bg-slate-900/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+            <div class="text-center max-w-3xl mx-auto space-y-4">
+                <span class="code-font text-xs font-bold uppercase tracking-widest text-neon-amber">QUY TẮC 5 GIÂY / KILL -9</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    Đâm Xuyên Qua Lực Cản Với 5-4-3-2-1
+                </h2>
+                <div class="text-sm text-gray-400 max-w-2xl mx-auto leading-relaxed border-t border-b border-white/5 py-4 my-4">
+                    Nguyên lý đếm ngược 5, 4, 3, 2, 1 và đâm xuyên qua lực cản (được biết đến rộng rãi là Quy tắc 5 giây - The 5-Second Rule của Mel Robbins) không phải là một câu thần chú tâm lý sáo rỗng. Đây là một kỹ thuật Bio-hacking (can thiệp sinh học) có chủ đích nhằm tước quyền kiểm soát của vùng não nguyên thủy và chuyển giao năng lượng cho vùng não logic. Dưới đây là phân tích chi tiết về logic vận hành, dẫn chứng khoa học, ẩn dụ công nghệ và cách áp dụng thực tế qua các trạng thái Trước/Sau.
+                </div>
+            </div>
+
+            <!-- Detailed breakdown grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Logic khoa hoc -->
+                <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-4 hover:border-neon-amber/40 transition-all duration-300">
+                    <div class="flex items-center space-x-3 text-neon-amber">
+                        <i class="fa-solid fa-brain text-2xl"></i>
+                        <h3 class="text-xl font-bold text-white">1. Logic Khoa học: Tại sao phải đếm ngược và "Đâm xuyên"?</h3>
+                    </div>
+                    <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                        <p class="font-semibold text-white">Cơ chế Thần kinh học của sự do dự:</p>
+                        <p>
+                            Khi bạn nhận ra có một việc cần làm, trong vòng chưa đầy 5 giây, não bộ sẽ kích hoạt một cơ chế phòng vệ cổ xưa. Hạch hạnh nhân (Amygdala) – trung tâm cảnh báo nỗi sợ – sẽ gửi tín hiệu: "Việc này tốn năng lượng, có rủi ro, có ma sát, hãy dừng lại!". Ngay lập tức, não bạn sẽ sản sinh ra hàng loạt lý do hợp thức hóa: "Để tí nữa", "Giờ chưa đủ cảm hứng", "Nghỉ thêm 5 phút không chết ai".
+                        </p>
+                        <p>
+                            Nếu bạn để khoảng hở do dự này kéo dài quá 5 giây, một Vòng lặp thói quen (Habit Loop) ngầm định của sự trì hoãn sẽ chiếm quyền điều khiển hệ thống thần kinh.
+                        </p>
+                        <p class="font-semibold text-white">Vì sao đếm ngược "5-4-3-2-1" lại có tác dụng?</p>
+                        <ul class="list-disc list-inside space-y-2 pl-2">
+                            <li><strong class="text-neon-amber">Pattern Interrupt (Đứt gãy mô thức):</strong> Đếm xuôi (1, 2, 3, 4, 5...) là một thuật toán quá quen thuộc, não có thể chạy tự động mà không cần nghĩ. Nhưng đếm ngược (5, 4, 3, 2, 1) buộc Vỏ não trước trán (Prefrontal Cortex - PFC) phải tập trung cao độ để đảo ngược chuỗi tư duy. Hành động này lập tức bẻ gãy (interrupt) luồng suy nghĩ biện hộ đang nhen nhóm của Amygdala.</li>
+                            <li><strong class="text-neon-amber">Chiếm dụng Băng thông Nhận thức:</strong> Việc đếm ngược hoạt động như một màn chắn, chiếm trọn RAM của não bộ, khiến các lý do lười biếng không có không gian để "render" (hiển thị) lên ý thức.</li>
+                            <li><strong class="text-neon-amber">Điểm kích hoạt (Starting Trigger):</strong> Số "1" đóng vai trò như một vạch đích hoặc phát súng hiệu hành động. Nó loại bỏ hoàn toàn sự lưỡng lự chọn thời điểm.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- An du cong nghe -->
+                <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-4 hover:border-neon-cyan/40 transition-all duration-300">
+                    <div class="flex items-center space-x-3 text-neon-cyan">
+                        <i class="fa-solid fa-terminal text-2xl"></i>
+                        <h3 class="text-xl font-bold text-white">2. Ẩn dụ Công nghệ: Lệnh kill -9 và Sự rò rỉ bộ nhớ (RAM Leak)</h3>
+                    </div>
+                    <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                        <p>
+                            Để hiểu toàn bộ quá trình "Lãi suất kép của sự lười biếng" và "Quy tắc đếm ngược", hãy hình dung hệ điều hành máy tính:
+                        </p>
+                        <div class="bg-black/40 p-4 rounded-xl border border-white/5 space-y-3 font-mono text-xs">
+                            <div>
+                                <span class="text-neon-rose font-bold">// Sự trì hoãn = Tiến trình treo (Zombie Process)</span>
+                                <p class="text-gray-400 mt-1">Khi bạn định làm một việc nhưng lại lùi lại 30 phút để lướt mạng, việc đó không biến mất. Hệ điều hành của não không thể đóng luồng (thread) đó lại vì nó chưa hoàn thành (Hiệu ứng Zeigarnik). Tác vụ đó trở thành một Zombie Process chạy ngầm. Nó liên tục thực hiện các truy vấn ẩn, gây ra tình trạng Rò rỉ bộ nhớ (RAM Leak). Kết quả là dù bạn đang "giải trí", hệ thống vẫn giật lag, tâm trí bồn chồn (Zeigarnik Anxiety), pin năng lượng nhận thức sụt giảm liên tục mà không sinh ra bất kỳ output nào.</p>
+                            </div>
+                            <hr class="border-white/5" />
+                            <div>
+                                <span class="text-neon-emerald font-bold">// Đếm 5, 4, 3, 2, 1 = Lệnh kill -9 hoặc Hardware Interrupt</span>
+                                <p class="text-gray-400 mt-1">Khi bạn thực hiện đếm ngược, bạn đang gửi một tín hiệu ngắt có ưu tiên tối cao trực tiếp đến CPU. Lệnh này cưỡng bức dừng toàn bộ các tiến trình rác chạy ngầm, giải phóng RAM bị rò rỉ, và ép CPU thực hiện một cú chuyển ngữ cảnh (Context Switch) ngay lập tức sang tác vụ mục tiêu: Đâm xuyên qua lực cản.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interative Simulation Block (Biểu đồ Mô phỏng) -->
+            <div id="simulation-block" class="glass-panel p-8 sm:p-12 rounded-3xl border border-white/10 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="code-font text-xs text-neon-emerald">REAL-TIME SYSTEM MONITOR</span>
+                        <h3 class="text-2xl font-bold text-white">3. Biểu đồ Mô phỏng: Khấu hao Nhận thức & Cơ chế Đứt gãy Mô thức</h3>
+                        <p class="text-sm text-gray-400">Để thấy rõ sự khác biệt giữa việc để mặc cho "Nợ trì hoãn" tích lũy và việc dùng lệnh ngắt 5 giây, hãy tương tác với mô phỏng trực quan dưới đây:</p>
+                    </div>
+                    <div>
+                        <button id="btn-kill9" class="px-5 py-2.5 bg-neon-rose text-white text-xs font-mono font-bold rounded-xl shadow-lg shadow-neon-rose/30 hover:bg-rose-600 transition-all uppercase">
+                            EXECUTE: kill -9
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center bg-black/40 p-6 rounded-2xl border border-white/5">
+                    <!-- Column 1: System Stats / RAM Indicators -->
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs code-font">
+                                <span class="text-gray-400">COGNITIVE LOAD (RAM USE)</span>
+                                <span id="txt-ram-load" class="text-neon-rose font-bold">87%</span>
+                            </div>
+                            <div class="h-3 bg-slate-900 rounded-full overflow-hidden border border-white/10">
+                                <div id="bar-ram" class="h-full bg-gradient-to-r from-neon-cyan via-brand-500 to-neon-rose w-[87%] transition-all duration-300"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs code-font">
+                                <span class="text-gray-400">AMYGDALA ARMED LEVEL</span>
+                                <span id="txt-amygdala-level" class="text-neon-amber font-bold">HIGH</span>
+                            </div>
+                            <div class="h-3 bg-slate-900 rounded-full overflow-hidden border border-white/10">
+                                <div id="bar-amygdala" class="h-full bg-neon-amber w-[90%] transition-all duration-300"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs code-font">
+                                <span class="text-gray-400">SYSTEM PERFORMANCE</span>
+                                <span id="txt-sys-perf" class="text-neon-rose">CRITICAL LAG</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Simulated Chart Canvas -->
+                    <div class="lg:col-span-2 relative h-48 bg-slate-950 rounded-xl border border-white/10 overflow-hidden flex items-end">
+                        <svg class="absolute inset-0 w-full h-full" id="sim-svg" viewBox="0 0 400 150">
+                            <!-- Baseline -->
+                            <line x1="0" y1="120" x2="400" y2="120" stroke="rgba(255,255,255,0.1)"/>
+                            <!-- RAM leak line -->
+                            <path id="graph-leak" d="M0,120 Q50,90 100,60 T200,40 T300,30 T400,20" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="0" class="transition-all duration-500"/>
+                            <!-- Kill -9 reset point visualizer -->
+                            <circle id="reset-circle" cx="200" cy="40" r="6" fill="#10b981" class="hidden"/>
+                            <!-- Legend -->
+                            <text x="10" y="20" fill="rgba(255,255,255,0.4)" font-size="8" class="code-font">Zombie Processes Accumulating...</text>
+                        </svg>
+                        <div class="absolute bottom-2 right-2 flex space-x-2 text-[9px] code-font">
+                            <span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-neon-rose mr-1"></span> RAM Leak</span>
+                            <span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-neon-emerald mr-1"></span> Safe State</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7 Real-World Examples (100% Raw Text) -->
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-white tracking-tight text-center">
+                    4. 7 Ví dụ thực tế áp dụng quy tắc "Đâm xuyên" (Trước vs. Sau)
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Example 1 -->
+                    <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-4 hover:border-brand-500/30 transition-all">
+                        <span class="code-font text-xs text-brand-500 font-bold">VÍ DỤ 1</span>
+                        <h4 class="text-md font-bold text-white leading-snug">Bắt đầu viết kịch bản hoặc dựng một đoạn video khó</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 bg-neon-rose/10 border border-neon-rose/20 rounded-xl">
+                                <span class="font-bold text-neon-rose">Trước:</span> Nghĩ đến đống tư liệu B-roll chưa phân loại, màu sắc chưa đồng bộ -&gt; Ngại -&gt; Nghĩ: "Lướt xem kênh đối thủ 15 phút lấy ý tưởng rồi làm" -&gt; Quá 15 phút, não vừa mệt vừa lo âu vì chưa sờ vào việc, dung lượng RAM nhận thức cạn kiệt.
+                            </div>
+                            <div class="p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl">
+                                <span class="font-bold text-neon-emerald">Sau:</span> Nhận diện lực cản (sự ngại phân loại tài nguyên) -&gt; Đếm 5, 4, 3, 2, 1 -&gt; Nhấn chuột mở Premiere/Figma, import file đầu tiên vào timeline mà không cần nghĩ đến độ hoàn hảo. Phá vỡ ma sát ban đầu, luồng Flow xuất hiện.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example 2 -->
+                    <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-4 hover:border-neon-cyan/30 transition-all">
+                        <span class="code-font text-xs text-neon-cyan font-bold">VÍ DỤ 2</span>
+                        <h4 class="text-md font-bold text-white leading-snug">Tuân thủ kỷ luật cắt lỗ/chốt lời trong giao dịch chứng khoán</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 bg-neon-rose/10 border border-neon-rose/20 rounded-xl">
+                                <span class="font-bold text-neon-rose">Trước:</span> Mã cổ phiếu chạm đúng điểm cắt lỗ theo thuật toán -&gt; Tiếc nuối, do dự, nghĩ: "Chờ hồi lại chút rồi bán" -&gt; Ngồi ôm bảng điện liên tục, tim đập nhanh, stress, đốt sạch năng lượng cho việc hy vọng ảo tưởng -&gt; Tổn thất sâu hơn.
+                            </div>
+                            <div class="p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl">
+                                <span class="font-bold text-neon-emerald">Sau:</span> Nhận diện lực cản (sự tiếc nuối tài sản) -&gt; Đếm 5, 4, 3, 2, 1 -&gt; Click chuột đặt lệnh bán theo đúng nguyên tắc. Đóng tab. Bảo toàn băng thông não cho các cơ hội khác.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example 3 -->
+                    <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-4 hover:border-neon-amber/30 transition-all">
+                        <span class="code-font text-xs text-neon-amber font-bold">VÍ DỤ 3</span>
+                        <h4 class="text-md font-bold text-white leading-snug">Bước lên máy đi bộ (Walking Pad) khi cơ thể đang uể oải</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 bg-neon-rose/10 border border-neon-rose/20 rounded-xl">
+                                <span class="font-bold text-neon-rose">Trước:</span> Nhìn chiếc máy và đôi giày -&gt; Nghĩ: "Hôm nay mệt quá, đi bộ làm sao tập trung viết code/kịch bản được" -&gt; Nằm lướt điện thoại -&gt; Cơ thể càng trì trệ, tâm trạng tệ hơn.
+                            </div>
+                            <div class="p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl">
+                                <span class="font-bold text-neon-emerald">Sau:</span> Đếm 5, 4, 3, 2, 1 -&gt; Đứng phắt dậy, xỏ giày, bấm nút khởi động máy. Khi đôi chân bắt đầu chuyển động cơ học, lưu thông máu tăng lên, não tự động tiết dopamine nền, khả năng tập trung quay trở lại.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example 4 -->
+                    <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-4 hover:border-brand-500/30 transition-all">
+                        <span class="code-font text-xs text-brand-500 font-bold">VÍ DỤ 4</span>
+                        <h4 class="text-md font-bold text-white leading-snug">Triển khai cấu trúc Database hoặc JSON cho hệ thống CMS cá nhân</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 bg-neon-rose/10 border border-neon-rose/20 rounded-xl">
+                                <span class="font-bold text-neon-rose">Trước:</span> Nghĩ đến việc phải cấu hình kết nối Supabase, xử lý metadata phức tạp -&gt; Thấy quá tải -&gt; Luẩn quẩn đọc các bài viết công nghệ mới trên mạng -&gt; Hệ thống vẫn nằm trên giấy, tích trữ thêm rác kỹ thuật số.
+                            </div>
+                            <div class="p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl">
+                                <span class="font-bold text-neon-emerald">Sau:</span> Đếm 5, 4, 3, 2, 1 -&gt; Mở VS Code, gõ đúng một hàm hoặc tạo một file config.json trống. Ép bản thân tạo ra Đầu ra bắt buộc trong 24 giờ.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example 5 -->
+                    <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-4 hover:border-neon-cyan/30 transition-all">
+                        <span class="code-font text-xs text-neon-cyan font-bold">VÍ DỤ 5</span>
+                        <h4 class="text-md font-bold text-white leading-snug">Thức dậy ngay lập tức khi chuông báo thức reo buổi sáng</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 bg-neon-rose/10 border border-neon-rose/20 rounded-xl">
+                                <span class="font-bold text-neon-rose">Trước:</span> Chuông reo -&gt; Nghĩ: "Ngủ thêm 5 phút nữa cho tỉnh" -&gt; Bấm Snooze -&gt; Rơi vào chu kỳ ngủ mới bị đứt đoạn (Sleep Inertia) -&gt; Khi dậy thực sự thì đầu óc mụ mẫm, nặng nề cả buổi sáng.
+                            </div>
+                            <div class="p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl">
+                                <span class="font-bold text-neon-emerald">Sau:</span> Chuông reo -&gt; Nhận biết cảm giác muốn nằm lười -&gt; Đếm 5, 4, 3, 2, 1 -&gt; Tung chăn, đặt chân xuống sàn nhà. Hành động vật lý này cắt đứt cơn buồn ngủ ngay lập tức.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example 6 -->
+                    <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-4 hover:border-neon-amber/30 transition-all">
+                        <span class="code-font text-xs text-neon-amber font-bold">VÍ DỤ 6</span>
+                        <h4 class="text-md font-bold text-white leading-snug">Xử lý một lời góp ý vô lý từ người khác (Ngắt tranh cãi giả lập)</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 bg-neon-rose/10 border border-neon-rose/20 rounded-xl">
+                                <span class="font-bold text-neon-rose">Trước:</span> Nhận một lời chê bai phiến diện -&gt; Im lặng lúc đó nhưng khi đi tắm hoặc đi bộ, não liên tục "chiếu phim" giả lập cuộc cãi vã, nghĩ câu chửi sắc bén hơn -&gt; Tự tiêm Cortisol độc hại vào máu khi đối thủ không có mặt.
+                            </div>
+                            <div class="p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl">
+                                <span class="font-bold text-neon-emerald">Sau:</span> Nhận diện DMN đang cố nặn dopamine bẩn -&gt; Đếm 5, 4, 3, 2, 1 -&gt; kill -9 tiến trình đó, gán nhãn: "Não bộ linh trưởng đang đòi tăng điểm vị thế xã hội ảo", lập tức quay về đếm nhịp thở để ngắt cầu dao năng lượng.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example 7 -->
+                    <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-4 hover:border-brand-500/30 transition-all lg:col-span-3">
+                        <span class="code-font text-xs text-brand-500 font-bold">VÍ DỤ 7</span>
+                        <h4 class="text-md font-bold text-white leading-snug">Dọn sạch không gian làm việc và tab trình duyệt cuối ngày</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 bg-neon-rose/10 border border-neon-rose/20 rounded-xl">
+                                <span class="font-bold text-neon-rose">Trước:</span> Cuối ngày mệt mỏi, nhìn màn hình 40 tab Chrome và đống tài liệu trên bàn -&gt; Nghĩ: "Mai dọn một thể" -&gt; Sáng hôm sau mở máy ra, đập vào mắt là sự hỗn độn, Vỏ não trước trán mất ngay 10% pin chỉ để xử lý sự ngợp thị giác trước khi làm việc.
+                            </div>
+                            <div class="p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl">
+                                <span class="font-bold text-neon-emerald">Sau:</span> Kết thúc giờ làm -&gt; Đếm 5, 4, 3, 2, 1 -&gt; Nhấn Ctrl+W đóng sạch các tab không còn giá trị, xếp gọn bàn làm việc trong đúng 2 phút. Tạo một "giao diện sạch" (Clean Slate) cho ngày mai.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <p class="text-center text-sm text-neon-cyan font-mono italic mt-6">
+                    "Bằng cách áp dụng nhất quán thuật toán ngắt này, bạn sẽ chuyển dịch từ trạng thái một hệ điều hành bị quá tải bởi các tiến trình treo, sang một hệ thống tối giản, thực thi mượt mà và giải phóng hoàn toàn băng thông nhận thức."
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Deep Dives (Q&A Sections verbatim) -->
+    <section id="deep-dive" class="py-24 border-t border-white/5 bg-slate-950/60">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+            
+            <div class="text-center max-w-3xl mx-auto space-y-4">
+                <span class="code-font text-xs font-bold uppercase tracking-widest text-brand-100">TECHNICAL QUESTIONS & SOLUTIONS</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    Giải Phẫu Thần Kinh: Thuyết Phục Sự Hoài Nghi
+                </h2>
+            </div>
+
+            <!-- Deep Dive Block 1 -->
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-neon-rose/10 flex items-center justify-center text-neon-rose shrink-0 font-bold font-mono">Q</div>
+                    <div class="space-y-4 text-gray-300">
+                        <h4 class="text-lg font-bold text-white">Tại sao Hành động "xuất file" này đánh lừa bộ não rằng "Tác vụ đã hoàn thành, ta đã có vũ khí", và vùng Amygdala sẽ ngừng gửi yêu cầu chạy giả lập. -&gt; não dễ lừa thê à ? Tôi thử 1 vài lần thây hiệu quả nhung chưa nhớ được, chưa tin đuọc, hãy thuyết phục và ẩn dụ theo 2 cach tiep can de tôi nhớ và thuộc</h4>
+                        
+                        <p class="text-sm">
+                            Chào bạn, sự hoài nghi của bạn là một phản xạ vô cùng chuẩn xác của một tư duy cơ học khắt khe. Câu hỏi của bạn thực chất đang chạm vào một trong những điểm kỳ diệu và nguyên thủy nhất của hệ thần kinh: Tại sao bộ não linh trưởng thông minh như vậy lại dễ dàng bị "đánh lừa" bởi một thao tác vật lý nhỏ nhoi?
+                        </p>
+                        <p class="text-sm">
+                            Sự thật là, bộ não của bạn không hề non nớt. Ngược lại, nó hoạt động quá xuất sắc theo các dòng lệnh sinh tồn đã được mã hóa từ 100.000 năm trước. Để bạn không chỉ hiểu bằng logic mà có thể "gắn thẻ nhớ" lưu trữ vĩnh viễn thuật toán này vào vô thức, hãy cùng đặt bộ não lên bàn phẫu thuật thông qua hai cách tiếp cận và ẩn dụ sâu sắc dưới đây.
+                        </p>
+
+                        <!-- Approach 1 -->
+                        <div class="border-l-2 border-brand-500 pl-4 py-2 space-y-2">
+                            <h5 class="text-sm font-bold text-white uppercase code-font">Cách tiếp cận 1: Ẩn dụ Hệ điều hành máy tính (Lệnh Flush Memory & Ổ cứng ngoài)</h5>
+                            <p class="text-xs">
+                                Hãy tưởng tượng bạn đang sử dụng một chiếc máy tính. Ý thức và khả năng suy nghĩ lý trí của bạn chính là Vỏ não trước trán (PFC) – hoạt động như một phần mềm giao diện người dùng (GUI) bóng bẩy trên màn hình. Còn Hạch hạnh nhân (Amygdala) và Hệ viền (Limbic System) chính là các bo mạch phần cứng sâu bên dưới, vận hành bằng dòng điện và các xung tín hiệu thô.
+                            </p>
+                            <p class="text-xs">
+                                <strong>Trạng thái Kẹt Vòng lặp (Zombie Process):</strong> Khi bạn cãi nhau với ai đó hoặc ấm ức mà chưa có hồi kết, bộ não ghi nhận đây là một tác vụ chưa hoàn thành. Theo Hiệu ứng Zeigarnik, một ý định hay một mối lo chưa đóng sẽ kích hoạt một tiến trình chạy ngầm (Background Process) kẹt tại bộ nhớ tạm (Working Memory / RAM não). Dù bạn đang đi tắm hay đi bộ thư giãn, tệp chạy ngầm này liên tục "bịt đầu này, mở đầu kia", ngốn điện năng và Glucose của thùy trán để giữ cho thông tin không bị mất. Bạn bị giật lag, tức ngực, bồn chồn mà không biết tại sao.
+                            </p>
+                            <p class="text-xs">
+                                <strong>Cơ chế "Trốn việc" của Não Trái:</strong> Khi tệp RAM này quá nặng, bán cầu não trái của bạn (Kẻ diễn dịch não trái - Left-Brain Interpreter) sẽ hóa thân thành một gã luật sư tồi. Nó sẽ lập tức "bịa" ra những kịch bản cãi lý tưởng tượng vô cùng sắc bén để bạn cãi thắng ảo trong đầu nhằm nạp liều Dopamine tự tôn rẻ tiền, xoa dịu áp lực.
+                            </p>
+                            <p class="text-xs text-neon-cyan">
+                                <strong>Lệnh kill -9 Vật lý:</strong> Tại sao hành động gõ chữ hoặc viết ra giấy và xuất file (hoặc vò nát vứt đi) lại kết thúc được trận chiến? Vì hệ điều hành lõi của não bộ hoạt động theo cơ chế Chuyển tải nhận thức ra ngoài vật lý (Cognitive Offloading). Khi bạn ép tư duy miên man trong đầu phải chuyển thành ký tự tuyến tính (qua vùng ngôn ngữ Broca), bạn bắt buộc phải đóng gói dữ liệu. Khoảnh khắc mắt bạn nhìn thấy dòng chữ nằm yên trên giấy hoặc file văn bản, một tín hiệu quang học truyền ngược lên bộ não. Hệ thống phần cứng nhận diện bằng chứng thị giác: "Dữ liệu này đã được di chuyển từ bộ nhớ tạm biến động (RAM) sang một vật thể lưu trữ bền vững ở môi trường ngoài (Ổ cứng)". Ngay lập tức, CPU của não chạy lệnh Flush Memory (Xóa bộ nhớ đệm), ngắt hoàn toàn dòng điện sinh học cấp cho tiến trình chạy ngầm đó. Tab Zeigarnik chính thức bị Force Quit.
+                            </p>
+                        </div>
+
+                        <!-- Approach 2 -->
+                        <div class="border-l-2 border-neon-cyan pl-4 py-2 space-y-2">
+                            <h5 class="text-sm font-bold text-white uppercase code-font">Cách tiếp cận 2: Góc nhìn Sinh học Tiến hóa (Kho vũ khí của Bộ tộc & Radar báo động)</h5>
+                            <p class="text-xs">
+                                Hàng triệu năm trước trên thảo nguyên hoang dã, tổ tiên chúng ta sinh tồn trong môi trường khan hiếm calo và đầy rẫy thú dữ. Để sống sót, tự nhiên đã cài đặt vào não người một nguyên tắc: Tuyệt đối không tin vào lý thuyết suông, chỉ tin vào Bằng chứng Vật lý (Empirical Evidence).
+                            </p>
+                            <p class="text-xs">
+                                <strong>Radar bị "Mù chữ":</strong> Vùng não lý trí (PFC) của bạn biết tiếng Việt, có thể đọc sách triết học. Nhưng Hạch hạnh nhân (Amygdala) – radar cảnh báo sinh tồn của bạn – hoàn toàn mù chữ và không hiểu ngôn ngữ logic. Nó chỉ giao tiếp bằng hóa chất (Cortisol, Adrenaline) và cảm giác vật lý của cơ thể (Somatic markers).
+                            </p>
+                            <p class="text-xs">
+                                <strong>Ảo ảnh của Sự Trấn an:</strong> Khi bạn cãi thua hoặc bị xúc phạm, Amygdala dịch dịch sự kiện này thành: "Tổn thương vị thế xã hội = Nguy cơ bị bộ lạc trục xuất = Chết đói ngoài rừng". Nó lập tức kích hoạt trục căng thẳng HPA, bơm Cortisol xối xả và ép bạn phải chạy giả lập để tìm cách chiến đấu tự vệ. Nếu bạn chỉ ngồi im và nhẩm trong đầu: "Thôi bỏ qua đi, mình an toàn mà", Amygdala sẽ gạt phăng câu lệnh đó. Nó sẽ gào lên: "Mày chỉ đang nghĩ thế thôi! Đâu, bằng chứng vật lý chứng minh mày đã giải quyết xong nguy hiểm đâu? Tao không thấy file nghiệm thu, tao sẽ tiếp tục găm giữ vòng lặp!".
+                            </p>
+                            <p class="text-xs text-neon-amber">
+                                <strong>Giao nộp "Bao cát" Vật lý:</strong> Khi bạn thực hiện hành động viết câu trả lời sắc bén ra file/giấy, vò nát và ném vào sọt rác, bạn đang dùng Sự đóng kín bằng Vận động học (Kinesthetic Closure) để nói chuyện với con thú hoang trong hộp sọ. Lực cơ tay gồng lên xé hoặc vò giấy cung cấp dữ liệu xúc giác về một "Động năng phá hủy" thực tế. Tiếng sột soạt gắt của giấy bị phá hủy truyền qua màng nhĩ vào thẳng Amygdala, báo động: "Trạng thái vật chất của mối đe dọa đã bị bẻ gãy". Khi bạn kết hợp với các thủ thuật vật lý giải độc cơ thể như: ngả lưng, giãn mắt góc rộng, và đặc biệt là rớt cuống lưỡi kịch sàn (bẻ gãy xung điện truyền xuống thanh quản khi bạn nhẩm lời cãi nhau), dây thần kinh phế vị sẽ gửi một báo cáo vượt cấp lên não bò sát: "Cơ bắp nhão nhoét, hầu họng thả lỏng, không gồng phòng thủ. Kết luận: Môi trường an toàn 100%!". Con thú đa nghi Amygdala lúc này bị khuất phục hoàn toàn bởi dữ liệu cơ học thô. Nó tắt van bơm Cortisol, xả ra Serotonin tĩnh tại. Vòng lặp được đóng lại vì não tin rằng bạn đã "chế tạo xong vũ khí" và "tiêu diệt xong mục tiêu" ở thế giới vật lý.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Block 2: Physical signs -->
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-4">
+                <h4 class="text-xl font-bold text-white flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-neon-emerald animate-ping"></span>
+                    Biểu hiện vật lý để bạn "Bắt quả tang" hệ thống dọn RAM thành công
+                </h4>
+                <p class="text-sm text-gray-400">
+                    Lần tới khi bạn thực hiện giao thức "Xuất file / Viết và Vứt bỏ" này, đừng cố dùng lý trí để đánh giá xem mình đã tin chưa. Hãy nhắm mắt lại và quan sát chính xác các biến đổi vật lý có khối lượng sau trên cơ thể để chứng thực thuật toán đã chạy:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-300">
+                    <div class="p-5 bg-slate-900/40 rounded-xl border border-white/5 space-y-2">
+                        <span class="code-font text-xs text-neon-cyan font-bold block">SIGNAL 01: PHYSIOLOGICAL SIGH</span>
+                        <p class="font-semibold text-white">Tiếng thở dài sinh lý (Sigh of relief)</p>
+                        <p class="text-xs text-gray-400">Ngay khoảnh khắc file được đóng/tờ giấy rơi vào sọt rác, lồng ngực bạn sẽ tự động có một nhịp thở hắt ra rất dài bằng miệng. Đây là lệnh giải độc phế nang, báo hiệu hệ đối giao cảm đã được kích hoạt thành công.</p>
+                    </div>
+                    <div class="p-5 bg-slate-900/40 rounded-xl border border-white/5 space-y-2">
+                        <span class="code-font text-xs text-neon-emerald font-bold block">SIGNAL 02: MUSCLE DROP</span>
+                        <p class="font-semibold text-white">Cú hạ cánh của bả vai và cơ hàm</p>
+                        <p class="text-xs text-gray-400">Hãy chú ý cơ hàm nhai đang cắn chặt và bả vai đang gồng cứng phòng thủ của bạn sẽ đột ngột rớt thõng xuống cái "rụp" theo trọng lực. Khối cơ bắp nhả lực vì hóa chất chiến đấu Cortisol đã bị ngừng cấp điện.</p>
+                    </div>
+                    <div class="p-5 bg-slate-900/40 rounded-xl border border-white/5 space-y-2">
+                        <span class="code-font text-xs text-neon-rose font-bold block">SIGNAL 03: EYE EXPANSION</span>
+                        <p class="font-semibold text-white">Sự quang đãng vùng hốc mắt</p>
+                        <p class="text-xs text-gray-400">Tầm nhìn đường ống căng thẳng (Tunnel Vision) biến mất. Bạn cảm nhận rõ một khoảng không nhẹ hẫng, trong trẻo xuất hiện ở vùng trán và phía sau hốc mắt. RAM đã hoàn toàn trống trải.</p>
+                    </div>
+                </div>
+                <p class="text-sm text-neon-cyan italic code-font">
+                    Khi bạn thực hành đủ nhiều, bộ não sẽ nhận ra một Sai số Dự đoán Phần thưởng (RPE Dương): "Ồ, việc viết ra rồi vứt đi này tốn cực ít calo cơ bắp, nhưng lại mang về lợi nhuận sinh học khổng lồ là sự bình an lập tức". Não bộ sẽ tự động bọc mỡ Myelin để biến thao tác này thành một phản xạ sinh học sắc lẹm của riêng bạn.
+                </p>
+            </div>
+
+            <!-- Deep Dive Block 3: Cognitive Offloading Explained -->
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-neon-cyan/10 flex items-center justify-center text-neon-cyan shrink-0 font-bold font-mono">Q</div>
+                    <div class="space-y-4 text-gray-300">
+                        <h4 class="text-lg font-bold text-white">Tôi vẫn chưa hiểu cơ chế Chuyển tải nhận thức ra ngoài vật lý (Cognitive Offloading)., hoạt động thê nào, tôi vẫn thấy nó rất fake, rất bịp, cso ví dụ nào tương tự mà hiển nhiên, để toi có thể quan sát đc ko . Hoặc giải thích theo cách tiếp cận khác kem ẩn dụ ví dụ</h4>
+                        
+                        <p class="text-sm">
+                            Sự hoài nghi của bạn là một phản xạ vô cùng chuẩn xác của một tư duy cơ học khắt khe. Nếu nghe qua lăng kính của tâm lý học đại chúng hay self-help mộng mơ, việc "viết lo âu ra giấy để nhẹ lòng" nghe rất giống một trò bịp bợm tinh thần.
+                        </p>
+                        <p class="text-sm">
+                            Nhưng dưới góc nhìn cơ học phần cứng, Cognitive Offloading (Chuyển tải nhận thức ra ngoài vật lý) là một thuật toán quản trị tài nguyên bắt buộc của hệ thần kinh. Bộ não không hề có phép thuật; nó chỉ là một con kế toán năng lượng cực kỳ bủn xỉn và đa nghi. Nó từ chối tin vào những suy nghĩ suông, nó chỉ tin vào bằng chứng vật lý thô.
+                        </p>
+
+                        <!-- 3 Examples -->
+                        <div class="space-y-4">
+                            <h5 class="text-md font-bold text-white">1. 3 Ví dụ hiển nhiên chứng minh "Não bộ luôn chuyển tải nhận thức"</h5>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                                    <span class="text-xs text-neon-amber font-mono font-bold">VÍ DỤ 1: THE OTP FLUSH</span>
+                                    <p class="text-xs text-gray-400">
+                                        <strong>Cơ chế "Xóa sổ" mã OTP 6 số:</strong> Bạn nhận được một mã OTP từ ngân hàng: 839201. Để nhập vào ứng dụng, bạn phải dùng Vỏ não trước trán (RAM) liên tục ghim giữ và lặp đi lặp lại trong đầu: "839-201, 839-201". Khoảnh khắc ngón tay bạn gõ xong các ký tự 839201 vào ô nhập liệu và màn hình hiện chữ "Thành công" (Bằng chứng thị giác). Đúng 3 giây sau, nếu có người hỏi mã OTP vừa rồi là gì, bạn sẽ ú ớ không thể nhớ nổi. Tại sao? Vì hệ điều hành lõi của não vừa chạy lệnh Flush Memory (Xóa bộ nhớ đệm) ngay lập tức để thu hồi RAM. Nó không thèm tốn calo bọc Myelin hay đẩy tệp này vào ổ cứng dài hạn nữa vì tác vụ đã được thế giới vật lý nghiệm thu.
+                                    </p>
+                                </div>
+                                <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                                    <span class="text-xs text-neon-cyan font-mono font-bold">VÍ DỤ 2: THE MENTAL CALCULATOR</span>
+                                    <p class="text-xs text-gray-400">
+                                        <strong>Phép tính nhân $73 \times 46$:</strong> Nếu bắt bạn nhắm mắt lại và tính nhẩm $73 \times 46$ thuần túy trong đầu, bạn sẽ thấy trán mình nóng lên và tim đập nhanh vì quá tải nhận thức. Não bạn phải trích RAM để gánh các kết quả trung gian: $70 \times 40 = 2800$, rồi $70 \times 6 = 420$, cộng lại là $3220$... Đang tính dở, chỉ cần một tiếng còi xe tải ré lên, bạn sẽ quên sạch con số $3220$. Đó là hiện tượng Tràn bộ đệm (Buffer Overflow). Nhưng nếu bạn cầm một cây bút, gõ số $3220$ ra tờ giấy nháp. Ngay lập tức, bạn có thể hoàn toàn quên con số $3220$ đó đi để rảnh tay tính tiếp phần còn lại ($3 \times 46$). Tờ giấy lúc này đóng vai trò chính xác là một cái USB cắm ngoài giữ hộ dữ liệu. Bạn không cần tốn 1 gram năng lượng nào để "gồng" giữ số $3220$ trong đầu nữa.
+                                    </p>
+                                </div>
+                                <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                                    <span class="text-xs text-neon-rose font-mono font-bold">VÍ DỤ 3: THE SOMATIC ANCHOR</span>
+                                    <p class="text-xs text-gray-400">
+                                        <strong>Hội chứng "Đã khóa cửa chưa?":</strong> Bạn dắt xe ra khỏi nhà đi được 100m, "gã luật sư não trái" đột ngột bật popup chạy ngầm: "Nhỡ nãy chưa khóa cửa thì sao?". Bạn cố dùng ý thức gào lên trấn an: "Khóa rồi, mình nhớ rõ là khóa rồi" – Vô ích! Ngực bạn vẫn bồn chồn, dạ dày thắt lại, RAM não vẫn bị chiếm dụng. Bạn bắt buộc phải quay xe lại, dùng tay giật mạnh cái nắm cửa cái "cạch, cạch". Khoảnh khắc xúc giác và thính giác nhận được dữ liệu thô này, lồng ngực bạn tự động thở hắt ra, vai thả lỏng. Não bộ đã nhận được file nghiệm thu vật lý và đóng tiến trình ngầm.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hardware Mechanism -->
+                        <div class="space-y-3">
+                            <h5 class="text-md font-bold text-white">2. Cơ chế vận hành dưới phần cứng của bộ não</h5>
+                            <div class="bg-black/30 p-4 rounded-xl space-y-3 text-xs">
+                                <p><strong>Giới hạn vật lý của RAM não:</strong> Trí nhớ làm việc (Working Memory) của con người cực kỳ chật hẹp, chỉ chứa được từ $4$ đến $7$ luồng thông tin cùng lúc. Một xung đột gia đình (đặc biệt là mối quan hệ ngắt quãng, xa nhau về địa lý như trường hợp của bạn) được não thú (Amygdala) dịch mã thành Nguy cơ đe dọa sinh tồn (mất bầy đàn). Vì thế, mạng lưới DMN bị ép phải liên tục chạy giả lập các kịch bản đối thoại, tìm câu chửi sắc bén hơn để giành chiến thắng ảo nhằm xoa dịu áp lực.</p>
+                                <p><strong>Ép tư duy tuyến tính bằng vùng Broca:</strong> Khi bạn suy nghĩ miên man, dữ liệu ở dạng một "đám mây hỗn lộn" chạy vòng tròn. Nhưng khi bạn cầm bút viết ra giấy, vùng ngôn ngữ Broca bắt buộc các ý nghĩ phải "xếp hàng tuyến tính" từng chữ một. Bạn không thể viết hai từ cùng một lúc. Thao tác này cưỡng bức não phải đóng gói dữ liệu.</p>
+                                <p><strong>Cú lừa từ "Sự đóng kín vận động học" (Kinesthetic Closure):</strong> Bộ bộ não sinh tồn rất nguyên thủy, nó mù chữ và không hiểu tiếng Việt. Bạn không thể dùng suy nghĩ để bảo suy nghĩ im đi. Nhưng khi mắt bạn nhìn thấy dòng chữ nằm yên trên giấy (dữ liệu đã ra ổ cứng ngoài), kết hợp hành động vật lý là vò nát tờ giấy và ném vào sọt rác, lực cơ tay và tiếng sột soạt dội về thân não một báo cáo nghiệm thu thô: "Tác vụ này đã được xử lý và tiêu hủy ở thế giới vật lý". Hệ thống lập tức chạy lệnh Force Quit tiến trình ngầm để thu hồi năng lượng.</p>
+                            </div>
+                        </div>
+
+                        <!-- Write Protocol -->
+                        <div class="space-y-2">
+                            <h5 class="text-md font-bold text-white">3. Giao thức viết "Cắt lỗ nhận thức" cho hoàn cảnh của bạn</h5>
+                            <p class="text-xs">
+                                Vì bạn và vợ đang sống xa nhau, các tương tác không ổn định sẽ khiến bộ não của bạn liên tục rơi vào cái bẫy "Mô phỏng ảo tưởng" (não tự bịa dữ liệu để lấp đầy khoảng trống thông tin). Khi một xung đột pop-up lúc bạn đang thư giãn, hãy mở một tờ giấy nháp và viết theo đúng cấu trúc "Debug phần cứng" sau:
+                            </p>
+                            <div class="p-4 bg-brand-950/40 border border-brand-500/20 rounded-xl text-xs code-font space-y-2">
+                                <p class="text-brand-500 font-bold">[BÁO CÁO SAI SỐ HỆ THỐNG]</p>
+                                <p>1. Dữ liệu rác đầu vào (Input): (Viết chính xác câu nói của vợ khiến bạn bực mình/lo lắng).</p>
+                                <p>2. Kịch bản chạy giả lập của Não Thú: (Viết phứa ra câu bạn đang muốn cãi lại hoặc nỗi sợ hãi trong đầu).</p>
+                                <p>3. Thẩm định bối cảnh thực tế (Context): Đây là biểu tượng 2D qua màn hình từ xa. Mình không quản lý được firmware của đối phương. Hiện tại, cơ thể mình đang an toàn, bụng đang no, nhà đang ấm. Tắt giả lập ảo.</p>
+                            </div>
+                            <p class="text-xs">
+                                <strong>Hành động vật lý quyết định:</strong> Viết xong, vò nát tờ giấy ném thẳng vào sọt rác. Ngay khoảnh khắc cục giấy rơi xuống, thực hiện Physiological Override (Vượt quyền bằng sinh lý): Đánh thõng hai vai xuống cái rụp, nhả khớp hàm, rớt cuống lưỡi kịch sàn và thở hắt ra một hơi thật dài bằng miệng. Bằng cách ném bằng chứng vật lý này vào hệ viền, gã luật sư ngụy biến trong đầu bạn sẽ tự động bị cắt nguồn điện.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Block 4: Kinesthetic Closure & Performing -->
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-neon-amber/10 flex items-center justify-center text-neon-amber shrink-0 font-bold font-mono">Q</div>
+                    <div class="space-y-4 text-gray-300 w-full">
+                        <h4 class="text-lg font-bold text-white">Tôi chưa hiểu Giải thích thêm VỀ ĐIỀU NÀY , Tôi chưa hiểu cơ chế hoạt động của câu này ? Sự đóng kín bằng Vận động học (Kinesthetic Closure) . Tức là phải làm cho nó thành tiếng, nghiến răng nghiến lợi xé giấy, gồng , rồi xong thì mở rộng mắt , thả lỏng lưỡi, thở sâu mỉm cười…. Thì tác động mới mạnh nó mới tưởng thật à ? Nói thêm về cách diễn sao cho có hiệu quả, và cơ chế khoa học, vi tôi vẫn thấy điều này rất lạ, hãy tìm logic thuyết phục hơn và ẩn dụ dễ nhớ ,</h4>
+                        
+                        <p class="text-sm">
+                            Chào bạn, câu hỏi của bạn vô cùng thực tế và trực diện. Nhìn từ bên ngoài, hành động viết một nỗi lo ra giấy, nghiến răng nghiến lợi xé toạc nó, rồi đột ngột há mồm rớt lưỡi, trợn mắt nhìn quanh... trông không khác gì một vở kịch phóng đại hay một liệu pháp tâm lý "tự diễn" ngớ ngẩn.
+                        </p>
+                        <p class="text-sm">
+                            Nhưng bạn hoàn toàn có lý khi thấy nó lạ. Bộ não lý trí hiện đại của bạn (Vỏ cortex) quá thông minh để biết rằng tờ giấy kia không phải là nguồn cơn của rắc rối thực tế. Tuy nhiên, bạn không diễn cho Vỏ não xem, bạn đang "bấm nút" vật lý để khuất phục Hệ viền (Não bò sát) sâu bên dưới. Con thú cổ đại đó không hiểu logic, nó chỉ vận hành bằng áp lực cơ học và hóa chất.
+                        </p>
+                        
+                        <!-- Real performance table / protocol -->
+                        <div class="space-y-4">
+                            <h5 class="text-md font-bold text-white">Giao thức "Diễn" hiệu quả: Tự nhiên, không gượng ép</h5>
+                            <p class="text-xs">
+                                Bạn cảm thấy "gượng gạo" vì bạn đang dùng ý chí để cố ép cơ bắp làm trò. Chìa khóa để nghi thức này đạt hiệu quả tối đa là Sự nhả lực đột ngột (Contrast Theory). Không cần phải gồng mình diễn một cách giả tạo, hãy làm theo quy trình tinh tế sau:
+                            </p>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-white/10 text-gray-400">
+                                            <th class="py-2 pr-4 font-mono">Pha vận hành</th>
+                                            <th class="py-2 pr-4 font-mono">Thao tác cơ học</th>
+                                            <th class="py-2 pr-4 font-mono">Mẹo để diễn "Thật"</th>
+                                            <th class="py-2 font-mono">Cơ chế bẻ khóa thần kinh</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-white/5">
+                                        <tr>
+                                            <td class="py-3 pr-4 font-bold text-white">Pha 1: Lên nòng & Tích tụ</td>
+                                            <td class="py-3 pr-4 text-gray-300">Viết nỗi ấm ức ra giấy. Dùng lực cơ tay bóp nghẹt, vò nát tờ giấy thật chặt.</td>
+                                            <td class="py-3 pr-4 text-neon-rose font-semibold">Cố tình gồng siết: Hãy nén hết cơn bực bội vào nắm đấm giữ cục giấy trong 3 giây.</td>
+                                            <td class="py-3 text-gray-400">Tận dụng định luật Hebbian: Ép các nơ-ron căng thẳng phóng điện cực đại để chuẩn bị cho pha nhả lực.</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3 pr-4 font-bold text-white">Pha 2: Tiêu hủy</td>
+                                            <td class="py-3 pr-4 text-gray-300">Ném dứt khoát cục giấy vào sọt rác. Mắt nhìn mặt bàn trống trải.</td>
+                                            <td class="py-3 pr-4 text-neon-cyan font-semibold">Cắt đứt động năng: Khoảnh khắc giấy rời tay, buông xuôi toàn bộ lực.</td>
+                                            <td class="py-3 text-gray-400">Cung cấp bằng chứng thị giác cho Amygdala: "Nhiệm vụ đã đóng. Biến mất thực thể".</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3 pr-4 font-bold text-white">Pha 3: Xả van sinh lý</td>
+                                            <td class="py-3 pr-4 text-gray-300">Há hờ môi (1-2mm). Nhẩm chữ "N" để cuống lưỡi rớt phịch xuống đáy họng.</td>
+                                            <td class="py-3 pr-4 text-neon-amber font-semibold">Kỹ thuật bóng xì hơi: Hé môi và để không khí tự "rơi" ra ngoài lồng ngực kèm tiếng thở hắt (Sigh).</td>
+                                            <td class="py-3 text-gray-400">Làm liệt cơ đọc thầm (Subvocalization), vùng ngôn ngữ Broca đứt cáp, tiếng lải nhải cãi lý trong đầu câm bặt cơ học.</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3 pr-4 font-bold text-white">Pha 4: Cởi giáp</td>
+                                            <td class="py-3 pr-4 text-gray-300">Thả rơi tự do hai bả vai cái oạch. Giãn mắt nhìn góc rộng 180 độ.</td>
+                                            <td class="py-3 pr-4 text-neon-emerald font-semibold">Kỹ thuật áo khoác 10kg: Hãy tưởng tượng một sợi dây thừng xách vai bạn vừa bị đứt.</td>
+                                            <td class="py-3 text-gray-400">Nhả hoàn toàn trương lực cơ đối kháng, kích hoạt dây thần kinh phế vị tiết Acetylcholine làm chậm nhịp tim.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Block 5: The Mother Rumination Scenarios -->
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
+                <h4 class="text-xl font-bold text-white flex items-center gap-3">
+                    <i class="fa-solid fa-person-breastfeeding text-neon-rose"></i>
+                    Giao thức dập "Rạp chiếu phim 3D" khi cãi lý ngầm với Mẹ
+                </h4>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    Việc bạn cố gắng kiềm chế không tranh cãi với mẹ nhưng sau đó bộ não vẫn tự động bật "rạp chiếu phim 3D" để chạy các kịch bản ấm ức, cãi lý ngầm (Rumination) là một phản xạ phần cứng hoàn toàn bình thường.
+                </p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    Khi mẹ cằn nhằn về việc sống xa vợ, tương tác bị ngắt quãng và thiếu ổn định, bộ não sinh tồn của bạn bị kích hoạt mạnh mẽ. Tiến hóa lập trình cho hạch hạnh nhân (Amygdala) coi các xung đột gia đình nghiêm trọng ngang ngửa mối đe dọa sinh mạng (nguy cơ bị bộ lạc đào thải). Vì mối quan hệ từ xa này chưa có một kết cục rõ ràng, não bộ coi đây là một Vòng lặp mở (Open Loop) theo hiệu ứng Zeigarnik. Ngay khi bạn thư giãn, mạng mặc định (DMN) lập tức chiếm quyền và lôi tệp chạy ngầm này lên để bắt bạn phải suy diễn.
+                </p>
+                
+                <div class="space-y-4">
+                    <h5 class="text-md font-bold text-white">Lộ trình 4 pha thực chiến để giải phóng RAM:</h5>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                        <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                            <span class="text-neon-cyan font-bold block font-mono">PHA 1: Kích hoạt tường lửa thời gian thực (Trong lúc mẹ đang nói)</span>
+                            <ul class="list-decimal list-inside space-y-1.5 text-gray-400">
+                                <li><strong>Mù điểm cảm xúc:</strong> Tuyệt đối không nhìn vào đồng tử (con ngươi) của mẹ. Hãy dời mắt nhìn tập trung vào sống mũi hoặc vùng ấn đường (giữa hai lông mày) của bà. Tế bào gương bắt sóng sự cáu bẳn cực nhanh qua ánh mắt; việc nhìn vào điểm mù này giúp bạn từ chối tải "file rác" về não.</li>
+                                <li><strong>Nhả lực cơ học:</strong> Chủ động đánh thõng 2 bả vai rơi rụng xuống cái oạch. Hé môi nhẹ 2mm và thả rớt cuống lưỡi xuống đáy hàm dưới. Thao tác này làm liệt cơ đọc thầm (Subvocalization), chặt đứt cáp truyền lệnh cãi thầm lên thùy trán.</li>
+                                <li><strong>Câu lệnh hoãn binh:</strong> Nếu bắt buộc phải đáp lời, tuyệt đối không giải thích đúng sai: <em>"Con biết mẹ đang rất lo cho tụi con (Ghi nhận). Hiện tại con đã có lộ trình và phương án riêng cho việc này rồi (Ranh giới). Giờ con phải tập trung giải quyết nốt công việc đã (Ngắt tiến trình)."</em></li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                            <span class="text-neon-amber font-bold block font-mono">PHA 2: Đổ rác nhận thức ra ổ cứng ngoài (Cognitive Offloading)</span>
+                            <p class="text-gray-400">Rời khỏi không gian đó. Lấy tờ giấy nháp rác và cây bút (tuyệt đối không gõ trên điện thoại hay máy tính) phẫu thuật lại tâm trí theo cấu trúc 3 bước:</p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-400 pl-2">
+                                <li><strong>Bước 1: Brain Dump</strong> (Xả rác thô - 2 phút) -> Viết ra toàn bộ những câu chửi bới, những lập luận cay độc, uất ức nhất.</li>
+                                <li><strong>Bước 2: Data Separation</strong> (Tách dữ liệu khách quan - 1 phút) -> Gọt bỏ toàn bộ tính từ, cảm xúc, suy diễn. Chỉ giữ lại những gì Camera ghi hình được. (Mẹ nói 3 câu về việc tại sao không sang ở với vợ; Cơ thể tôi nghẹn ở cổ, tim tăng).</li>
+                                <li><strong>Bước 3: Lập trình Khế ước [NẾU - THÌ]</strong> (1 phút) -> NẾU tối nay ý nghĩ này lại popup, THÌ tôi áp dụng "Thác nước 5 giây". NẾU mẹ tiếp tục phàn nàn, THÌ tôi lặp lại câu hoãn binh và đi ra ban công.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                            <span class="text-neon-rose font-bold block font-mono">PHA 3: Đóng vòng lặp bằng vận động học (Kinesthetic Closure)</span>
+                            <ul class="list-disc list-inside space-y-1 text-gray-400 pl-2">
+                                <li><strong>Hành động dứt khoát:</strong> Cầm tờ giấy nháp vừa viết xong, dùng lực cơ tay vò nát nó lại thành một cục tròn hoặc xé toạc nó ra rồi ném dứt khoát vào sọt rác.</li>
+                                <li><strong>Cơ chế phần cứng:</strong> Lực bóp gồng cung cấp dữ liệu xúc giác về một "động năng phá hủy" thực tế; tiếng sột soạt gắt truyền qua màng nhĩ dội thẳng vào Amygdala báo cáo: "Thực thể của mối đe dọa đã bị tiêu hủy".</li>
+                                <li><strong>Xả van áp suất sinh lý:</strong> Ngay khoảnh khắc giấy rơi vào sọt rác, thực hiện cú Thở dài sinh lý (Physiological Sigh): Hít một hơi thật sâu bằng mũi -> Hít bồi thêm một nhịp ngắn nữa -> Thở hắt ra chầm chậm bằng miệng.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                            <span class="text-neon-emerald font-bold block font-mono">PHA 4: Reframe - Tải bản vá nhận thức (Cập nhật Firmware)</span>
+                            <p class="text-gray-400">
+                                <strong>Nhìn mẹ như một Robot sinh học lỗi phần mềm:</strong> Xuyên qua lớp từ ngữ lải nhải khó chịu của mẹ, hãy hiểu rằng hệ thần kinh của bà đang bị quá tải Cortisol vì những lo âu tiến hóa ngầm. Phần cứng của bà đang phát đi tín hiệu cầu cứu bầy đàn một cách vụng về. Lời nói của bà là bản tự khai về sự bất an trong nội tâm của bà, hoàn toàn không liên quan gì đến giá trị hay bài tập về nhà của bạn.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Block 6: Neuroeconomics -->
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
+                <h4 class="text-xl font-bold text-white flex items-center gap-3 text-neon-emerald">
+                    <i class="fa-solid fa-coins"></i>
+                    Kinh Tế Học Thần Kinh (Neuroeconomics) & Bản Hạch Toán Thua Lỗ
+                </h4>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    Tôi hoàn toàn hiểu cảm giác kiệt quệ của bạn lúc này. Việc cố gắng giữ im lặng để giữ hòa khí với mẹ là một nỗ lực tuyệt vời của lý trí, nhưng việc não bộ sau đó tự động bật lại những suy nghĩ cãi vã là một phản xạ sinh tồn mà bạn khó kiểm soát ngay lập tức.
+                </p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    Dưới lăng kính của Kinh tế học Thần kinh (Neuroeconomics), mọi hành vi của bạn đều là một giao dịch mua bán. Đồng tiền thanh toán là Dopamine (Động lực), Glucose (Điện năng não bộ) và Ý chí (Sức mạnh vùng aMCC). Khi bạn để mạng lưới DMN (Mạng mặc định) chạy giả lập các cuộc cãi vã trong đầu, bạn đang ký kết những "hợp đồng ma" gây thua lỗ toàn diện.
+                </p>
+                
+                <div class="space-y-4">
+                    <h5 class="text-md font-bold text-white">4 khoản thua lỗ nặng nề nhất:</h5>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5 space-y-1">
+                            <span class="text-neon-rose font-bold block">1. Đóng "Thuế Sinh Học" (Biological Tax) Cắt Cổ</span>
+                            <p class="text-gray-400"><strong>Bản chất:</strong> Khi bạn nằm trên giường tưởng tượng ra một cuộc cãi vã, não vẫn bật công tắc sinh tồn. Nó không phân biệt được đối thủ đang ở trước mặt hay chỉ nằm trong tưởng tượng.</p>
+                            <p class="text-gray-400"><strong>Khoản lỗ:</strong> Nó bơm ồ ạt Cortisol và Adrenaline vào máu. Những hóa chất này ép nhịp tim tăng, cơ bắp căng cứng và hệ miễn dịch bị ức chế. Bạn đang rút cạn "bình xăng" thể chất của ngày mai chỉ để cãi thắng một người... không hề có mặt ở đó.</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5 space-y-1">
+                            <span class="text-neon-cyan font-bold block">2. Trả Lãi Suất Kép Do Rò Rỉ RAM (Sunk Cost & Zeigarnik Effect)</span>
+                            <p class="text-gray-400"><strong>Bản chất:</strong> Cãi nhau hoặc ấm ức với ai đó chưa giải quyết xong, đi tắm/đi ngủ não vẫn tự động tưởng tượng ra kịch bản cãi lại cho ngầu hơn.</p>
+                            <p class="text-gray-400"><strong>Khoản lỗ:</strong> Nó tạo ra một "Tab chạy ngầm" liên tục hút cạn Băng thông IQ (RAM) của bạn, ép bạn phải nghĩ về nó. Giống như một chiếc máy tính bị kẹt RAM, mọi thao tác khác của bạn (làm việc, đọc sách, tận hưởng buổi tối) đều trở nên giật lag, chậm chạp.</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5 space-y-1">
+                            <span class="text-neon-amber font-bold block">3. Đốt Tiền Mua "Cổ Phiếu Rác" (Ego-Dopamine)</span>
+                            <p class="text-gray-400"><strong>Bản chất:</strong> Khi DMN tua lại kịch bản, nó thường nhét những câu phản biện sắc bén vào miệng bạn để bạn "cãi thắng" mẹ trong tâm trí.</p>
+                            <p class="text-gray-400"><strong>Khoản lỗ:</strong> Khi phán xét, não phải quét tìm "điểm xấu". Quá trình này kích hoạt Hạch hạnh nhân, bắt não tiết ra Cortisol. Bạn tốn một lượng calo khổng lồ chỉ để đổi lấy một liều Dopamine tự tôn (Ego-Dopamine) ảo tưởng, rẻ tiền.</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5 space-y-1">
+                            <span class="text-neon-emerald font-bold block">4. Chi Phí Cơ Hội Khổng Lồ (Opportunity Cost)</span>
+                            <p class="text-gray-400"><strong>Bản chất:</strong> Những lúc rảnh rỗi như đi tắm, đi bộ, hoặc trước khi ngủ là thời điểm vàng để não bộ dọn rác, sắp xếp lại thông tin và nảy sinh ý tưởng sáng tạo (chuyển từ Beta sang sóng Alpha).</p>
+                            <p class="text-gray-400"><strong>Khoản lỗ:</strong> Bạn đang dùng một trong những thời điểm não bộ tiết Dopamine nền đẹp nhất để ném vào mạng lưới DMN. Bạn tự đầu độc mình bằng Cortisol vì một đối thủ... không có mặt ở đó. Thay vì sạc đầy pin, bạn đã mang cỗ máy in tiền của mình đi chạy một phần mềm độc hại.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Balance Sheet Table -->
+                <div class="space-y-2">
+                    <h5 class="text-md font-bold text-white uppercase code-font">Bảng Cân Đối Kế Toán Thần Kinh Học</h5>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="border-b border-white/10 text-gray-400">
+                                    <th class="py-2 pr-4 font-mono">Hạng mục</th>
+                                    <th class="py-2 pr-4 font-mono">Đầu tư vào "Tranh cãi giả lập" (Hiện tại)</th>
+                                    <th class="py-2 font-mono">Nếu cắt lỗ bằng "Xé giấy/Quan sát" (Mục tiêu)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <tr>
+                                    <td class="py-3 pr-4 font-bold text-white">Vốn (Năng lượng)</td>
+                                    <td class="py-3 pr-4 text-neon-rose">Đốt cháy lượng lớn Glucose & Oxy.</td>
+                                    <td class="py-3 text-neon-emerald font-semibold">Bảo toàn 100% tài nguyên cho PFC (lý trí).</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 pr-4 font-bold text-white">Hóa chất nhận về</td>
+                                    <td class="py-3 pr-4 text-neon-rose">Cortisol, Adrenaline (căng thẳng, bồn chồn).</td>
+                                    <td class="py-3 text-neon-emerald font-semibold">Serotonin, Dopamine nền (tĩnh lặng, tỉnh táo).</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 pr-4 font-bold text-white">RAM (Bộ nhớ tạm)</td>
+                                    <td class="py-3 pr-4 text-neon-rose">Đầy rác, lag hệ thống, sương mù não.</td>
+                                    <td class="py-3 text-neon-emerald font-semibold">Trống trải, sẵn sàng dung nạp kiến thức mới.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 pr-4 font-bold text-white">Lợi nhuận (ROI)</td>
+                                    <td class="py-3 pr-4 text-neon-rose">Mất thời gian, mệt mỏi, sinh ra oán hận.</td>
+                                    <td class="py-3 text-neon-emerald font-semibold">Giành lại quyền kiểm soát, tự do tâm trí.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <p class="text-sm text-neon-cyan italic code-font">
+                    Năng lượng và sự chú ý của bạn giống như tiền mặt. Việc đoán già đoán non xem người khác đánh giá mình ra sao là cách bạn đang "đốt tiền" vào một khoản đầu tư không bao giờ có lãi. Mẹ bạn lải nhải là do hệ thống sinh tồn của bà đang phát tín hiệu bất an, đó là rắc rối của bà, không phải món nợ của bạn.
+                </p>
+            </div>
+
+            <!-- Deep Dive Block 7: Abuse vs. Matrix -->
+            <div id="matrix" class="glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-neon-rose/10 flex items-center justify-center text-neon-rose shrink-0 font-bold font-mono">Q</div>
+                    <div class="space-y-4 text-gray-300 w-full">
+                        <h4 class="text-lg font-bold text-white">Có nên làm liên tục cho mọi suy nghĩ pop-up lướt qua trong ngày không?</h4>
+                        <p class="text-sm text-neon-rose font-bold">
+                            Câu trả lời ngắn gọn và đanh thép là: KHÔNG. Tuyệt đối không nên làm liên tục.
+                        </p>
+                        <p class="text-sm">
+                            Nếu bạn áp dụng "Nghi thức vật lý" (Viết ra rồi xé) cho MỌI suy nghĩ pop-up lướt qua trong ngày, nó không những mất tác dụng mà còn gây ra một sự thua lỗ sinh học tàn khốc hơn. Dưới lăng kính Khoa học Thần kinh, đây là lý do tại sao việc lạm dụng vũ khí này lại biến thành "thuốc độc", và bảng phân bổ thuật toán giúp bạn biết lúc nào nên dùng chiêu thức nào.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                            <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                                <span class="font-bold text-neon-rose block uppercase">A. Bẫy Ám ảnh Cưỡng chế (OCD Loop)</span>
+                                <p class="text-gray-400">
+                                    Khi bạn tung chăn bật dậy viết giấy mỗi khi có một suy nghĩ thoảng qua, bạn đang dạy cho Não thú (Amygdala) một thuật toán hoàn toàn sai lệch. Bạn đang gửi cho nó tín hiệu: "Vấn đề này cực kỳ nguy hiểm và quan trọng, tôi phải dừng mọi thứ lại, tốn công sức để xử lý nó!". Sự chú ý thái quá và hành động lặp đi lặp lại này chính là "củi lửa" nạp thêm điện năng cho mạng lưới DMN (Mạng mặc định). Lâu dần, não bạn sẽ hình thành một dạng Nghi thức cưỡng chế: Nó cố tình ném pop-up ra chỉ để ép bạn phải thực hiện hành động viết-xé. Bạn biến mình thành nô lệ của chính phương pháp chữa lành.
+                                </p>
+                            </div>
+                            <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+                                <span class="font-bold text-neon-cyan block uppercase">B. Sự "Lờn thuốc" (Habituation)</span>
+                                <p class="text-gray-400">
+                                    Não bộ tiến hóa để nhanh chóng làm quen và bỏ qua những kích thích lặp lại (để tiết kiệm năng lượng). Nếu một tháng bạn làm động tác viết-xé 1 lần khi cực kỳ ấm ức, não sẽ ghi nhận đó là một cú Sốc vật lý (Pattern Interrupt) và chạy lệnh xóa RAM. Nhưng nếu ngày nào bạn cũng xé 10 tờ giấy, tiếng sột soạt và hành động vò giấy mất đi tính "Báo động". Nó trở thành một thói quen cơ học nhàm chán, và não sẽ lờ đi, không thèm chạy lệnh Flush Memory nữa.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Ẩn dụ máy tính -->
+                        <div class="bg-black/30 p-4 rounded-xl text-xs space-y-2 border border-white/5">
+                            <span class="font-bold text-white block font-mono">Ẩn dụ Logic: Nút Reset cứng vs. Phím Tắt (Ctrl+W)</span>
+                            <p class="text-gray-400">
+                                Hãy nhìn bộ não của bạn như một chiếc Máy tính: Hành động Viết ra và Xé nát giống hệt như việc nhấn nút Nguồn (Reset cứng) trên thùng máy. Nó dập tắt mọi lỗi hệ thống ngay lập tức. Nhưng nếu cứ 5 phút máy hơi lag một chút mà bạn lại rút phích cắm khởi động lại, bạn sẽ làm cháy ổ cứng và không thể làm việc được. Với những pop-up vụn vặt (những tab rác tự động nhảy ra), bạn không cần rút điện. Bạn chỉ cần nhấn tổ hợp phím Ctrl + W (Đóng tab) hoặc Mute (Tắt tiếng).
+                            </p>
+                        </div>
+
+                        <!-- Matrix of allocation -->
+                        <div class="space-y-4">
+                            <h5 class="text-md font-bold text-white uppercase code-font">Ma Trận Phân Bổ Vũ Khí (Từ nhẹ đến nặng)</h5>
+                            <p class="text-xs text-gray-400">
+                                Là một người quản trị hệ thống, bạn cần "đo lường" độ nghiêm trọng của Pop-up để rút ra vũ khí tương ứng, nhằm bảo toàn calo ở mức tối đa:
+                            </p>
+                            
+                            <div class="space-y-4">
+                                <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-neon-cyan font-bold text-sm">Cấp độ 1: Pop-up Ruồi muỗi (Thoảng qua, gây bực bội nhẹ)</span>
+                                        <span class="px-2 py-0.5 bg-neon-cyan/20 text-neon-cyan text-[10px] rounded code-font">MUTE AUDIO</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400"><strong>Biểu hiện:</strong> Ý nghĩ vừa xẹt qua đầu (Ví dụ: "Sao mẹ lại nói câu đó nhỉ?"), hơi khó chịu nhưng cơ thể chưa có phản ứng gồng cứng.</p>
+                                    <p class="text-xs text-gray-300"><strong>Vũ khí:</strong> Kỹ thuật Rớt lưỡi kịch sàn.</p>
+                                    <p class="text-xs text-gray-400"><strong>Thực thi & Cơ chế:</strong> Không cần nhúc nhích tay chân. Chỉ cần hé môi hờ 2mm, thả rơi cuống lưỡi xuống đáy họng như một miếng thịt luộc. Để nghĩ ra câu chữ cãi nhau trong đầu, bạn bắt buộc phải dùng vi cơ thanh quản để "Phát âm thầm" (Subvocalization). Rớt lưỡi làm đứt cáp vùng ngôn ngữ Broca. Lưỡi bất động, tiếng lải nhải trong đầu lập tức bị câm bặt cơ học. Pop-up thiếu ngôn ngữ sẽ tan rã sau 5 giây.</p>
+                                </div>
+
+                                <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-neon-amber font-bold text-sm">Cấp độ 2: Pop-up Dai dẳng (Ý nghĩ lặp lại, đòi giải quyết)</span>
+                                        <span class="px-2 py-0.5 bg-neon-amber/20 text-neon-amber text-[10px] rounded code-font">PAUSE THREAD</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400"><strong>Biểu hiện:</strong> Não liên tục nhắc nhở "Nhớ phải làm rõ chuyện này với vợ", "Nhớ phản biện lại ý hôm qua".</p>
+                                    <p class="text-xs text-gray-300"><strong>Vũ khí:</strong> Thuật toán [NẾU - THÌ] (Implementation Intentions).</p>
+                                    <p class="text-xs text-gray-400"><strong>Thực thi & Cơ chế:</strong> Dùng ý thức dán nhãn và lên lịch vật lý cho nó: "NẾU mày cứ nhắc chuyện này, THÌ tao ấn định đúng 8h tối nay tao sẽ ngồi nghĩ về nó. Bây giờ tao đóng tab!". Bộ não (Hiệu ứng Zeigarnik) chỉ ám ảnh những thứ "mập mờ chưa biết bao giờ làm". Khi bạn cấp cho nó một Tọa độ Thời gian cụ thể, não thấy vấn đề đã được "khoanh vùng an toàn", nó sẽ tự động thu hồi tiến trình chạy ngầm.</p>
+                                </div>
+
+                                <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-neon-rose font-bold text-sm">Cấp độ 3: Sóng Thần Cảm Xúc (Amygdala Hijack)</span>
+                                        <span class="px-2 py-0.5 bg-neon-rose/20 text-neon-rose text-[10px] rounded code-font">HARD RESET</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400"><strong>Biểu hiện:</strong> Tim đập thình thịch, ngực thắt lại, cơ hàm nghiến chặt, cảm xúc ấm ức, bất công dâng trào tột độ. Vòng lặp chiếu đi chiếu lại trên 15 phút không thể dùng lý trí dập tắt.</p>
+                                    <p class="text-xs text-gray-300"><strong>Vũ khí:</strong> Viết ra và Xé nát.</p>
+                                    <p class="text-xs text-gray-400"><strong>Thực thi & Cơ chế:</strong> Lúc này mới dùng đến sổ nháp. Dồn mọi sự bực tức gồng vào ngón tay, viết ra, vò nát tạo tiếng động gắt, ném đi và thở hắt ra chìm vai xuống. Hóa chất Cortisol/Adrenaline đã ngập trong máu, bạn bắt buộc phải dùng "Động năng hủy diệt" vật lý và Âm thanh cường độ cao để gửi bằng chứng nghiệm thu cho não sinh tồn, ép nó đóng van hóa chất.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm font-bold text-center text-neon-amber italic">
+                            Tóm lại: Đừng dùng búa tạ để đập một con muỗi. Bạn chỉ viết và xé khi hệ thống bị quá tải nặng (Cấp độ 3). Xoay tua sử dụng "Rớt cuống lưỡi", "Gán nhãn lên lịch" và "Quan sát Panoramic" cho các cấp độ nhẹ hơn chính là nghệ thuật tối ưu hóa RAM đỉnh cao nhất của một Bio-Hacker.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Interactive Flashcard Section: 25 Questions directly visible without interaction -->
+    <section id="flashcards" class="py-24 border-t border-white/5 bg-slate-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <div class="text-center max-w-3xl mx-auto space-y-4">
+                <span class="code-font text-xs font-bold uppercase tracking-widest text-neon-emerald">HỆ THỐNG KIỂM TRA CHỦ ĐỘNG</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    Khối Flashcard 25 Câu Hỏi Ôn Tập
+                </h2>
+                <p class="text-sm text-gray-400">
+                    Xem nhanh toàn bộ các định nghĩa, cơ chế khoa học cốt lõi đã học để củng cố bộ nhớ dài hạn của bạn.
+                </p>
+            </div>
+
+            <!-- Beautiful Dual-Column Grid of 25 pre-revealed Q&A -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 01/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Mindful Gap (Khoảng hở nhận thức) là gì?</h4>
+                        <p class="text-xs text-gray-400">A: Là khả năng đứng lùi lại, tách biệt bản ngã để chỉ quan sát bộ não tự "diễn kịch" mà không bị chìm sâu hay đồng nhất mình với cơn giận.</p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 02/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Tại sao não bộ tự động bật "popup" cãi lý khi xảy ra mâu thuẫn xã hội?</h4>
+                        <p class="text-xs text-gray-400">A: Dưới góc độ tiến hóa, não đánh đồng thất bại giao tiếp (cãi thua, bị chỉ trích) với việc suy giảm vị thế bầy đàn, tức nguy cơ tử vong ngoài tự nhiên.</p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 03/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Amygdala (Hạch hạnh nhân) có vai trò gì trong vòng lặp này?</h4>
+                        <p class="text-xs text-gray-400">A: Nó liên tục bơm hóa chất báo động sinh tồn (Cortisol, Adrenaline) ép mạng lưới DMN phải mô phỏng kịch bản để tìm ra câu trả lời thắng ảo.</p>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 04/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Mạng lưới mặc định DMN (Default Mode Network) là gì?</h4>
+                        <p class="text-xs text-gray-400">A: Mạng lưới nơ-ron hoạt động mạnh nhất khi cơ thể rảnh rỗi, chuyên xử lý các suy nghĩ miên man, dằn vặt quá khứ và dự phòng lo âu tương lai.</p>
+                    </div>
+                </div>
+                <!-- Card 5 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 05/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Mạng lưới TPN (Task-Positive Network) có đặc điểm gì?</h4>
+                        <p class="text-xs text-gray-400">A: Mạng lưới chỉ kích hoạt khi xử lý tác vụ tập trung logic. Nó có tính đối nghịch trực tiếp với DMN: Cái này hoạt động thì cái kia bắt buộc phải sập nguồn.</p>
+                    </div>
+                </div>
+                <!-- Card 6 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 06/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Làm sao để kích hoạt chéo TPN một cách thủ công dập tắt lo âu?</h4>
+                        <p class="text-xs text-gray-400">A: Ép não bộ chịu tải nhận thức (Cognitive Load) bằng tác vụ logic khó, ví dụ như nhẩm đếm ngược từ 100 trừ đi 7 liên tục.</p>
+                    </div>
+                </div>
+                <!-- Card 7 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 07/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Physiological Sigh (Hơi thở kép) là gì?</h4>
+                        <p class="text-xs text-gray-400">A: Giao thức hít sâu bằng mũi -> Hít bồi thêm một hơi ngắn gắt -> Thở dài từ từ qua miệng kéo dài gấp đôi thời gian hít vào.</p>
+                    </div>
+                </div>
+                <!-- Card 8 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 08/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Tại sao Physiological Sigh là van can thiệp sinh lý nhanh nhất?</h4>
+                        <p class="text-xs text-gray-400">A: Nó làm phồng phế nang bị xẹp và kích hoạt tức thì hệ thần kinh đối giao cảm để báo cáo vượt cấp lên não rằng "môi trường an toàn".</p>
+                    </div>
+                </div>
+                <!-- Card 9 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 09/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Sốc Vật lý (Pattern Interrupt) dựa trên cơ chế khoa học nào?</h4>
+                        <p class="text-xs text-gray-400">A: Dựa vào Mammalian Dive Reflex (Phản xạ lặn của động vật có vú) và Sensory Gating. Cơ thể đột ngột dồn lực giữ ấm/thở sẽ quét sạch suy nghĩ trừu tượng khỏi RAM.</p>
+                    </div>
+                </div>
+                <!-- Card 10 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 10/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Hiệu ứng Zeigarnik chi phối lo âu thế nào?</h4>
+                        <p class="text-xs text-gray-400">A: Bộ não luôn ưu tiên phân bổ tài nguyên nhận thức cho các tác vụ chưa hoàn thành (Open Loops). Xung đột chưa dứt chính là tác vụ dang dở.</p>
+                    </div>
+                </div>
+                <!-- Card 11 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 11/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Cognitive Offloading (Chuyển tải nhận thức) là gì?</h4>
+                        <p class="text-xs text-gray-400">A: Là hành vi chuyển dữ liệu số từ bộ nhớ tạm biến động (RAM não) ra ổ cứng lưu trữ vật lý bên ngoài (vở nháp, tệp tin ghi chú).</p>
+                    </div>
+                </div>
+                <!-- Card 12 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 12/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Deep Affect Labeling (Dán nhãn cấu trúc tiến hóa) hoạt động ra sao?</h4>
+                        <p class="text-xs text-gray-400">A: Gọi đích danh bản chất sinh học tiến hóa của hành vi (VD: "Não 300k tuổi đòi tăng điểm ảo"), đưa máu về vùng logic rvlPFC, giảm hoạt động Amygdala.</p>
+                    </div>
+                </div>
+                <!-- Card 13 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 13/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Quy tắc 5 giây (The 5-Second Rule) hoạt động bằng cơ chế nào?</h4>
+                        <p class="text-xs text-gray-400">A: Đếm ngược 5-4-3-2-1 để kích hoạt vỏ não trước trán (PFC), bẻ gãy xu hướng trì hoãn tự động bảo vệ năng lượng của Amygdala.</p>
+                    </div>
+                </div>
+                <!-- Card 14 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 14/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Tại sao phải đếm ngược (5-4-3-2-1) thay vì đếm xuôi (1-2-3-4-5)?</h4>
+                        <p class="text-xs text-gray-400">A: Đếm xuôi quá quen thuộc nên não chạy tự động. Đếm ngược buộc PFC phải tập trung tính toán đảo ngược chuỗi tư duy, chặn đứng luồng bào chữa.</p>
+                    </div>
+                </div>
+                <!-- Card 15 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 15/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Zombie Process (Tiến trình treo) trong não bộ là gì?</h4>
+                        <p class="text-xs text-gray-400">A: Là ý định/mâu thuẫn dang dở kẹt lại trong Working Memory, liên tục thực hiện truy vấn ẩn gây rò rỉ RAM và đốt pin nhận thức.</p>
+                    </div>
+                </div>
+                <!-- Card 16 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 16/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: "Kill -9" trong thuật toán não là gì?</h4>
+                        <p class="text-xs text-gray-400">A: Lệnh ngắt phần cứng cưỡng bức, dập tắt các suy nghĩ rác chạy ngầm bằng cách đếm 5s và lập tức thực hiện hành động đâm xuyên lực cản.</p>
+                    </div>
+                </div>
+                <!-- Card 17 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 17/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Kinesthetic Closure (Sự đóng kín vận động học) là gì?</h4>
+                        <p class="text-xs text-gray-400">A: Sử dụng động năng cơ học thực tế (xé/vò giấy) để gửi báo cáo vật lý thô cho con thú mù chữ Amygdala rằng mối đe dọa đã bị tiêu hủy.</p>
+                    </div>
+                </div>
+                <!-- Card 18 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 18/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Subvocalization (Phát âm thầm) liên kết như thế nào với DMN?</h4>
+                        <p class="text-xs text-gray-400">A: Là hành động vi chuyển động cơ thanh quản để nhẩm lời cãi vã trong đầu. Rớt cuống lưỡi kịch sàn sẽ trực tiếp bẻ gãy xung điện này cơ học.</p>
+                    </div>
+                </div>
+                <!-- Card 19 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 19/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: "Mù điểm cảm xúc" trong giao tiếp căng thẳng có lợi ích gì?</h4>
+                        <p class="text-xs text-gray-400">A: Nhìn tập trung vào sống mũi/ấn đường thay vì đồng tử đối phương để ngăn tế bào thần kinh gương hấp thụ và tải nhanh hóa chất căng thẳng.</p>
+                    </div>
+                </div>
+                <!-- Card 20 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 20/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Định luật Hebbian ứng dụng trong Pha 1 Giao thức Viết - Xé là gì?</h4>
+                        <p class="text-xs text-gray-400">A: Cố tình gồng siết cơ tay bóp nghẹt tờ giấy để ép các nơ-ron căng thẳng phóng điện cực đại, tạo tiền đề để buông xuôi xả van hoàn toàn sau đó.</p>
+                    </div>
+                </div>
+                <!-- Card 21 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 21/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Định nghĩa Ý chí dưới góc nhìn Kinh tế học thần kinh (Neuroeconomics)?</h4>
+                        <p class="text-xs text-gray-400">A: Ý chí là một loại tiền tệ giới hạn (vận hành bằng Glucose và điện năng não). Suy nghĩ miên man là giao dịch đầu tư ma gây thua lỗ toàn diện.</p>
+                    </div>
+                </div>
+                <!-- Card 22 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 22/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Tại sao lạm dụng việc viết và xé giấy liên tục sẽ gây hại?</h4>
+                        <p class="text-xs text-gray-400">A: Sẽ kích hoạt chu kỳ OCD (Ám ảnh cưỡng chế) khiến não nhờn thuốc và coi việc xé giấy là thói quen nhàm chán chứ không còn là Pattern Interrupt.</p>
+                    </div>
+                </div>
+                <!-- Card 23 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 23/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Khi nào sử dụng "Rớt cuống lưỡi kịch sàn"?</h4>
+                        <p class="text-xs text-gray-400">A: Áp dụng cho các pop-up Cấp độ 1 (bực bội thoáng qua). Giúp dập tắt vi phát âm trong thanh quản ngay lập tức mà không cần dùng lực cơ học tay.</p>
+                    </div>
+                </div>
+                <!-- Card 24 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 24/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Thuật toán [NẾU - THÌ] giúp giải phóng DMN thế nào?</h4>
+                        <p class="text-xs text-gray-400">A: Ấn định rõ một tọa độ hành động vật lý trong tương lai để não thấy vấn đề đã được "phân vùng an toàn", loại bỏ trạng thái mập mờ.</p>
+                    </div>
+                </div>
+                <!-- Card 25 -->
+                <div class="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-500/20 transition-all lg:col-span-2">
+                    <div>
+                        <span class="code-font text-[10px] text-neon-cyan font-bold block mb-1">CARD 25/25</span>
+                        <h4 class="text-sm font-bold text-white mb-2">Q: Sự nhả lực đột ngột (Contrast Theory) ảnh hưởng thế nào đến cơ bắp?</h4>
+                        <p class="text-xs text-gray-400">A: Sự hạ bả vai, thả lỏng quai hàm đột ngột kích hoạt trực tiếp các dây thần kinh phế vị tiết Acetylcholine làm chậm nhịp tim và sạc đầy pin nhận thức.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer: Exactly 128px (h-32) with Requested Info and Icons -->
+    <footer class="h-32 border-t border-white/10 glass-panel relative flex items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <!-- Content -->
+        <div class="text-xs text-gray-400 max-w-3xl leading-relaxed">
+            <span class="font-bold text-white block mb-1">CÁC KÊNH HIỆN TẠI</span>
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </div>
+        
+        <!-- Social Links with Icons -->
+        <div class="flex items-center space-x-4 shrink-0">
+            <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-red-600/20 border border-red-600/30 flex items-center justify-center text-red-500 hover:bg-red-600 hover:text-white transition-all shadow-md shadow-red-600/10" title="Kênh Youtube">
+                <i class="fa-brands fa-youtube text-lg"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all" title="Kênh Tiktok">
+                <i class="fa-brands fa-tiktok text-lg"></i>
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-blue-600/20 border border-blue-600/30 flex items-center justify-center text-blue-500 hover:bg-blue-600 hover:text-white transition-all shadow-md shadow-blue-600/10" title="Facebook Page">
+                <i class="fa-brands fa-facebook-f text-lg"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Interactive Simulation Logic -->
+    <script>
+        const btnKill = document.getElementById('btn-kill9');
+        const barRam = document.getElementById('bar-ram');
+        const txtRamLoad = document.getElementById('txt-ram-load');
+        const barAmygdala = document.getElementById('bar-amygdala');
+        const txtAmygdalaLevel = document.getElementById('txt-amygdala-level');
+        const txtSysPerf = document.getElementById('txt-sys-perf');
+        const graphLeak = document.getElementById('graph-leak');
+        const resetCircle = document.getElementById('reset-circle');
+
+        btnKill.addEventListener('click', () => {
+            // Animate RAM load down to 12%
+            barRam.style.width = '12%';
+            txtRamLoad.innerText = '12%';
+            txtRamLoad.className = 'text-neon-emerald font-bold';
+            
+            // Animate Amygdala levels to Safe
+            barAmygdala.style.width = '15%';
+            txtAmygdalaLevel.innerText = 'DEACTIVATED';
+            txtAmygdalaLevel.className = 'text-neon-emerald font-bold';
+            
+            // Change performance state
+            txtSysPerf.innerText = 'CLEAN FLOW STATE';
+            txtSysPerf.className = 'text-neon-emerald font-bold';
+
+            // Flatten the RAM leak line
+            graphLeak.setAttribute('d', 'M0,120 Q100,120 200,120 T400,120');
+            graphLeak.setAttribute('stroke', '#10b981');
+            
+            // Trigger Reset Circle visual splash
+            resetCircle.classList.remove('hidden');
+            resetCircle.setAttribute('r', '20');
+            resetCircle.setAttribute('fill', 'rgba(16, 185, 129, 0.4)');
+            
+            setTimeout(() => {
+                resetCircle.setAttribute('r', '6');
+                resetCircle.setAttribute('fill', '#10b981');
+            }, 500);
+
+            // Revert state back after 6 seconds to allow multiple interactions
+            setTimeout(() => {
+                barRam.style.width = '87%';
+                txtRamLoad.innerText = '87%';
+                txtRamLoad.className = 'text-neon-rose font-bold';
+                
+                barAmygdala.style.width = '90%';
+                txtAmygdalaLevel.innerText = 'HIGH';
+                txtAmygdalaLevel.className = 'text-neon-amber font-bold';
+                
+                txtSysPerf.innerText = 'CRITICAL LAG';
+                txtSysPerf.className = 'text-neon-rose';
+
+                graphLeak.setAttribute('d', 'M0,120 Q50,90 100,60 T200,40 T300,30 T400,20');
+                graphLeak.setAttribute('stroke', '#f43f5e');
+                resetCircle.classList.add('hidden');
+            }, 6000);
+        });
+    </script>
+</body>
+</html>
