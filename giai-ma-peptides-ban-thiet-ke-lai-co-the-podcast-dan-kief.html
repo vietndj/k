@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải Mã Peptides - Bản Thiết Kế Lại Cơ Thể</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        bio: {
+                            light: '#e0f2fe', // sky-100
+                            DEFAULT: '#0284c7', // sky-600
+                            dark: '#0f172a', // slate-900
+                            accent: '#14b8a6', // teal-500
+                            card: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* CSS Abstract Art - Bio Cells Background */
+        .abstract-cell {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+        .cell-1 { width: 400px; height: 400px; background: linear-gradient(135deg, #38bdf8, #818cf8); top: -100px; left: -100px; }
+        .cell-2 { width: 500px; height: 500px; background: linear-gradient(135deg, #2dd4bf, #3b82f6); top: 30%; right: -150px; }
+        .cell-3 { width: 350px; height: 350px; background: linear-gradient(135deg, #c084fc, #38bdf8); bottom: 10%; left: 10%; }
+
+        /* Abstract Art for Cards */
+        .card-art {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+        .card-art::after {
+            content: '';
+            position: absolute;
+            top: -50%; right: -50%;
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Mindmap Container */
+        #mindmap-wrapper {
+            overflow: hidden; /* Ngăn cuộn tự do */
+            position: relative;
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            cursor: grab;
+        }
+        #mindmap-wrapper:active {
+            cursor: grabbing;
+        }
+        #mermaid-graph {
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-origin: center center;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, #0284c7, #14b8a6);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- CSS Abstract Art Background -->
+    <div class="abstract-cell cell-1"></div>
+    <div class="abstract-cell cell-2"></div>
+    <div class="abstract-cell cell-3"></div>
+
+    <div class="max-w-6xl mx-auto px-4 py-12 md:py-20 relative z-10">
+
+        <!-- Header / Intro -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-bio-light text-bio-DEFAULT font-semibold mb-6 shadow-sm border border-sky-200">
+                <i class="fa-solid fa-dna"></i> Khám phá Kỷ nguyên Y sinh mới
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-bio-dark mb-6 leading-tight">
+                Giải Mã <span class="text-transparent bg-clip-text bg-gradient-to-r from-bio-DEFAULT to-bio-accent">Peptides</span>: Bản Thiết Kế Lại Cơ Thể
+            </h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">
+                Từ một cuộc trò chuyện sâu sắc giữa Steven Bartlett và Bác sĩ Alex Tatem. Chào bạn, mình là Cố vấn Học tập của bạn. Hôm nay chúng ta sẽ bóc tách loại "mã code sinh học" đang làm khuynh đảo giới tinh hoa Thung lũng Silicon.
+            </p>
+        </header>
+
+        <!-- 1. The Big Idea & Mindmap -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold text-bio-dark mb-8 section-title">🎯 The Big Idea & Sơ đồ Tư duy</h2>
+            
+            <div class="glass-card rounded-2xl p-8 mb-8 border-l-4 border-l-bio-accent">
+                <h3 class="text-xl font-bold text-bio-dark flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-lightbulb text-yellow-500"></i> Luận điểm Cốt lõi
+                </h3>
+                <p class="text-slate-700 text-lg leading-relaxed">
+                    Khác với thuốc hóa học truyền thống giống như một chiếc búa tạ đập phá mọi thứ, <strong>Peptides là những đoạn mã sinh học (amino acid) đóng vai trò như "chìa khóa" siêu chuẩn xác</strong>. Chúng khớp vừa vặn vào các "ổ khóa" của tế bào để ra lệnh cho cơ thể tự chữa lành, đốt mỡ, hoặc trẻ hóa mà giảm thiểu tối đa tác dụng phụ.
+                </p>
+            </div>
+
+            <!-- Mindmap Section -->
+            <div class="relative bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
+                <!-- Controls -->
+                <div class="absolute top-4 right-4 z-20 flex gap-2">
+                    <button onclick="zoomMindmap(0.2)" class="w-10 h-10 bg-white border border-slate-300 rounded-lg shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 hover:text-bio-DEFAULT transition-colors" title="Phóng to">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button onclick="zoomMindmap(-0.2)" class="w-10 h-10 bg-white border border-slate-300 rounded-lg shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 hover:text-bio-DEFAULT transition-colors" title="Thu nhỏ">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                
+                <div id="mindmap-wrapper" class="w-full h-[500px]">
+                    <div id="mermaid-graph" class="mermaid">
+                        graph LR
+                        %% Styling
+                        classDef rootNode fill:#0f172a,stroke:#38bdf8,stroke-width:3px,color:#fff,rx:10,ry:10,font-weight:bold;
+                        classDef branch fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0f172a,rx:8,ry:8;
+                        
+                        A[🧬 PEPTIDES <br/> Bản chất: Mã lệnh sinh học]:::rootNode
+                        
+                        A --> B(Chữa Lành & Phục Hồi):::branch
+                        A --> C(Đốt Mỡ & Chuyển Hóa):::branch
+                        A --> D(Trẻ Hóa & Thẩm Mỹ):::branch
+                        A --> E(Rủi Ro & Cạm Bẫy):::branch
+                    </div>
+                </div>
+            </div>
+
+            <!-- Youtube Button -->
+            <div class="mt-6 text-center">
+                <a href="https://youtu.be/jt5hHb6kzYM?si=TUcl5iwQf3vbgOO-" target="_blank" class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-full transition-all shadow-lg shadow-red-200 hover:shadow-red-300 transform hover:-translate-y-1">
+                    <i class="fa-brands fa-youtube text-xl"></i>
+                    Xem Video Gốc: Chuyên Gia Peptides: Chúng Thực Sự Làm Gì? - Bác sĩ Alex Tatem
+                </a>
+            </div>
+        </section>
+
+        <!-- 2. Deep Insights -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold text-bio-dark mb-8 section-title">🧠 Deep Insights - Các Trụ cột Tri thức</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Insight 1 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">🔑</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">1. Cơ chế Chìa & Ổ khóa</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Thuốc tây truyền thống là những "phân tử nhỏ" ngấm vào toàn thân. Peptides là chuỗi acid amin ngắn, được thiết kế để tác động cục bộ tới 1 loại thụ thể duy nhất.</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Giống như lập trình hướng đối tượng, nó chỉ kích hoạt một lệnh cụ thể ở một khu vực cụ thể mà không phá vỡ cân bằng của các hệ thống khác.</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ẩn dụ:</strong> Thuốc tây giống như dùng búa đập cả bức tường để sửa đường ống. Peptides giống như tra đúng chiếc chìa khóa vào ổ khóa của một cánh cửa hẹp để vặn ốc.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">🧱</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">2. Lego Sinh học</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Amino acid là nền tảng của cơ thể. Bằng cách lắp ráp chúng theo các trình tự khác nhau, chúng ta tạo ra vô số loại "key" (peptide) khác nhau.</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Insulin chính là peptide đầu tiên được con người sử dụng. Dạ dày phân giải protein thành amino acid, nên hầu hết peptide phải tiêm để tránh bị dịch vị tiêu hủy.</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ẩn dụ:</strong> Cơ thể bạn giống như một thùng gạch Lego. Cùng là những mảnh Lego đó, bạn có thể lắp thành một chiếc thuyền (peptide chữa lành), hoặc một tên lửa (peptide đốt mỡ).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">🩸</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">3. BPC-157: Kỹ sư Chữa lành</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Là bản sao tổng hợp của một đoạn peptide bảo vệ niêm mạc dạ dày, có khả năng kích thích mọc mạch máu mới cực nhanh.</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Khi tiêm vào vùng chấn thương (ví dụ gót chân Achilles), BPC-157 & TB-500 tăng cường lưu lượng máu (Angiogenesis), mang theo tế bào gốc và dưỡng chất để tái tạo mô đứt gãy.</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ẩn dụ:</strong> Bạn bị sập cầu (đứt gân). Thay vì chờ cơ thể từ từ bơi qua sông để nối dây, BPC-157 gọi ngay trực thăng thả đội kỹ sư và vật liệu thép xuống để xây cầu mới trong chớp mắt.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">🔥</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">4. GLP-1: Cỗ máy Đốt Mỡ</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Các loại thuốc như Tirzepatide, Retatrutide đang làm thay đổi thế giới. Chúng là các thụ thể đa kênh giúp giảm cân khủng khiếp và cải thiện mỡ gan.</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Chúng làm chậm quá trình rỗng dạ dày (gastric emptying) và vô hiệu hóa tín hiệu thèm ăn ở não, đồng thời điều hòa Insulin để kiểm soát đường huyết mượt mà.</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ví dụ thực tế:</strong> BS. Alex kể về một nam thanh niên vô sinh do béo phì. Sau khi dùng GLP-1 giảm hơn 45kg, lượng tinh trùng của anh ta đã tăng gấp 10 lần và sinh hoạt bình thường trở lại.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">📉</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">5. Hiệu ứng Mất Cơ Bắp</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Sụt cân quá nhanh nhờ thuốc sẽ khiến cơ thể rơi vào trạng thái Dị hóa (Catabolism) - tiêu hủy mọi thứ để sống, kể cả cơ bắp.</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Cơ bắp tốn rất nhiều calo để duy trì. Khi lượng calo nạp vào bị cắt đột ngột do GLP-1, cơ thể sẽ phân giải cơ bắp trước mỡ. Điều này làm giảm độ nhạy Insulin trầm trọng.</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ẩn dụ:</strong> Bạn muốn sưởi ấm ngôi nhà (cơ thể) vào mùa đông (đói calo). Thay vì lấy củi trong kho (mỡ thừa), bạn tháo luôn cả bàn ghế nội thất bằng gỗ xịn (cơ bắp) để đốt.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">✨</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">6. GHK-Cu: Phép màu Làn da</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Đây là loại Copper Tripeptide (Peptide Đồng) giảm dần theo tuổi tác, rất hiệu quả khi thoa ngoài da (kem bôi) thay vì tiêm.</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Nó kích thích các nguyên bào sợi sản sinh ra collagen và elastin trực tiếp tại bề mặt biểu bì, giữ cho da căng và chữa chứng đỏ mặt (Rosacea).</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ẩn dụ:</strong> Thay vì uống vitamin rồi hy vọng 1% phần dưỡng chất nhỏ nhoi sẽ trôi tới da mặt, thoa GHK-Cu giống như bạn rải trực tiếp "phân bón sinh học" lên ngay mảnh vườn khô cằn để hoa nở tức thì.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Insight 7 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">⏳</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">7. Epithalon & Nút thắt Lão hóa</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Epithalon (và các peptide giấc ngủ) điều chỉnh nhịp sinh học và được đồn đại là "suối nguồn tươi trẻ" bằng cách can thiệp vào Telomere.</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Mỗi khi tế bào phân chia, đoạn đuôi nhiễm sắc thể (Telomere) bị ngắn đi một chút, dẫn đến lão hóa. Epithalon kích thích Telomerase để sửa chữa đoạn đuôi này.</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ẩn dụ:</strong> Hãy tưởng tượng DNA của bạn là sợi dây giày. Telomere là cái màng bọc bằng nhựa cứng ở đầu dây. Khi màng bọc này tuột đi (lão hóa), dây giày sẽ tưa ra. Epithalon là keo bọc lại đầu dây đó.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">☠️</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">8. Rủi ro "Thị trường Xám"</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Vì FDA chặn cấp phép, một thị trường đen mọc lên bán Peptide dán mác "Chỉ Dành Cho Nghiên Cứu" (Research Use Only) để lách luật.</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Bạn tiêm hóa chất này trực tiếp vào tĩnh mạch/dưới da, nhưng không ai kiểm định xem nó có dính vi khuẩn (endotoxin) hay tạp chất, nồng độ sai lệch hay không.</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ẩn dụ:</strong> Bác sĩ Alex ví von việc tự mua Peptide trôi nổi trên mạng giống hệt như "Mua Sushi ở trạm xăng". Có thể bạn không chết ngay, nhưng bạn không biết mình thực sự đang ăn cái gì vào bụng.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="card-art"></div>
+                    <div class="text-4xl mb-4">⚖️</div>
+                    <h3 class="text-xl font-bold text-bio-dark mb-3">9. Quy luật "Không Bữa Trưa Miễn Phí"</h3>
+                    <div class="flex-grow space-y-3 text-sm text-slate-700">
+                        <p><strong class="text-bio-DEFAULT">Bản chất:</strong> Peptides chỉ là CÔNG CỤ (Tool), không phải PHÉP THUẬT (Magic). Mọi lợi ích to lớn đều đi kèm một sự đánh đổi (Trade-off).</p>
+                        <p><strong class="text-bio-DEFAULT">Cơ chế:</strong> Ngay khi bạn ngừng dùng peptide giảm cân (do không gánh nổi chi phí hoặc tác dụng phụ), nếu lối sống cũ vẫn còn, cơ thể sẽ khôi phục lại mỡ thừa ban đầu rất nhanh chóng.</p>
+                        <p class="bg-blue-50 p-3 rounded-lg border border-blue-100 italic">
+                            <strong class="text-blue-600"><i class="fa-solid fa-lightbulb"></i> Ví dụ thực tế:</strong> Dù dùng hormone tăng trưởng hay tiêm GLP-1, BS. Alex vẫn phải dậy lúc 4:45 sáng để đi tập tạ. Bạn không thể chích một mũi kim rồi mong đợi có cơ bắp khi nằm ườn trên sofa cả ngày.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Action Playbook -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold text-bio-dark mb-8 section-title">🚀 Action Playbook - Sổ tay Thực chiến</h2>
+            
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                <div class="p-6 bg-bio-light border-b border-sky-100">
+                    <h3 class="text-xl font-bold text-bio-dark flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-list text-bio-DEFAULT"></i> Kịch bản "Nếu - Thì" (If - Then)
+                    </h3>
+                </div>
+                <div class="p-6 divide-y divide-slate-100">
+                    <div class="py-4 flex gap-4">
+                        <div class="text-2xl text-bio-accent"><i class="fa-solid fa-scale-unbalanced"></i></div>
+                        <div>
+                            <strong class="text-lg text-bio-dark block mb-1">NẾU bạn đang béo phì, kháng insulin nặng và không thể kìm hãm sự thèm ăn:</strong>
+                            <span class="text-slate-600">THÌ thay vì cố nhịn ăn hành xác, hãy tìm đến bác sĩ nội tiết để hỏi về các phác đồ dùng GLP-1 (như Semaglutide/Tirzepatide) hợp pháp. Coi nó như "bánh xe tập" để giữ thăng bằng trong khi bạn sửa đổi chế độ dinh dưỡng.</span>
+                        </div>
+                    </div>
+                    <div class="py-4 flex gap-4">
+                        <div class="text-2xl text-bio-accent"><i class="fa-solid fa-dumbbell"></i></div>
+                        <div>
+                            <strong class="text-lg text-bio-dark block mb-1">NẾU bạn quyết định sử dụng peptide để giảm mỡ nhanh:</strong>
+                            <span class="text-slate-600">THÌ hãy bắt buộc đăng ký 1 phòng gym và thuê HLV cá nhân. Bạn PHẢI tập kháng lực (nâng tạ) và nạp đủ lượng Protein cao để cơ thể không ăn thịt chính cơ bắp của bạn.</span>
+                        </div>
+                    </div>
+                    <div class="py-4 flex gap-4">
+                        <div class="text-2xl text-bio-accent"><i class="fa-solid fa-person-falling-burst"></i></div>
+                        <div>
+                            <strong class="text-lg text-bio-dark block mb-1">NẾU bạn có một chấn thương cơ/gân mãn tính đeo bám mãi không khỏi:</strong>
+                            <span class="text-slate-600">THÌ bạn nên thảo luận với chuyên gia/phòng khám phục hồi chức năng về liệu pháp BPC-157 hoặc TB-500 cục bộ thay vì chỉ phụ thuộc vào thuốc giảm đau Corticosteroid.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-bio-DEFAULT text-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-yellow-300"></i> Hành động Micro (Trong 24h tới)
+                    </h3>
+                    <p class="text-sky-100">Bước đi nhỏ nhất bạn có thể làm ngay lúc này để tối ưu hóa cơ thể.</p>
+                </div>
+                <div class="bg-white text-bio-dark rounded-xl p-4 font-semibold shadow-inner flex-shrink-0 md:max-w-md w-full">
+                    1. Đặt lịch đi đo chỉ số máu (Testosterone, Insulin, Vitamin D) trước khi nghĩ tới bất kỳ "hacker" sinh học nào.<br><br>
+                    2. Rà soát lại đĩa thức ăn trưa nay: Đã có đủ chất đạm (Protein) chưa?
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Reality Check -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold text-bio-dark mb-8 section-title">⚠️ Reality Check - Chốt chặn Kỷ luật</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-rose-50 border border-rose-200 rounded-2xl p-8 relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 text-8xl opacity-10"><i class="fa-solid fa-skull-crossbones"></i></div>
+                    <h3 class="text-2xl font-bold text-rose-700 mb-4">Tại sao mọi người thất bại?</h3>
+                    <ul class="space-y-3 text-rose-900">
+                        <li class="flex gap-2"><i class="fa-solid fa-xmark mt-1"></i> Tìm kiếm "Đường tắt" (Shortcut) ảo tưởng: Nghĩ rằng tiêm peptide xong thì có thể ăn đồ rác (Junk food) thoải mái.</li>
+                        <li class="flex gap-2"><i class="fa-solid fa-xmark mt-1"></i> Đóng vai bác sĩ mạng: Tự mua các loại lọ "Research Use Only" rẻ tiền trên mạng về tự pha trộn và bơm vào cơ thể.</li>
+                        <li class="flex gap-2"><i class="fa-solid fa-xmark mt-1"></i> Bỏ qua bức tranh lớn: Tập trung tiêm chích nhưng mất ngủ, stress triền miên và dinh dưỡng tồi tệ.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900 text-white rounded-2xl p-8 relative overflow-hidden shadow-xl">
+                    <div class="absolute -right-4 -top-4 text-8xl opacity-10 text-bio-accent"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="text-2xl font-bold text-bio-accent mb-4">🛡️ Guardrails (Chốt chặn Vật lý)</h3>
+                    <p class="text-slate-300 mb-6">Đừng dặn bản thân "phải tỉnh táo". Hãy thiết lập chốt chặn môi trường ép bạn phải an toàn:</p>
+                    
+                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 mb-3">
+                        <strong class="text-white block mb-1">Quy tắc "Không có Đơn, Không Mua":</strong>
+                        <span class="text-sm text-slate-400">Khóa thẻ thanh toán/cài extension chặn các website bán peptide chợ đen không yêu cầu đơn thuốc của bác sĩ.</span>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                        <strong class="text-white block mb-1">Luật Ký Quỹ Gym:</strong>
+                        <span class="text-sm text-slate-400">Nếu bạn muốn đầu tư vào peptide hoặc thuốc giảm cân, bạn BẮT BUỘC phải chuyển tiền mua 3 tháng thẻ Gym trước. Nếu chưa tập tạ, tuyệt đối không đụng vào kim tiêm.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- 5. Footer Kênh Thông Tin -->
+    <footer class="bg-slate-900 text-slate-300 border-t-4 border-bio-accent h-[128px] flex items-center justify-center">
+        <div class="max-w-6xl mx-auto px-4 w-full flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-center md:text-left">
+                <p class="font-semibold text-white mb-1">Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+                <p class="text-slate-500 text-xs">&copy; 2026 Bản quyền thuộc về tác giả. Tóm tắt nội dung học tập.</p>
+            </div>
+            
+            <div class="flex items-center gap-6 text-2xl">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="text-slate-400 hover:text-red-500 transition-colors transform hover:scale-110" title="YouTube">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-slate-400 hover:text-white transition-colors transform hover:scale-110" title="TikTok">
+                    <i class="fa-brands fa-tiktok"></i>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="text-slate-400 hover:text-blue-500 transition-colors transform hover:scale-110" title="Facebook">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mermaid.js -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+
+    <!-- Custom Script for Mindmap Zoom & Pan -->
+    <script>
+        let currentScale = 1;
+        const MIN_SCALE = 0.5;
+        const MAX_SCALE = 2;
+        const graphEl = document.getElementById('mermaid-graph');
+        
+        // Chức năng Zoom in / out cho Mindmap bằng 2 nút ấn
+        function zoomMindmap(delta) {
+            currentScale += delta;
+            
+            // Giới hạn scale
+            if (currentScale < MIN_SCALE) currentScale = MIN_SCALE;
+            if (currentScale > MAX_SCALE) currentScale = MAX_SCALE;
+            
+            graphEl.style.transform = `scale(${currentScale})`;
+        }
+
+        // Logic để kéo thả (pan) Mindmap bên trong container
+        const wrapper = document.getElementById('mindmap-wrapper');
+        let isDragging = false;
+        let startX, startY;
+        let translateX = 0, translateY = 0;
+
+        wrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            
+            // Kết hợp translate và scale
+            graphEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+        });
+
+        // Ngăn scroll chuột zoom để tránh giật trang (chỉ cho phép vuốt trang bình thường)
+        wrapper.addEventListener('wheel', (e) => {
+            // Không chặn hành vi mặc định, để cuộn trang vẫn bình thường.
+            // Vì yêu cầu là TUYỆT ĐỐI không để cuộn chuột tự do gây giật.
+        });
+    </script>
+</body>
+</html>
