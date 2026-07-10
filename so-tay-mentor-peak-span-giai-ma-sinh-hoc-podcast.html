@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Mentor: Peak Span & Giải Mã Sinh Học</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+
+    <style>
+        /* =========================================================
+           DYNAMIC THEME: 🌱🧠 BIOHACKING & LONGEVITY 
+           Tone màu: Xanh ngọc lục bảo (Sức khỏe), Xanh dương nhạt (Khoa học)
+        ========================================================= */
+        :root {
+            --bg-body: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --primary: #10b981;       /* Emerald 500 */
+            --primary-dark: #047857;  /* Emerald 700 */
+            --primary-light: #d1fae5;
+            --accent: #0ea5e9;        /* Sky 500 */
+            --warning: #f59e0b;       /* Amber 500 */
+            --danger: #ef4444;        /* Red 500 */
+            --card-bg: #ffffff;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            min-height: calc(100vh - 128px);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Nunito', sans-serif;
+            color: var(--text-main);
+            font-weight: 800;
+            line-height: 1.3;
+        }
+        
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 12px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            font-size: 1.05rem;
+        }
+
+        /* Mentor Voice */
+        .mentor-voice {
+            background: linear-gradient(135deg, #ecfdf5 0%, #e0f2fe 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px 32px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            font-style: italic;
+            color: #334155;
+            margin-bottom: 48px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
+        }
+
+        section {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05);
+            margin-bottom: 56px;
+        }
+
+        /* =========================================================
+           1. THE BIG IDEA & MINDMAP
+        ========================================================= */
+        .big-idea-highlight {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 32px;
+            padding: 0 16px;
+            border-left: 3px solid var(--warning);
+        }
+
+        /* Mindmap Container */
+        .mindmap-container {
+            position: relative;
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius-md);
+            overflow: hidden; /* Cấm cuộn tràn */
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+        }
+
+        .zoom-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .zoom-controls button {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: var(--primary-dark);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .zoom-controls button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        #mindmap-content {
+            transform-origin: center center;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+        }
+
+        .youtube-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #ef4444;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            margin: 0 auto;
+        }
+        .youtube-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            background-color: #dc2626;
+        }
+
+        /* =========================================================
+           2. DEEP INSIGHTS
+        ========================================================= */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 28px;
+        }
+
+        .insight-card {
+            background: var(--bg-body);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 28px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.2);
+            border-color: var(--primary-light);
+        }
+
+        .insight-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .insight-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .tag-logic { background: #e0f2fe; color: #0284c7; }
+        .tag-mech { background: #fef3c7; color: #b45309; }
+        .tag-example { background: #dcfce7; color: #15803d; }
+
+        .insight-part { margin-bottom: 16px; font-size: 0.95rem; }
+        .insight-part.metaphor {
+            background: #ffffff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            font-style: italic;
+            color: var(--text-muted);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* CSS Abstract Art */
+        .abstract-art {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 24px;
+            position: relative;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            animation: morph 6s ease-in-out infinite;
+        }
+
+        @keyframes morph {
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            50% { border-radius: 70% 30% 50% 50% / 30% 70% 50% 50%; }
+            100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        }
+
+        .art-1 { background: linear-gradient(135deg, #fca5a5, #ef4444); }
+        .art-2 { background: linear-gradient(135deg, #6ee7b7, #10b981); animation-delay: -1s; }
+        .art-3 { background: linear-gradient(135deg, #93c5fd, #3b82f6); animation-delay: -2s; }
+        .art-4 { background: linear-gradient(135deg, #fcd34d, #f59e0b); animation-delay: -3s; }
+        .art-5 { background: linear-gradient(135deg, #a78bfa, #7c3aed); animation-delay: -4s; }
+        .art-6 { background: linear-gradient(135deg, #7dd3fc, #0ea5e9); animation-delay: -5s; }
+        .art-7 { background: linear-gradient(135deg, #f472b6, #db2777); animation-delay: -1.5s; }
+        .art-8 { background: linear-gradient(135deg, #fb923c, #ea580c); animation-delay: -2.5s; }
+        .art-9 { background: linear-gradient(135deg, #94a3b8, #334155); animation-delay: -3.5s; }
+
+        /* =========================================================
+           3. ACTION PLAYBOOK
+        ========================================================= */
+        .playbook-card {
+            background: #f0fdf4;
+            border-left: 4px solid var(--primary);
+            padding: 24px;
+            margin-bottom: 24px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .if-then-item {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .micro-action-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .micro-action-list li {
+            background: #fffbeb;
+            border-left: 4px solid var(--warning);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            border-radius: 0 12px 12px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .micro-action-list li i {
+            color: var(--warning);
+            font-size: 1.4rem;
+            margin-top: 2px;
+        }
+
+        /* =========================================================
+           4. REALITY CHECK
+        ========================================================= */
+        .guardrail-card {
+            background: #fff1f2;
+            border: 2px dashed #fecdd3;
+            padding: 32px;
+            border-radius: var(--radius-md);
+            margin-top: 24px;
+        }
+
+        .guardrail-item {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--danger);
+            margin-bottom: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        /* =========================================================
+           5. FOOTER
+        ========================================================= */
+        footer {
+            height: 128px; 
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 24px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        footer p {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            max-width: 900px;
+            color: #cbd5e1;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 16px; }
+            section { padding: 24px; }
+            h2 { font-size: 1.7rem; }
+            .mindmap-container { height: 400px; }
+            .footer-links { flex-direction: column; gap: 12px; }
+            footer { height: auto; padding: 32px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Mentor's Voice -->
+        <div class="mentor-voice">
+            <strong><i class="fa-solid fa-leaf"></i> Góc nhìn Cố vấn:</strong> Chào bạn, tôi ở đây để giúp bạn bóc tách những thuật ngữ y khoa phức tạp của Tiến sĩ Rhonda Patrick thành những bài học thực chiến nhất. Đừng sợ hãi trước những khái niệm sinh học hàn lâm. Cơ thể chúng ta là một cỗ máy hoàn hảo, nó không tự nhiên già đi, nó chỉ đang bị 'bào mòn' bởi những thói quen tàng hình. Nào, cất lý thuyết đi và cùng tôi bẻ khóa mã gen của bạn nhé! 🌱
+        </div>
+
+        <!-- ==========================================
+             1. 🎯 THE BIG IDEA
+        =========================================== -->
+        <section>
+            <h2>🎯 [The Big Idea] Bức tranh toàn cảnh</h2>
+            <div class="big-idea-highlight">
+                <span style="color: var(--primary-dark);">Luận điểm cốt lõi (Paradigm Shift):</span><br> 
+                Tuổi thọ không chỉ là việc bạn sống được bao nhiêu năm, mà là kéo dài <strong>"Đỉnh cao phong độ" (Peak Span)</strong>. Kẻ thù lớn nhất tàn phá cơ thể bạn từ bên trong chính là lớp mỡ nội tạng tàng hình và sự xâm nhập của các hóa chất ẩn nấp trong những vật dụng vô hại nhất (như biên lai siêu thị).
+            </div>
+
+            <!-- Mindmap Block -->
+            <div class="mindmap-container" id="mindmap-wrapper">
+                <div class="zoom-controls">
+                    <button onclick="zoomMap(0.15)"><i class="fa-solid fa-magnifying-glass-plus"></i> Phóng to</button>
+                    <button onclick="zoomMap(-0.15)"><i class="fa-solid fa-magnifying-glass-minus"></i> Thu nhỏ</button>
+                </div>
+                
+                <div id="mindmap-content">
+                    <pre class="mermaid">
+                        graph LR
+                            A((Đỉnh Cao<br>Phong Độ<br>Peak Span)) --> B(Kẻ Thù Phá Hủy)
+                            A --> C(Cơ Chế Giải Cứu)
+                            
+                            B --> B1(Mỡ Nội Tạng: Cỗ Máy Viêm)
+                            B --> B2(Hóa Đơn Giấy: Độc Tố BPA)
+                            B --> B3(Thiếu Ngủ: Chế Độ Tích Mỡ)
+                            B --> B4(Đồ Nhựa Vi Sóng: Rối Loạn Hormone)
+                            
+                            C --> C1(Nhịn Ăn Gián Đoạn 12h)
+                            C --> C2(Tự Thực Bào: Dọn Rác Tế Bào)
+                            C --> C3(Tập HIIT: Vắt Kiệt Mỡ Thừa)
+                            C --> C4(Cơ Bắp: Bồn Chứa Đường)
+                    </pre>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="https://youtu.be/PyhmvAL-iYw" target="_blank" class="youtube-btn">
+                    <i class="fa-brands fa-youtube" style="font-size: 1.2rem;"></i>
+                    Chuyên gia Chống Lão hóa: Dừng chạm vào hóa đơn ngay lập tức! Cách nhanh nhất để teo mỡ nội tạng
+                </a>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             2. 🧠 DEEP INSIGHTS
+        =========================================== -->
+        <section>
+            <h2>🧠 [Deep Insights] Các Trụ cột Tri thức</h2>
+            <p style="color: var(--text-muted); margin-bottom: 32px;">
+                Áp dụng kỹ thuật Feynman: Không cần nhớ các thuật ngữ hóa học. Bạn chỉ cần hiểu bản chất cơ thể mình đang làm gì qua 9 trụ cột cốt lõi sau.
+            </p>
+
+            <div class="insights-grid">
+                
+                <!-- Insight 1 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-1"></div>
+                    <h3>1. Mỡ Nội Tạng: Khối U Tàng Hình</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Mỡ nội tạng không phải là lớp thịt mỡ dưới da mà bạn có thể véo được. Nó là một cơ quan sống ẩn sâu bên trong, bám chặt lấy gan, tim và ruột.
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        Lớp mỡ này hoạt động như một nhà máy sản xuất chất độc, liên tục xả Cytokines (chất gây viêm) vào mạch máu. Hệ miễn dịch lầm tưởng cơ thể đang bị nhiễm trùng, dẫn đến kháng insulin và đẩy nhanh lão hóa.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Giống như bạn đang quấn một quả bom nổ chậm rỉ axit quanh động cơ chiếc xe hơi. Bề ngoài chiếc xe sáng bóng, nhưng động cơ bên trong đang bị ăn mòn mỗi ngày.
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-2"></div>
+                    <h3>2. Peak Span: Định nghĩa lại Tuổi thọ</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Đừng chỉ đếm xem bạn sống được bao lâu. Hãy đếm xem bạn có bao nhiêu năm sống với phong độ đỉnh cao nhất (Peak Span).
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        Mật độ xương, khối lượng cơ và khả năng sửa chữa DNA đạt đỉnh ở tuổi 25. Bằng dinh dưỡng và tập luyện, ta "bẻ cong" đồ thị lão hóa, ép tế bào phải giữ vững phong độ thay vì phó mặc cho sự héo mòn.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Sức khỏe không phải là chiếc lá rụng từ từ. Bạn phải là phi công liên tục "châm nhiên liệu" để giữ máy bay thăng bằng ở độ cao lý tưởng đến tận phút cuối cùng.
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-3"></div>
+                    <h3>3. Kẻ Cắp Hormone từ Tờ Hóa Đơn</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Tuyệt đối không cầm tờ biên lai/hóa đơn siêu thị bằng tay trần. Nó chứa đầy BPA/BPS – những chất hóa học siêu độc phá vỡ nội tiết.
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        BPA ngấm xuyên qua da vào máu (nhanh gấp 10 lần nếu tay đang dính cồn sát khuẩn). Khi vào cơ thể, nó đóng giả thành Estrogen, làm sụt giảm tới 50% Testosterone ở nam và rối loạn sinh lý ở nữ, ép cơ thể tích mỡ bụng.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Cầm hóa đơn ngay sau khi xịt cồn sát khuẩn hệt như việc bạn mở toang cửa nhà và trải thảm đỏ mời "kẻ cắp hormone" bước thẳng vào cơ thể.
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-4"></div>
+                    <h3>4. Thiếu Ngủ: Bật Chế Độ Bơm Mỡ</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Bạn không cần ăn dư calo để béo. Chỉ cần thức khuya thiếu ngủ 2 tuần, mỡ nội tạng của bạn sẽ tự động tăng vọt 11%.
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        Thiếu ngủ đẩy hormone stress (Cortisol) lên cao, làm giảm hormone báo no và tăng hormone thèm ăn. Cortisol đánh lừa cơ thể rằng bạn đang đối mặt với nạn đói, ép cơ thể khóa mỡ lại để dự phòng sinh tồn.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Cơ thể thiếu ngủ giống như chiếc điện thoại còn 5% pin. Nó lập tức tắt chức năng "đốt năng lượng" và ép các ứng dụng chạy ngầm (tích mỡ) để cố gắng duy trì sự sống.
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-5"></div>
+                    <h3>5. Nhịn Ăn Gián Đoạn 12H</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Nhịn ăn 12-14 tiếng (tính cả giấc ngủ đêm) không phải là bỏ đói bản thân, mà là tạo một "khoảng trống sinh học" cho cơ thể vặn công tắc chuyển hóa.
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        Sau 12 tiếng không nạp calo, lượng đường trong gan cạn kiệt. Cơ thể bắt buộc phải lôi mỡ nội tạng ra đốt, biến chúng thành Xeton (Ketone) - một nguồn nhiên liệu siêu cấp giúp não bộ cực kỳ sắc bén.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Giống hệt chiếc ô tô Hybrid (Xăng - Điện). Khi bạn chạy cạn bình điện (đường huyết từ thức ăn), hệ thống sẽ tự động kích hoạt động cơ xăng (đốt mỡ dự trữ) để xe tiếp tục lăn bánh.
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-6"></div>
+                    <h3>6. Autophagy: Đội Dọn Rác Tế Bào</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Tự thực bào (Autophagy) là cỗ máy dọn dẹp vĩ đại nhất của cơ thể, nhưng nó chỉ xuất hiện khi dạ dày bạn trống rỗng.
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        Khi không có năng lượng mới nạp vào, các tế bào khỏe mạnh sẽ đi săn lùng và nuốt chửng các tế bào hỏng hóc, rác thải protein (nguyên nhân cốt lõi gây ung thư và não cá vàng) để tái chế thành nhiên liệu.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Giống như việc dọn dẹp tổng vệ sinh nhà cửa. Bạn không thể quét sạch sàn nhà nếu khách (thức ăn) cứ liên tục giẫm giày bẩn bước vào nhà 24/7. Phải đóng cửa lại.
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-7"></div>
+                    <h3>7. Cỗ Máy Thời Gian HIIT</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Đi bộ đủ 10.000 bước rất tốt cho tĩnh tâm, nhưng nó không đủ sức để "vắt kiệt" mỡ nội tạng. Bạn cần bài tập ép nhịp tim lên vùng đỏ.
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        Tập Cardio/HIIT cường độ cao tạo ra lượng Adrenaline bùng nổ, ép dòng máu chảy xiết làm sạch mảng bám thành mạch, đồng thời đánh thức các kho mỡ sâu mở cửa giải phóng năng lượng.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Mỡ nội tạng là vết bùn đất khô cứng bám trên xe. Gập bụng hay đi bộ chỉ như việc dội một gáo nước lã. Tập HIIT chính là dùng vòi xịt cao áp thổi bay mọi vết bẩn cứng đầu.
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-8"></div>
+                    <h3>8. Bẫy Vi Nhựa Trong Căn Bếp</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Sự tiện lợi của hộp nhựa hâm thức ăn đang âm thầm bắt bạn trả giá bằng chính sức khỏe sinh sản và hệ miễn dịch của mình.
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        Nhiệt độ cao bẻ gãy liên kết trong đồ nhựa, giải phóng các hóa chất vĩnh cửu (Phthalates, PFAS) ngấm thẳng vào thức ăn. Khi vào máu, chúng gây nhiễu loạn toàn bộ hệ thống nội tiết.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Bỏ hộp nhựa chứa thức ăn vào quay trong lò vi sóng không khác gì việc bạn tự tay rắc một muỗng gia vị "lão hóa cấp tốc và vô sinh" vào bữa trưa của chính mình.
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="insight-card">
+                    <div class="abstract-art art-9"></div>
+                    <h3>9. Cơ Bắp: Bồn Chứa Đường Huyết</h3>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-logic">Bản chất</span><br>
+                        Người có nhiều cơ bắp không chỉ để đẹp, họ đang sở hữu một lớp áo giáp sinh học khổng lồ chống lại sự tích tụ mỡ bụng.
+                    </div>
+                    <div class="insight-part">
+                        <span class="insight-tag tag-mech">Cơ chế vận hành</span><br>
+                        Cơ bắp là hồ chứa đường (Glucose) lớn nhất trong cơ thể. Khối lượng cơ càng lớn, đường thừa từ thức ăn càng có nhiều không gian để tẩu tán, ngăn chặn tuyến tụy phải bơm insulin quá sức.
+                    </div>
+                    <div class="insight-part metaphor">
+                        💡 <strong>Ẩn dụ:</strong> Khối cơ bắp chính là một miếng bọt biển. Bọt biển càng dày, nó càng hút sạch lượng nước (đường dư thừa) tràn ra trên mặt bàn một cách nhanh gọn mà không để lại giọt nào.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==========================================
+             3. 🚀 ACTION PLAYBOOK
+        =========================================== -->
+        <section>
+            <h2>🚀 [Action Playbook] Sổ tay Thực chiến</h2>
+            <p style="margin-bottom: 24px;">Biến kiến thức y sinh thành hành động đời thường. Đừng chờ đến ngày mai, đây là sổ tay của bạn.</p>
+
+            <div class="playbook-card">
+                <h3 style="color: var(--primary-dark); margin-bottom: 20px;">🔄 Kịch bản "Nếu - Thì" (If - Then)</h3>
+                
+                <div class="if-then-item">
+                    <p><strong>NẾU</strong> bạn đi siêu thị tính tiền và thu ngân xé hóa đơn đưa cho bạn...</p>
+                    <p style="color: var(--primary-dark); margin-top: 8px;">👉 <strong>THÌ:</strong> Hãy nói "Không cần in hóa đơn giúp mình". Nếu bắt buộc phải cầm, chỉ dùng đầu móng tay kẹp lại, vứt thẳng vào thùng rác và <strong>RỬA TAY BẰNG XÀ PHÒNG</strong> (tuyệt đối không dùng cồn sát khuẩn lúc này, vì cồn hòa tan BPA khiến da hút độc nhanh gấp 10 lần).</p>
+                </div>
+
+                <div class="if-then-item">
+                    <p><strong>NẾU</strong> bạn rơi vào trạng thái thèm ăn vặt kinh khủng lúc 10h đêm...</p>
+                    <p style="color: var(--primary-dark); margin-top: 8px;">👉 <strong>THÌ:</strong> Hãy đi uống 1 ly nước đầy và đánh răng thật kỹ. Vị bạc hà cay nồng sẽ bẻ gãy cảm giác thèm ăn và gửi tín hiệu khóa sinh học lên não: "Nhà bếp đã đóng cửa, không nhận thêm năng lượng".</p>
+                </div>
+            </div>
+
+            <div class="playbook-card" style="border-left-color: var(--warning); background-color: #fffbeb;">
+                <h3 style="color: #b45309; margin-bottom: 20px;">⚡ Hành động Micro (Trong 24h tới)</h3>
+                <ul class="micro-action-list">
+                    <li>
+                        <i class="fa-solid fa-bolt"></i>
+                        <div>
+                            <strong>Chiến dịch Thanh trừng Ví tiền:</strong> Mở ví và túi xách của bạn ra. Lấy TẤT CẢ các tờ biên lai, hóa đơn giấy in nhiệt cũ kỹ đang nhét trong đó vứt thẳng vào thùng rác. Đừng để túi chứa độc BPA ám vào tay bạn mỗi ngày.
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-bolt"></i>
+                        <div>
+                            <strong>Thiết lập "Cửa sổ đóng băng":</strong> Tối nay, hãy hoàn thành miếng ăn cuối cùng trước 19:30. Sau đó chỉ uống nước lọc. Bạn sẽ vô tình tạo ra chu kỳ nhịn ăn 12 tiếng trong lúc ngủ mà không cần tốn một giọt mồ hôi.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             4. ⚠️ REALITY CHECK
+        =========================================== -->
+        <section>
+            <h2>⚠️ [Reality Check] Nhận diện Cạm bẫy & Chốt chặn Kỷ luật</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">
+                <strong>Tại sao chúng ta luôn thất bại?</strong> Mọi người đọc kiến thức xong đều rất quyết tâm, nhưng 3 ngày sau lại bỏ cuộc. Bởi vì họ đánh giá quá cao <strong>Ý CHÍ</strong>. Ý chí là một viên pin sẽ cạn sạch vào lúc 8h tối sau một ngày làm việc mệt mỏi. Đừng bắt bản thân phải đấu tranh, hãy tạo ra các giới hạn vật lý để triệt tiêu cám dỗ.
+            </p>
+
+            <div class="guardrail-card">
+                <h3 style="color: var(--danger); margin-bottom: 20px;"><i class="fa-solid fa-shield-halved"></i> Chốt chặn Kỷ luật (Guardrails)</h3>
+                
+                <div class="guardrail-item">
+                    <h4 style="color: var(--danger); margin-bottom: 8px;">🛡️ Luật "Khoảng Cách Vật Lý" (Cách ly Đồ ăn vặt)</h4>
+                    <p>Thay vì dặn bản thân: <em>"Mua bim bim để tủ lạnh đãi khách, mình sẽ kiềm chế không ăn đâu"</em>. Hãy thiết lập chốt chặn cứng: <strong>TUYỆT ĐỐI không mua bất kỳ đồ ăn vặt nào mang về nhà.</strong> Nếu 11h đêm bạn thèm ăn, sự lười biếng phải dắt xe ra ngoài mua sẽ ngay lập tức chiến thắng cơn thèm ăn của bạn.</p>
+                </div>
+
+                <div class="guardrail-item">
+                    <h4 style="color: var(--danger); margin-bottom: 8px;">🛡️ Luật "Lưu Đày Thiết Bị" (Bảo vệ Giấc ngủ)</h4>
+                    <p>Để ngăn chặn việc thức khuya lướt điện thoại khiến mỡ bụng tăng 11%, hãy mua một cái đồng hồ báo thức cơ học giá 50 ngàn. Từ nay, cục sạc điện thoại của bạn <strong>BẮT BUỘC phải cắm ở phòng khách</strong>. Sự bất tiện khi phải bước ra ngoài giữa đêm tối để lấy điện thoại sẽ bảo vệ sự toàn vẹn của giấc ngủ.</p>
+                </div>
+            </div>
+        </section>
+
+    </div> <!-- End Container -->
+
+    <!-- ==========================================
+         5. 🌐 FOOTER
+    =========================================== -->
+    <footer>
+        <p>Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.</p>
+        <div class="footer-links">
+            <a href="https://youtube.com/@vietndonline" target="_blank" title="YouTube">
+                <i class="fa-brands fa-youtube"></i> YouTube
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" title="TikTok">
+                <i class="fa-brands fa-tiktok"></i> TikTok
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" title="Facebook">
+                <i class="fa-brands fa-facebook"></i> Facebook Page
+            </a>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+         SCRIPTS: MERMAID & ZOOM CONTROLS
+    =========================================== -->
+    <script>
+        // Cấu hình sơ đồ Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e0f2fe',
+                primaryTextColor: '#0284c7',
+                primaryBorderColor: '#0ea5e9',
+                lineColor: '#64748b',
+                fontFamily: 'Inter, sans-serif'
+            },
+            flowchart: {
+                curve: 'basis' // Đường cong mềm mại
+            }
+        });
+
+        // Xử lý Phóng to, Thu nhỏ & Pan (Kéo thả) sơ đồ
+        let currentScale = 1;
+        let isDragging = false;
+        let startX, startY, initialX = 0, initialY = 0;
+        
+        const mindmapContent = document.getElementById('mindmap-content');
+
+        function updateTransform() {
+            mindmapContent.style.transform = `translate(${initialX}px, ${initialY}px) scale(${currentScale})`;
+        }
+
+        function zoomMap(delta) {
+            currentScale += delta;
+            // Giới hạn zoom
+            if (currentScale < 0.5) currentScale = 0.5;
+            if (currentScale > 2.5) currentScale = 2.5;
+            
+            // Kích hoạt transition khi bấm nút zoom để tạo độ mượt
+            mindmapContent.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
+            updateTransform();
+        }
+
+        // Logic Kéo thả sơ đồ khi đã phóng to
+        mindmapContent.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            // Tắt transition khi kéo để tránh bị delay/lag
+            mindmapContent.style.transition = 'none';
+            startX = e.clientX - initialX;
+            startY = e.clientY - initialY;
+            mindmapContent.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                mindmapContent.style.cursor = 'grab';
+            }
+        });
+
+        window.addEventListener('mouseleave', () => {
+            if (isDragging) {
+                isDragging = false;
+                mindmapContent.style.cursor = 'grab';
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            initialX = e.clientX - startX;
+            initialY = e.clientY - startY;
+            updateTransform();
+        });
+
+        // Chặn cuộn chuột tự do trong khu vực Mindmap để tránh giật trang web
+        const mindmapContainer = document.querySelector('.mindmap-container');
+        mindmapContainer.addEventListener('wheel', (e) => {
+            // Không xử lý zoom bằng cuộn chuột, để trang web cuộn lên/xuống tự nhiên
+        }, { passive: true });
+    </script>
+</body>
+</html>
