@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Xây Kênh & Thuật Toán - Mentor Nguyễn Đức Việt</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome cho Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1121; /* Dark Mode không gian tối sâu */
+            color: #f8fafc;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Variables & Gradients */
+        :root {
+            --primary: #3b82f6;   /* Blue */
+            --secondary: #10b981; /* Emerald */
+            --accent: #f59e0b;    /* Orange */
+            --danger: #ef4444;    /* Red */
+            --bg-card: #1e293b;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Glassmorphism Cards */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+        }
+
+        /* --- CSS Abstract Art (100% Thuật toán CSS, Không dùng ảnh) --- */
+        .art {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #0f172a;
+        }
+        .art-1 { background: radial-gradient(circle at 20% 30%, #3b82f6 0%, transparent 50%), radial-gradient(circle at 80% 80%, #10b981 0%, transparent 50%); }
+        .art-2 { background: repeating-linear-gradient(45deg, #ef4444, #ef4444 10px, #b91c1c 10px, #b91c1c 20px); clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 80%); }
+        .art-3 { background: conic-gradient(from 0deg, #f59e0b, #ec4899, #8b5cf6, #3b82f6); transform: scale(1.5); }
+        .art-4 { background: linear-gradient(135deg, #f59e0b 25%, transparent 25%) -20px 0, linear-gradient(225deg, #f59e0b 25%, transparent 25%) -20px 0, linear-gradient(315deg, #f59e0b 25%, transparent 25%), linear-gradient(45deg, #f59e0b 25%, transparent 25%); background-size: 40px 40px; background-color: #b45309; }
+        .art-5 { background: radial-gradient(ellipse at center, #8b5cf6 0%, #0f172a 70%); }
+        .art-5::before { content:''; position:absolute; width: 40px; height: 40px; border-radius: 50%; background: #ec4899; top: 20px; left: 20px; box-shadow: 20px 20px 0 #3b82f6; }
+        .art-6 { background: linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%); clip-path: circle(70% at 50% 120%); }
+        .art-7 { background: linear-gradient(to right, #ec4899, #f43f5e); }
+        .art-7::after { content:''; position:absolute; width: 100%; height: 50%; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); }
+        .art-8 { background: conic-gradient(at 50% 50%, #10b981 0%, #06b6d4 50%, #10b981 100%); }
+        .art-9 { background: repeating-radial-gradient(circle, #8b5cf6, #8b5cf6 15px, #0f172a 15px, #0f172a 30px); }
+
+        /* --- Mindmap Cấu hình --- */
+        .mindmap-wrapper {
+            position: relative;
+            width: 100%;
+            height: 480px;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            overflow: hidden; /* BẮT BUỘC KHÓA CUỘN TRÀN */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .zoom-btn {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+            color: #f8fafc;
+            border: 1px solid #475569;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .zoom-btn:hover {
+            background-color: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        #mermaid-container {
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Footer Tuyệt Đối --- */
+        .footer {
+            height: 128px;
+            background-color: #020617;
+            border-top: 1px solid #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="max-w-6xl mx-auto pt-24 pb-16 px-6 text-center">
+    <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-blue-900/30 text-blue-400 font-bold text-sm mb-6 border border-blue-500/30">
+        <i class="fa-solid fa-rocket"></i> Tư Duy Thực Chiến Kỷ Nguyên Mới 📈
+    </div>
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+        Giải Mã Thuật Toán & Nghệ Thuật <br/>
+        <span class="gradient-text">Xây Kênh Niche Bền Vững</span>
+    </h1>
+    <p class="text-slate-400 max-w-3xl mx-auto text-lg leading-relaxed">
+        "Chào bạn, Mentor của bạn đây! Sai lầm lớn nhất của Creator là cố chiều lòng một cỗ máy AI vô hồn. Hãy ngừng chạy theo view ảo. Dưới đây là tấm bản đồ giúp bạn mượn sức thuật toán, thao túng sự chú ý và thiết kế hành trình tâm lý sắc bén cho tệp khách hàng mục tiêu."
+    </p>
+</header>
+
+<main class="max-w-6xl mx-auto px-6 space-y-24 pb-20">
+
+    <!-- 1. THE BIG IDEA -->
+    <section>
+        <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+            🎯 1. [The Big Idea] Bức Tranh Toàn Cảnh
+        </h2>
+        
+        <div class="bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-xl mb-10 shadow-lg">
+            <p class="text-lg font-medium text-slate-200">
+                <span class="text-blue-400 font-bold">Luận điểm cốt lõi (Paradigm Shift):</span> 
+                Mạng xã hội không còn đo lường nội dung bằng lượng Follower, mà bằng "Tỷ lệ giữ chân" (Retention) của một tệp khán giả hẹp. Bạn không sáng tạo nội dung cho nền tảng, bạn đang thiết kế một cái "bẫy" giữ chân ngọt ngào cho não bộ con người.
+            </p>
+        </div>
+
+        <!-- MINDMAP CONTAINER -->
+        <div class="mindmap-wrapper" id="mindmap-wrapper">
+            <div class="zoom-controls">
+                <button class="zoom-btn" id="zoom-out" title="Thu nhỏ">[-]</button>
+                <button class="zoom-btn" id="zoom-in" title="Phóng to">[+]</button>
+            </div>
+            <div id="mermaid-container">
+                <!-- Mã code Mermaid JS vẽ Graph LR, 2 cấp độ -->
+                <pre class="mermaid">
+                %%{init: {'theme': 'dark', 'themeVariables': {'fontFamily': 'Inter', 'primaryColor': '#0f172a', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#3b82f6', 'lineColor': '#64748b'}, 'flowchart': {'curve': 'basis', 'nodeSpacing': 50, 'rankSpacing': 120}}}%%
+                graph LR
+                    ROOT([🚀 GỐC RỄ XÂY KÊNH NICHE]) 
+                    ROOT --> B([Tâm Lý Khán Giả])
+                    ROOT --> C([Cơ Chế Thuật Toán])
+                    ROOT --> D([Kỹ Thuật Quay Dựng])
+
+                    B --> B1([Hook 3s Sinh Tử])
+                    B --> B2([Kịch bản Pain-Solution])
+
+                    C --> C1([Đo lường Retention])
+                    C --> C2([Phân phối tệp Niche])
+
+                    D --> D1([Cắt tỉa nhịp độ Pacing])
+                    D --> D2([B-roll & Âm thanh])
+                </pre>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="https://youtu.be/fymfTFftN-g?si=EEB0oazxC0SFRIWL" target="_blank" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:scale-105">
+                <i class="fa-brands fa-youtube text-xl"></i>
+                Xem video gốc: Kiến thức Quay Dựng, Xây kênh Niche & Thuật toán
+            </a>
+        </div>
+    </section>
+
+    <!-- 2. DEEP INSIGHTS -->
+    <section>
+        <h2 class="text-3xl font-bold mb-10 border-b border-slate-800 pb-4">
+            🧠 2. [Deep Insights] 9 Trụ Cột Tri Thức
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Bài học 1 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-1"></div>
+                <h3 class="text-xl font-bold mb-3 text-blue-400">1. Quyền Lực Của Tệp Ngách (Niche)</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> Đừng cố nấu một nồi lẩu thập cẩm cho tất cả mọi người. Hãy làm một món đặc sản mà chỉ có bạn là chuyên gia.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Machine Learning của nền tảng cần "gắn nhãn" tệp khán giả cho kênh. Đăng tùm lum chủ đề sẽ làm AI bị phân liệt và ngừng đẩy video.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-blue-500 text-sm text-slate-200">
+                    💡 <strong>Ẩn dụ:</strong> Bạn bị đau dạ dày, bạn sẽ tìm đến Bác sĩ chuyên khoa tiêu hóa, chứ không bước vào một phòng khám đa khoa xập xệ.
+                </div>
+            </div>
+
+            <!-- Bài học 2 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-2"></div>
+                <h3 class="text-xl font-bold mb-3 text-red-400">2. Mỏ Vàng "Tỷ Lệ Giữ Chân"</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> Lượt View và Follow ảo không tạo ra tiền. Thời gian người xem nán lại (Watch-time) mới là thước đo sinh tử.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Nền tảng sống nhờ bán quảng cáo. Bạn giữ chân người dùng trong App càng lâu, bạn càng được AI "độ" lên xu hướng miễn phí.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-red-500 text-sm text-slate-200">
+                    💡 <strong>Ẩn dụ:</strong> Giật tít lừa đảo để câu view giống như đổ nước vào một cái xô thủng đáy. Nước vào bao nhiêu tuột ra bấy nhiêu.
+                </div>
+            </div>
+
+            <!-- Bài học 3 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-3"></div>
+                <h3 class="text-xl font-bold mb-3 text-emerald-400">3. Hook 3 Giây Sinh Tử</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> 3 giây đầu tiên quyết định 90% sinh mạng video. Không chào hỏi lằng nhằng, phải cướp lấy sự chú ý lập tức.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Thói quen vuốt màn hình khiến não bộ "ngủ đông". Bạn cần ném một cú sốc (hình ảnh lạ, câu hỏi giật gân) để bẻ gãy quán tính ngón tay.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-emerald-500 text-sm text-slate-200">
+                    💡 <strong>Ví dụ:</strong> Đừng nói: "Xin chào, hôm nay mình dạy edit". Hãy thẳng tay: "Đây là cách mình kiếm 10 triệu đầu tiên bằng điện thoại vỡ màn hình!".
+                </div>
+            </div>
+
+            <!-- Bài học 4 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-4"></div>
+                <h3 class="text-xl font-bold mb-3 text-orange-400">4. Định Lý Kịch Bản P-A-S</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> Đừng ném luôn giải pháp. Hãy khơi gợi Nỗi đau (Pain) -> Xát muối vào nó (Agitate) -> Rút Giải pháp (Solution) ra cứu rỗi.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Tâm lý học hành vi chứng minh: Động lực để con người trốn tránh sự đau khổ luôn mãnh liệt gấp đôi khao khát tìm kiếm niềm vui.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-orange-500 text-sm text-slate-200">
+                    💡 <strong>Ví dụ:</strong> Thay vì khoe "Kem này trắng da", hãy đâm thẳng: "Da đen sạm đi tiệc mất tự tin? Đắp chục loại không trắng nổi? Đây là cách...".
+                </div>
+            </div>
+
+            <!-- Bài học 5 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-5"></div>
+                <h3 class="text-xl font-bold mb-3 text-purple-400">5. Nhịp Độ Đứt Đoạn (Pacing)</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> Sự chuyên nghiệp trong Edit nằm ở chỗ bạn dám tàn nhẫn cắt bỏ đi bao nhiêu giây tĩnh lặng thừa thãi.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Mắt người tự động lướt qua những thứ đứng yên. Việc zoom in/out, chuyển cảnh liên tục mỗi 3-5 giây sẽ "Reset" lại sự tập trung của não bộ.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-purple-500 text-sm text-slate-200">
+                    💡 <strong>Ẩn dụ:</strong> Dựng video giống như bạn cầm lái qua đường đèo. Bạn phải bắt người xem đánh lái liên tục, không cho họ cơ hội ngủ gật.
+                </div>
+            </div>
+
+            <!-- Bài học 6 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-6"></div>
+                <h3 class="text-xl font-bold mb-3 text-cyan-400">6. Đừng Nói, Hãy Cho Xem</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> Nguyên tắc "Show, Don't Tell". Lời nói dùng để giải thích, hình ảnh mới là thứ chứng minh chân lý.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Não bộ xử lý hình ảnh nhanh gấp 60,000 lần chữ viết. B-roll (cảnh quay phụ) giúp khán giả tiết kiệm calo suy nghĩ, nên họ sẽ rất thích xem.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-cyan-500 text-sm text-slate-200">
+                    💡 <strong>Ví dụ:</strong> Đừng đứng phân tích thông số chiếc áo chống nước. Ngay giây đầu tiên, hãy hất thẳng một xô nước đá vào người để minh chứng.
+                </div>
+            </div>
+
+            <!-- Bài học 7 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-7"></div>
+                <h3 class="text-xl font-bold mb-3 text-pink-400">7. Trọng Lực Của Âm Thanh</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> Khán giả có thể thông cảm cho một video quay hơi tối hoặc mờ, nhưng họ sẽ tắt ngay lập tức nếu âm thanh bị rè, nhỏ.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Hình ảnh tiếp nhận qua lý trí, nhưng âm thanh đâm thẳng vào tiềm thức. Âm thanh tồi tạo ra cảm giác "nghiệp dư" cực kỳ khó chịu.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-pink-500 text-sm text-slate-200">
+                    💡 <strong>Ẩn dụ:</strong> Hãy thử bật một bộ phim ma kinh dị và tắt hẳn tiếng đi, bạn sẽ thấy nó biến thành một bộ phim hài ngớ ngẩn.
+                </div>
+            </div>
+
+            <!-- Bài học 8 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-8"></div>
+                <h3 class="text-xl font-bold mb-3 text-teal-400">8. Lời Kêu Gọi Tàng Hình (CTA)</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> Đừng van xin tình thương bằng câu "Hãy like và follow kênh mình nhé". Hãy cho họ một lý do ích kỷ để tự làm việc đó.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Con người ghét bị sai khiến nhưng lại có tính tư lợi cao (Sợ bỏ lỡ FOMO). Bạn trao mồi câu giá trị, hiệu ứng hàm ơn sẽ xuất hiện.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-teal-500 text-sm text-slate-200">
+                    💡 <strong>Thực tế:</strong> "Bảng checklist này quá dài nên mình đã ghim link tải miễn phí trên Bio, bạn có thể lưu về". Tự khắc họ sẽ follow để lấy quà.
+                </div>
+            </div>
+
+            <!-- Bài học 9 -->
+            <div class="card p-6 flex flex-col h-full">
+                <div class="art art-9"></div>
+                <h3 class="text-xl font-bold mb-3 text-indigo-400">9. Hiệu Ứng Lãi Kép Nội Dung</h3>
+                <div class="space-y-3 flex-grow">
+                    <p class="text-sm text-slate-300"><strong class="text-white">Bản chất:</strong> Video thứ 100 mới là thứ nuôi sống bạn. 99 video trước chỉ là học phí trả cho nền tảng để test thị trường.</p>
+                    <p class="text-sm text-slate-400"><strong class="text-white">Cơ chế vận hành:</strong> Khi 1 video bất kỳ "cắn đề xuất", nó sẽ kéo theo một lượng traffic khổng lồ tò mò ấn vào kênh và xem lại toàn bộ di sản video cũ của bạn.</p>
+                </div>
+                <div class="mt-5 bg-slate-900/80 p-3 rounded-lg border-l-2 border-indigo-500 text-sm text-slate-200">
+                    💡 <strong>Ẩn dụ:</strong> Giống như lăn một quả cầu tuyết từ đỉnh núi xuống. Những mét đầu tiên đẩy rất nặng nhọc, nhưng khi có đà, nó sẽ tự phình to ra cực đại.
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="grid md:grid-cols-2 gap-8">
+        
+        <!-- 3. ACTION PLAYBOOK -->
+        <section class="card p-8 border-t-4 border-t-blue-500 bg-blue-900/10 relative overflow-hidden">
+            <h2 class="text-2xl font-bold mb-8 text-white">
+                🚀 3. [Action Playbook] Sổ Tay Thực Chiến
+            </h2>
+            
+            <h3 class="font-bold text-blue-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-code-branch"></i> Kịch Bản Bắt Bệnh "Nếu - Thì"</h3>
+            <div class="space-y-5 mb-8">
+                <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700">
+                    <p class="text-sm text-slate-300 mb-2"><span class="text-orange-400 font-bold">NẾU:</span> Video của bạn lẹt đẹt mãi ở mức 200 view rồi đứng im vĩnh viễn...</p>
+                    <p class="text-sm text-white"><span class="text-emerald-400 font-bold">THÌ:</span> Hãy xóa sổ ngay câu chào hỏi dài dòng ở 3 giây đầu. Thay nó bằng một câu hỏi đâm thẳng vào tim khách hàng hoặc đưa ra một kết quả giật gân, và đăng lại thử nghiệm.</p>
+                </div>
+                <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700">
+                    <p class="text-sm text-slate-300 mb-2"><span class="text-orange-400 font-bold">NẾU:</span> Bạn bị bí ý tưởng, vò đầu bứt tai không biết ngày mai phải quay gì...</p>
+                    <p class="text-sm text-white"><span class="text-emerald-400 font-bold">THÌ:</span> Ngừng tự suy diễn. Hãy vào kênh của 3 đối thủ sừng sỏ nhất, cày comment tìm xem khán giả đang chửi rủa hoặc thắc mắc điều gì. Lấy nỗi đau đó làm kịch bản ngày mai của bạn.</p>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-blue-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-bolt"></i> Hành Động Micro (Làm ngay trong 24h tới)</h3>
+            <ul class="space-y-4">
+                <li class="flex gap-4">
+                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xs shrink-0">1</span>
+                    <p class="text-sm text-slate-300 leading-relaxed">Lấy một tờ giấy, viết xuống <strong>đúng 1 từ khóa Niche duy nhất</strong> mà bạn tự tin có thể nói liên tục 30 ngày không chán. Dán nó thẳng lên mép màn hình máy tính.</p>
+                </li>
+                <li class="flex gap-4">
+                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xs shrink-0">2</span>
+                    <p class="text-sm text-slate-300 leading-relaxed">Mở file video đang dựng trên điện thoại ra. Thẳng tay <strong>cắt phăng mọi khoảng trống tĩnh lặng, tiếng lấy hơi, từ "ờ... à..."</strong>. Ép nhịp độ video nhanh hơn 20% so với ban đầu.</p>
+                </li>
+            </ul>
+        </section>
+
+        <!-- 4. REALITY CHECK -->
+        <section class="card p-8 border-t-4 border-t-red-500 bg-red-900/10 relative overflow-hidden">
+            <h2 class="text-2xl font-bold mb-6 text-white">
+                ⚠️ 4. [Reality Check] Kỷ Luật Thép
+            </h2>
+            
+            <h3 class="font-bold text-red-400 mb-2">Bóc Trần Sự Thất Bại</h3>
+            <p class="text-sm text-slate-300 mb-8 leading-relaxed">
+                Tại sao 90% người học xong lại thất bại ngoài đời thực? Vì họ mắc <strong>"Hội chứng hoàn hảo"</strong>. Họ ngồi đợi mua iPhone xịn, setup phòng đèn xịn mới chịu quay. Họ mất 3 tiếng chỉnh một cái màu video nhưng kịch bản thì rỗng tuếch. Đừng dùng ý chí, hãy dùng kỷ luật môi trường để trói bản thân lại!
+            </p>
+
+            <h3 class="font-bold text-red-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> Chốt Chặn Giới Hạn Vật Lý</h3>
+            <ul class="space-y-5">
+                <li class="bg-slate-900/80 p-5 rounded-xl border border-red-900/50">
+                    <strong class="text-white text-base block mb-2"><i class="fa-solid fa-pen-nib text-red-500 mr-2"></i>Luật "Không Giấy - Không Quay"</strong>
+                    <p class="text-sm text-slate-400">Trừ phi bạn có một kịch bản gạch đầu dòng rõ ràng 3 phần (Hook - Body - CTA) viết ra trên giấy, <strong>tuyệt đối không được phép bấm nút Record.</strong> Cấm tiệt hành vi "vừa nghĩ vừa nói", nó sẽ giết chết nhịp độ của video.</p>
+                </li>
+                <li class="bg-slate-900/80 p-5 rounded-xl border border-red-900/50">
+                    <strong class="text-white text-base block mb-2"><i class="fa-solid fa-eye-slash text-red-500 mr-2"></i>Quy Tắc "Mù Data 24H"</strong>
+                    <p class="text-sm text-slate-400">Xóa các ứng dụng phân tích chỉ số khỏi màn hình chính. Sau khi đăng video lên, <strong>cấm tuyệt đối việc vào đếm lượt View trong 24 giờ đầu</strong>. Tránh để sự sụt giảm view bào mòn tâm lý. Hoàn thành quan trọng hơn hoàn hảo!</p>
+                </li>
+            </ul>
+        </section>
+        
+    </div>
+
+</main>
+
+<!-- 5. FOOTER -->
+<footer class="footer flex flex-col justify-center items-center px-6 text-center w-full">
+    <p class="text-slate-400 text-sm font-medium max-w-3xl mb-4 leading-relaxed">
+        Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+    </p>
+    <div class="flex gap-8 text-2xl">
+        <a href="https://youtube.com/@vietndonline" target="_blank" class="text-slate-500 hover:text-red-500 transition-transform hover:scale-110" title="YouTube Channel">
+            <i class="fa-brands fa-youtube"></i>
+        </a>
+        <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="text-slate-500 hover:text-white transition-transform hover:scale-110" title="TikTok Thực chiến">
+            <i class="fa-brands fa-tiktok"></i>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="text-slate-500 hover:text-blue-500 transition-transform hover:scale-110" title="Facebook Page">
+            <i class="fa-brands fa-facebook"></i>
+        </a>
+    </div>
+</footer>
+
+<!-- CẤU HÌNH MERMAID JS VÀ TÍNH NĂNG CHỐNG GIẬT TRANG -->
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const wrapper = document.getElementById('mindmap-wrapper');
+        const container = document.getElementById('mermaid-container');
+        const btnZoomIn = document.getElementById('zoom-in');
+        const btnZoomOut = document.getElementById('zoom-out');
+        
+        let scale = 1;
+        const scaleStep = 0.2;
+        const minScale = 0.6;
+        const maxScale = 2.4;
+
+        // TUYỆT ĐỐI NGĂN CHẶN cuộn chuột tự do gây giật trang
+        wrapper.addEventListener('wheel', (e) => {
+            e.preventDefault(); 
+        }, { passive: false });
+
+        // Logic Phóng To
+        btnZoomIn.addEventListener('click', () => {
+            if (scale < maxScale) {
+                scale += scaleStep;
+                container.style.transform = `scale(${scale})`;
+            }
+        });
+
+        // Logic Thu Nhỏ
+        btnZoomOut.addEventListener('click', () => {
+            if (scale > minScale) {
+                scale -= scaleStep;
+                container.style.transform = `scale(${scale})`;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
