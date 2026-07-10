@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Cố Vấn: Xây Dựng Doanh Nghiệp AI-First</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === DYNAMIC THEME: BUSINESS & TECH 🚀📈 === */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1120; /* Dark Blue Tech */
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 { line-height: 1.3; }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Mentor Quote Box */
+        .mentor-box {
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.8), transparent);
+            border-left: 4px solid #38bdf8;
+        }
+
+        /* === 1. MINDMAP CONTAINER === */
+        .mindmap-box {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #020617;
+            border-radius: 16px;
+            border: 1px solid #1e293b;
+            overflow: hidden; /* Cấm cuộn chuột tự do gây giật trang */
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        #mermaid-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .zoom-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-zoom {
+            background: #1e293b;
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-zoom:hover { background: #38bdf8; color: #0f172a; transform: scale(1.05); }
+
+        /* === 2. CSS ABSTRACT ART TỪNG KHỐI BÀI HỌC === */
+        .insight-card {
+            background: #0f172a;
+            border-radius: 16px;
+            border: 1px solid #1e293b;
+            overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .insight-card:hover {
+            transform: translateY(-8px);
+            border-color: #38bdf8;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .art-box {
+            height: 140px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .art-1 { background: linear-gradient(135deg, #1e3a8a, #38bdf8); }
+        .art-1::before { content:''; position:absolute; width:80px; height:80px; border:4px solid rgba(255,255,255,0.2); border-radius:50%; top:20px; left:20px; }
+        
+        .art-2 { background: linear-gradient(135deg, #78350f, #f59e0b); }
+        .art-2::after { content:''; position:absolute; border-bottom:60px solid rgba(255,255,255,0.2); border-left:40px solid transparent; border-right:40px solid transparent; bottom:0; left:50%; transform:translateX(-50%); }
+        
+        .art-3 { background: linear-gradient(135deg, #064e3b, #10b981); }
+        .art-3::before { content:''; position:absolute; width:150%; height:30px; background:rgba(255,255,255,0.15); transform:rotate(-15deg); top:40px; left:-10px; }
+
+        .art-4 { background: linear-gradient(135deg, #4c1d95, #8b5cf6); }
+        .art-4::after { content:''; position:absolute; width:100%; height:8px; background:rgba(255,255,255,0.2); top:50%; border-style:dashed; }
+
+        .art-5 { background: linear-gradient(135deg, #831843, #f43f5e); }
+        .art-5::before { content:''; position:absolute; width:60px; height:60px; border:8px solid rgba(255,255,255,0.15); border-radius:12px; transform:rotate(45deg); top:40px; left:50%; margin-left:-30px; }
+
+        .art-6 { background: linear-gradient(135deg, #0f766e, #14b8a6); }
+        .art-6::after { content:''; position:absolute; border-left:60px solid rgba(255,255,255,0.2); border-top:30px solid transparent; border-bottom:30px solid transparent; top:40px; left:40px; }
+
+        .art-7 { background: linear-gradient(135deg, #991b1b, #ef4444); }
+        .art-7::before { content:''; position:absolute; width:120px; height:120px; background:rgba(255,255,255,0.1); border-radius:30px 0 30px 0; right:-20px; bottom:-20px; }
+
+        .art-8 { background: linear-gradient(135deg, #1d4ed8, #60a5fa); }
+        .art-8::after { content:''; position:absolute; width:100%; height:100%; background:repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px); }
+
+        .art-9 { background: radial-gradient(circle, #334155, #0f172a); }
+        .art-9::before { content:''; position:absolute; width:50px; height:50px; background:rgba(255,255,255,0.2); border-radius:50%; box-shadow: 70px 0 0 rgba(255,255,255,0.1); top:45px; left:50px; }
+
+        /* === 5. FOOTER === */
+        footer {
+            height: 128px;
+            background-color: #020617;
+            border-top: 1px solid #1e293b;
+        }
+        
+        .tag { font-size: 0.7rem; padding: 4px 10px; border-radius: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body class="antialiased pb-0">
+
+    <!-- HEADER / MENTOR INTRO -->
+    <header class="max-w-6xl mx-auto px-6 py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-8 tracking-tight">
+            Giải mã Cỗ máy: <span class="text-gradient">Doanh Nghiệp AI-First</span> 🚀
+        </h1>
+        <div class="mentor-box p-6 rounded-r-xl max-w-4xl mx-auto text-left shadow-lg">
+            <p class="text-lg text-slate-300">
+                <i class="fa-solid fa-quote-left text-sky-400 mr-2"></i>
+                Chào bạn, Mentor của bạn đây. Nếu bạn đang giữ cái suy nghĩ "muốn công ty lớn mạnh thì phải thuê thêm thật nhiều quân, mở thêm chục phòng ban"... thì bạn sắp bị thị trường nuốt chửng rồi. Cuộc chơi giờ đây không đo bằng số lượng ghế ngồi trong văn phòng. Hãy ngồi xuống, để tôi bóc tách cho bạn cách những bộ óc nhạy bén nhất đang dùng AI để phá vỡ mọi giới hạn tốc độ và tạo ra biên lợi nhuận khổng lồ. Bắt đầu nào! ⚡
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-24 mb-24">
+        
+        <!-- ========================================== -->
+        <!-- 1. THE BIG IDEA & MINDMAP -->
+        <!-- ========================================== -->
+        <section id="big-idea">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                <span class="text-sky-400"><i class="fa-solid fa-crosshairs"></i></span>
+                1. [The Big Idea] Bức tranh toàn cảnh
+            </h2>
+            
+            <div class="bg-slate-800/50 border border-slate-700 p-6 rounded-xl mb-8">
+                <h3 class="text-xl font-bold text-sky-400 mb-2">Luận điểm cốt lõi (Paradigm Shift):</h3>
+                <p class="text-lg text-slate-200">
+                    Sự dịch chuyển vĩ đại đã diễn ra: Doanh nghiệp không còn xoay quanh các phòng ban đông đúc. Tương lai thuộc về mô hình <strong>tích hợp một "Lõi AI" vào trung tâm</strong>, được vận hành bởi một lực lượng siêu tinh gọn gồm những con người xuất chúng, giúp bẻ gãy hoàn toàn mối liên kết cũ giữa số lượng nhân sự và quy mô doanh thu.
+                </p>
+            </div>
+
+            <!-- Sơ đồ Tư duy (Bắt buộc cấm cuộn chuột) -->
+            <div class="mindmap-box">
+                <!-- Nút điều khiển Zoom -->
+                <div class="zoom-controls">
+                    <button class="btn-zoom" onclick="zoomMindmap(0.15)" title="Phóng to">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button class="btn-zoom" onclick="zoomMindmap(-0.15)" title="Thu nhỏ">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                
+                <div id="mermaid-wrapper">
+                    <!-- Sơ đồ Mermaid: 2 Cấp, Graph LR, Bo góc mềm -->
+                    <pre class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'curve': 'basis'}}}%%
+graph LR
+    classDef root fill:#0ea5e9,stroke:#fff,stroke-width:2px,color:#fff,rx:12,ry:12,font-weight:bold
+    classDef node fill:#1e293b,stroke:#475569,stroke-width:1px,color:#cbd5e1,rx:12,ry:12
+
+    A["🚀 DOANH NGHIỆP AI-FIRST"]:::root --> B["🤖 Lõi AI Trung Tâm"]:::node
+    A --> C["🌟 Đại Sứ Thương Hiệu (KPI)"]:::node
+    A --> D["📈 Lãnh Đạo Tăng Trưởng (Growth)"]:::node
+    A --> E["📦 Lãnh Đạo Sản Phẩm (Product)"]:::node
+    A --> F["🛠️ Chiến Binh Đa Nhiệm (Ops)"]:::node
+    A --> G["📊 Quy Luật 40"]:::node
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Nút Link Video -->
+            <div class="mt-8 text-center">
+                <a href="https://youtu.be/J5B-akVebyc?si=aiL1QZaILWzcoirJ" target="_blank" class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-full transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:-translate-y-1">
+                    <i class="fa-brands fa-youtube text-2xl"></i>
+                    Cách Xây Dựng Doanh Nghiệp Ưu Tiên AI (AI-First Business)
+                </a>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 2. DEEP INSIGHTS: CÁC TRỤ CỘT TRI THỨC -->
+        <!-- ========================================== -->
+        <section id="deep-insights">
+            <h2 class="text-3xl font-bold mb-8 flex items-center gap-3">
+                <span class="text-purple-400"><i class="fa-solid fa-brain"></i></span>
+                2. [Deep Insights] 9 Trụ cột Tri thức
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Bài 1 -->
+                <div class="insight-card">
+                    <div class="art-box art-1"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">1. Đập bỏ mô hình bành trướng</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> Việc quản lý theo tầng tháp (Sếp -> Quản lý -> Lính) tạo ra sự chậm chạp tột độ. Mô hình AI-First san phẳng mọi thứ.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> Bằng việc ném các công việc báo cáo, số liệu cho AI ở giữa, thông tin được truyền tải tức thì mà không bị kẹt ở các tầng "chuyển lời". Doanh nghiệp nhẹ đi hàng chục lần chi phí quỹ lương.</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ẩn dụ:</strong> Bạn không cần thuê 10 người đẩy xe bò nữa. Hãy sắm 1 cỗ xe tự lái AI và bạn chỉ việc định vị điểm đến.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài 2 -->
+                <div class="insight-card">
+                    <div class="art-box art-2"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">2. Tư duy "Bánh kem AI"</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> AI không phải là "phần mềm gõ văn bản". Nó phải được thiết lập để trở thành não bộ lưu trữ toàn bộ lịch sử và quy trình công ty.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> Dữ liệu từ mọi phòng ban được đổ chung vào AI. Dù nhân viên có nghỉ việc, trí tuệ và cách giải quyết rắc rối của họ vẫn nằm lại và liên tục khôn lên.</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ẩn dụ:</strong> Giống như bạn đang nấu một nồi súp khổng lồ. Mọi nguyên liệu ném vào tạo ra hương vị độc quyền không đối thủ nào copy được.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài 3 -->
+                <div class="insight-card">
+                    <div class="art-box art-3"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">3. Vai trò 1: KPI (Tạo sức hút)</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> Key Person of Influence. Thương hiệu "vô danh" núp sau logo đang chết dần. Khách hàng cần một gương mặt thật để tin tưởng.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> Khi AI có thể fake được mọi bài viết hay, thứ duy nhất khách hàng khao khát là "Tính nhân bản" (Sự thật, vấp ngã). Bạn có uy tín, bạn có dòng tiền.</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ví dụ:</strong> Người ta đặt cọc xe Tesla vì cuồng tín tầm nhìn của Elon Musk, chứ không phải vì cái logo hình chữ T.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài 4 -->
+                <div class="insight-card">
+                    <div class="art-box art-4"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">4. Vai trò 2: Head of Growth</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> Người biến uy tín của Founder thành các chiến dịch phủ sóng và chuyển đổi thành đơn hàng tự động.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> Họ không cần đội ngũ content hùng hậu. Họ dùng AI phân tích thuật toán, cắt 1 video dài thành 20 short-video, phân phối khắp mọi nơi với chi phí gần bằng 0.</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ẩn dụ:</strong> Đại sứ thương hiệu quăng lưới bắt cá, còn Growth là hệ thống ròng rọc AI tự động kéo mẻ lưới đó lên tàu.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài 5 -->
+                <div class="insight-card">
+                    <div class="art-box art-5"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">5. Vai trò 3: Head of Product</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> Lời hứa của công ty phải được thực hiện. Đây là người dùng AI để thiết kế ra trải nghiệm khách hàng xuất sắc nhất.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> Hứa thật hay mà giao hàng tồi thì công ty sụp đổ. Vai trò này tích hợp AI để tối ưu chuỗi cung ứng, đảm bảo chất lượng đồng đều 100%.</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ẩn dụ:</strong> Marketing dụ khách vào nhà hàng, thì Product chính là vị bếp trưởng đảm bảo món ăn ngon đến mức khách phải quay lại lần 2.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài 6 -->
+                <div class="insight-card">
+                    <div class="art-box art-6"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">6. Vai trò 4: Chiến binh Đa nhiệm</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> Kẻ vá mọi lỗ hổng (Swiss Army Knife). Một cá nhân có tính tự chủ cực cao, am hiểu cơ bản về IT, Vận hành và Automations.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> Nhờ AI viết code, viết luồng Zapier... một người này làm khối lượng công việc của 5 chuyên viên. Bất cứ nút thắt nào trong quy trình, họ đều có mặt để gỡ.</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ẩn dụ:</strong> Đúng như con dao Thụy Sĩ, không cần đao to búa lớn. Gặp ốc vít thì lấy tua vít, gặp hộp thì lấy đồ khui, gỡ rối tức thì.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài 7 -->
+                <div class="insight-card">
+                    <div class="art-box art-7"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">7. Săn tìm "Sự chú ý Chất lượng"</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> Triệu view rác vô nghĩa. Sự chú ý từ đúng tệp khách hàng sẵn sàng xuống tiền mới là vàng.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> Tập trung vào chiều sâu nội dung (giáo dục thị trường). Thuật toán AI của nền tảng sẽ tự động đi tìm những người đang đau đáu tìm giải pháp để hiển thị.</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ẩn dụ:</strong> 10 người đang khát cháy trên sa mạc giá trị hơn 10.000 người đang dạo chơi trong siêu thị mát lạnh không có nhu cầu uống nước.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài 8 -->
+                <div class="insight-card">
+                    <div class="art-box art-8"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">8. Quy luật 40 - Thước đo sinh tử</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> Thước đo kinh điển của các quỹ đầu tư: Tỷ lệ Tăng trưởng (%) + Biên lợi nhuận (%) phải LỚN HƠN 40.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> AI loại bỏ chi phí phình to của con người. Tăng trưởng chậm thì phải bù lại bằng lợi nhuận cực cao. Nếu tổng số dưới 40, cỗ máy của bạn đang bị rò rỉ chi phí (nuôi quân quá đông).</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ẩn dụ:</strong> Giống như đo nhịp tim và huyết áp. Nhịp tim đập siêu chậm mà huyết áp cũng tụt thì cơ thể chắc chắn sẽ đột quỵ.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài 9 -->
+                <div class="insight-card">
+                    <div class="art-box art-9"></div>
+                    <div class="p-6 flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-sky-400 mb-4">9. Tính Nguyên bản (Authenticity)</h3>
+                        <p class="text-sm text-slate-300 mb-3"><span class="tag bg-sky-900 text-sky-400 mr-2">Bản chất</span> Sự hoàn hảo máy móc đã trở nên rẻ mạt. Khách hàng khao khát những vấp váp, cảm xúc và "Tính Người" thật sự.</p>
+                        <p class="text-sm text-slate-300 mb-4"><span class="tag bg-emerald-900 text-emerald-400 mr-2">Cơ chế</span> Quy luật kinh tế: Cái gì có thể sản xuất hàng loạt (text mượt, ảnh đẹp) thì giá trị giảm. Cái gì không thể fake (Kinh nghiệm sống, giọng nói nghẹn ngào) sẽ vô giá.</p>
+                        <div class="mt-auto bg-slate-800/50 p-3 rounded-lg border-l-2 border-amber-500 text-sm">
+                            <strong class="text-amber-500">💡 Ví dụ:</strong> Một chiếc túi xách khâu tay bị lỗi chỉ thừa một xíu vẫn được săn đón đắt gấp 100 lần chiếc túi dập máy không tì vết tại nhà xưởng.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 3. ACTION PLAYBOOK: SỔ TAY THỰC CHIẾN -->
+        <!-- ========================================== -->
+        <section id="action-playbook">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                <span class="text-emerald-400"><i class="fa-solid fa-rocket"></i></span>
+                3. [Action Playbook] Sổ tay Thực chiến
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- If - Then Scenarios -->
+                <div class="bg-slate-800/60 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-5">🔄 Kịch bản "Nếu - Thì" (Gỡ rối tức thì)</h3>
+                    <ul class="space-y-5">
+                        <li class="border-l-4 border-emerald-500 pl-4">
+                            <p class="text-slate-300"><strong class="text-rose-400">NẾU</strong> bạn đang kiệt sức vì lặp đi lặp lại việc copy data khách hàng từ nền tảng này sang nền tảng khác...</p>
+                            <p class="text-slate-300 mt-2"><strong class="text-emerald-400">👉 THÌ hãy:</strong> Ngừng ngay ý định thuê thêm nhân sự nhập liệu. Dùng Zapier hoặc Make.com nối API tự động hai phần mềm đó lại. Mất 30 phút thiết lập, rảnh tay cả đời.</p>
+                        </li>
+                        <li class="border-l-4 border-emerald-500 pl-4">
+                            <p class="text-slate-300"><strong class="text-rose-400">NẾU</strong> đối thủ cạnh tranh liên tục phá giá và copy y hệt sản phẩm của bạn...</p>
+                            <p class="text-slate-300 mt-2"><strong class="text-emerald-400">👉 THÌ hãy:</strong> Bạn (Founder) phải đứng ra trước camera ngay lập tức. Kể câu chuyện khởi nghiệp, những đêm thức trắng. Khách sẽ ở lại vì uy tín của bạn, thứ không ai có thể copy hay phá giá.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Micro Actions -->
+                <div class="bg-slate-800/60 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-xl font-bold text-sky-400 mb-5">⚡ Hành động Micro (Làm ngay 24h tới)</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 bg-slate-900/50 p-4 rounded-lg">
+                            <div class="bg-sky-500/20 text-sky-400 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shrink-0">1</div>
+                            <p class="text-slate-300">Quay 1 video ngắn 60s kể về 1 sai lầm lớn nhất bạn từng gặp trong nghề. Đừng trang điểm mộng mơ, đừng chỉnh sửa hiệu ứng phức tạp. Đăng ngay lên mạng xã hội để kiểm chứng sức mạnh của sự "Chân thật".</p>
+                        </div>
+                        <div class="flex items-start gap-4 bg-slate-900/50 p-4 rounded-lg">
+                            <div class="bg-sky-500/20 text-sky-400 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shrink-0">2</div>
+                            <p class="text-slate-300">Tìm 1 tác vụ bạn thấy nhàm chán nhất trong ngày hôm nay. Mở ChatGPT lên và hỏi: <em>"Làm sao để tôi tự động hóa hoàn toàn việc [XYZ] này bằng AI miễn phí?"</em> và làm theo hướng dẫn.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 4. REALITY CHECK: CẠM BẪY & KỶ LUẬT -->
+        <!-- ========================================== -->
+        <section id="reality-check">
+            <div class="bg-rose-950/20 border border-rose-900 p-8 rounded-2xl relative overflow-hidden">
+                <!-- Icon background -->
+                <i class="fa-solid fa-triangle-exclamation absolute -right-4 -top-8 text-9xl text-rose-500 opacity-10"></i>
+                
+                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3 relative z-10">
+                    <span class="text-rose-500"><i class="fa-solid fa-shield-halved"></i></span>
+                    4. [Reality Check] Nhận diện Cạm bẫy
+                </h2>
+                
+                <div class="relative z-10 grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-rose-400 mb-3">Tại sao 90% áp dụng toàn thất bại?</h3>
+                        <p class="text-slate-300">Căn bệnh <strong>"Mặc áo giáp sắt nhưng đi xe đạp"</strong>. Bạn bỏ tiền mua tool AI xịn xò, nhưng vẫn giữ nguyên quy trình duyệt 5 bước của thời đồ đá. Bạn bắt AI viết email rồi bắt nhân viên in ra giấy đem trình ký sếp. Ném ChatGPT vào một hệ thống rườm rà không giải quyết được gì cả!</p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-bold text-amber-400 mb-3">🛡️ Chốt chặn Kỷ luật (Giới hạn vật lý)</h3>
+                        <ul class="space-y-4">
+                            <li class="bg-rose-900/30 p-4 rounded-lg border-l-4 border-rose-500">
+                                <strong class="text-white block mb-1">Quy tắc "Không gõ phím số 0"</strong>
+                                <span class="text-sm text-slate-300">Luật cứng: Bản nháp đầu tiên của mọi kịch bản, email, báo cáo BẮT BUỘC phải do AI viết. Con người chỉ được phép làm công việc Duyệt và Thêm 20% cảm xúc. Triệt tiêu tư duy "để tự gõ cho nhanh".</span>
+                            </li>
+                            <li class="bg-rose-900/30 p-4 rounded-lg border-l-4 border-rose-500">
+                                <strong class="text-white block mb-1">Xóa app Tuyển dụng 30 ngày</strong>
+                                <span class="text-sm text-slate-300">Ép môi trường vật lý: Mỗi khi bạn quá tải và định đăng tin tuyển thêm người, hãy bắt buộc hoãn quyết định đó trong 30 ngày. Đưa bộ não vào thế bí để phải tự tìm giải pháp Tự động hóa trước tiên.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- 5. FOOTER: KÊNH THÔNG TIN -->
+    <!-- ========================================== -->
+    <footer class="w-full flex flex-col justify-center items-center">
+        <p class="text-slate-400 text-sm md:text-base font-medium mb-4 max-w-2xl text-center px-4">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="flex gap-6">
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-slate-700 transition-all text-xl" title="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all text-xl" title="TikTok">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-blue-500 hover:bg-slate-700 transition-all text-xl" title="Facebook">
+                <i class="fa-brands fa-facebook-f"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Thư viện Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        // Khởi tạo Sơ đồ tư duy
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            flowchart: { curve: 'basis' } // Đường nối cong mềm mại
+        });
+
+        // Xử lý logic Phóng to / Thu nhỏ bằng 2 nút (Không dùng cuộn chuột)
+        let currentScale = 1;
+        function zoomMindmap(step) {
+            const wrapper = document.getElementById('mermaid-wrapper');
+            let newScale = currentScale + step;
+            
+            // Chốt chặn giới hạn Zoom (Từ 0.5x đến 2x) để tránh vỡ giao diện
+            if(newScale >= 0.5 && newScale <= 2.2) {
+                currentScale = newScale;
+                wrapper.style.transform = `scale(${currentScale})`;
+            }
+        }
+    </script>
+</body>
+</html>
