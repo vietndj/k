@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Tư Duy: Kiến Tạo Sức Mạnh Đích Thực</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        primary: '#9f1239', /* Rose-800 - Năng lượng & Nữ tính */
+                        surface: '#FAF7F5', /* Cát ấm - Chữa lành */
+                        card: '#FFFFFF'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #FAF7F5; color: #333; scroll-behavior: smooth; }
+        
+        /* Typography */
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        /* CSS Abstract Art cho các thẻ bài học */
+        .art-block {
+            position: relative;
+            width: 100%; height: 140px;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            background: #fdf2f8;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .art-shape { position: absolute; filter: blur(18px); opacity: 0.85; transition: transform 0.8s ease; }
+        .insight-card:hover .art-shape { transform: scale(1.15) rotate(15deg); }
+        
+        /* Đổ màu gradient nghệ thuật ngẫu nhiên */
+        .art-1 { background: #ffe4e6; }
+        .art-1 .shape-a { width: 90px; height: 90px; background: #fb7185; border-radius: 40% 60% 70% 30%; top: 10%; left: 20%; }
+        .art-1 .shape-b { width: 70px; height: 70px; background: #fda4af; border-radius: 60% 40% 30% 70%; bottom: 10%; right: 20%; }
+        
+        .art-2 { background: #e0e7ff; }
+        .art-2 .shape-a { width: 80px; height: 80px; background: #818cf8; border-radius: 50%; top: 20%; left: 30%; }
+        .art-2 .shape-b { width: 100px; height: 100px; background: #c7d2fe; border-radius: 30% 70% 50% 50%; bottom: -10%; right: 10%; }
+        
+        .art-3 { background: #dcfce7; }
+        .art-3 .shape-a { width: 90px; height: 90px; background: #4ade80; border-radius: 60% 40% 30% 70%; top: 10%; right: 20%; }
+        .art-3 .shape-b { width: 80px; height: 80px; background: #bbf7d0; border-radius: 40% 60% 70% 30%; bottom: 10%; left: 10%; }
+        
+        .art-4 { background: #fef3c7; }
+        .art-4 .shape-a { width: 100px; height: 100px; background: #fbbf24; border-radius: 30% 70% 70% 30%; top: -10%; left: 20%; }
+        .art-4 .shape-b { width: 70px; height: 70px; background: #fde68a; border-radius: 50%; bottom: 10%; right: 30%; }
+        
+        .art-5 { background: #f3e8ff; }
+        .art-5 .shape-a { width: 80px; height: 80px; background: #c084fc; border-radius: 50%; top: 10%; right: 10%; }
+        .art-5 .shape-b { width: 90px; height: 90px; background: #e9d5ff; border-radius: 40% 60% 30% 70%; bottom: -10%; left: 20%; }
+        
+        .art-6 { background: #ffedd5; }
+        .art-6 .shape-a { width: 90px; height: 90px; background: #fb923c; border-radius: 50%; top: 10%; left: 10%; }
+        .art-6 .shape-b { width: 80px; height: 80px; background: #fed7aa; border-radius: 30% 70% 70% 30%; bottom: 10%; right: 20%; }
+        
+        .art-7 { background: #ccfbf1; }
+        .art-7 .shape-a { width: 100px; height: 100px; background: #2dd4bf; border-radius: 40% 60% 50% 50%; top: -10%; left: 30%; }
+        .art-7 .shape-b { width: 70px; height: 70px; background: #99f6e4; border-radius: 50%; bottom: 10%; right: 20%; }
+        
+        .art-8 { background: #fce7f3; }
+        .art-8 .shape-a { width: 80px; height: 80px; background: #f472b6; border-radius: 60% 40% 30% 70%; top: 10%; right: 30%; }
+        .art-8 .shape-b { width: 90px; height: 90px; background: #fbcfe8; border-radius: 50%; bottom: 10%; left: 20%; }
+        
+        .art-9 { background: #e1effe; }
+        .art-9 .shape-a { width: 90px; height: 90px; background: #60a5fa; border-radius: 30% 70% 50% 50%; top: 10%; left: 20%; }
+        .art-9 .shape-b { width: 80px; height: 80px; background: #bfdbfe; border-radius: 40% 60% 70% 30%; bottom: 10%; right: 20%; }
+
+        /* Mindmap Container (Bảo vệ UX, cấm cuộn tự do) */
+        .mindmap-wrapper {
+            position: relative;
+            width: 100%;
+            height: 520px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+            overflow: hidden; /* NGĂN CUỘN CHUỘT */
+            border: 1px solid #fecdd3;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 50;
+            display: flex;
+            gap: 12px;
+        }
+
+        .zoom-btn {
+            background-color: #fff1f2;
+            color: #9f1239;
+            border: 1px solid #fecdd3;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover { background-color: #9f1239; color: white; transform: translateY(-2px); }
+
+        #mermaid-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Thẻ Bài Học Insight */
+        .insight-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f5f5f4;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .insight-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(159, 18, 57, 0.1);
+            border-color: #ffe4e6;
+        }
+
+        /* Nhãn (Tag) Kiến thức */
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; margin-bottom: 6px; }
+        .tag-core { background: #fee2e2; color: #b91c1c; }
+        .tag-mech { background: #e0e7ff; color: #4338ca; }
+        .tag-meta { background: #fef3c7; color: #d97706; }
+
+        /* Footer */
+        .footer-fixed { height: 128px; background-color: #1c1917; color: #e7e5e4; }
+        .social-link { transition: all 0.2s; }
+        .social-link:hover { color: #f43f5e; transform: scale(1.15); }
+    </style>
+</head>
+<body class="antialiased selection:bg-rose-200 selection:text-rose-900">
+
+    <!-- Header -->
+    <header class="max-w-4xl mx-auto pt-20 pb-12 px-6 text-center">
+        <span class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-rose-100 text-rose-800 text-sm font-bold tracking-wide mb-6 shadow-sm">
+            🌱 SỨC KHỎE TÂM LÝ & THỂ CHẤT NỮ GIỚI
+        </span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight text-gray-900">
+            Thoát Khỏi Lời Nguyền "Nhỏ Bé"<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-orange-500">Kiến Tạo Sức Mạnh Đích Thực</span> 👸✨
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Chào bạn, Mentor của bạn đây. Một lời khuyên tồi tệ nhất mà xã hội nhồi sọ phụ nữ là: Giá trị của bạn nằm ở việc bạn có thể thu mình nhỏ bé đến mức nào. Hãy gạt bỏ chiếc cân, ngừng nhịn đói và cầm tạ lên. Đã đến lúc chúng ta thiết lập lại bộ máy sinh lý học của chính mình! 💪
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 pb-24 space-y-24">
+        
+        <!-- =================== 1. 🎯 [The Big Idea] =================== -->
+        <section id="big-idea">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <span class="text-4xl">🎯</span> [The Big Idea] Bức Tranh Toàn Cảnh
+            </h2>
+            
+            <div class="bg-white p-8 rounded-2xl border-l-4 border-rose-600 shadow-sm mb-10">
+                <p class="text-xl font-medium text-gray-800 italic leading-relaxed">
+                    <strong class="text-rose-800 font-serif block text-2xl mb-2">Luận điểm cốt lõi (Paradigm Shift):</strong>
+                    Ngành công nghiệp làm đẹp đã lừa dối chúng ta. Sự tự do và vẻ đẹp thực sự không đến từ việc vắt kiệt sức trên máy chạy bộ hay nhịn đói để mặc vừa váy size S. Vũ khí tối thượng bảo vệ sinh mạng, nội tiết và sắc đẹp của bạn chính là việc <strong>xây dựng khối lượng cơ bắp từ bên trong.</strong> Bạn sinh ra để rực rỡ, không phải để tàn lụi!
+                </p>
+            </div>
+
+            <!-- Mindmap Container -->
+            <div class="mindmap-wrapper relative">
+                <!-- Nút điều khiển Zoom -->
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoomMap(0.2)" title="Phóng to">[+]</button>
+                    <button class="zoom-btn" onclick="zoomMap(-0.2)" title="Thu nhỏ">[-]</button>
+                </div>
+                
+                <div id="mermaid-container">
+                    <div class="mermaid">
+                        %%{
+                            init: {
+                                'theme': 'base',
+                                'themeVariables': {
+                                    'primaryColor': '#fff1f2',
+                                    'primaryTextColor': '#881337',
+                                    'primaryBorderColor': '#f43f5e',
+                                    'lineColor': '#f43f5e',
+                                    'fontFamily': '"Plus Jakarta Sans", sans-serif'
+                                },
+                                'flowchart': {
+                                    'curve': 'basis'
+                                }
+                            }
+                        }%%
+                        graph LR
+                            Root([👸 Kiến Tạo Sức Mạnh Nữ Giới]) --> B([Thoát khỏi lầm tưởng 'Gầy là Đẹp'])
+                            Root --> C([Cơ bắp là 'Quỹ hưu trí' sinh mạng])
+                            Root --> D([Đánh bại nỗi sợ 'Tập tạ sẽ bị đô'])
+                            Root --> E([Dinh dưỡng là nguyên liệu phục hồi])
+                            Root --> F([Chốt chặn kỷ luật bảo vệ thành quả])
+                    </div>
+                </div>
+            </div>
+
+            <!-- Link Video -->
+            <div class="mt-8 text-center md:text-left">
+                <a href="https://youtu.be/HwVn3WMv5oI?si=AzxQ-ZYKi6Kferba" target="_blank" class="inline-flex items-center gap-3 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 px-8 rounded-full transition-transform hover:-translate-y-1 shadow-lg shadow-rose-200">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M21.582 6.186a2.6 2.6 0 0 0-1.83-1.83C18.136 4 12 4 12 4s-6.136 0-7.752.356a2.6 2.6 0 0 0-1.83 1.83C2 7.802 2 12 2 12s0 4.198.418 5.814a2.6 2.6 0 0 0 1.83 1.83C5.864 20 12 20 12 20s6.136 0 7.752-.356a2.6 2.6 0 0 0 1.83-1.83C22 16.198 22 12 22 12s0-4.198-.418-5.814zM9.99 15.405V8.595L15.904 12l-5.914 3.405z"/></svg>
+                    Chuyên gia Thể hình Nữ: Những Điều BẠN CẦN Biết Về Ăn Kiêng & Tập Luyện
+                </a>
+            </div>
+        </section>
+
+        <!-- =================== 2. 🧠 [Deep Insights] =================== -->
+        <section id="deep-insights">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                <span class="text-4xl">🧠</span> [Deep Insights] 9 Trụ Cột Tri Thức
+            </h2>
+            <p class="text-gray-600 text-lg mb-10">Bóc trần bản chất hệ sinh học của bạn qua ngôn ngữ cực kỳ đơn giản.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Bài học 1 -->
+                <div class="insight-card">
+                    <div class="art-block art-1"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">1. Lời Nói Dối Mang Tên "Size S"</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Thu nhỏ cơ thể không phải là đích đến của sức khỏe. Gầy đi nhờ nhịn đói chỉ là sự teo tóp về mặt sinh học.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Ép cân cực đoan bào mòn hệ hormone. Chiếc cân điện tử không phân biệt được bạn đang mất mỡ hay đang tự "ăn thịt" cơ bắp và xương của chính mình.</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ẩn dụ</span><br>Nhét mình vào chiếc váy nhỏ bé bằng cách nhịn đói giống hệt như việc "gọt chân cho vừa giày thủy tinh" – lộng lẫy bên ngoài nhưng rỉ máu bên trong.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài học 2 -->
+                <div class="insight-card">
+                    <div class="art-block art-2"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">2. Bẫy Rập "Skinny Fat" (Gầy Mỡ)</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Mặc vừa đồ size S không đồng nghĩa là cơ thể bạn vững chắc. Thể trạng của bạn có thể đang vô cùng lỏng lẻo.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Lạm dụng chạy bộ và nhịn đói khiến cơ thể hoảng sợ. Nó buộc phải đốt cơ bắp làm năng lượng, và giữ khư khư mỡ bụng làm áo giáp chống lại "nạn đói".</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ẩn dụ</span><br>Tình trạng này giống như một quả táo đỏ mọng, vỏ ngoài láng bóng nhưng bên trong lại xốp rỗng, cạn kiệt sinh lực.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài học 3 -->
+                <div class="insight-card">
+                    <div class="art-block art-3"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">3. Nỗi Sợ "Cuồn Cuộn" Hoang Đường</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Nỗi sợ chạm vào tạ nặng sẽ khiến phụ nữ biến thành lực sĩ là hoàn toàn đi ngược lại quy luật sinh học.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Cơ thể nữ giới chỉ có lượng Testosterone bằng 1/15 nam giới. Đẩy tạ nặng đến mấy cũng không thể phình to, nó chỉ ép các bó cơ săn chắc và kiến tạo đường cong.</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ẩn dụ</span><br>Sợ tập tạ biến bạn thành quái vật cơ bắp cũng vô lý y hệt như việc sợ đi hát karaoke cuối tuần sẽ vô tình biến bạn thành Diva thế giới.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài học 4 -->
+                <div class="insight-card">
+                    <div class="art-block art-4"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">4. Quỹ Hưu Trí "Xương Cơ"</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Tài sản lớn nhất tuổi già không chỉ là số dư tài khoản, mà là mật độ xương và lượng cơ bắp bạn đang nắm giữ.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Khi mãn kinh, Estrogen sụt giảm làm xương xốp đi. Áp lực cơ học từ việc nâng tạ sẽ ép tế bào xương phải liên tục tái tạo, cứng cáp và đặc lên.</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ví dụ</span><br>Nhịn đói để dáng đẹp lúc 40 tuổi không cứu bạn khỏi việc gãy xương hông khi vấp ngã ở tuổi 65. Cơ bắp là gói bảo hiểm nhân thọ thiết thực nhất.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài học 5 -->
+                <div class="insight-card">
+                    <div class="art-block art-5"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">5. Cú Lừa Từ Máy Chạy Bộ</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Sự thoải mái, nhịp nhàng nhễ nhại mồ hôi trên máy Cardio không đủ sức để định hình lại cấu trúc cơ thể bạn.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Cardio cường độ thấp chỉ đốt calo tức thời. Trong khi tập tạ tạo ra nợ oxy, ép cơ thể phải liên tục đốt mỡ để sửa chữa cơ bắp trong suốt 48 giờ sau đó.</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ẩn dụ</span><br>Tập Cardio giống như làm công ăn lương (ngày nào biết ngày đó). Tập tạ là đầu tư sinh lời kép – cơ bắp tự tiêu hao calo ngay cả lúc bạn đang nằm ngủ.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài học 6 -->
+                <div class="insight-card">
+                    <div class="art-block art-6"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">6. Nuôi Dưỡng Để Tái Tạo</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Bạn không thể dùng sự "bỏ đói" hay thâm hụt cực đoan để xây dựng một cơ thể tràn đầy sinh lực.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Ở phòng tập, bạn đang PHÁ VỠ sợi cơ. Cơ bắp chỉ thực sự lớn lên trong lúc bạn nghỉ ngơi, và nó đòi hỏi nguyên liệu thô (Protein/Carb) dồi dào để đắp lại.</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ẩn dụ</span><br>Xây cơ bắp giống hệt xây nhà. Tập gym là "gọi thợ đến", còn Protein là "gạch vữa". Đừng bắt thợ làm việc quần quật nhưng lại không chịu mua gạch cho họ!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài học 7 -->
+                <div class="insight-card">
+                    <div class="art-block art-7"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">7. Sức Mạnh Của Bài Tập Đa Khớp</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Hãy bỏ qua việc ngồi hàng giờ trên cỗ máy tập từng nhóm cơ nhỏ lẻ. Hãy đứng lên và chuyển động toàn thân.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Bài tập đa khớp (Compound như Squat, Deadlift) huy động hệ thần kinh kích hoạt nhiều nhóm cơ cùng lúc, tạo ra thác hormone tích cực và đốt mỡ vượt trội.</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ẩn dụ</span><br>Thay vì dùng một chiếc bàn chải đánh răng để chà từng viên gạch, hãy dùng vòi xịt áp suất cao làm sạch toàn bộ căn phòng chỉ trong chớp mắt.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài học 8 -->
+                <div class="insight-card">
+                    <div class="art-block art-8"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">8. Cơ Chế Tự Vệ Sinh Học</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Cơ thể không hề ghét bạn khi nó từ chối giảm mỡ, nó chỉ đang cố bảo vệ bạn khỏi lối sống khắc nghiệt.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Khi hormone căng thẳng (Cortisol) tăng cao do bị bỏ đói dài ngày, não bộ lập tức hạ thân nhiệt, khóa chặt năng lượng và tích mỡ quanh bụng để bọc lót nội tạng.</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ẩn dụ</span><br>Cơ thể giống như một người mẹ lo xa. Khi thấy "nạn đói" ập tới, người mẹ ấy sẽ lập tức khóa chặt kho lương thực (mỡ) lại để duy trì sự sống.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài học 9 -->
+                <div class="insight-card">
+                    <div class="art-block art-9"><div class="art-shape shape-a"></div><div class="art-shape shape-b"></div></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">9. Kháng Cự Hiện Tại, Tự Do Tương Lai</h3>
+                    <div class="space-y-3 text-sm text-gray-700 flex-1">
+                        <p><span class="tag tag-core">📌 Bản chất</span><br>Tự đưa bản thân vào sự "khó chịu" có chủ đích (tập tạ) ở hiện tại chính là giao dịch mua lấy sự tự do vô giá ở tương lai.</p>
+                        <p><span class="tag tag-mech">⚙️ Cơ chế</span><br>Sự kháng cự vật lý sinh ra sự bền bỉ của não bộ. Trốn tránh sự kháng cự của tạ sắt hôm nay, bạn sẽ phải đối mặt với sự bất lực của thể chất ngày sau.</p>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 mt-auto">
+                            <span class="tag tag-meta">💡 Ví dụ</span><br>Đổ mồ hôi gánh tạ ở tuổi 40 để mua lấy "Đặc quyền": có thể tự mình xách vali đi du lịch vòng quanh thế giới ở tuổi 70 mà không cần ai dìu dắt.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- =================== 3. 🚀 [Action Playbook] =================== -->
+        <section class="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-rose-100 relative overflow-hidden" id="action-playbook">
+            <!-- Deco Glow -->
+            <div class="absolute -top-20 -right-20 w-64 h-64 bg-rose-200 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3 relative z-10">
+                <span class="text-4xl">🚀</span> [Action Playbook] Sổ Tay Thực Chiến
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                <!-- If - Then -->
+                <div>
+                    <h3 class="text-xl font-bold text-rose-800 mb-6 flex items-center gap-2">Kịch bản "Nếu - Thì" (Gỡ rối)</h3>
+                    <div class="space-y-5">
+                        <div class="bg-rose-50 border-l-4 border-rose-600 p-5 rounded-r-xl">
+                            <p class="font-bold text-gray-900 mb-2">Tình huống 1: Ngại ngùng phòng Gym</p>
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                <span class="font-bold text-rose-700">NẾU</span> bạn sợ ánh nhìn phán xét khi bước vào khu vực tạ tự do vốn toàn nam giới...<br>
+                                <span class="font-bold text-gray-900">THÌ</span> hãy đi thẳng vào đó, lấy 1 cặp tạ đơn (Dumbbell) nhẹ 3-5kg, tìm một góc tĩnh lặng (hoặc quay mặt vào tường) và chỉ tập trung vào bài Goblet Squat. Chấp nhận sự ngượng ngùng ban đầu. Sự hiện diện của bạn ở đó đã là một chiến thắng.
+                            </p>
+                        </div>
+
+                        <div class="bg-rose-50 border-l-4 border-rose-600 p-5 rounded-r-xl">
+                            <p class="font-bold text-gray-900 mb-2">Tình huống 2: Cơn thèm ăn vặt</p>
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                <span class="font-bold text-rose-700">NẾU</span> bạn luôn cảm thấy cồn cào, đói lả và thèm đồ ngọt vặt vào lúc 3 giờ chiều...<br>
+                                <span class="font-bold text-gray-900">THÌ</span> vấn đề nằm ở bữa trưa của bạn quá ít đạm. Hãy lập tức đứng dậy pha 1 cốc Whey Protein hoặc ăn sữa chua Hy Lạp để dập tắt cơn thèm, và nhớ tăng lượng thịt/cá vào bữa trưa ngày mai.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro-actions -->
+                <div>
+                    <h3 class="text-xl font-bold text-rose-800 mb-6 flex items-center gap-2">Hành động Micro (Làm ngay trong 24h tới)</h3>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-rose-300 transition shadow-sm">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold">1</div>
+                            <div class="text-sm text-gray-700">
+                                <strong class="text-gray-900 block mb-1 text-base">Thanh lọc Tầm nhìn Không gian Mạng:</strong>
+                                Mở điện thoại, hủy theo dõi (Unfollow) NGAY LẬP TỨC 3 tài khoản cổ xúy thân hình "siêu gầy" hoặc bán trà giảm cân khiến bạn luôn cảm thấy tự ti về cơ thể mình.
+                            </div>
+                        </li>
+                        <li class="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-rose-300 transition shadow-sm">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold">2</div>
+                            <div class="text-sm text-gray-700">
+                                <strong class="text-gray-900 block mb-1 text-base">Thiết lập Ranh giới Bữa ăn:</strong>
+                                Kiểm tra đĩa ăn tối nay của bạn. Đảm bảo BẮT BUỘC phải có một phần Đạm (thịt, cá, trứng, đậu hũ) có kích thước to bằng đúng 1 lòng bàn tay của bạn.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================== 4. ⚠️ [Reality Check] =================== -->
+        <section class="bg-gray-900 rounded-3xl p-8 md:p-12 border border-gray-800 shadow-2xl" id="reality-check">
+            <h2 class="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                <span class="text-4xl">⚠️</span> [Reality Check] Nhận Diện Cạm Bẫy
+            </h2>
+            
+            <div class="bg-gray-800 p-6 rounded-2xl mb-10 border border-gray-700">
+                <h4 class="text-lg font-bold text-rose-400 mb-2">Bóc tách: Tại sao 90% phụ nữ bỏ cuộc ngay trong 2 tuần đầu?</h4>
+                <p class="text-gray-300 leading-relaxed">
+                    Đó là do ảo giác của "Chiếc cân". Khi mới làm quen với tạ, cơ bắp sẽ bị tổn thương vi mô và tự động <strong>ngậm nước</strong> để phục hồi. Điều này khiến số cân có thể đứng im hoặc tăng nhẹ. Nếu bạn dựa vào cảm xúc và con số đó, bạn sẽ hoảng loạn và dễ dàng từ bỏ để quay lại vòng lặp nhịn đói mù quáng! Đừng lấy "Động lực" làm chỗ dựa, hãy dùng Chốt chặn Kỷ luật.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Guardrail 1 -->
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border-l-4 border-rose-500">
+                    <h4 class="font-bold text-lg text-white mb-3 flex items-center gap-2">🛡️ Chốt chặn 1: Tạm Giam Chiếc Cân</h4>
+                    <p class="text-sm text-gray-300 leading-relaxed"><strong>Quy tắc cứng:</strong> Tháo pin chiếc cân điện tử hoặc giấu nó vào sâu trong gầm giường trong đúng 30 ngày. Từ nay, thước đo duy nhất của bạn là độ rộng của cạp quần jeans và việc mức tạ của bạn có tăng lên hay không.</p>
+                </div>
+                
+                <!-- Guardrail 2 -->
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border-l-4 border-rose-500">
+                    <h4 class="font-bold text-lg text-white mb-3 flex items-center gap-2">🛡️ Chốt chặn 2: Vùng An Toàn Vật Lý</h4>
+                    <p class="text-sm text-gray-300 leading-relaxed">Đừng bắt bộ não đang kiệt sức phải đấu tranh ý chí với túi bánh quy lúc 10h đêm. <strong>Quy tắc cứng:</strong> Tuyệt đối KHÔNG MUA và tích trữ đồ ăn vặt rác (Junk food) trong nhà. Nếu thèm, bạn buộc phải dắt xe đi mua - sự lười biếng sẽ tự động dập tắt cám dỗ.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =================== 5. 🌐 [Footer] =================== -->
+    <footer class="footer-fixed w-full mt-10 border-t border-gray-800">
+        <div class="flex flex-col items-center justify-center h-full max-w-4xl mx-auto space-y-4 px-4 text-center">
+            <p class="text-sm md:text-base font-medium opacity-90 text-gray-300">
+                Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+            </p>
+            <div class="flex items-center gap-6">
+                <!-- YouTube -->
+                <a href="https://youtube.com/@vietndonline" target="_blank" aria-label="YouTube" class="social-link text-gray-400">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <!-- TikTok -->
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" aria-label="TikTok" class="social-link text-gray-400">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 448 512"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25v178.72A162.55 162.55 0 1 1 162.6 181.7v77.5a85.05 85.05 0 1 0 85.1 85.05V0h76.4a152.05 152.05 0 0 0 123.9 123.9z"/></svg>
+                </a>
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" aria-label="Facebook" class="social-link text-gray-400">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =================== SCRIPTS =================== -->
+    <script>
+        // Cấu hình giao diện Mermaid
+        document.addEventListener("DOMContentLoaded", function() {
+            mermaid.initialize({ 
+                startOnLoad: true, 
+                theme: 'base',
+                themeVariables: {
+                    primaryColor: '#fff1f2',
+                    primaryTextColor: '#881337',
+                    primaryBorderColor: '#f43f5e',
+                    lineColor: '#f43f5e',
+                    fontFamily: '"Plus Jakarta Sans", sans-serif'
+                },
+                flowchart: {
+                    curve: 'basis'
+                }
+            });
+        });
+
+        // Xử lý thu phóng Mindmap bằng Javascript bảo vệ UX (không cuộn chuột tự do)
+        let currentScale = 1;
+        const container = document.getElementById('mermaid-container');
+        const STEP = 0.2;
+
+        function zoomMap(factor) {
+            currentScale += factor;
+            // Giới hạn zoom từ 0.5x đến 2.5x
+            if (currentScale < 0.5) currentScale = 0.5;
+            if (currentScale > 2.5) currentScale = 2.5;
+            
+            container.style.transform = `scale(${currentScale})`;
+        }
+    </script>
+</body>
+</html>
