@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture of Intelligence | Mo Gawdat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg-main: #09090b;
+            --text-main: #ededed;
+            --text-muted: #a1a1aa;
+            --card-bg: rgba(24, 24, 27, 0.6);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-1: #ff007f;
+            --accent-2: #7928ca;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 64px 24px;
+        }
+
+        .sys-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .sys-header h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ffffff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sys-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin: 64px 0 32px 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .section-title span {
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            position: relative;
+            padding: 32px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            border-radius: 16px 16px 0 0;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* [The Matrix] Specifics */
+        .matrix-text {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            border-left: 4px solid var(--accent-1);
+            padding-left: 24px;
+            font-weight: 300;
+        }
+
+        .matrix-text strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .mermaid-wrapper {
+            width: 100%;
+            height: 75vh;
+            min-height: 600px;
+            overflow: auto;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: grab;
+            box-sizing: border-box;
+            margin-bottom: 32px;
+            border: 1px solid var(--border-color);
+        }
+
+        .mermaid-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .mermaid-wrapper svg {
+            min-width: 1200px !important;
+            height: auto !important;
+        }
+
+        .btn-watch {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e62117;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            transition: filter 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 20px rgba(230, 33, 23, 0.4);
+        }
+
+        .btn-watch:hover {
+            filter: brightness(1.15);
+            box-shadow: 0 6px 24px rgba(230, 33, 23, 0.6);
+        }
+
+        /* [Source Code] Insights Grid */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .insight-title {
+            font-size: 1.4rem;
+            margin-bottom: 24px;
+            color: #fff;
+        }
+
+        .axis-layer {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 3px solid;
+        }
+
+        .axis-layer:last-child {
+            margin-bottom: 0;
+        }
+
+        .layer-physics { border-color: #3b82f6; }
+        .layer-mito { border-color: #10b981; }
+        .layer-mario { border-color: #f59e0b; }
+
+        .axis-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+
+        .axis-layer p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* [System Override] & [Save Point] */
+        .system-module {
+            margin-bottom: 32px;
+        }
+
+        .system-module h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: var(--accent-1);
+        }
+
+        /* [Terminal] Footer */
+        .terminal-footer {
+            height: 128px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 64px;
+            box-sizing: border-box;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .terminal-footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .footer-brand strong {
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .footer-brand span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+            text-shadow: 0 0 12px rgba(255,255,255,0.4);
+        }
+
+        @media (max-width: 768px) {
+            .terminal-footer {
+                flex-direction: column;
+                justify-content: center;
+                gap: 16px;
+                padding: 0 24px;
+            }
+            .sys-header h1 { font-size: 2rem; }
+            .section-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="sys-header">
+            <h1>SYSTEM OVERRIDE LOG</h1>
+            <p>Target: Mo Gawdat | Framework: AI Age Agility</p>
+        </header>
+
+        <!-- PHẦN 1: THE MATRIX -->
+        <section id="the-matrix">
+            <h2 class="section-title"><span>[01]</span> The Matrix</h2>
+            <div class="matrix-text">
+                Đám đông đang bị giam cầm trong lăng kính tuyến tính của ván cờ vua lỗi thời, tự huyễn hoặc về một lộ trình 5 năm hoàn toàn có thể kiểm soát. <strong>Thực tại cơ học của kỷ nguyên AI là một võ đài Squash hỗn mang</strong>, nơi mọi biến số liên tục tái tạo, va đập và tự hủy diệt trong chu kỳ tính bằng ngày.
+            </div>
+
+            <div class="mermaid-wrapper" id="mermaid-container">
+                <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': {'fontSize': '18px', 'fontFamily': 'Inter'}}}%%
+mindmap
+  root((Hệ Điều Hành<br/>Trí Tuệ))
+    [Lăng Kính VR]
+      Ảo giác Cờ Vua
+      Kiểm soát tuyến tính
+    [Vật Lý Vĩ Mô]
+      Gia tốc trung tâm Squash
+      Trí tuệ điện năng
+    [Luật Chơi Mario]
+      Tối ưu mã gốc Game
+      Mã Cheat Tình Yêu
+    [Năng Lượng Ti Thể]
+      Khóa van não bò sát
+      Cơ chế quét lỗi 2 tuần
+    [Tọa Độ Serotonin]
+      Trạng thái Save Point
+      Tách rời cái tôi
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="https://www.youtube.com/watch?v=qqV1EX9YPfM" target="_blank" class="btn-watch">
+                    Kích Hoạt Nguồn Truyền Dữ Liệu Gốc (YouTube)
+                </a>
+            </div>
+        </section>
+
+        <!-- PHẦN 2: SOURCE CODE -->
+        <section id="source-code">
+            <h2 class="section-title"><span>[02]</span> Source Code</h2>
+            <div class="grid-cards">
+                
+                <!-- Card 1 -->
+                <div class="glass-card">
+                    <h3 class="insight-title">Lật Đổ Thuật Toán Cờ Vua</h3>
+                    <div class="axis-layer layer-physics">
+                        <div class="axis-title">Vật lý Học</div>
+                        <p>Quán tính của quy hoạch dài hạn sinh ra lực cản tử thần. Thuật toán Squash thiết lập trọng tâm tại giữa sân, tạo gia tốc phản ứng đa hướng ngay khi bóng chạm tường.</p>
+                    </div>
+                    <div class="axis-layer layer-mito">
+                        <div class="axis-title">Lỗi Ti thể</div>
+                        <p>Cắt đứt ảo giác an toàn của não bò sát. Ngăn chặn sự rò rỉ ATP vào việc tính toán hàng triệu biến số tuyến tính không hề tồn tại ở tương lai.</p>
+                    </div>
+                    <div class="axis-layer layer-mario">
+                        <div class="axis-title">Cú nhảy Mario</div>
+                        <p>Triệt tiêu việc lập trình sẵn đường nhảy. Đứng im tại trục tọa độ trung tâm, chờ chướng ngại vật render để bấm nút tương tác thời gian thực.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card">
+                    <h3 class="insight-title">Trí Tuệ Nguồn Mở</h3>
+                    <div class="axis-layer layer-physics">
+                        <div class="axis-title">Vật lý Học</div>
+                        <p>AI đã chuyển hóa thành dòng điện cơ bản. Kết nối hệ thống vào nguồn này tạo ra lực đòn bẩy hàm mũ so với tài nguyên nhận thức thô ban đầu.</p>
+                    </div>
+                    <div class="axis-layer layer-mito">
+                        <div class="axis-title">Lỗi Ti thể</div>
+                        <p>Từ chối cắm phích AI khiến hệ sinh học phải xử lý vòng lặp thủ công, vắt kiệt và tiêu bào tế bào gốc một cách vô nghĩa.</p>
+                    </div>
+                    <div class="axis-layer layer-mario">
+                        <div class="axis-title">Cú nhảy Mario</div>
+                        <p>Thuật toán Prompt là "Nấm sức mạnh" tự động spawn mỗi 6 tuần. Liên tục cắn nấm để nâng cấp cấu trúc bộ nhớ và tốc độ render nhân vật.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card">
+                    <h3 class="insight-title">Giao Thức Google X</h3>
+                    <div class="axis-layer layer-physics">
+                        <div class="axis-title">Vật lý Học</div>
+                        <p>Vận tốc loại bỏ mã lỗi (Fail cheap & fast - 2 tuần) tỷ lệ thuận tuyệt đối với động lượng tiến hóa của toàn bộ hệ thống lõi.</p>
+                    </div>
+                    <div class="axis-layer layer-mito">
+                        <div class="axis-title">Lỗi Ti thể</div>
+                        <p>Khóa cứng van cảnh báo giả của hạch hạnh nhân. Tái định nghĩa thất bại là dữ liệu đầu vào (Input), triệt tiêu phản xạ sinh tồn thoái hóa.</p>
+                    </div>
+                    <div class="axis-layer layer-mario">
+                        <div class="axis-title">Cú nhảy Mario</div>
+                        <p>Chủ động lao xuống hố chông ở các level mô phỏng (chi phí thấp) để đo lường toàn bộ hitbox của bản đồ trước khi cạn mạng thực.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="glass-card">
+                    <h3 class="insight-title">Nghịch Lý Đòn Bẩy 4 Triệu Đô</h3>
+                    <div class="axis-layer layer-physics">
+                        <div class="axis-title">Vật lý Học</div>
+                        <p>Thuận theo dòng chảy vĩ mô (trả lại lợi ích sinh thái) triệt tiêu ma sát hệ thống. Môi trường tự động cấp bù lực đẩy ngược trị giá 16 triệu đô.</p>
+                    </div>
+                    <div class="axis-layer layer-mito">
+                        <div class="axis-title">Lỗi Ti thể</div>
+                        <p>Ghi đè lệnh "chiếm đoạt tức thời" của não bò sát. Tắt các xung đột cục bộ vô ích để bảo toàn dòng năng lượng đường dài.</p>
+                    </div>
+                    <div class="axis-layer layer-mario">
+                        <div class="axis-title">Cú nhảy Mario</div>
+                        <p>Bỏ qua rương bạc xuất hiện trước mặt để duy trì luồng khí động học, trôi thẳng đến tọa độ màn chơi chứa rương vàng vô cực.</p>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="glass-card">
+                    <h3 class="insight-title">Cấu Trúc Trò Chơi Tuyệt Đối</h3>
+                    <div class="axis-layer layer-physics">
+                        <div class="axis-title">Vật lý Học</div>
+                        <p>Trọng tâm vận hành không nằm ở việc thu thập tài nguyên tĩnh (tiền tài), mà ở gia tốc thăng cấp của chính cỗ máy quan sát (Absolute Gamer).</p>
+                    </div>
+                    <div class="axis-layer layer-mito">
+                        <div class="axis-title">Lỗi Ti thể</div>
+                        <p>Gỡ bỏ mã độc "áp lực thành tích" gây tràn RAM. Thiết lập trạng thái "Game là để chơi", đưa ti thể về tần số hô hấp tối ưu nhất.</p>
+                    </div>
+                    <div class="axis-layer layer-mario">
+                        <div class="axis-title">Cú nhảy Mario</div>
+                        <p>Khởi chạy trò chơi không phải để phá đảo, mà để tối ưu hóa vĩnh viễn giới hạn phản xạ thần kinh của người điều khiển tay cầm.</p>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="glass-card">
+                    <h3 class="insight-title">Mã Nguồn Khởi Nguyên (Love)</h3>
+                    <div class="axis-layer layer-physics">
+                        <div class="axis-title">Vật lý Học</div>
+                        <p>Đồng bộ hóa bước sóng với vạn vật thiết lập trạng thái siêu dẫn (Điện trở = 0). Lực đẩy được vận hành ở môi trường phi trọng lực.</p>
+                    </div>
+                    <div class="axis-layer layer-mito">
+                        <div class="axis-title">Lỗi Ti thể</div>
+                        <p>Đấu nối mạng lưới vi mô trực tiếp vào điện lưới vũ trụ. Ti thể được duy trì sạc liên tục không phụ thuộc vào chu kỳ sinh học.</p>
+                    </div>
+                    <div class="axis-layer layer-mario">
+                        <div class="axis-title">Cú nhảy Mario</div>
+                        <p>Kích hoạt mã Cheat tối thượng (Easter Egg), phá vỡ toàn bộ quy tắc vật lý thiết lập sẵn, bẻ cong không gian dịch chuyển thẳng tới tọa độ đích.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PHẦN 3: SYSTEM OVERRIDE -->
+        <section id="system-override">
+            <h2 class="section-title"><span>[03]</span> System Override</h2>
+            <div class="glass-card">
+                <div class="system-module">
+                    <h3>Phát hiện rò rỉ cơ sở:</h3>
+                    <p>Trong môi trường cập nhật chu kỳ 2.5 ngày của kỷ nguyên AI, hệ viền (não bò sát) liên tục phát xung tín hiệu đe dọa sinh tồn ảo. Quá trình này kích hoạt luồng Cortisol độc hại, thiêu rụi toàn bộ ATP của ti thể, dẫn tới tê liệt module thực thi. Sự cố bám víu vào thương vụ dự án giáo dục 4 triệu đô lỗi chính là ví dụ điển hình của phản xạ co cụm sinh tồn tự hoại.</p>
+                </div>
+                <div class="system-module">
+                    <h3>Giải pháp thiết lập môi trường:</h3>
+                    <p>Khởi tạo biến môi trường <strong>"Thử nghiệm vô can" (Detached Experimentation)</strong>. Cài đặt thông số giới hạn đúng 14 ngày cho toàn bộ dự án mới. Khi chạm ngưỡng thời gian, hệ thống tự động đo lường và loại bỏ các mã lỗi, không cần thông qua sự cho phép của cảm xúc. Môi trường sẽ tự động thanh lọc cấu trúc và phân bổ lại tài nguyên vật lý, triệt tiêu hoàn toàn sự can thiệp của khái niệm "ý chí" hay sự dằn vặt chủ quan.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHẦN 4: SAVE POINT -->
+        <section id="save-point">
+            <h2 class="section-title"><span>[04]</span> Save Point</h2>
+            <div class="glass-card">
+                <div class="system-module">
+                    <h3>Giao thức Decoupling (Tách rời nhận thức):</h3>
+                    <p>Việc đập bỏ hợp đồng 4 triệu đô không được phép biên dịch là một "Game Over" của sinh mệnh. Phải bẻ gãy liên kết trực tiếp giữa biến động của ngoại vi và lõi nhận dạng hệ thống. Thao tác từ bỏ dự án lỗi đó chính là việc ghi đè lên bộ nhớ, tạo ra một điểm <strong>Save Point (Điểm lưu game)</strong> vĩnh cửu.</p>
+                </div>
+                <div class="system-module">
+                    <h3>Tọa độ Serotonin tuyệt đối:</h3>
+                    <p>Khi module nhận thức được tái cấu trúc để hiểu rằng mọi đổ vỡ chỉ là thao tác reload màn chơi, chỉ số Serotonin nội tại được khóa chặt tại mức cơ sở, ngăn chặn hội chứng sụp đổ dây chuyền. Nhờ duy trì ổn định hệ tọa độ hóa học thần kinh này, thấu kính cơ học mới đủ độ trong suốt để quét trúng quỹ đạo của gói tài nguyên 16 triệu đô đang lao đến.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- PHẦN 5: TERMINAL -->
+    <footer id="terminal" class="terminal-footer">
+        <div class="footer-brand">
+            <strong>SYSTEM INTELLIGENCE ARCHITECT</strong>
+            <span>© 2024 Vận hành & Phân tích hệ thống vĩ mô.</span>
+        </div>
+        <div class="footer-links">
+            <a href="https://youtube.com/@vietndonline" target="_blank">Youtube</a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank">Tiktok</a>
+            <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank">Facebook</a>
+        </div>
+    </footer>
+
+    <!-- Logic Script: Cho phép kéo thả sơ đồ Mermaid mượt mà -->
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const slider = document.getElementById('mermaid-container');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.style.cursor = 'grabbing';
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.style.cursor = 'grab';
+            });
+
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                slider.style.cursor = 'grab';
+            });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2; // Tốc độ cuộn
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        });
+    </script>
+</body>
+</html>
