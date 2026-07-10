@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Thực Chiến: Khởi Nghiệp Kỷ Nguyên AI</title>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --surface: #1e293b;
+            --primary: #3b82f6;   /* Tech Blue */
+            --secondary: #f97316; /* Energy Orange */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        h1, h2, h3 { line-height: 1.3; }
+        
+        .page-title {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .mentor-intro {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            max-width: 900px;
+            margin: 0 auto 50px auto;
+            font-style: italic;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+            padding-bottom: 10px;
+            margin: 60px 0 30px 0;
+            color: var(--text-main);
+        }
+
+        /* 1. The Big Idea */
+        .big-idea-box {
+            background: linear-gradient(145deg, var(--surface), #0b1120);
+            padding: 30px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        .core-thesis {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #fff;
+            border-left: 4px solid var(--secondary);
+            padding-left: 20px;
+        }
+
+        /* Mindmap Container */
+        .mindmap-wrapper {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background-color: #0b1120;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden; /* CẤM CUỘN TỰ DO GÂY GIẬT TRANG */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .mermaid-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-origin: center center;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .zoom-btn {
+            background: var(--surface);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        .zoom-btn:hover { background: var(--primary); border-color: var(--primary); transform: translateY(-2px); }
+
+        .yt-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        .yt-btn:hover { background: #dc2626; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
+
+        /* 2. Deep Insights */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-6px); border-color: rgba(59, 130, 246, 0.5); }
+
+        /* CSS Abstract Art Graphics */
+        .art-box { height: 110px; border-radius: 12px; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .art-1 { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .art-1::after { content:''; position:absolute; width:100px; height:100px; background:rgba(255,255,255,0.1); border-radius:50%; top:-20px; right:-20px; }
+        .art-2 { background: linear-gradient(45deg, #f59e0b, #ea580c); clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%); }
+        .art-3 { background: linear-gradient(to right, #10b981, #059669); }
+        .art-3::after { content:''; position:absolute; border:30px solid rgba(255,255,255,0.05); border-color: transparent transparent rgba(255,255,255,0.15) transparent; bottom:0; right:0;}
+        .art-4 { background: repeating-linear-gradient(45deg, #8b5cf6, #8b5cf6 10px, #7c3aed 10px, #7c3aed 20px); }
+        .art-5 { background: radial-gradient(circle at 50% 50%, #ec4899, #be185d); }
+        .art-5::before { content:''; position:absolute; width:50px; height:50px; background:rgba(0,0,0,0.1); transform:rotate(45deg); top:30px; left:30px; }
+        .art-6 { background: linear-gradient(to bottom, #14b8a6, #0f766e); }
+        .art-6::after { content:''; position:absolute; width:100%; height:50%; background:rgba(255,255,255,0.1); bottom:0; left:0; transform:skewY(-10deg); transform-origin:bottom left; }
+        .art-7 { background: conic-gradient(from 90deg, #f43f5e, #9f1239, #f43f5e); }
+        .art-8 { background: linear-gradient(135deg, #6366f1, #4338ca); }
+        .art-8::before { content:''; position:absolute; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.05); right:-30px; bottom:-30px; box-shadow:0 0 0 20px rgba(255,255,255,0.02); }
+        .art-9 { background: linear-gradient(to right, #84cc16, #65a30d); }
+        .art-9::after { content:''; position:absolute; width:100%; height:5px; background:rgba(255,255,255,0.3); top:50%; transform:rotate(-20deg); }
+
+        .card h3 { font-size: 1.25rem; margin-bottom: 15px; color: #fff; }
+        
+        .lesson-part { margin-bottom: 12px; font-size: 0.95rem; }
+        .label-logic { color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+        .label-mech { color: var(--success); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+        
+        .example-box {
+            background: rgba(249, 115, 22, 0.1);
+            border-left: 3px solid var(--secondary);
+            padding: 12px 15px;
+            margin-top: 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: #fed7aa;
+        }
+
+        /* 3. Action Playbook & Reality Check */
+        .playbook-box, .guardrail-box {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .if-then-item {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 15px;
+        }
+        .if-then-item strong { color: var(--primary); }
+        .if-then-item span { display: block; margin-top: 8px; color: var(--text-muted); }
+
+        .micro-action {
+            display: flex;
+            gap: 15px;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px dashed rgba(16, 185, 129, 0.3);
+        }
+
+        .guardrail-box { border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
+        .trap-text { font-size: 1.05rem; margin-bottom: 20px; color: #fca5a5; }
+
+        .rule-item {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--danger);
+        }
+
+        /* 5. Footer */
+        footer {
+            height: 128px;
+            background-color: #0b1120;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+            margin-top: 80px;
+        }
+
+        .footer-msg {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            max-width: 800px;
+        }
+
+        .social-icons { display: flex; gap: 20px; }
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px; height: 40px;
+            background: var(--surface);
+            border-radius: 50%;
+            color: #fff;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .social-icons a:hover { background: var(--primary); transform: translateY(-3px); }
+        .social-icons svg { width: 18px; height: 18px; fill: currentColor; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <h1 class="page-title">🚀 Đế Chế Cá Nhân Kỷ Nguyên AI</h1>
+        <div class="mentor-intro">
+            "Chào bạn, tôi là Mentor của bạn đây. Nghe này, nếu bạn đang nghĩ khởi nghiệp kỷ nguyên AI là cuộc đua xem ai dùng tool Midjourney hay gõ lệnh ChatGPT nhanh hơn, bạn đang lao thẳng vào ngõ cụt. AI làm phần 'Thợ', còn bạn phải làm 'Ngọn Hải Đăng'. Đừng đọc lý thuyết suông nữa, đây là bản lề để bạn tái cấu trúc lại sự nghiệp kinh doanh của chính mình!"
+        </div>
+
+        <!-- SECTION 1: THE BIG IDEA -->
+        <section>
+            <h2 class="section-title">🎯 [The Big Idea] Bức Tranh Toàn Cảnh</h2>
+            <div class="big-idea-box">
+                <p class="core-thesis">
+                    "Khi máy móc kéo chi phí sản xuất và chức năng (Functionality) về bằng 0, tài sản sinh lời đắt giá nhất của bạn chính là 'Sinh Khí' (Vitality) của con người và năng lực đóng gói chất xám (IP) thành cỗ máy tự vận hành. Đừng vội tay trắng làm sếp, hãy tích lũy sức mạnh từ vị trí Số 2!"
+                </p>
+            </div>
+
+            <!-- Mindmap -->
+            <div class="mindmap-wrapper">
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoomIn()" title="Phóng to">[+] Phóng to</button>
+                    <button class="zoom-btn" onclick="zoomOut()" title="Thu nhỏ">[-] Thu nhỏ</button>
+                </div>
+                <div class="mermaid-container" id="mermaid-zoom">
+                    <div class="mermaid">
+                        %%{init: {'theme': 'dark', 'flowchart': {'curve': 'basis', 'nodeSpacing': 50, 'rankSpacing': 80}}}%%
+                        graph LR
+                            A([🚀 LỘ TRÌNH KHỞI NGHIỆP AI]) --> B([1. Làm 'Số 2' Học Việc])
+                            A --> C([2. Người Thật Đè Bẹp Logo])
+                            A --> D([3. Giữ Sinh Khí, Bỏ Chức Năng])
+                            A --> E([4. Đóng Gói IP Thành GPT])
+                            A --> F([5. Cá Nhân Hóa Tốc Độ])
+                            A --> G([6. Hack Lòng Tin 7-11-4])
+                            A --> H([7. Lương Kết Hợp Cổ Phần])
+                            A --> I([8. Sự Nghiệp Đa Luồng])
+                            A --> J([9. Hiệu Ứng Hành Động Phá Cách])
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="https://youtu.be/tPM9_3ZQ6iw?si=Gcn7pxzgcPebeWzV" target="_blank" class="yt-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    Xây Dựng Con Đường Khởi Nghiệp Trong Kỷ Nguyên AI: Cẩm Nang Daniel Priestley
+                </a>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DEEP INSIGHTS -->
+        <section>
+            <h2 class="section-title">🧠 [Deep Insights] 9 Trụ Cột Tri Thức</h2>
+            <div class="insights-grid">
+                
+                <!-- Insight 1 -->
+                <div class="card">
+                    <div class="art-box art-1"></div>
+                    <h3>1. Thực tập sinh Tỷ đô (Apprenticeship)</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Đừng vội xưng danh CEO khi tay trắng. Hãy xin làm cánh tay phải (Số 2) cho một Founder xuất chúng.
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> Khởi nghiệp từ số 0 là cỗ máy đốt tiền. Khi làm Số 2, bạn được quyền điều hành dòng tiền, học chiến lược và phạm sai lầm trên rủi ro của người khác. Đó là tấm bằng MBA thực chiến nhất.
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ví dụ:</strong> Daniel kể việc anh từng chứng kiến một công ty tăng trưởng từ 0 lên nhiều triệu đô trong 2 năm khi anh làm "đệ tử" – một sự học hỏi ở cự ly gần không trường lớp nào dạy được.
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="card">
+                    <div class="art-box art-2"></div>
+                    <h3>2. Quyền Lực của Cổ Phần (Equity)</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Chấp nhận giảm một chút tiền mặt để đổi lấy Cổ phần khi đầu quân cho các dự án tiềm năng.
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> Tiền lương giúp bạn không chết đói hôm nay. Nhưng Cổ phần mới là thứ bẻ khóa tư duy của bạn từ "người đánh thuê" sang "người làm chủ", tạo ra khối tài sản nổ tung khi công ty lớn mạnh.
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ẩn dụ:</strong> Lương là việc bạn xách xô đi lấy nước mỗi ngày. Cổ phần là việc bạn đang âm thầm tự xây đường ống dẫn nước thẳng về nhà mình.
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="card">
+                    <div class="art-box art-3"></div>
+                    <h3>3. Khuôn Mặt đè bẹp Logo (Human Premium)</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Khách hàng tin tưởng vào một khuôn mặt thật, chứ không phải một chiếc logo doanh nghiệp vô tri.
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> Não bộ con người được lập trình để quét và tìm kiếm sự an toàn từ đồng loại. Một câu chuyện cá nhân tạo ra sự kết nối và chốt sale nhanh hơn 100 lần chạy Ads mờ nhạt.
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ví dụ:</strong> Rất nhiều Founder chạy quảng cáo đủ kiểu không ra đơn, nhưng khi họ trực tiếp bước ra ánh sáng, kể câu chuyện đời thật của mình, khách hàng lập tức rút ví vì họ "tin người bán" trước khi "tin sản phẩm".
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="card">
+                    <div class="art-box art-4"></div>
+                    <h3>4. Sinh Khí vs. Chức Năng (Vitality)</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Giao toàn bộ việc "sản xuất rập khuôn" (Functionality) cho AI. Việc của bạn là thổi "Sinh khí" (Cảm xúc, Năng lượng).
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> AI làm việc logic, không biết mệt. Nhưng nó không có tầm nhìn hay sức mạnh truyền cảm hứng. Dòng tiền sẽ chảy về nơi phát ra sinh khí con người, bởi sự hoàn hảo của máy móc đang trở nên quá rẻ mạt.
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ẩn dụ:</strong> AI là bộ giáp Iron Man. Nó chỉ là sắt thép vô tri nếu Tony Stark (là bạn) không mang ý chí và cảm xúc bước vào để điều khiển nó thành siêu anh hùng.
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="card">
+                    <div class="art-box art-5"></div>
+                    <h3>5. Vốn Hóa Chất Xám (GPT Wrappers)</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Ngừng bán thời gian tư vấn 1-1. Hãy biến kiến thức, framework (IP) của bạn thành phần mềm.
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> Khi bạn train một Custom GPT bằng triết lý riêng của mình, bạn đã tạo ra hàng nghìn "nhân viên tư vấn" mang DNA não bộ của bạn, hoạt động 24/7 với chi phí biên bằng 0.
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ẩn dụ:</strong> Thay vì tự tay pha từng ly cà phê mỗi sáng cho khách, bạn chốt công thức độc quyền và đóng gói nó vào máy bán hàng tự động đặt khắp thành phố.
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="card">
+                    <div class="art-box art-6"></div>
+                    <h3>6. Cá Nhân Hóa Siêu Tốc (Speed-to-value)</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Ai bắt mạch và đưa ra giải pháp cá nhân hóa cho khách hàng nhanh nhất, người đó thắng.
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> Tích hợp các công cụ đánh giá (như ScoreApp) với AI. Khách hàng vừa điền form xong, hệ thống lập tức chấm điểm và nhả ra một báo cáo phân tích thiết kế riêng cho nỗi đau của họ. Tốc độ sinh ra uy quyền.
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ẩn dụ:</strong> Bệnh nhân không muốn đọc cẩm nang y khoa 500 trang. Họ muốn bạn dùng máy X-quang quét qua và chỉ đúng chỗ xương gãy trong vòng 3 giây.
+                    </div>
+                </div>
+
+                <!-- Insight 7 -->
+                <div class="card">
+                    <div class="art-box art-7"></div>
+                    <h3>7. Định Luật Lòng Tin 7-11-4</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Để người lạ xuống tiền, họ cần: 7 giờ tiêu thụ nội dung, 11 điểm chạm, trên 4 nền tảng/địa điểm khác nhau.
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> Hạch hạnh nhân của con người luôn cảnh giác với người lạ. Sự lặp lại ở nhiều bối cảnh khác nhau sẽ hack hệ thống phòng ngự này, biến bạn thành "người quen cực kỳ an toàn".
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ẩn dụ:</strong> Bán hàng y hệt đi tán tỉnh. Bạn không thể chốt cưới ở ngay lần gặp đầu. Phải qua nhắn tin (chạm 1), đi cafe (chạm 2), xem phim (đổi bối cảnh nền tảng).
+                    </div>
+                </div>
+
+                <!-- Insight 8 -->
+                <div class="card">
+                    <div class="art-box art-8"></div>
+                    <h3>8. Sự Nghiệp Đa Luồng (Plural Careers)</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Tư duy "một nghề cho chín" đã chết. Đòn bẩy AI cho phép bạn chạy 2-3 sự nghiệp cùng lúc.
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> AI đóng vai trò như một đội ngũ trợ lý khổng lồ, gánh vác 80% công việc hành chính tay chân. Bạn lùi lại làm "nhạc trưởng", giải phóng não bộ cho nhiều dự án ngách khác nhau.
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ví dụ:</strong> Bạn hoàn toàn có thể là một Giám đốc vận hành xuất sắc vào ban ngày, nhưng là một Podcaster có tiếng về đêm và nhà đầu tư thiên thần vào cuối tuần mà không sợ kiệt sức.
+                    </div>
+                </div>
+
+                <!-- Insight 9 -->
+                <div class="card">
+                    <div class="art-box art-9"></div>
+                    <h3>9. Hiệu Ứng Cái Rìu (Symbolic Action)</h3>
+                    <div class="lesson-part">
+                        <span class="label-logic">Bản chất:</span> Sự bình thường là án tử PR. Hãy biết tạo ra những hành động vật lý táo bạo mang tính biểu tượng.
+                    </div>
+                    <div class="lesson-part">
+                        <span class="label-mech">Cơ chế:</span> Sự chú ý là loại tiền tệ đắt nhất. Giữa biển thông tin nhiễu loạn, một cú sốc thị giác có tính toán sẽ phá vỡ bộ lọc của não bộ đám đông và ghim sâu vào trí nhớ vĩnh viễn.
+                    </div>
+                    <div class="example-box">
+                        💡 <strong>Ví dụ:</strong> Tỷ phú Richard Branson từng bay trực thăng đến sân bay Sydney, tay cầm một chiếc rìu thật để "chôn vùi chiếc rìu" (hòa giải) với đối thủ. Mọi camera quốc gia đều chĩa vào ông!
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: ACTION PLAYBOOK -->
+        <section>
+            <h2 class="section-title">🚀 [Action Playbook] Sổ Tay Thực Chiến</h2>
+            
+            <div class="playbook-box">
+                <h3 style="color: var(--secondary); margin-bottom: 20px;">Kịch bản "Nếu - Thì" (Dập lửa đời thường)</h3>
+                
+                <div class="if-then-item">
+                    <strong>🚨 NẾU bạn đang cạn vốn, bế tắc và không có ý tưởng kinh doanh rõ ràng...</strong>
+                    <span>👉 <strong>THÌ:</strong> Tuyệt đối đừng vay mượn mở công ty. Hãy gạt cái tôi đi, xin làm trợ lý, "người số 2" cho một Founder xuất sắc trong ngách bạn thích. Học cách họ xoay dòng tiền và xử lý khủng hoảng bằng tiền của họ. Lấy lương để đi thực tập khởi nghiệp!</span>
+                </div>
+                
+                <div class="if-then-item">
+                    <strong>🚨 NẾU bài viết của bạn trên mạng xã hội do AI viết ra bị nhạt nhẽo, không ai thèm đọc...</strong>
+                    <span>👉 <strong>THÌ:</strong> Hãy dừng ngay việc đuổi theo các từ vựng bóng bẩy giả tạo. Dùng AI lên khung sườn, nhưng BẮT BUỘC bạn phải TỰ TAY gõ vào đó 1 sai lầm ngớ ngẩn hoặc 1 trải nghiệm cay đắng bạn vừa gặp. AI không thể fake được sự thật đó.</span>
+                </div>
+
+                <h3 style="color: var(--success); margin: 35px 0 20px 0;">Hành động Micro (Làm ngay trong 24h tới)</h3>
+                
+                <div class="micro-action">
+                    <div style="font-size: 1.8rem;">🤖</div>
+                    <div>
+                        <strong style="color: var(--success); font-size: 1.1rem; display:block; margin-bottom:5px;">Sa thải bản thân khỏi việc tay chân:</strong>
+                        Liệt kê 3 thao tác hành chính bạn phải làm đi làm lại mỗi ngày. Bật ChatGPT lên và ra lệnh: <em>"Hãy viết cho tôi 1 prompt hoặc hướng dẫn tự động hóa 1 trong 3 công việc này."</em> Giải phóng ngay 1 tiếng đồng hồ cho ngày mai!
+                    </div>
+                </div>
+
+                <div class="micro-action">
+                    <div style="font-size: 1.8rem;">🎯</div>
+                    <div>
+                        <strong style="color: var(--success); font-size: 1.1rem; display:block; margin-bottom:5px;">Sửa lại Bio (Tiểu sử) mạn xã hội:</strong>
+                        Xóa ngay các chức danh sáo rỗng vô hồn. Điền lại theo công thức: <em>"Giúp [Tệp khách hàng cụ thể] giải quyết [Vấn đề cực kỳ đau đớn] bằng [Phương pháp/Công cụ độc quyền của bạn]."</em>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: REALITY CHECK -->
+        <section>
+            <h2 class="section-title" style="color: var(--danger);">⚠️ [Reality Check] Nhận Diện Cạm Bẫy</h2>
+            
+            <div class="guardrail-box">
+                <div class="trap-text">
+                    <strong>☠️ Ảo giác "Mê mẩn Công cụ" (Shiny Object Syndrome):</strong> <br>
+                    Lý do bạn mãi không giàu là vì bạn bận rộn tải hàng ngàn prompt AI, mua hàng chục phần mềm trả phí... nhưng lại KHÔNG ĐÓNG GÓI ĐƯỢC bất kỳ kiến thức (IP) nào của riêng mình. Bạn đang trở thành một "thợ bấm nút" cho máy móc chứ không phải là một doanh nhân có sức ảnh hưởng.
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0; color: #fff;">🛡️ Chốt chặn Kỷ luật (Bảo vệ bản thân)</h3>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Đừng tin vào sự tự giác, hãy cài đặt các giới hạn môi trường vật lý cứng rắn:</p>
+
+                <div class="rule-item">
+                    <strong style="color: var(--danger); font-size: 1.1rem; display:block; margin-bottom:5px;">1. Quy tắc "0 Đồng"</strong>
+                    Tự khóa thẻ tín dụng lại. Tuyệt đối KHÔNG chi thêm tiền mua bất kỳ tool tự động hóa CRM hay tài khoản AI Pro nào cho đến khi bạn TỰ TAY gọi điện, nhắn tin và chốt thành công được 1 khách hàng trả tiền thực tế. Phải hiểu con người trước khi dùng máy!
+                </div>
+
+                <div class="rule-item">
+                    <strong style="color: var(--danger); font-size: 1.1rem; display:block; margin-bottom:5px;">2. Chốt chặn "Mặt mộc AI"</strong>
+                    Đặt ra ĐÚNG 1 NGÀY trong tuần (ví dụ Chủ Nhật), bạn phải log out toàn bộ ChatGPT/Claude. Mọi email, kịch bản, bài đăng trong ngày hôm đó BẮT BUỘC phải được viết bằng "não thịt" của bạn. Sai chính tả, câu cú lủng củng cũng được, nhưng tuyệt đối không để Sinh khí con người bị thui chột.
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- SECTION 5: FOOTER -->
+    <footer>
+        <p class="footer-msg">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div class="social-icons">
+            <a href="https://youtube.com/@vietndonline" target="_blank" title="YouTube">
+                <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" title="TikTok">
+                <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" title="Facebook">
+                <svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.592 0 0 .592 0 1.325v21.351C0 23.408.592 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.592 1.323-1.325V1.325C24 .592 23.408 0 22.675 0z"/></svg>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Logic JS cho Zoom Mindmap (Không bị giật trang, không cuộn tự do) -->
+    <script>
+        // Khởi tạo Mermaid
+        mermaid.initialize({ startOnLoad: true });
+
+        // Logic điều khiển Nút Zoom
+        let currentScale = 1;
+        const scaleStep = 0.2;
+        const maxScale = 2.5;
+        const minScale = 0.5;
+        const mermaidZoomDiv = document.getElementById('mermaid-zoom');
+
+        function zoomIn() {
+            if (currentScale < maxScale) {
+                currentScale += scaleStep;
+                applyZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentScale > minScale) {
+                currentScale -= scaleStep;
+                applyZoom();
+            }
+        }
+
+        function applyZoom() {
+            mermaidZoomDiv.style.transform = `scale(${currentScale})`;
+        }
+    </script>
+</body>
+</html>
