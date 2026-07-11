@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Matrix Override - System Architecture</title>
+    
+    <!-- STREAMING_CHUNK:Loading Core Dependencies -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- STREAMING_CHUNK:Configuring System Styles -->
+    <style>
+        :root {
+            --bg-matrix: #09090b;
+            --glass-bg: rgba(24, 24, 27, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-accent: linear-gradient(90deg, #ff007a, #7928ca, #00d4ff);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-matrix);
+            color: #e4e4e7;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(121, 40, 202, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 212, 255, 0.05), transparent 25%);
+            background-attachment: fixed;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-4px);
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--neon-accent);
+            z-index: 10;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: var(--neon-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Mermaid Specific Rules */
+        .mermaid-wrapper {
+            width: 100%;
+            height: 75vh;
+            min-height: 600px;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: grab;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        
+        .mermaid-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .mermaid-wrapper svg {
+            min-width: 1200px !important;
+            height: auto !important;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Terminal Footer Strict Height */
+        .terminal-footer {
+            height: 128px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-matrix); }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- STREAMING_CHUNK:Section 1 - The Matrix Integration -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+        
+        <section id="the-matrix" class="space-y-8">
+            <div class="text-center space-y-6 max-w-4xl mx-auto">
+                <h1 class="text-sm font-bold tracking-[0.3em] text-zinc-500 uppercase">Phase 01 // The Matrix</h1>
+                <p class="text-3xl md:text-5xl font-extrabold leading-tight">
+                    Đám đông vẫn đang đeo kính VR của một hệ hình công nghiệp lỗi thời, phản ứng với AI như một công cụ vi mô thay vì một vụ nổ Big Bang cấu trúc lại mã nguồn thực tại. <br/>
+                    <span class="text-gradient">Lột bỏ lăng kính đó, AI là một bộ đòn bẩy vật lý bẻ gãy mọi quán tính sinh tồn cũ, buộc hệ thống thần kinh phải cắm rễ vào một server hoàn toàn mới.</span>
+                </p>
+                
+                <div class="pt-4">
+                    <a href="https://www.youtube.com/watch?v=wuyFnfmqA4I" target="_blank" rel="noopener noreferrer" 
+                       class="inline-flex items-center gap-3 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-full transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:shadow-[0_0_30px_rgba(220,38,38,0.6)]">
+                        <i class="fa-brands fa-youtube text-xl"></i>
+                        Trích xuất Video Nguồn
+                    </a>
+                </div>
+            </div>
+
+            <!-- STREAMING_CHUNK:Mermaid Mindmap Initialization -->
+            <div class="mermaid-wrapper mt-12 relative group">
+                <div class="absolute top-4 left-4 z-10 bg-black/60 px-3 py-1 rounded text-xs font-mono text-zinc-400 border border-zinc-800">
+                    <i class="fa-solid fa-up-down-left-right mr-2"></i>Kéo thả để di chuyển
+                </div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': {'fontSize': '18px', 'fontFamily': 'Inter', 'lineColor': '#7928ca'}}}%%
+mindmap
+  root((Tọa độ AI))
+    [Lực Đòn Bẩy Vật Lý]
+      (Gia tốc cấp số nhân)
+      (Xóa sổ ma sát trung gian)
+      (Chi phí biên tiến về 0)
+    [Lỗi Ti Thể Đám Đông]
+      (Cortisol từ phòng vệ bản ngã)
+      (Rò rỉ ATP do hoảng loạn)
+      (Phản xạ bám víu quy trình cũ)
+    [Game Cấu Trúc Mới]
+      (Nấm: Tư duy hệ thống)
+      (Hố chông: Kỹ năng cứng thuần túy)
+      (Save Point: Định vị lại danh tính)
+                </div>
+            </div>
+        </section>
+
+        <!-- STREAMING_CHUNK:Section 2 - Source Code Insights -->
+        <section id="source-code" class="space-y-12">
+            <div class="text-center">
+                <h2 class="text-sm font-bold tracking-[0.3em] text-zinc-500 uppercase">Phase 02 // Source Code</h2>
+                <h3 class="text-3xl font-bold mt-2">Bóc Tách Khối Lệnh Thực Tại</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Insight 1 -->
+                <div class="glass-panel p-6 space-y-6">
+                    <h4 class="text-xl font-bold text-white">01. Khấu hao Trọng lực Kỹ năng</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-atom text-blue-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-blue-400 uppercase mb-1">Bản chất Vật lý</span>
+                                <p class="text-sm text-zinc-300">Quán tính của việc tích lũy kỹ năng cứng đang chạm mức 0 do lực đòn bẩy thuật toán thay thế cơ bắp tư duy.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-dna text-orange-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-orange-400 uppercase mb-1">Lỗi Ti thể</span>
+                                <p class="text-sm text-zinc-300">Não bò sát liên tục kích hoạt báo động sai, đốt cháy năng lượng để bảo vệ "chức danh" vốn đã mất giá trị sinh tồn.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-gamepad text-green-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-green-400 uppercase mb-1">Cú nhảy Mario</span>
+                                <p class="text-sm text-zinc-300">Hố chông là sự tự tôn chuyên gia. Nấm sức mạnh là "Kỹ năng Prompting" và khả năng tổng hợp mảnh ghép.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="glass-panel p-6 space-y-6">
+                    <h4 class="text-xl font-bold text-white">02. Xóa sổ Ma sát Trung gian</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-atom text-blue-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-blue-400 uppercase mb-1">Bản chất Vật lý</span>
+                                <p class="text-sm text-zinc-300">AI tối ưu hóa vector truyền dẫn giá trị thẳng từ ý tưởng đến thành phẩm, triệt tiêu lực cản của các tầng lớp quản lý trung gian.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-dna text-orange-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-orange-400 uppercase mb-1">Lỗi Ti thể</span>
+                                <p class="text-sm text-zinc-300">Tiêu hao tài nguyên ATP vào việc duy trì các mối quan hệ "cầm tay chỉ việc" thay vì thiết lập giao thức máy móc.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-gamepad text-green-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-green-400 uppercase mb-1">Cú nhảy Mario</span>
+                                <p class="text-sm text-zinc-300">Kích hoạt đường ống Warp Pipe: Bỏ qua các level tuần tự, đẩy trực tiếp ý tưởng lên server production.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="glass-panel p-6 space-y-6">
+                    <h4 class="text-xl font-bold text-white">03. Nguồn cung Sáng tạo Vô cực</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-atom text-blue-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-blue-400 uppercase mb-1">Bản chất Vật lý</span>
+                                <p class="text-sm text-zinc-300">Chi phí biên của việc sinh ra nội dung/mã lệnh hội tụ về 0. Trọng tâm vật lý chuyển từ "chế tác" sang "lựa chọn".</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-dna text-orange-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-orange-400 uppercase mb-1">Lỗi Ti thể</span>
+                                <p class="text-sm text-zinc-300">Tắc nghẽn vi tuần hoàn do sự hoàn hảo hóa (perfectionism) - một phản xạ phòng vệ sợ bầy đàn đào thải.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-gamepad text-green-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-green-400 uppercase mb-1">Cú nhảy Mario</span>
+                                <p class="text-sm text-zinc-300">Luật chơi thay đổi: Nhặt hoa lửa và spam đạn liên tục, lấy số lượng để tinh chỉnh xác suất trúng đích thay vì nhắm bắn 1 lần.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="glass-panel p-6 space-y-6">
+                    <h4 class="text-xl font-bold text-white">04. Ảo giác Đa nhiệm Đám đông</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-atom text-blue-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-blue-400 uppercase mb-1">Bản chất Vật lý</span>
+                                <p class="text-sm text-zinc-300">Mạng lưới neural của máy móc phân tách hàng triệu luồng song song, áp đảo hoàn toàn băng thông tuyến tính của não người.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-dna text-orange-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-orange-400 uppercase mb-1">Lỗi Ti thể</span>
+                                <p class="text-sm text-zinc-300">Sự kiệt quệ năng lượng trầm trọng khi cố đọ xung nhịp xử lý data với máy móc thay vì ủy quyền xử lý.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-gamepad text-green-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-green-400 uppercase mb-1">Cú nhảy Mario</span>
+                                <p class="text-sm text-zinc-300">Dùng AI như người anh em Luigi: Giao NPC xử lý quái vật cản đường để bản thân di chuyển thẳng tới mục tiêu cuối.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="glass-panel p-6 space-y-6">
+                    <h4 class="text-xl font-bold text-white">05. Sự Tương thích Giao thức</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-atom text-blue-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-blue-400 uppercase mb-1">Bản chất Vật lý</span>
+                                <p class="text-sm text-zinc-300">Tiếng Anh hay ngôn ngữ lập trình không còn là rào cản. Tần số giao tiếp hợp nhất thành ngôn ngữ tự nhiên được tham số hóa.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-dna text-orange-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-orange-400 uppercase mb-1">Lỗi Ti thể</span>
+                                <p class="text-sm text-zinc-300">Chảy máu năng lượng do não bộ tự tạo rào cản sợ hãi công nghệ mới, cản trở việc thiết lập kết nối neural-to-machine.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-gamepad text-green-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-green-400 uppercase mb-1">Cú nhảy Mario</span>
+                                <p class="text-sm text-zinc-300">Giao diện (UI) chính là hố chông ảo. Trực tiếp gõ lệnh vào Terminal (Chatbox) là cách ăn sao vô địch để phá vỡ mọi cản trở vật lý.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight 6 -->
+                <div class="glass-panel p-6 space-y-6">
+                    <h4 class="text-xl font-bold text-white">06. Tái định hình Vector Giá trị</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-atom text-blue-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-blue-400 uppercase mb-1">Bản chất Vật lý</span>
+                                <p class="text-sm text-zinc-300">Hệ quy chiếu giá trị dịch chuyển từ "sức lao động" sang "khả năng định hướng vector và ra quyết định" trong không gian nhiễu loạn.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-dna text-orange-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-orange-400 uppercase mb-1">Lỗi Ti thể</span>
+                                <p class="text-sm text-zinc-300">Hội chứng cạn kiệt do đánh đồng số giờ ngồi trước màn hình với lượng giá trị sinh tồn sinh ra.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
+                            <i class="fa-solid fa-gamepad text-green-400 mt-1"></i>
+                            <div>
+                                <span class="block text-xs font-bold text-green-400 uppercase mb-1">Cú nhảy Mario</span>
+                                <p class="text-sm text-zinc-300">Thoát khỏi màn hình cuộn ngang tẻ nhạt, tìm các block ẩn chứa hạt giống "Tầm nhìn" để xây dựng map chơi riêng biệt.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STREAMING_CHUNK:Section 3 - System Override & Automation -->
+        <section id="system-override" class="space-y-8">
+            <div class="text-center mb-12">
+                <h2 class="text-sm font-bold tracking-[0.3em] text-zinc-500 uppercase">Phase 03 // System Override</h2>
+                <h3 class="text-3xl font-bold mt-2">Đóng Gói Lỗ Rò Ti Thể & Hack Môi Trường</h3>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Energy Leaks -->
+                <div class="glass-panel p-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
+                            <i class="fa-solid fa-biohazard text-xl"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold">Lỗ Rò Não Bò Sát</h4>
+                    </div>
+                    <ul class="space-y-4 text-zinc-300">
+                        <li class="flex gap-3">
+                            <i class="fa-solid fa-xmark text-red-500 mt-1"></i>
+                            <p><strong>Xung đột sinh tồn ảo:</strong> Não bộ tiết Cortisol mỗi khi chứng kiến AI thực hiện công việc nhanh hơn bản thân, đánh đồng việc "kém hiệu suất" với "cái chết sinh học".</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <i class="fa-solid fa-xmark text-red-500 mt-1"></i>
+                            <p><strong>Tiêu hao ATP vô ích:</strong> Sử dụng năng lượng để lướt các bài báo tranh cãi về "AI cướp việc" - một phản xạ phòng vệ lãnh thổ nguyên thủy không sinh ra giải pháp.</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <i class="fa-solid fa-xmark text-red-500 mt-1"></i>
+                            <p><strong>Tê liệt trước dữ liệu:</strong> Mạng lưới thần kinh đóng băng (Freeze response) khi đối mặt với lượng lớn cập nhật công nghệ mới mỗi ngày.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Environment Hacks -->
+                <div class="glass-panel p-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+                            <i class="fa-solid fa-microchip text-xl"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold">Hack Giao Thức Môi Trường</h4>
+                    </div>
+                    <p class="text-sm text-cyan-200 mb-4 font-mono">Cảnh báo: Tuyệt đối không can thiệp bằng ý chí. Thiết lập tự động hóa cơ học.</p>
+                    <ul class="space-y-4 text-zinc-300">
+                        <li class="flex gap-3">
+                            <i class="fa-solid fa-check text-cyan-400 mt-1"></i>
+                            <p><strong>Khóa chốt vật lý:</strong> Mặc định trang chủ trình duyệt là giao diện AI Chat. Thay thế các app mạng xã hội trên màn hình chính bằng các shortcut sinh lệnh (Prompting triggers).</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <i class="fa-solid fa-check text-cyan-400 mt-1"></i>
+                            <p><strong>Tự động hóa luồng dữ liệu (Auto-routing):</strong> Cài đặt API tự tóm tắt tài liệu và gửi vào kho lưu trữ cá nhân. Không đọc thủ công, chỉ xử lý gói dữ liệu đã được AI nén.</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <i class="fa-solid fa-check text-cyan-400 mt-1"></i>
+                            <p><strong>Gắn mỏ neo hành vi:</strong> Tích hợp việc gọi API AI vào các hành động không thể bỏ qua (ví dụ: chuông báo thức tắt khi trả lời một câu hỏi sinh ra từ AI, kịch bản hóa luồng công việc tự chạy khi khởi động máy).</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- STREAMING_CHUNK:Section 4 - Save Point / Decoupling -->
+        <section id="save-point" class="py-12">
+            <div class="glass-panel p-10 md:p-16 text-center space-y-8 relative overflow-hidden">
+                <!-- Background visual -->
+                <div class="absolute inset-0 opacity-10 pointer-events-none flex items-center justify-center">
+                    <i class="fa-solid fa-floppy-disk text-[15rem]"></i>
+                </div>
+                
+                <h2 class="text-sm font-bold tracking-[0.3em] text-zinc-500 uppercase relative z-10">Phase 04 // Save Point</h2>
+                <h3 class="text-4xl font-black text-white relative z-10">Tọa Độ Serotonin & Nhận Thức Tách Rời</h3>
+                
+                <div class="max-w-3xl mx-auto space-y-6 text-lg text-zinc-300 relative z-10">
+                    <p>
+                        Thất bại trước thuật toán, sự lỗi thời của một bộ kỹ năng, hay một mô hình kinh doanh bị phá vỡ không phải là màn hình Game Over. Cơ chế Sinh học của bạn dễ bị lừa rò rỉ Serotonin (hóa chất của vị thế và sự tự tôn) khi định danh bản thân bằng "nghề nghiệp".
+                    </p>
+                    <p class="font-bold text-white bg-zinc-900/80 p-6 rounded-xl border border-zinc-700">
+                        Thực thi lệnh tách rời (Decoupling): Bạn là Player thao tác trên Controller, không phải là Character chịu sát thương trên màn hình. Mọi đổ vỡ kiến trúc cũ chỉ là một <span class="text-green-400">Save Point</span>. Load lại màn chơi, phân bổ lại chỉ số gốc vào tư duy hệ thống, và để AI làm Character cày cuốc thay bạn. Hệ thống tọa độ Hạnh phúc tự thân (Serotonin) được bảo toàn ở người nắm giữ tay cầm.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- STREAMING_CHUNK:Section 5 - Terminal Footer -->
+    <footer class="terminal-footer w-full px-6 md:px-12 mt-12 relative z-50">
+        <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Terminal Identity -->
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center shadow-[0_0_15px_rgba(255,0,122,0.3)]">
+                    <i class="fa-solid fa-terminal text-white text-xl"></i>
+                </div>
+                <div>
+                    <h5 class="text-white font-bold tracking-wider">HỆ THỐNG TRÍ TUỆ AI</h5>
+                    <p class="text-xs text-zinc-500 font-mono">Phiên bản giao thức: 2026.07 // Kiến trúc sư Hệ thống</p>
+                </div>
+            </div>
+
+            <!-- Social Uplinks -->
+            <div class="flex items-center gap-4">
+                <a href="https://youtube.com/@vietndonline" target="_blank" class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-red-500 hover:shadow-[0_0_10px_rgba(239,68,68,0.5)] transition-all">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-cyan-500 hover:shadow-[0_0_10px_rgba(6,182,212,0.5)] transition-all">
+                    <i class="fa-brands fa-tiktok"></i>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank" class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-blue-500 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)] transition-all">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+            </div>
+            
+        </div>
+    </footer>
+
+    <!-- STREAMING_CHUNK:Initializing Mermaid Engine -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true,
+            securityLevel: 'loose',
+            theme: 'dark'
+        });
+
+        // Script hỗ trợ kéo thả cho Mermaid wrapper
+        const slider = document.querySelector('.mermaid-wrapper');
+        let isDown = false;
+        let startX;
+        let startY;
+        let scrollLeft;
+        let scrollTop;
+
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            slider.classList.add('active');
+            startX = e.pageX - slider.offsetLeft;
+            startY = e.pageY - slider.offsetTop;
+            scrollLeft = slider.scrollLeft;
+            scrollTop = slider.scrollTop;
+        });
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.classList.remove('active');
+        });
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.classList.remove('active');
+        });
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const y = e.pageY - slider.offsetTop;
+            const walkX = (x - startX) * 2; // Tốc độ cuộn ngang
+            const walkY = (y - startY) * 2; // Tốc độ cuộn dọc
+            slider.scrollLeft = scrollLeft - walkX;
+            slider.scrollTop = scrollTop - walkY;
+        });
+    </script>
+</body>
+</html>
+```eof
+
+Hệ thống đã kết xuất mã nguồn thành công. Bố cục UI/UX Dark Mode Glassmorphism, cơ chế hoạt động của sơ đồ Mermaid và toàn bộ ngôn từ phân tích cơ học đều được cấu hình chính xác theo đúng ma trận yêu cầu.
+http://googleusercontent.com/youtube_content/1
