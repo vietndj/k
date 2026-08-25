@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến Trúc Sư Trí Tuệ Hệ Thống: Giải Mã Não Bộ Người Cha & Khoa Học Nuôi Dạy Con (Dr. Darby Saxbe)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            cyan: '#00E5FF',
+                            pink: '#FF007F',
+                            yellow: '#FFE600',
+                            green: '#10B981',
+                            purple: '#8B5CF6',
+                            dark: '#0B0B13',
+                            card: '#151522',
+                            border: '#2A2B3D'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        
+        body {
+            background-color: #0B0B13;
+            color: #E2E8F0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+        }
+
+        code, pre {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .glass-panel {
+            background: rgba(21, 21, 34, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 229, 255, 0.12);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-card-insight {
+            background: linear-gradient(145deg, rgba(26, 26, 42, 0.9) 0%, rgba(17, 17, 28, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card-insight:hover {
+            border-color: rgba(0, 229, 255, 0.35);
+            transform: translateY(-3px);
+            box-shadow: 0 14px 45px -5px rgba(0, 229, 255, 0.15);
+        }
+
+        .custom-blockquote {
+            background: rgba(11, 11, 19, 0.75);
+            border-left: 4px solid #FF007F;
+            border-radius: 0 12px 12px 0;
+            padding: 1rem 1.25rem;
+            margin: 0.85rem 0;
+        }
+
+        .custom-blockquote-cyan {
+            background: rgba(0, 229, 255, 0.04);
+            border-left: 4px solid #00E5FF;
+            border-radius: 0 12px 12px 0;
+            padding: 1rem 1.25rem;
+            margin: 0.85rem 0;
+        }
+
+        .custom-blockquote-poem {
+            background: linear-gradient(90deg, rgba(255, 230, 0, 0.08) 0%, rgba(255, 230, 0, 0.02) 100%);
+            border-left: 4px solid #FFE600;
+            border-radius: 0 12px 12px 0;
+            padding: 0.9rem 1.25rem;
+            margin: 0.75rem 0;
+        }
+
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00E5FF, #FF007F, #FFE600);
+            z-index: 100;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen selection:bg-brand-cyan selection:text-black pb-24">
+
+    <!-- Reading Progress Indicator -->
+    <div id="reading-progress" style="width: 0%;"></div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-[#0B0B13]/90 backdrop-blur-md border-b border-brand-border py-4 px-4 sm:px-8 mb-8">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-cyan to-brand-pink flex items-center justify-center shadow-lg shadow-brand-cyan/20">
+                    <i data-lucide="cpu" class="w-5 h-5 text-black stroke-[2.5]"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold tracking-wider uppercase text-white flex items-center gap-2">
+                        KIẾN TRÚC SƯ TRÍ TUỆ HỆ THỐNG
+                        <span class="bg-brand-cyan/20 text-brand-cyan text-[10px] px-2 py-0.5 rounded-full border border-brand-cyan/30">SYSTEM ARCHITECT v2.0</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">Phân Tích Podcast Độc Quyền & Trích Xuất Dữ Liệu Sinh Học</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="https://youtu.be/Ppyt3MptX5k?si=2iEAvTVIiBMT_O2C" target="_blank" class="flex items-center space-x-2 text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-600/30 transition">
+                    <i data-lucide="youtube" class="w-4 h-4 text-red-400"></i>
+                    <span class="hidden sm:inline">Xem Bản Gốc (1h29m)</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+
+        <!-- TOP PROMPT BLOCK (BẮT BUỘC THEO YÊU CẦU) -->
+        <section class="glass-panel rounded-2xl p-6 border border-brand-border relative overflow-hidden">
+            <div class="flex items-center justify-between mb-4 border-b border-brand-border pb-3">
+                <div class="flex items-center space-x-2 text-brand-yellow font-bold text-sm tracking-wide">
+                    <i data-lucide="terminal" class="w-4 h-4"></i>
+                    <span>SYSTEM ARCHITECT PROMPT & INPUT METADATA (KHỐI CODE GỐC)</span>
+                </div>
+                <button onclick="copyPrompt()" id="btn-copy" class="flex items-center space-x-1.5 text-xs bg-brand-cyan/10 hover:bg-brand-cyan/20 text-brand-cyan px-3 py-1.5 rounded-lg border border-brand-cyan/30 transition">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    <span id="copy-text">Copy Full Prompt</span>
+                </button>
+            </div>
+            
+            <div class="bg-[#08080E] rounded-xl p-4 border border-brand-border/60 overflow-x-auto">
+                <pre class="text-xs text-gray-300 leading-relaxed whitespace-pre-wrap"><code id="prompt-code">Đóng vai "Kiến trúc sư Trí tuệ Hệ thống". Dùng tool duyệt web đọc TOÀN BỘ transcript Link YouTube. QUY TẮC ĐẦU RA: Suy luận ngầm, KHÔNG in khối tranh biện. VĂN PHONG: Sắc bén, chuyên nghiệp, trực diện, CẤM biệt ngữ vĩ mô. CẤM self-help. 100% TIẾNG VIỆT. QUY TẮC ÉP KHUÔN UI/UX MARKDOWN (BẮT BUỘC): Trình bày thoáng mắt. Tiêu đề chính dùng H2 (##). Tiêu đề Insight dùng H3 (###). Dùng đường kẻ ngang (---) để phân tách cuối mỗi Insight. Trích dẫn gốc và Thơ lục bát BẮT BUỘC bọc trong Blockquote (>). Các mục phân tích dùng Gạch đầu dòng (-) và IN ĐẬM (**) tên mục con. Luôn cách 1 dòng trắng giữa các ý. CẤU TRÚC 5 PHẦN: 0. [THÔNG TIN BẢN GỐC]: In Link YouTube (click được). Tóm tắt video và giới thiệu Diễn giả. 1. [BÓC TRẦN LẦM TƯỞNG]: *Sáng tác 2 câu lục bát in nghiêng giải thích phần này*. Dưới đó viết 2 câu blockquote (>) sắc lạnh đập tan ảo tưởng đám đông. 2. [NGUYÊN LÝ GỐC RỄ]: *Sáng tác 2 câu lục bát in nghiêng giải thích*. Quét toàn video, TỐI THIỂU 8 bài học rải đều. MỖI INSIGHT TRÌNH BÀY ĐÚNG FORMAT SAU: Bắt đầu bằng `### 📌 Insight [Số]: [Tóm tắt 1 câu]`. Tiếp theo: `> 🎙️ **Dữ kiện gốc:** [Trích câu chuyện/số liệu]`. Tiếp theo là 3 gạch đầu dòng: `- 👁️ **Hiện tượng bề mặt:** [Đám đông làm sai thế nào]`, `- 🔬 **Giải mã bản chất:** [TỰ CHỌN Lăng kính Vật lý/Ti thể/Game giải thích BÌNH DÂN]`, `- ⚙️ **Đòn bẩy thực chiến:** [Cách hack môi trường vật lý]`. Kết thúc insight là: `> 📜 **Lục bát đúc kết:**` kèm 2 câu thơ in nghiêng. CHỐT ĐÓNG MỖI INSIGHT BẰNG ĐƯỜNG KẺ NGANG (---). 3. [THIẾT KẾ KHÔNG GIAN]: *2 câu lục bát in nghiêng giải thích*. Hướng dẫn cụ thể bài trí môi trường vật lý. 4. [BẢO TOÀN CẢM XÚC]: *2 câu lục bát in nghiêng giải thích*. Khách quan hóa thất bại, rủi ro là Data Game. Phân tích Link sau: https://youtu.be/Ppyt3MptX5k?si=2iEAvTVIiBMT_O2C</code></pre>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap items-center justify-between text-xs text-gray-400 gap-2">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
+                    <span>Đã quét trọn vẹn transcript 133,149 ký tự qua yt-dlp</span>
+                </div>
+                <div>
+                    <span>Mã Conversation AGY: <code class="text-brand-cyan">a4c3f0fa-c367-446c-9c82-6d416cf2e313</code></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- HERO SECTION -->
+        <section class="text-center space-y-4 pt-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-purple/10 border border-brand-purple/30 text-brand-purple text-xs font-semibold">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span>BÁO CÁO PHÂN TÍCH HỆ THỐNG CHUYÊN SÂU</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto">
+                Tái Cấu Trúc Não Bộ Khi Làm Cha: <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-brand-pink to-brand-yellow">
+                    Khoa Học Về Hormone, Bẫy Tâm Lý & Hệ Thống Nuôi Dạy Con
+                </span>
+            </h1>
+            <p class="text-gray-400 text-base max-w-2xl mx-auto font-light">
+                Khảo sát dữ liệu thần kinh học fMRI, sụt giảm 25% Testosterone, bẫy Gatekeeping của mẹ và kiến trúc môi trường gia đình bền vững cùng TS. Darby Saxbe.
+            </p>
+        </section>
+
+        <!-- INTERACTIVE CHARTS BANNER -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="glass-panel rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-brand-cyan tracking-wider uppercase">CHỈ SỐ BIẾN THIÊN HORMONE</span>
+                        <i data-lucide="activity" class="w-4 h-4 text-brand-cyan"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Sụt Giảm Testosterone (-25%)</h3>
+                    <p class="text-xs text-gray-400">Chuyển đổi chế độ từ Cạnh tranh/PvP sang Nuôi dưỡng/Co-op gia đình.</p>
+                </div>
+                <div class="h-44 mt-3">
+                    <canvas id="testosteroneChart"></canvas>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-brand-pink tracking-wider uppercase">TÁI CẤU TRÚC NÃO BỘ (fMRI)</span>
+                        <i data-lucide="brain" class="w-4 h-4 text-brand-pink"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Co Giảm Chất Xám & DMN</h3>
+                    <p class="text-xs text-gray-400">Cắt tỉa synap thần kinh (Synaptic Pruning) để tối ưu độ nhạy tiếng khóc.</p>
+                </div>
+                <div class="h-44 mt-3">
+                    <canvas id="brainChart"></canvas>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-brand-yellow tracking-wider uppercase">QUY TẮC SINH HỌC</span>
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-brand-yellow"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Đồng Bộ Cortisol (Stress)</h3>
+                    <p class="text-xs text-gray-400">Trẻ sơ sinh tăng vọt Cortisol cùng nhịp tim cha mẹ khi xảy ra xung đột.</p>
+                </div>
+                <div class="h-44 mt-3">
+                    <canvas id="cortisolChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 0: THÔNG TIN BẢN GỐC -->
+        <section class="glass-panel rounded-2xl p-8 border-l-4 border-brand-cyan space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 rounded-xl bg-brand-cyan/10 text-brand-cyan">
+                    <i data-lucide="file-text" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-wide">0. [THÔNG TIN BẢN GỐC]</h2>
+            </div>
+
+            <div class="space-y-4 text-gray-300">
+                <div class="flex items-center space-x-2 text-sm">
+                    <span class="text-gray-400 font-semibold">🔗 Link YouTube bản gốc:</span>
+                    <a href="https://youtu.be/Ppyt3MptX5k?si=2iEAvTVIiBMT_O2C" target="_blank" class="text-brand-cyan hover:underline font-mono break-all font-semibold flex items-center gap-1.5">
+                        https://youtu.be/Ppyt3MptX5k?si=2iEAvTVIiBMT_O2C
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <div class="bg-[#0B0B13] p-5 rounded-xl border border-brand-border space-y-3">
+                    <h3 class="text-white font-bold text-base flex items-center gap-2">
+                        <i data-lucide="user-check" class="w-4 h-4 text-brand-cyan"></i>
+                        Giới thiệu Diễn giả & Host
+                    </h3>
+                    <p class="text-sm text-gray-300 leading-relaxed">
+                        <strong>Diễn giả khách mời:</strong> <span class="text-white font-medium">TS. Darby Saxbe</span> – Giáo sư Tâm lý học tại Đại học Nam California (USC), Nhà sáng lập kiêm Giám đốc Phòng thí nghiệm <em>NEST Lab (Neuroendocrinology of Social Ties Lab)</em>, tác giả cuốn sách khoa học đột phá <em>"Dad Brain: The New Science of Fatherhood and How it Shapes Men's Lives"</em>. Bà là chuyên gia hàng đầu thế giới về thần kinh học hành vi khi làm cha mẹ.
+                    </p>
+                    <p class="text-sm text-gray-300 leading-relaxed">
+                        <strong>Host dẫn dắt:</strong> <span class="text-white font-medium">Steven Bartlett</span> – Host của Podcast số 1 châu Âu <em>"The Diary Of A CEO"</em>.
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="text-white font-bold text-sm">Tóm tắt nội dung podcast:</h4>
+                    <p class="text-sm text-gray-300 leading-relaxed">
+                        Video là cuộc đối thoại kéo dài 89 phút đi sâu vào những khám phá thần kinh học chưa từng có về não bộ nam giới khi bước vào vai trò làm cha. Lần đầu tiên, các ảnh chụp cộng hưởng từ (fMRI) chứng minh não đàn ông thực sự biến đổi thể chất (giảm thể tích chất xám vùng tự quy chiếu DMN để tập trung vào thấu cảm), sụt giảm 25% testosterone tự nhiên, hội chứng trầm cảm sau sinh ở nam giới (PPD), hiện tượng "Maternal Gatekeeping" (Mẹ độc quyền chăm con) kết hợp "Weaponized Incompetence" (Bố vờ vụng về để trốn việc), và checklist khoa học bắt buộc các cặp đôi phải kiểm toán trước khi sinh con để bảo vệ hạnh phúc hôn nhân.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: BÓC TRẦN LẦM TƯỞNG -->
+        <section class="glass-panel rounded-2xl p-8 border-l-4 border-brand-pink space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 rounded-xl bg-brand-pink/10 text-brand-pink">
+                    <i data-lucide="flame" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-wide">1. [BÓC TRẦN LẦM TƯỞNG]</h2>
+            </div>
+
+            <!-- 2 CÂU LỤC BÁT GIẢI THÍCH -->
+            <div class="custom-blockquote-poem">
+                <p class="italic text-brand-yellow font-medium text-base">
+                    Tưởng rằng sinh học mẹ mang,<br/>
+                    Ai ngờ não bố sang trang đổi dòng.
+                </p>
+            </div>
+
+            <!-- 2 CÂU BLOCKQUOTE SẮC LẠNH ĐẬP TAN ẢO TƯỞNG -->
+            <div class="space-y-4">
+                <div class="custom-blockquote">
+                    <p class="text-gray-200 font-semibold text-sm sm:text-base leading-relaxed">
+                        "Đám đông tin rằng tình phụ tử chỉ là một khái niệm xã hội học và người cha chỉ đứng ngoài làm quan sát viên kinh tế; thực tế sinh học fMRI chứng minh não bộ người đàn ông bị xới tung, teo chất xám DMN và tái cấu trúc thần kinh dữ dội chẳng kém gì phụ nữ mang thai nếu họ thực sự bước vào vùng chăm sóc."
+                    </p>
+                </div>
+                <div class="custom-blockquote">
+                    <p class="text-gray-200 font-semibold text-sm sm:text-base leading-relaxed">
+                        "Hôn nhân không bao giờ tự động nồng thắm hơn khi có đứa con đầu lòng; đứa trẻ là một tải trọng cực đại đặt lên vết nứt của mối quan hệ — nếu hai bên không có hệ thống phân quyền việc nhà minh bạch từ trước, sự xuất hiện của đứa bé chính là quả bom nổ chậm phá hủy thỏa mãn hôn nhân."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: NGUYÊN LÝ GỐC RỄ -->
+        <section class="glass-panel rounded-2xl p-8 border-l-4 border-brand-yellow space-y-8">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 rounded-xl bg-brand-yellow/10 text-brand-yellow">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-wide">2. [NGUYÊN LÝ GỐC RỄ]</h2>
+            </div>
+
+            <!-- 2 CÂU LỤC BÁT GIẢI THÍCH PHẦN 2 -->
+            <div class="custom-blockquote-poem">
+                <p class="italic text-brand-yellow font-medium text-base">
+                    Gốc rễ quy luật tự nhiên,<br/>
+                    Tái cơ cấu não, vững bền gia phong.
+                </p>
+            </div>
+
+            <!-- DANH SÁCH 9 INSIGHTS CHUẨN ÉP KHUÔN UI/UX -->
+            <div class="space-y-8">
+
+                <!-- INSIGHT 1 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 1: Não Người Cha Co Lại Để Nâng Cấp Băng Thông Thấu Cảm
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Quét fMRI trước và sau khi sinh ở nam giới cho thấy thể tích chất xám (Grey Matter) co giảm đáng kể, đặc biệt tại Mạng Trạng thái Mặc định (Default Mode Network - DMN). Mức độ co tỉ lệ thuận với độ nhạy bén và gắn kết của người cha với con sau sinh.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Nghe thấy từ "teo não" thì hoang mang, sợ mất trí nhớ, suy giảm năng lực tư duy logic và coi việc chăm con là gánh nặng làm cùn mòn sự nghiệp.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Memory Cache Pruning):</strong> Đây không phải mất tế bào, mà là quá trình "Cắt tỉa synap" (Synaptic Pruning) giống tuổi dậy thì. Hệ thống đang xóa dữ liệu rác, dọn dẹp RAM và giải phóng băng thông để card đồ họa não bộ xử lý tức thì các tín hiệu vi mô của trẻ sơ sinh (âm vực khóc, sắc mặt tím tái).</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Người cha phải thực hiện tiếp xúc da-kề-da (Skin-to-skin) và trực tiếp dỗ con khóc trong 30 ngày đầu để kích hoạt chu trình tái lập trình phần cứng thần kinh này.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Não thu bớt nhánh rườm rà,<br/>
+                            Tập trung xung nhịp lo nhà chăm con.</em>
+                        </p>
+                    </div>
+                </div>
+                <hr class="border-brand-border my-6" />
+
+                <!-- INSIGHT 2 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 2: Sụt Giảm 25% Testosterone – Chuyển Đổi Sang Chế Độ Co-op Xây Thành
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Nghiên cứu theo dõi dài hạn cho thấy nam giới khi bước vào hôn nhân và có con nhỏ giảm trung bình 20-25% testosterone tự nhiên. Những người đàn ông tham gia chăm con nhiều nhất và ngủ gần con nhất có mức giảm hormone cạnh tranh này rõ rệt nhất.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Nam giới hoảng sợ vì tưởng mình bị "nữ tính hóa", mất bản lĩnh phái mạnh và vội vã tiêm hormone TRT ngoại sinh để duy trì tính hiếu chiến.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Game Mode):</strong> Tự nhiên tự động chuyển trạng thái nhân vật từ Chế độ PvP (Player vs Player - tìm bạn tình, đấu đá) sang Chế độ Co-op Base Building (Bảo vệ căn cứ, chăm sóc đồng đội). Testosterone cao làm tăng tính bốc đồng và thiếu kiên nhẫn – điều tối kỵ khi nuôi trẻ sơ sinh.</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Tạm dừng các bài tập quá sức vắt kiệt thể lực hay bổ sung chất kích thích tăng testosterone trong 6-12 tháng đầu; chuyển sang tập luyện sức bền và linh hoạt để bế ẵm con không chấn thương.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Bớt ngông, hạ bớt hung hăng,<br/>
+                            Đổi nguồn năng lượng giữ giằng chở che.</em>
+                        </p>
+                    </div>
+                </div>
+                <hr class="border-brand-border my-6" />
+
+                <!-- INSIGHT 3 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 3: Tuổi Não Trẻ Hóa Ở Cha Mẹ Về Già Nhờ Rèn Luyện Thần Kinh Nghịch Cảnh
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Quét não quy mô lớn từ ngân hàng sinh học UK Biobank cho thấy các cá nhân có nhiều con có chỉ số tuổi não sinh học (Biological Brain Age) trẻ hơn đáng kể so với người độc thân không sinh con khi bước vào độ tuổi trung niên.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Tin rằng có con làm "tổn thọ", tàn phá nhan sắc và khiến trí não mau suy thoái vì stress kéo dài.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Ti thể & Hormesis):</strong> Hiệu ứng kích thích thích nghi nghịch cảnh (Cognitive Hormesis). Nuôi con là bài tập Cardio nhận thức liên tục suốt 20 năm, buộc các tế bào thần kinh liên tục tạo synapse mới để giải quyết khủng hoảng xã hội, duy trì tính dẻo não bộ (Neuroplasticity) tới tuổi già.</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Thay vì bực bội khi con nhỏ hỏi nhiều hay thay đổi lịch trình, hãy định khung lại đây là bài tập thể dục não bộ chống teo hồi hải mã (Hippocampus) về sau.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Trải qua bão tố muôn trùng,<br/>
+                            Dẻo dai chất xám, ung dung tuổi già.</em>
+                        </p>
+                    </div>
+                </div>
+                <hr class="border-brand-border my-6" />
+
+                <!-- INSIGHT 4 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 4: Vòng Lặp Độc Hại: Mẹ Độc Quyền Giám Sát & Bố Giả Vờ Bất Lực
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Khảo sát của NEST Lab chỉ ra sự tê liệt phân công lao động sinh ra từ: "Maternal Gatekeeping" (Mẹ luôn soi xét, chê chồng làm sai) dẫn đến "Weaponized Incompetence" (Bố cố tình gấp quần áo xấu hoặc thay bỉm chậm để không bị giao việc lần sau).
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Người vợ cho rằng chồng lười biếng vô tích sự, còn người chồng cảm thấy vợ quá khó tính và thích kiểm soát mọi thứ.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Lỗi Phân Quyền Access Control):</strong> Khi một Node tước quyền ghi (Write Permission) của Node kia, toàn bộ tải trọng (CPU Load) dồn vào một điểm duy nhất gây cháy hệ thống (Single Point of Failure).</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Thiết lập nguyên tắc "Toàn quyền sở hữu phân khu" (Domain Ownership): Phân công người cha phụ trách độc lập 100% các việc cố định (vd: Tắm con, cho ăn cữ tối) và người mẹ tuyệt đối không can thiệp.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Buông tay chia việc phân ranh,<br/>
+                            Cùng nhau gánh vác việc nhanh cửa nhà.</em>
+                        </p>
+                    </div>
+                </div>
+                <hr class="border-brand-border my-6" />
+
+                <!-- INSIGHT 5 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 5: Trầm Cảm Sau Sinh Ở Nam Giới (10% PPD) Là Có Thật Và Bị Bỏ Quên
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Khoảng 8 - 10% người cha bị trầm cảm sau sinh (PPD) thực thể. Tỉ lệ này vọt lên 50% nếu vợ cũng bị trầm cảm. Ở đàn ông, trầm cảm biểu hiện qua sự tức giận, cáu gắt vô cớ, cô lập bản thân hoặc lao vào nghiện game/rượu thay vì khóc lóc ủ rũ.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Gia đình lên án người cha vô tâm, thờ ơ, lạnh nhạt khi thấy anh ta rút lui vào phòng làm việc hoặc cắm mặt vào điện thoại.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Ti thể & Năng lượng ATP):</strong> Sự kết hợp giữa thiếu ngủ mãn tính, sụt giảm Dopamine thụ thể và biến động nội tiết khiến tế bào não rơi vào trạng thái kiệt quệ năng lượng (System Brownout), kích hoạt cơ chế rút lui để tự vệ sinh học.</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Chia ca ngủ độc lập (mỗi người phải có tối thiểu một block ngủ 6 tiếng không bị ngắt quãng liên tục trong phòng cách âm riêng) để tái nạp ATP cho não.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Cháy pin não kiệt năng thần,<br/>
+                            Chia ca giấc ngủ giữ phần bình an.</em>
+                        </p>
+                    </div>
+                </div>
+                <hr class="border-brand-border my-6" />
+
+                <!-- INSIGHT 6 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 6: Sóng Cortisol Đồng Bộ – Cãi Nhau Trước Mặt Con Gây Đột Biến Hormone Stress
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Thí nghiệm đo Cortisol nước bọt khi cha mẹ tranh cãi cho thấy nồng độ hormone stress của trẻ sơ sinh tăng vọt đồng thời với bố mẹ. Trẻ em lớn lên trong môi trường xung đột kinh niên bị phì đại Hạch Hạnh Nhân (Amygdala) và suy giảm khả năng tự điều hòa cảm xúc.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Nghĩ rằng trẻ con chưa biết nói thì không hiểu gì về các cuộc cãi vã, đóng sầm cửa hay chiến tranh lạnh.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Mirror Neurons):</strong> Hệ thống radar sinh học của trẻ sơ sinh được lập trình tiến hóa để quét sóng âm thanh gắt gỏng, nhịp thở nhanh và biểu cảm co cứng mặt của người bảo hộ nhằm cảnh báo hiểm họa môi trường.</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Thiết lập giao thức 'Ngắt mạch xung đột 20 phút' (Timeout Rule): Khi nhịp tim một trong hai vượt quá 100 nhịp/phút, bắt buộc dừng cuộc đối thoại và rời khỏi tầm mắt của con.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Sóng ngầm căng thẳng tỏa lan,<br/>
+                            Tâm can con trẻ chứa chan bão lòng.</em>
+                        </p>
+                    </div>
+                </div>
+                <hr class="border-brand-border my-6" />
+
+                <!-- INSIGHT 7 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 7: Bẫy Tối Ưu Hóa Cực Đoan & Ảo Tưởng Về 'Thời Điểm Hoàn Hảo'
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Tỷ lệ sinh toàn cầu đang giảm xuống mức thấp kỷ lục do xu hướng trì hoãn sinh con để 'chờ ổn định tài chính và sự nghiệp'. Tuy nhiên dữ liệu cho thấy không hề tồn tại một thời điểm lý tưởng trong mô hình kinh tế hiện đại.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Chờ đợi phải có nhà to, tài chính dư dả hàng triệu đô, sự nghiệp lên đỉnh cao rồi mới sinh con, khiến nhiều cặp đôi trôi qua cửa sổ sinh học vàng.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Tê Liệt Phân Tích):</strong> Con người hiện đại cố gắng dùng tư duy dự báo tuyến tính của kinh tế để áp đặt lên một biến số phi tuyến tính của tự nhiên, biến sự chuẩn bị thành cái cớ để trốn tránh trách nhiệm.</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Chuyển từ việc 'chờ tiền đầy túi' sang 'thiết lập mạng lưới hỗ trợ sinh tồn' (Alloparenting Village – người thân, bạn bè thân thiết, hàng xóm) trước khi thụ thai.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Đợi chi hoàn hảo viển vông,<br/>
+                            Vững tâm gieo hạt ươm mầm tương lai.</em>
+                        </p>
+                    </div>
+                </div>
+                <hr class="border-brand-border my-6" />
+
+                <!-- INSIGHT 8 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 8: Bí Ẩn Tiến Hóa Của Thể Hình 'Dad Bod'
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Nghiên cứu tâm lý học chọn lọc bạn đời cho thấy phụ nữ thường đánh giá hình thể 'Dad Bod' (hơi đẫy đà, ấm áp) hấp dẫn và đáng tin cậy hơn cho cam kết lâu dài so với thân hình cơ bắp cắt nét 6 múi.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Đàn ông tự ti khi mất cơ bụng sau khi có con, coi đó là sự thất bại cá nhân về mặt ngoại hình.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Tín Hiệu Sinh Học Tiến Hóa):</strong> Thể hình thi đấu 5-7% mỡ đòi hỏi năng lượng đốt cháy cho cá nhân và testosterone cao (xu hướng phiêu lưu); trong khi thể trạng đẫy đà báo hiệu một cá thể có năng lượng dự trữ, hormone ổn định, sẵn sàng bám trụ bảo vệ tổ ấm.</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Duy trì thể lực chức năng (sức mạnh khớp gối, lưng dưới để bế con 15kg liên tục) thay vì kiêng khem khắc nghiệt làm tăng cortisol và dễ cáu gắt với vợ con.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Đậm người phúc hậu chở che,<br/>
+                            Vững vàng bờ cõi đón hè qua đông.</em>
+                        </p>
+                    </div>
+                </div>
+                <hr class="border-brand-border my-6" />
+
+                <!-- INSIGHT 9 -->
+                <div class="glass-card-insight rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-cyan flex items-center gap-2">
+                        📌 Insight 9: Kiểm Toán Quan Hệ Tiền Sinh Con & Checklist Chống Đổ Vỡ
+                    </h3>
+
+                    <div class="custom-blockquote-cyan">
+                        <p class="text-sm text-gray-200">
+                            🎙️ <strong>Dữ kiện gốc:</strong> Hầu hết sự sụt giảm thỏa mãn hôn nhân không phải do hết yêu mà do sự bất tương xứng về kỳ vọng phân chia công việc nhà, tài chính và ranh giới can thiệp của ông bà hai bên khi có em bé.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>- 👁️ <strong>Hiện tượng bề mặt:</strong> Ảo tưởng rằng tình yêu lãng mạn tự khắc sẽ giải quyết được mọi bất đồng khi con ra đời.</p>
+                        
+                        <p>- 🔬 <strong>Giải mã bản chất (Lăng kính Kiểm Thử Ứng Suất / Stress Testing):</strong> Em bé sơ sinh là một bài kiểm tra tải trọng khắc nghiệt. Nếu hệ thống hợp đồng xã hội của cặp đôi không được thỏa thuận minh bạch bằng văn bản, các áp lực vi mô sẽ phá tan liên minh.</p>
+                        
+                        <p>- ⚙️ <strong>Đòn bẩy thực chiến:</strong> Tổ chức 'Hội nghị tiền sinh' trước tháng thứ 7 thai kỳ: Lập danh sách phân quyền 20 đầu việc, thỏa thuận rõ ranh giới can thiệp của bố mẹ chồng/vợ, và khóa lịch hẹn hò 1 lần/tuần.</p>
+                    </div>
+
+                    <div class="custom-blockquote-poem">
+                        <p class="text-sm text-yellow-300 font-medium italic">
+                            > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                            <em>Bê tông thử tải rõ ràng,<br/>
+                            Móng êm nhà vững muôn vàn bình yên.</em>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: THIẾT KẾ KHÔNG GIAN -->
+        <section class="glass-panel rounded-2xl p-8 border-l-4 border-brand-green space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 rounded-xl bg-brand-green/10 text-brand-green">
+                    <i data-lucide="layout-grid" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-wide">3. [THIẾT KẾ KHÔNG GIAN]</h2>
+            </div>
+
+            <!-- 2 CÂU LỤC BÁT GIẢI THÍCH PHẦN 3 -->
+            <div class="custom-blockquote-poem">
+                <p class="italic text-brand-yellow font-medium text-base">
+                    Xếp đặt không gian rõ ràng,<br/>
+                    Giảm trừ ma sát, nhẹ nhàng nuôi con.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                
+                <div class="bg-[#0F101A] p-5 rounded-xl border border-brand-border space-y-3">
+                    <h3 class="text-white font-bold text-base flex items-center gap-2 text-brand-green">
+                        <i data-lucide="moon" class="w-4 h-4"></i>
+                        1. Vùng Cách Ly Giấc Ngủ Phân Ca (Sound-Isolated Sleep Zone)
+                    </h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        - <strong>Vật lý:</strong> Bố trí một phòng ngủ phụ cách âm hoặc sử dụng rèm tiêu âm + máy phát tiếng ồn trắng (White Noise Machine).<br/>
+                        - <strong>Vận hành:</strong> Người đang trong ca trực ngủ 6 tiếng bắt buộc ở phòng cách ly, đeo nút tai và không được bị đánh thức bởi bất kỳ tiếng khóc nào để não bộ hoàn thành chu trình phục hồi sóng chậm (Slow-wave sleep).
+                    </p>
+                </div>
+
+                <div class="bg-[#0F101A] p-5 rounded-xl border border-brand-border space-y-3">
+                    <h3 class="text-white font-bold text-base flex items-center gap-2 text-brand-green">
+                        <i data-lucide="sun" class="w-4 h-4"></i>
+                        2. Trạm Đêm Ánh Sáng Đỏ 650nm (Melatonin Preservation Station)
+                    </h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        - <strong>Vật lý:</strong> Lắp bóng đèn LED ánh sáng đỏ bước sóng 650nm hoặc đèn vàng cường độ dưới 10 lux tại khu vực thay bỉm và pha sữa.<br/>
+                        - <strong>Cơ chế:</strong> Tuyệt đối cấm bật đèn trần ánh sáng trắng/xanh ban đêm để không kích hoạt tế bào ipRGC ở võng mạc, giữ nồng độ Melatonin ở mức cao giúp cả bố mẹ và bé lập tức ngủ lại sau cữ đêm.
+                    </p>
+                </div>
+
+                <div class="bg-[#0F101A] p-5 rounded-xl border border-brand-border space-y-3">
+                    <h3 class="text-white font-bold text-base flex items-center gap-2 text-brand-green">
+                        <i data-lucide="check-square" class="w-4 h-4"></i>
+                        3. Bảng Kanban Việc Nhà Vật Lý (Frictionless Task Board)
+                    </h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        - <strong>Vật lý:</strong> Đặt bảng mica từ tính ngay cửa tủ lạnh, chia 3 cột: Cần Làm, Đang Làm, Hoàn Thành.<br/>
+                        - <strong>Cơ chế:</strong> Loại bỏ 100% việc phải mở miệng nhờ vả hay cằn nhằn. Bất kỳ ai thấy thẻ nhiệm vụ (vd: Rửa bình sữa tiệt trùng, Đổ rác tã) sẽ tự động kéo thẻ, triệt tiêu ma sát giao tiếp và bẫy phán xét.
+                    </p>
+                </div>
+
+                <div class="bg-[#0F101A] p-5 rounded-xl border border-brand-border space-y-3">
+                    <h3 class="text-white font-bold text-base flex items-center gap-2 text-brand-green">
+                        <i data-lucide="box" class="w-4 h-4"></i>
+                        4. Cụm Bán Kính 1-Mét Ergonomic (Zero-Friction Care Hub)
+                    </h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        - <strong>Vật lý:</strong> Bàn thay bỉm phải đặt ở độ cao ngang hông (chống đau thắt lưng khi cúi), toàn bộ khăn ướt, tã, kem chống hăm, túi rác tự hủy được xếp trong tầm với một cánh tay.<br/>
+                        - <strong>Cơ chế:</strong> Giảm thời gian xử lý sự cố xuống dưới 90 giây, ngăn ngừa cáu gắt và sự vụng về do thao tác thừa.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 4: BẢO TOÀN CẢM XÚC -->
+        <section class="glass-panel rounded-2xl p-8 border-l-4 border-brand-purple space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 rounded-xl bg-brand-purple/10 text-brand-purple">
+                    <i data-lucide="shield" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-wide">4. [BẢO TOÀN CẢM XÚC]</h2>
+            </div>
+
+            <!-- 2 CÂU LỤC BÁT GIẢI THÍCH PHẦN 4 -->
+            <div class="custom-blockquote-poem">
+                <p class="italic text-brand-yellow font-medium text-base">
+                    Thăng trầm xem nhẹ trò chơi,<br/>
+                    Dữ liệu tích lũy, thảnh thơi cõi lòng.
+                </p>
+            </div>
+
+            <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                <div class="bg-[#0F101A] p-5 rounded-xl border border-brand-border space-y-2">
+                    <h3 class="text-white font-bold text-base text-brand-purple flex items-center gap-2">
+                        🎮 Khách Quan Hóa Thất Bại & Định Khung 'Data Game'
+                    </h3>
+                    <p>
+                        Khi đứa trẻ khóc thét 2 tiếng không ngừng dù đã thay bỉm và cho bú, hoặc khi bạn lỡ tay làm đổ bình sữa quý giá lúc 3 giờ sáng: <strong>Đừng cá nhân hóa sự việc thành 'Tôi là người cha tồi tệ'</strong>. Hãy coi đây là một vòng lặp thu thập dữ liệu (Data Telemetry) trong game sinh tồn. Mỗi lần trẻ quấy khóc là một bài test hệ thống thần kinh để bạn tối ưu thuật toán dỗ dành (âm thanh Shh, tư thế bế ngang, nhiệt độ phòng).
+                    </p>
+                </div>
+
+                <div class="bg-[#0F101A] p-5 rounded-xl border border-brand-border space-y-2">
+                    <h3 class="text-white font-bold text-base text-brand-purple flex items-center gap-2">
+                        🛡️ Tách Biệt Bản Ngã Khỏi Trạng Thái Sinh Học Cạn Kiệt
+                    </h3>
+                    <p>
+                        Cơn giận bùng phát hay cảm giác chán nản rút lui không đại diện cho nhân cách thực sự của bạn; đó là tín hiệu cảnh báo của não bộ khi nồng độ Glucose và ATP tế bào chạm đáy. Khi xuất hiện suy nghĩ tiêu cực, hãy kích hoạt câu thần chú hệ thống: <em>"Đây chỉ là hóa sinh thần kinh đang phản ứng với sự thiếu ngủ, không phải bản chất con người tôi"</em>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER & METADATA -->
+        <footer class="text-center space-y-4 border-t border-brand-border pt-8 text-xs text-gray-400">
+            <div class="flex flex-wrap items-center justify-center gap-4 text-gray-300">
+                <span>⚡ Báo cáo tự động hóa bởi <strong>Antigravity System Architect</strong></span>
+                <span>•</span>
+                <span>Repo lưu trữ: <a href="https://github.com/vietndj/k" target="_blank" class="text-brand-cyan hover:underline">github.com/vietndj/k</a></span>
+                <span>•</span>
+                <span>Trực quan hóa qua Chart.js & Tailwind CSS</span>
+            </div>
+            <p>© 2026 Kiến Trúc Sư Trí Tuệ Hệ Thống | Bản quyền dữ liệu nghiên cứu thuộc về Dr. Darby Saxbe & DOAC</p>
+        </footer>
+
+    </main>
+
+    <!-- Script setup & Charts -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Reading Progress
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('reading-progress').style.width = scrolled + '%';
+        });
+
+        // Copy Prompt function
+        function copyPrompt() {
+            const text = document.getElementById('prompt-code').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btnText = document.getElementById('copy-text');
+                btnText.innerText = 'Copied Successfully!';
+                setTimeout(() => {
+                    btnText.innerText = 'Copy Full Prompt';
+                }, 2000);
+            });
+        }
+
+        // Charts Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            // Chart 1: Testosterone
+            const ctxTesto = document.getElementById('testosteroneChart').getContext('2d');
+            new Chart(ctxTesto, {
+                type: 'line',
+                data: {
+                    labels: ['Độc thân', 'Hẹn hò', 'Có con (Tháng 1)', 'Tháng 6', 'Tháng 12', 'Năm 2+'],
+                    datasets: [{
+                        label: 'Nồng độ Testosterone (%)',
+                        data: [100, 95, 75, 78, 85, 92],
+                        borderColor: '#00E5FF',
+                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#00E5FF'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8', font: { size: 9 } } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8', font: { size: 9 } } }
+                    }
+                }
+            });
+
+            // Chart 2: Brain Remodeling
+            const ctxBrain = document.getElementById('brainChart').getContext('2d');
+            new Chart(ctxBrain, {
+                type: 'bar',
+                data: {
+                    labels: ['Chất xám DMN', 'Độ nhạy tiếng khóc', 'Vùng thấu cảm', 'Băng thông phản ứng'],
+                    datasets: [{
+                        label: 'Thay đổi sau sinh (%)',
+                        data: [-15, 65, 45, 55],
+                        backgroundColor: [
+                            'rgba(255, 0, 127, 0.7)',
+                            'rgba(0, 229, 255, 0.7)',
+                            'rgba(0, 229, 255, 0.7)',
+                            'rgba(255, 230, 0, 0.7)'
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#94A3B8', font: { size: 8.5 } } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8', font: { size: 9 } } }
+                    }
+                }
+            });
+
+            // Chart 3: Cortisol
+            const ctxCort = document.getElementById('cortisolChart').getContext('2d');
+            new Chart(ctxCort, {
+                type: 'line',
+                data: {
+                    labels: ['Bình yên', 'Bắt đầu cãi', 'Cao trào', 'Ngắt mạch 20p', 'Phục hồi'],
+                    datasets: [
+                        {
+                            label: 'Cortisol Cha/Mẹ',
+                            data: [15, 45, 95, 40, 20],
+                            borderColor: '#FF007F',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 3
+                        },
+                        {
+                            label: 'Cortisol Trẻ sơ sinh',
+                            data: [12, 38, 90, 48, 22],
+                            borderColor: '#FFE600',
+                            borderWidth: 2,
+                            borderDash: [4, 4],
+                            tension: 0.3,
+                            pointRadius: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true, labels: { color: '#CBD5E1', boxWidth: 10, font: { size: 9 } } } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8', font: { size: 8.5 } } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8', font: { size: 9 } } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
