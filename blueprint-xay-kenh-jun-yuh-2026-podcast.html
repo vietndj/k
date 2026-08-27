@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueprint Xây Kênh Triệu View Trước 2026 | Jun Yuh - Kiến Trúc Sư Hệ Thống</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#121224',
+                primaryColor: '#1A1A3A',
+                primaryTextColor: '#00E5FF',
+                primaryBorderColor: '#00E5FF',
+                lineColor: '#FF007F',
+                secondaryColor: '#1E1E38',
+                tertiaryColor: '#0F0F1E'
+            },
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+    <style>
+        :root {
+            --bg-dark: #0B0B13;
+            --card-dark: #141424;
+            --neon-blue: #00E5FF;
+            --neon-pink: #FF007F;
+            --neon-yellow: #FFE600;
+            --neon-green: #10B981;
+            --border-glow: rgba(0, 229, 255, 0.25);
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-dark);
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+        .font-heading { font-family: 'Space Grotesk', sans-serif; }
+        .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Reading Progress Bar */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00E5FF, #FF007F, #FFE600);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px #00E5FF;
+        }
+
+        /* Glassmorphism & Cyberpunk Glow */
+        .cyber-card {
+            background: rgba(20, 20, 36, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .cyber-card:hover {
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(0, 229, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .neon-border-blue {
+            border-left: 4px solid var(--neon-blue);
+        }
+        .neon-border-pink {
+            border-left: 4px solid var(--neon-pink);
+        }
+        .neon-border-yellow {
+            border-left: 4px solid var(--neon-yellow);
+        }
+        .neon-border-green {
+            border-left: 4px solid var(--neon-green);
+        }
+
+        .glow-text-blue {
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+        }
+        .glow-text-pink {
+            text-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
+        }
+
+        /* Code block styling */
+        .code-container {
+            background: #07070D;
+            border: 1px solid #1E1E38;
+            border-radius: 0.75rem;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B0B13; }
+        ::-webkit-scrollbar-thumb { background: #1E1E38; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00E5FF; }
+
+        /* Toast Alert */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+        #toast.show {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="selection:bg-cyan-500 selection:text-black">
+
+    <!-- READING PROGRESS BAR -->
+    <div id="progress-bar"></div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="cyber-card px-5 py-3 border border-cyan-400/50 bg-[#101020] text-cyan-300 flex items-center gap-3 shadow-2xl">
+        <i class="fa-solid fa-circle-check text-cyan-400 text-lg"></i>
+        <span id="toast-msg" class="text-sm font-medium">Đã sao chép vào Clipboard!</span>
+    </div>
+
+    <!-- HERO HEADER -->
+    <header class="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 border-b border-slate-800/80 bg-gradient-to-b from-[#0F0F1E] to-[#0B0B13] overflow-hidden">
+        <!-- Background Ambient Glow -->
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-10 right-1/4 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 text-xs font-mono tracking-widest uppercase mb-6 shadow-inner">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                SYSTEM ARCHITECT PODCAST INTELLIGENCE
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold font-heading text-white tracking-tight mb-6 leading-tight">
+                Blueprint Xây Kênh Triệu View <br class="hidden sm:inline"/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#FF007F] to-[#FFE600]">Trước Năm 2026</span>
+            </h1>
+
+            <p class="text-base sm:text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed mb-8">
+                Bóc tách toàn diện Masterclass của <strong class="text-white">Jun Yuh</strong> — Kỹ sư Y sinh học chuyển mình thành Nhà sáng tạo 5.5 triệu Follower. Đập tan cái bẫy "Niche Down", giải mã cấu trúc 3 Trụ Cột, Đòn bẩy Low-Intensity và Công thức Xếp Chồng Móc Câu (Hook Stacking).
+            </p>
+
+            <div class="flex flex-wrap justify-center items-center gap-4">
+                <a href="https://youtu.be/FoWSI-yIadk" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-600/90 hover:bg-red-600 text-white font-semibold text-sm transition shadow-lg shadow-red-600/20 hover:scale-105 active:scale-95">
+                    <i class="fa-brands fa-youtube text-lg"></i>
+                    <span>Xem Video Gốc (44:05)</span>
+                </a>
+                <button onclick="scrollToSection('prompt-box')" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium transition hover:scale-105 active:scale-95">
+                    <i class="fa-solid fa-terminal text-cyan-400"></i>
+                    <span>Xem Prompt Kiến Trúc Sư</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- PROMPT CODE BOX (TOP) -->
+        <section id="prompt-box" class="cyber-card p-6 border-slate-800">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="text-xs font-mono text-slate-400 ml-2">SYSTEM_ARCHITECT_PROMPT.sh</span>
+                </div>
+                <button onclick="copyPrompt()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 text-xs font-mono transition">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copy Prompt</span>
+                </button>
+            </div>
+            <pre class="font-mono-code text-xs sm:text-sm text-slate-300 bg-[#07070D] p-4 rounded-lg overflow-x-auto leading-relaxed border border-slate-850" id="prompt-content">ROLE: Kiến trúc sư Trí tuệ Hệ thống (System Architect)
+INPUT_URL: https://youtu.be/FoWSI-yIadk (Jun Yuh - Blueprint To Win With Content Before 2026)
+FRAMEWORK:
+  0. [THÔNG TIN BẢN GỐC]: Tóm tắt video + Giới thiệu Diễn giả
+  1. [BÓC TRẦN LẦM TƯỞNG]: 2 câu lục bát + 2 blockquote sắc lạnh đập tan ảo tưởng đám đông
+  2. [NGUYÊN LÝ GỐC RỄ]: 8+ Insight sâu sắc (Dữ kiện gốc -> Hiện tượng bề mặt -> Lăng kính Vật lý/Ti thể/Game -> Đòn bẩy thực chiến -> Lục bát đúc kết)
+  3. [THIẾT KẾ KHÔNG GIAN]: Bài trí môi trường vật lý, triệt tiêu ma sát, thiết kế trigger
+  4. [BẢO TOÀN CẢM XÚC]: Data Game Mindset, quản trị Dopamine, neo sứ mệnh phụng sự</pre>
+        </section>
+
+        <!-- 0. [THÔNG TIN BẢN GỐC] -->
+        <section id="origin-info" class="cyber-card p-6 sm:p-8 neon-border-blue">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-2.5 py-1 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-400 font-mono text-xs font-bold">SECTION 0</span>
+                <h2 class="text-xl sm:text-2xl font-bold font-heading text-white">Thông Tin Bản Gốc & Diễn Giả</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-2 space-y-4">
+                    <div class="flex items-center gap-2 text-sm text-cyan-300">
+                        <i class="fa-solid fa-podcast"></i>
+                        <span>Podcast Masterclass: <strong>Your Blueprint To Win With Content Before 2026</strong></span>
+                    </div>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Bài giảng dài 44 phút độc quyền của <strong>Jun Yuh</strong> giải phẫu toàn diện công thức sáng tạo nội dung bền vững trong kỷ nguyên AI. Thay vì chạy theo xu hướng nhất thời hay ép mình vào một ngách hẹp (Niche Down) khiến tài năng bị thui chột, Jun Yuh chuyển giao hệ thống vận hành đã giúp anh duy trì kỷ lục <strong>5.5 năm không bỏ sót một ngày đăng bài</strong>, chạm mốc 80-100 triệu lượt hiển thị mỗi tháng.
+                    </p>
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs sm:text-sm text-slate-400 space-y-1">
+                        <div><strong class="text-slate-200">🔗 Đường dẫn YouTube:</strong> <a href="https://youtu.be/FoWSI-yIadk" target="_blank" class="text-cyan-400 underline hover:text-cyan-300">https://youtu.be/FoWSI-yIadk</a></div>
+                        <div><strong class="text-slate-200">⏱ Thời lượng:</strong> 44 phút 05 giây</div>
+                        <div><strong class="text-slate-200">📊 Tác động:</strong> 5.5M+ Followers, 100M Monthly Impressions, Founder Creative College</div>
+                    </div>
+                </div>
+
+                <div class="cyber-card p-5 border-slate-800 bg-[#101020] flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xl font-bold mb-3 shadow-lg shadow-cyan-500/20">
+                            JY
+                        </div>
+                        <h3 class="text-white font-bold text-base mb-1">Jun Yuh (@jun_yuh)</h3>
+                        <p class="text-xs text-cyan-400 font-mono mb-3">Biomedical Engineer -> Creator-Founder</p>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Người Mỹ gốc Hàn, xuất phát điểm từ nghịch cảnh gia đình tan vỡ, nghèo khó, tự ti; tốt nghiệp song bằng Thạc sĩ Kỹ thuật Y sinh và biến tư duy kỹ sư hệ thống thành đòn bẩy triệu đô trong kinh tế sáng tạo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. [BÓC TRẦN LẦM TƯỞNG] -->
+        <section id="myth-busters" class="cyber-card p-6 sm:p-8 neon-border-pink">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-2.5 py-1 rounded bg-pink-950 border border-pink-500/40 text-pink-400 font-mono text-xs font-bold">SECTION 1</span>
+                <h2 class="text-xl sm:text-2xl font-bold font-heading text-white">Bóc Trần Lầm Tưởng Đám Đông</h2>
+            </div>
+
+            <div class="mb-6 p-4 rounded-xl bg-pink-950/20 border border-pink-900/30">
+                <p class="text-pink-300 italic font-mono text-sm text-center">
+                    "Tưởng rằng ép ngách mới hay, hóa ra tự nhốt chuỗi ngày cạn khô.<br>
+                    Tưởng rằng thiết bị điểm tô, ngờ đâu ma sát làm xô gãy cành."
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <blockquote class="p-5 rounded-xl bg-[#14101E] border-l-4 border-pink-500 text-slate-200 relative overflow-hidden">
+                    <div class="font-bold text-pink-400 text-sm mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        ẢO TƯỞNG 1: "PHẢI ÉP MÌNH VÀO MỘT NGÁCH HẸP (NICHE DOWN) ĐỂ DỄ THÀNH CÔNG"
+                    </div>
+                    <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+                        Đây là lời khuyên tai hại nhất khiến 90% creator kiệt sức và bế tắc. Khi bạn đóng đinh mình chỉ là một người làm nội dung về "thể hình" hay "chứng khoán", bạn tự tước bỏ nhân tính đa chiều của mình. Đến khi bạn thay đổi sở thích hoặc muốn chuyển mình (pivot), khán giả lập tức rời bỏ vì họ follow một chủ đề khô khan chứ không follow con người bạn. 
+                        <strong class="text-pink-300 block mt-2">SỰ THẬT: BẠN CHÍNH LÀ NGÁCH (YOU ARE THE NICHE). Mọi sở thích, vết sẹo và trải nghiệm của bạn mới là chiếc khuôn độc bản không thể sao chép.</strong>
+                    </p>
+                </blockquote>
+
+                <blockquote class="p-5 rounded-xl bg-[#14101E] border-l-4 border-pink-500 text-slate-200 relative overflow-hidden">
+                    <div class="font-bold text-pink-400 text-sm mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        ẢO TƯỞNG 2: "CẦN MÁY ẢNH ĐẮT TIỀN & VIDEO ĐẸP LUNG LINH MỚI GIỮ CHÂN ĐƯỢC NGƯỜI XEM"
+                    </div>
+                    <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+                        Khán giả lướt mạng xã hội với tốc độ 0.5 giây/swipe. Những cảnh quay 4K lung linh nhưng thiếu Ngữ cảnh (Context) hay thiếu sự va chạm cảm xúc chỉ là "rác thị giác vô hồn". Sự phức tạp trong quy trình sản xuất (High friction) chính là thủ phạm giết chết tính nhất quán.
+                        <strong class="text-pink-300 block mt-2">SỰ THẬT: Thứ thuật toán và bộ não con người săn tìm là Hook Stacking (Móc câu đa tầng), Sự đồng cảm qua nỗi đau thật và Ngữ cảnh dẫn dắt rõ ràng.</strong>
+                    </p>
+                </blockquote>
+            </div>
+        </section>
+
+        <!-- SƠ ĐỒ HỆ THỐNG MERMAID -->
+        <section id="system-diagram" class="cyber-card p-6 sm:p-8 border-slate-800">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-2.5 py-1 rounded bg-yellow-950 border border-yellow-500/40 text-yellow-400 font-mono text-xs font-bold">SYSTEM MAP</span>
+                <h2 class="text-xl sm:text-2xl font-bold font-heading text-white">Kiến Trúc Tổng Thể: Cỗ Máy Sáng Tạo Jun Yuh</h2>
+            </div>
+            
+            <div class="bg-[#07070D] p-6 rounded-xl border border-slate-800 overflow-x-auto flex justify-center">
+                <div class="mermaid">
+flowchart TD
+    Ethos["👑 SỨ MỆNH TRUNG TÂM (OVERARCHING ETHOS)<br>Personal Brand là tài sản dài hạn vô giá"]
+    
+    Ethos --> P1["📌 Pillar 1: Kỹ Năng & Chiến Lược<br>(Content Strategy, Filming, Scripting)"]
+    Ethos --> P2["📌 Pillar 2: Sự Nghiệp & Tài Chính<br>(Monetization, Entrepreneurship, System)"]
+    Ethos --> P3["📌 Pillar 3: Câu Chuyện Tổn Thương<br>(Mindset, Growth, Pain to Service)"]
+    
+    P1 & P2 & P3 --> Engine["⚙️ BỘ MÁY SẢN XUẤT 80/20"]
+    
+    Engine --> Low["🟢 80% Low-Intensity Formats<br>(Ma sát = 0, Duy trì kỷ luật 5.5 năm)"]
+    Engine --> High["🔴 20% High-Intensity Formats<br>(Chiều sâu, chuyển đổi Follower mới)"]
+    
+    Low & High --> Stack["🎯 CÔNG THỨC HOOK STACKING 3 LỚP"]
+    Stack --> H1["🗣️ Spoken Hook (Câu hỏi / Nghịch lý)"]
+    Stack --> H2["👁️ Visual Hook (Pope in pool / Chuyển động)"]
+    Stack --> H3["📝 Text Hook (Gắn ngữ cảnh & Nỗi đau)"]
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. [NGUYÊN LÝ GỐC RỄ - 8 INSIGHTS] -->
+        <section id="deep-insights" class="space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-400 font-mono text-xs font-bold">SECTION 2</span>
+                        <h2 class="text-2xl sm:text-3xl font-bold font-heading text-white">8 Nguyên Lý Gốc Rễ Độc Bản</h2>
+                    </div>
+                    <p class="text-slate-400 text-sm">Quét toàn bộ lộ trình Masterclass qua lăng kính Vật lý, Ti thể và Game Engine.</p>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-400 italic">
+                    "Gốc sâu rễ vững cội cành,<br>Lăng kính vật lý chuyển thành đòn giông."
+                </div>
+            </div>
+
+            <!-- INSIGHT 1 -->
+            <div class="cyber-card p-6 sm:p-8 neon-border-blue space-y-4" id="insight-1">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-cyan-400 font-mono">📌 Insight 01:</span> 
+                        Định Luật "You Are The Niche" & 3 Trụ Cột Nội Dung Đa Tầng
+                    </h3>
+                    <button onclick="copyInsight('insight-1')" class="text-slate-400 hover:text-cyan-400 text-sm transition" title="Copy Insight">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <blockquote class="p-4 rounded-lg bg-slate-900/60 border-l-2 border-cyan-400 text-slate-300 text-sm">
+                    🎙️ <strong>Dữ kiện gốc:</strong> Jun Yuh chứng minh sai lầm của creator khi tự giam mình vào một ngách đơn lẻ (như Fitness hay Tech). Jun xây dựng 3 trụ cột: Content (Chiến lược), Monetization (Kinh doanh) và Mindset (Tâm trí), neo chặt bởi Sứ mệnh trung tâm (Ethos).
+                </blockquote>
+                <div class="space-y-2 text-sm text-slate-300">
+                    <p>👁️ <strong>Hiện tượng bề mặt:</strong> Chọn 1 chủ đề hẹp duy nhất, làm một thời gian là cạn ý tưởng và mất kết nối với bản thân.</p>
+                    <p>🔬 <strong>Giải mã bản chất (Lăng kính Game RPG):</strong> Một nhân vật trong thế giới mở luôn có nhiều cây kỹ năng (Strength, Intelligence, Wisdom). Không ai muốn chơi một tựa game chỉ có 1 chiêu thức lặp lại vô tận. Bạn là một thực thể sống đa chiều, thương hiệu của bạn là hành trình của chính nhân vật đó.</p>
+                    <p>⚙️ <strong>Đòn bẩy thực chiến:</strong> Xác định 1 Sứ mệnh cốt lõi (Ethos) -> Triển khai 3 Pillars độc lập (Chuyên môn, Tài chính/Công việc, Lối sống/Tổn thương cá nhân). Khi đổi chủ đề con, khán giả vẫn ở lại vì nhân vật trung tâm.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-cyan-950/30 border border-cyan-900/30 text-cyan-300 text-xs italic font-mono">
+                    📜 Lục bát đúc kết: <em>Thân ta là ngách ngàn phương / Đem tâm soi sáng nẻo đường trần ai.</em>
+                </div>
+            </div>
+
+            <!-- INSIGHT 2 -->
+            <div class="cyber-card p-6 sm:p-8 neon-border-pink space-y-4" id="insight-2">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-pink-400 font-mono">📌 Insight 02:</span> 
+                        Quyền Năng Chuyển Hóa Vết Sẹo: Kết Nối Qua Tính Người, Không Bằng Hào Quang
+                    </h3>
+                    <button onclick="copyInsight('insight-2')" class="text-slate-400 hover:text-pink-400 text-sm transition" title="Copy Insight">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <blockquote class="p-4 rounded-lg bg-slate-900/60 border-l-2 border-pink-400 text-slate-300 text-sm">
+                    🎙️ <strong>Dữ kiện gốc:</strong> Jun Yuh chia sẻ về biến cố tuổi thơ nghèo khó, bố mẹ ly hôn qua điện thoại, mẹ di cư xa 10 năm mất liên lạc. Khi biến những tổn thương sâu kín này thành nội dung phụng sự, anh nhận được sự đồng cảm của hàng triệu người.
+                </blockquote>
+                <div class="space-y-2 text-sm text-slate-300">
+                    <p>👁️ <strong>Hiện tượng bề mặt:</strong> Chỉ khoe thành công, xe sang, nhà đẹp (Flexing highlights) và tự hỏi vì sao không ai thực sự yêu quý hay trung thành với mình.</p>
+                    <p>🔬 <strong>Giải mã bản chất (Lăng kính Ti thể & Sinh học):</strong> Não bộ con người được lập trình qua hàng triệu năm tiến hóa để cảnh giác với kẻ phô trương (bảo vệ tài nguyên) nhưng lại tiết ra Oxytocin và kích hoạt liên kết bầy đàn khi nhìn thấy tín hiệu đồng cảnh ngộ (Vulnerability).</p>
+                    <p>⚙️ <strong>Đòn bẩy thực chiến:</strong> Rà soát 9 nỗi đau phổ quát (Đổ vỡ, nghèo khó, cô đơn nơi xứ người, tự ti, kiệt sức, lạc lõng, bị chê cười, bắt đầu lại, so sánh bản thân). Chọn 1 nỗi đau đã vượt qua để đóng gói thành bài học phụng sự cộng đồng.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-pink-950/30 border border-pink-900/30 text-pink-300 text-xs italic font-mono">
+                    📜 Lục bát đúc kết: <em>Đừng đem hào nhoáng khoe khoang / Nỗi đau sẻ nửa hóa vàng niềm tin.</em>
+                </div>
+            </div>
+
+            <!-- INSIGHT 3 -->
+            <div class="cyber-card p-6 sm:p-8 neon-border-yellow space-y-4" id="insight-3">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-yellow-400 font-mono">📌 Insight 03:</span> 
+                        Tam Giác Cấu Trúc Định Dạng (Hook - Story - Visuals) Tối Ưu Giữ Chân
+                    </h3>
+                    <button onclick="copyInsight('insight-3')" class="text-slate-400 hover:text-yellow-400 text-sm transition" title="Copy Insight">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <blockquote class="p-4 rounded-lg bg-slate-900/60 border-l-2 border-yellow-400 text-slate-300 text-sm">
+                    🎙️ <strong>Dữ kiện gốc:</strong> Jun Yuh chỉ ra 3 yếu tố cốt lõi quyết định thuật toán phân phối: 3 giây đầu tiên (Hook), Sự chuyển đổi và giải pháp rõ ràng (Story/Payoff), và Hình ảnh gợi cảm xúc có khung hình chuẩn (Visuals).
+                </blockquote>
+                <div class="space-y-2 text-sm text-slate-300">
+                    <p>👁️ <strong>Hiện tượng bề mặt:</strong> Quay video tùy hứng, nói lan man không điểm nhấn, kết thúc lửng lơ không đem lại giá trị chuyển đổi cho người xem.</p>
+                    <p>🔬 <strong>Giải mã bản chất (Lăng kính Vật lý):</strong> Động lượng (Momentum) và Rào cản thế năng (Energy Barrier). Hook đóng vai trò hạ thấp thế năng kích hoạt giúp người xem dừng ngón tay; Story duy trì động lượng vận tốc xem; Visuals giảm hệ số ma sát quang học.</p>
+                    <p>⚙️ <strong>Đòn bẩy thực chiến:</strong> Checklist 3 câu hỏi trước khi bấm máy: (1) 3 giây đầu có làm người lướt giật mình? (2) Sau 45 giây người xem nhận được giải pháp gì cụ thể? (3) Khung hình có truyền tải cảm xúc và sự chỉn chu?</p>
+                </div>
+                <div class="p-3 rounded-lg bg-yellow-950/30 border border-yellow-900/30 text-yellow-300 text-xs italic font-mono">
+                    📜 Lục bát đúc kết: <em>Mở đầu níu mắt người xem / Câu chuyện chuyển hóa mở rèm tương lai.</em>
+                </div>
+            </div>
+
+            <!-- INSIGHT 4 -->
+            <div class="cyber-card p-6 sm:p-8 neon-border-green space-y-4" id="insight-4">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-green-400 font-mono">📌 Insight 04:</span> 
+                        Chiến Lược Đảo Ngược Ma Trận 3x3: "Format, Not Substance"
+                    </h3>
+                    <button onclick="copyInsight('insight-4')" class="text-slate-400 hover:text-green-400 text-sm transition" title="Copy Insight">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <blockquote class="p-4 rounded-lg bg-slate-900/60 border-l-2 border-green-400 text-slate-300 text-sm">
+                    🎙️ <strong>Dữ kiện gốc:</strong> Không ai sở hữu độc quyền một Format. Jun Yuh đưa ra công thức 3x3: Chọn 3 creator xuất sắc (dù ở ngành nghề khác như đan len, nấu ăn) -> Lấy 3 video top views của mỗi người -> Thu được 9 video mẫu để bóc tách cấu trúc nhịp điệu.
+                </blockquote>
+                <div class="space-y-2 text-sm text-slate-300">
+                    <p>👁️ <strong>Hiện tượng bề mặt:</strong> Cố gắng sáng tạo từ hư vô, phát minh lại bánh xe trong khi thuật toán nền tảng phân phối dựa trên mẫu hình hành vi (Pattern Recognition).</p>
+                    <p>🔬 <strong>Giải mã bản chất (Lăng kính Game Engine):</strong> Kế thừa khung xương chuyển động (Skeleton Rigging). Bạn mượn cấu trúc xương đã được cân chỉnh trọng lực hoàn hảo, sau đó phủ lên lớp Texture/Skin là linh hồn tri thức của bạn.</p>
+                    <p>⚙️ <strong>Đòn bẩy thực chiến:</strong> Thu thập 9 video viral khác ngành -> Ghi chú chính xác giây xuất hiện Hook, cú máy Visual, điểm nút kịch bản -> Thay thế toàn bộ bằng thông điệp trong ngách của bạn.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-green-950/30 border border-green-900/30 text-green-300 text-xs italic font-mono">
+                    📜 Lục bát đúc kết: <em>Học khung mượn dáng người ngoài / Thổi hồn mình chuyển miệt mài đường bay.</em>
+                </div>
+            </div>
+
+            <!-- INSIGHT 5 -->
+            <div class="cyber-card p-6 sm:p-8 neon-border-blue space-y-4" id="insight-5">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-cyan-400 font-mono">📌 Insight 05:</span> 
+                        Đòn Bẩy Cường Độ Thấp (Low-Intensity): Bí Mật Đăng Bài 2.000 Ngày Không Nghỉ
+                    </h3>
+                    <button onclick="copyInsight('insight-5')" class="text-slate-400 hover:text-cyan-400 text-sm transition" title="Copy Insight">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <blockquote class="p-4 rounded-lg bg-slate-900/60 border-l-2 border-cyan-400 text-slate-300 text-sm">
+                    🎙️ <strong>Dữ kiện gốc:</strong> Jun Yuh vừa học thạc sĩ kỹ thuật vừa xây dựng doanh nghiệp triệu đô mà không bỏ lỡ 1 ngày đăng bài trong 5.5 năm nhờ làm chủ các format Low-Intensity (Đặt máy quay tĩnh góc bàn, text overlay ngắn gọn).
+                </blockquote>
+                <div class="space-y-2 text-sm text-slate-300">
+                    <p>👁️ <strong>Hiện tượng bề mặt:</strong> Dồn toàn lực làm 1 video kỹ xảo bom tấn mất 2 tuần, sau đó kiệt quệ và "mất tích" 2 tháng.</p>
+                    <p>🔬 <strong>Giải mã bản chất (Lăng kính Ti thể & Năng lượng ATP):</strong> Sự sản sinh năng lượng bền vững của chu trình Krebs. Cơ thể không thể sống bằng việc bứt tốc yếm khí liên tục. Sáng tạo nội dung cần vận hành ở trạng thái hiếu khí (Aerobic) với mức tiêu hao năng lượng tối thiểu.</p>
+                    <p>⚙️ <strong>Đòn bẩy thực chiến:</strong> Cân bằng tỷ lệ 80/20: 80% video theo format Low-Intensity (Quay 30 phút được 7 clip cho cả tuần) để nuôi dưỡng tương tác hàng ngày; 20% video High-Intensity để tạo cú hích tăng trưởng mạnh.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-cyan-950/30 border border-cyan-900/30 text-cyan-300 text-xs italic font-mono">
+                    📜 Lục bát đúc kết: <em>Đường dài chẳng cậy sức trâu / Nhẹ nhàng bền bỉ dãi dầu tháng năm.</em>
+                </div>
+            </div>
+
+            <!-- INSIGHT 6 -->
+            <div class="cyber-card p-6 sm:p-8 neon-border-pink space-y-4" id="insight-6">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-pink-400 font-mono">📌 Insight 06:</span> 
+                        Nghệ Thuật Xếp Chồng Móc Câu 3 Lớp (Hook Stacking Formula)
+                    </h3>
+                    <button onclick="copyInsight('insight-6')" class="text-slate-400 hover:text-pink-400 text-sm transition" title="Copy Insight">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <blockquote class="p-4 rounded-lg bg-slate-900/60 border-l-2 border-pink-400 text-slate-300 text-sm">
+                    🎙️ <strong>Dữ kiện gốc:</strong> Jun Yuh bóc tách kỹ thuật Hook Stacking: Không chỉ nói một câu hook đơn độc, mà xếp chồng đồng thời 3 tầng: Lời nói (Spoken) + Hành động thị giác (Visual / Pope in the pool) + Dòng chữ ngữ cảnh (Text).
+                </blockquote>
+                <div class="space-y-2 text-sm text-slate-300">
+                    <p>👁️ <strong>Hiện tượng bề mặt:</strong> Ngồi im trước camera đọc câu mở đầu buồn ngủ hoặc chỉ quay hình ảnh mà không có dòng chữ nào định hướng sự chú ý.</p>
+                    <p>🔬 <strong>Giải mã bản chất (Lăng kính Vật lý Sóng):</strong> Hiện tượng Giao thoa Sóng Cùng Pha (Constructive Interference). Khi 3 tần số kích thích giác quan (Âm thanh, Chuyển động, Ký tự) đánh trúng vỏ não cùng một tích tắc, biên độ sóng chú ý đạt cực đại, đánh sập chế độ lơ đãng mặc định (DMN - Default Mode Network).</p>
+                    <p>⚙️ <strong>Đòn bẩy thực chiến:</strong> Vừa làm một hành động thường nhật (pha trà, cắt quả táo, bước vào phòng) + Vừa nói câu hỏi đánh trúng nỗi đau + Đặt text hook giải thích ngữ cảnh trên màn hình.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-pink-950/30 border border-pink-900/30 text-pink-300 text-xs italic font-mono">
+                    📜 Lục bát đúc kết: <em>Tiếng vang hình lượn chữ bày / Ba tầng giao hưởng giữ tay người nhìn.</em>
+                </div>
+            </div>
+
+            <!-- INSIGHT 7 -->
+            <div class="cyber-card p-6 sm:p-8 neon-border-yellow space-y-4" id="insight-7">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-yellow-400 font-mono">📌 Insight 07:</span> 
+                        Nguyên Tắc Ngữ Cảnh Hóa (Contextualization): Cứu Rỗi "Thị Giác Vô Hồn"
+                    </h3>
+                    <button onclick="copyInsight('insight-7')" class="text-slate-400 hover:text-yellow-400 text-sm transition" title="Copy Insight">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <blockquote class="p-4 rounded-lg bg-slate-900/60 border-l-2 border-yellow-400 text-slate-300 text-sm">
+                    🎙️ <strong>Dữ kiện gốc:</strong> Jun Yuh sửa bài cho học viên Stanford và Stylist thời trang: Video quay cực đẹp nhưng view lẹt đẹt vì thiếu Context. Chỉ cần thêm dòng chữ hoặc Voice-over "Đi uống cà phê để có cớ diện đồ đẹp", video lập tức viral.
+                </blockquote>
+                <div class="space-y-2 text-sm text-slate-300">
+                    <p>👁️ <strong>Hiện tượng bề mặt:</strong> Cắt ghép nhiều cảnh B-roll đẹp mắt nghệ thuật nhưng không ai quan tâm vì người xem không hiểu video này nhằm mục đích gì.</p>
+                    <p>🔬 <strong>Giải mã bản chất (Lăng kính Game Narrative):</strong> Nhiệm vụ chính tuyến (Main Quest). Đồ họa chân thực đến đâu cũng trở nên vô nghĩa nếu người chơi không biết nhân vật đang thực hiện nhiệm vụ gì trong thế giới game.</p>
+                    <p>⚙️ <strong>Đòn bẩy thực chiến:</strong> Không bao giờ để video trôi đi mà không có 1 dòng Text giải thích lý do hành động, hoặc chèn thêm Voice-over tự sự bộc lộ suy nghĩ nội tâm.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-yellow-950/30 border border-yellow-900/30 text-yellow-300 text-xs italic font-mono">
+                    📜 Lục bát đúc kết: <em>Cảnh đẹp dẫu có ngút ngàn / Không lời dẫn lối cũng tàn hư vô.</em>
+                </div>
+            </div>
+
+            <!-- INSIGHT 8 -->
+            <div class="cyber-card p-6 sm:p-8 neon-border-green space-y-4" id="insight-8">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-green-400 font-mono">📌 Insight 08:</span> 
+                        Khước Từ Kênh Ẩn Danh (Faceless): Xây Dựng Bản Sắc Độc Bản Kỷ Nguyên AI
+                    </h3>
+                    <button onclick="copyInsight('insight-8')" class="text-slate-400 hover:text-green-400 text-sm transition" title="Copy Insight">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <blockquote class="p-4 rounded-lg bg-slate-900/60 border-l-2 border-green-400 text-slate-300 text-sm">
+                    🎙️ <strong>Dữ kiện gốc:</strong> Jun Yuh thẳng thừng từ chối làm việc với các tài khoản faceless. Khi AI có thể tự sinh hàng triệu video ẩn danh mỗi phút, tài sản có giá trị trường tồn duy nhất của con người là Personal Brand gắn liền với gương mặt và nhân cách thật.
+                </blockquote>
+                <div class="space-y-2 text-sm text-slate-300">
+                    <p>👁️ <strong>Hiện tượng bề mặt:</strong> Trốn sau các video AI lồng tiếng, cắt ghép phim stock vì sợ bị phán xét hoặc ngại lộ mặt.</p>
+                    <p>🔬 <strong>Giải mã bản chất (Lăng kính Nhiệt động lực học & Entropy):</strong> Dữ liệu tổng hợp có thể nhân bản với chi phí cận biên bằng 0 (Entropy cực đại = hàng hóa đại trà). Ngược lại, trải nghiệm sống và sự hiện diện sinh học của một cá nhân là cấu trúc trật tự độc nhất không thể sao chép.</p>
+                    <p>⚙️ <strong>Đòn bẩy thực chiến:</strong> Tập quay đối thoại trực diện 15-30 giây mỗi ngày. Coi ống kính máy ảnh như một người bạn tri kỷ để chia sẻ bài học đời thực.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-green-950/30 border border-green-900/30 text-green-300 text-xs italic font-mono">
+                    📜 Lục bát đúc kết: <em>Mặt người in dấu thời gian / AI ngàn bản chẳng màng sánh đôi.</em>
+                </div>
+            </div>
+        </section>
+
+        <!-- BIỂU ĐỒ TRỰC QUAN HÓA CHART.JS -->
+        <section class="cyber-card p-6 sm:p-8 border-slate-800">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-2.5 py-1 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-400 font-mono text-xs font-bold">ANALYTICS</span>
+                <h2 class="text-xl sm:text-2xl font-bold font-heading text-white">Tác Động Của Hook Stacking Lên Tỷ Lệ Giữ Chân (Retention)</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="h-64 sm:h-72">
+                    <canvas id="retentionChart"></canvas>
+                </div>
+                <div class="space-y-4 text-sm text-slate-300">
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="font-bold text-red-400 mb-1">📉 Không Dùng Hook Stacking</div>
+                        <p class="text-xs text-slate-400">70% khán giả rời đi ngay trong 3 giây đầu do thiếu kích thích và không có ngữ cảnh rõ ràng.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="font-bold text-cyan-400 mb-1">📈 Áp Dụng Hook Stacking 3 Lớp</div>
+                        <p class="text-xs text-slate-400">Tỷ lệ xem qua 3 giây đầu tăng vọt lên 78%, tạo đà duy trì retention trên 45% đến cuối video, kích hoạt phân phối thuật toán.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. [THIẾT KẾ KHÔNG GIAN] -->
+        <section id="space-design" class="cyber-card p-6 sm:p-8 neon-border-yellow">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-2.5 py-1 rounded bg-yellow-950 border border-yellow-500/40 text-yellow-400 font-mono text-xs font-bold">SECTION 3</span>
+                <h2 class="text-xl sm:text-2xl font-bold font-heading text-white">Thiết Kế Không Gian & Triệt Tiêu Ma Sát Vật Lý</h2>
+            </div>
+
+            <div class="mb-6 p-4 rounded-xl bg-yellow-950/20 border border-yellow-900/30">
+                <p class="text-yellow-300 italic font-mono text-sm text-center">
+                    "Góc bàn bày sẵn tiện nghi,<br>
+                    Chạm tay là máy ngại chi nhọc nhằn."
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-5 rounded-xl bg-[#141420] border border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Zero-Friction Camera Setup</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Cố định Tripod và kẹp điện thoại sẵn ở góc bàn làm việc hoặc góc pha trà. Đèn chiếu sáng cắm sẵn ổ cắm thông minh 1 chạm. Loại bỏ hoàn toàn 15 phút lắp ráp thiết bị trước khi quay.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-xl bg-[#141420] border border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">One-Click Script Widget</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Đặt Widget ghi chú (Notion/Apple Notes) ngay màn hình khóa điện thoại. Mỗi khi có ý tưởng đời sống hoặc nỗi đau vừa trải qua, ghi lại 3 dòng (Hook - Pain - Action) trong vòng 30 giây.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-xl bg-[#141420] border border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-mug-hot"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Khu Vực "Pope In The Pool"</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Thiết kế không gian ánh sáng tự nhiên tại nơi diễn ra các hoạt động thường ngày (uống cà phê, đọc sách, viết lách) để biến mọi hành động sinh hoạt thành B-roll tự nhiên không cần diễn.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. [BẢO TOÀN CẢM XÚC] -->
+        <section id="emotional-mastery" class="cyber-card p-6 sm:p-8 neon-border-green">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-2.5 py-1 rounded bg-green-950 border border-green-500/40 text-green-400 font-mono text-xs font-bold">SECTION 4</span>
+                <h2 class="text-xl sm:text-2xl font-bold font-heading text-white">Bảo Toàn Cảm Xúc & Quản Trị Tâm Trí (Data Game Mindset)</h2>
+            </div>
+
+            <div class="mb-6 p-4 rounded-xl bg-green-950/20 border border-green-900/30">
+                <p class="text-green-300 italic font-mono text-sm text-center">
+                    "View cao chẳng vội kiêu căng,<br>
+                    View rơi xem nhẹ như lăng kính đời."
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 rounded-xl bg-[#101918] border border-green-900/30 space-y-3">
+                    <h3 class="text-base font-bold text-green-400 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Khách Quan Hóa Thất Bại: Coi View Là Data Game
+                    </h3>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Một video 200 lượt xem không định nghĩa giá trị hay tài năng của bạn. Nó đơn thuần là một <em>Data Point</em> báo hiệu rằng móc câu (Hook) hoặc ngữ cảnh chưa kích hoạt đúng thuật toán. Tách rời hoàn toàn cái Tôi (Ego) ra khỏi số liệu phân tích.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-xl bg-[#101918] border border-green-900/30 space-y-3">
+                    <h3 class="text-base font-bold text-green-400 flex items-center gap-2">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        Neo Tâm Lý Vào Sứ Mệnh Phụng Sự (Turn Pain Into Service)
+                    </h3>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Khi cảm giác tự ti hoặc hội chứng kẻ mạo danh (Imposter Syndrome) xuất hiện, hãy tự nhắc nhở bản thân: <em>"Mình không làm video để chứng minh mình giỏi hơn ai, mình làm video để gửi chiếc phao cứu sinh cho những người đang trải qua khó khăn như mình từng chịu đựng."</em>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center pt-8 border-t border-slate-800/80 text-slate-500 text-xs sm:text-sm space-y-2">
+            <p>Báo cáo phân tích chuyên sâu được xuất bản tự động bởi <strong>Kiến Trúc Sư Trí Tuệ Hệ Thống</strong></p>
+            <p class="font-mono text-slate-600">Repository: vietndj/k | GitHub Pages Live Engine</p>
+        </footer>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Reading Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        // Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // Copy Prompt Function
+        function copyPrompt() {
+            const text = document.getElementById('prompt-content').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Đã sao chép Prompt Kiến Trúc Sư vào Clipboard!');
+            });
+        }
+
+        // Copy Insight Function
+        function copyInsight(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                const text = el.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Đã sao chép Insight vào Clipboard!');
+                });
+            }
+        }
+
+        // Smooth Scroll
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Chart.js Retention Rendering
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('retentionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0s', '3s', '10s', '20s', '30s', '45s'],
+                    datasets: [
+                        {
+                            label: 'Có Hook Stacking 3 Lớp',
+                            data: [100, 78, 65, 56, 50, 46],
+                            borderColor: '#00E5FF',
+                            backgroundColor: 'rgba(0, 229, 255, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointBackgroundColor: '#00E5FF',
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Không Có Hook Stacking',
+                            data: [100, 30, 22, 18, 14, 10],
+                            borderColor: '#FF007F',
+                            backgroundColor: 'rgba(255, 0, 127, 0.05)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointBackgroundColor: '#FF007F',
+                            pointRadius: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#94A3B8',
+                                font: { family: 'Inter', size: 11 }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                color: '#64748B',
+                                callback: function(value) { return value + '%'; }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#64748B' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
