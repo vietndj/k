@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Phức Hợp #5 | Giải Mã Phương Trình Lo Âu & Bản Chất Của Sự Hoảng Loạn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(20, 20, 20, 0.7);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --accent-glow: rgba(139, 92, 246, 0.15);
+            --accent-color: #8b5cf6;
+            --gradient-top: linear-gradient(90deg, #8b5cf6, #ec4899);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            background: linear-gradient(to right, #ffffff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* Glassmorphism Section Card */
+        section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--gradient-top);
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffffff;
+        }
+
+        section h2 span {
+            color: var(--accent-color);
+            font-family: monospace;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .card {
+            background: rgba(10, 10, 10, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: #ffffff;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+        }
+
+        .thesis-statement {
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 18px;
+            font-size: 0.95rem;
+            color: #ddd6fe;
+        }
+
+        .thesis-statement strong {
+            color: var(--accent-color);
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .layer {
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+
+        .layer strong {
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .layer p {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        /* YouTube Button */
+        .btn-youtube {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #ef4444;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+            margin-top: 24px;
+        }
+
+        .btn-youtube:hover {
+            background-color: #dc2626;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Mermaid Wrapper */
+        .mermaid-wrapper {
+            width: 100%;
+            height: 75vh;
+            min-height: 600px;
+            overflow: auto;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: grab;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .mermaid-wrapper.active {
+            cursor: grabbing;
+        }
+
+        .mermaid-wrapper svg {
+            min-width: 1200px !important;
+            height: auto !important;
+        }
+
+        /* Override lists styling */
+        .override-list {
+            list-style: none;
+        }
+
+        .override-item {
+            background: rgba(10, 10, 10, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .override-item h3 {
+            color: #ffffff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .override-item h3::before {
+            content: '⚙️';
+        }
+
+        .explanation-block {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .explanation-block p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .explanation-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Save point card styling */
+        .save-point-card {
+            background: rgba(139, 92, 246, 0.03);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        /* Footer styling */
+        footer {
+            height: 128px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-top);
+        }
+
+        .footer-logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #ffffff;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #ffffff;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hệ Thống Phức Hợp #5 | Giải Mã Phương Trình Lo Âu & Bản Chất Của Sự Hoảng Loạn</h1>
+            <p>Phân tích nhiệt động lực học của sự hoảng loạn và chiến thuật bẻ gãy ma sát nhận thức do thiếu hụt kỹ năng và thời gian</p>
+        </header>
+
+        <!-- SECTION 1: ĐỊNH LUẬT ENTROPY -->
+        <section id="entropy">
+            <h2><span>[01]</span> Định Luật Entropy</h2>
+            <p style="font-size: 1.15rem; color: var(--text-primary); margin-bottom: 24px; font-weight: 300;">
+                Sự lo âu và hoảng loạn không đến từ việc mối đe dọa bên ngoài quá lớn (entropy cao), mà đến từ việc hệ thống bên trong (kỹ năng và thời gian của bạn) không đủ sức đồng bộ với tốc độ tiến đến của sự kiện. Việc bạn cố gắng trực tiếp giải quyết "mối đe dọa" vô hình sẽ chỉ làm cạn kiệt năng lượng vô ích. Để bảo toàn hệ thống, hãy chuyển hướng sang nâng cấp biến số "kỹ năng" và thao túng biến số "thời gian".
+            </p>
+            
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': {'fontSize': '18px', 'fontFamily': 'Inter'}}}%%
+mindmap
+  root((Giai Ma Lo Au))
+    Dinh Luat Entropy
+      Thieu hut ky nang
+      Thieu hut thoi gian
+      Dung nhin moi de doa
+    He Toa Do Su Kien
+      Phuong trinh hoang loan
+      Quy trinh cap cuu 90s
+      Thuat toan 3 cau hoi
+    Ho Hap Te Bao
+      Loc tin hieu nao bo
+      Dung ly tri de bao toan ATP
+    Dong Luc Hoc
+      Giam ma sat thoi gian
+      Chap nhan bien so tinh
+    Sap Dat Moi Truong
+      Tat thong bao doc
+      Cai dat san ky nang
+    Goc Nhin Nguoi Choi
+      Player khong so hai
+      Load game va farm cap do
+                </pre>
+            </div>
+
+            <a href="https://www.youtube.com/watch?v=eG4G44NJMXg" target="_blank" class="btn-youtube">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.518 3.545 12 3.545 12 3.545s-7.518 0-9.388.508a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.87.508 9.388.508 9.388.508s7.518 0 9.388-.508a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                Xem Video Gốc trên YouTube
+            </a>
+        </section>
+
+        <!-- SECTION 2: HỆ TỌA ĐỘ SỰ KIỆN -->
+        <section id="coordinates">
+            <h2><span>[02]</span> Hệ Tọa Độ Sự Kiện</h2>
+            <div class="grid">
+                <!-- Insight 1 -->
+                <div class="card">
+                    <h3>Insight 1: Bản Chất Thực Sự Của Lo Âu</h3>
+                    <div class="thesis-statement">
+                        <strong>Luận điểm</strong>
+                        Lo âu không phải là sự nhận thức về một mối đe dọa trong tương lai. Lo âu là niềm tin rằng bạn KHÔNG ĐỦ KỸ NĂNG để đối phó với mối đe dọa đó.
+                    </div>
+                    <div class="layer">
+                        <strong>Hiện tượng</strong>
+                        <p>Đám đông khi lo lắng thường tập trung sự chú ý vào "kẻ thù" (mối đe dọa) và càng hoảng loạn khi nhận ra mình không thể kiểm soát được nó.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Bản chất Vật lý</strong>
+                        <p>Sự chênh lệch năng lượng. Khi năng lượng của khó khăn lớn hơn năng lượng của hệ thống (kỹ năng), hệ sinh học báo động bằng lo âu.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Công thức áp dụng</strong>
+                        <p>Khi lo âu xuất hiện, lập tức ngừng nhìn vào mối đe dọa. Hãy nhìn vào kỹ năng của bạn và tìm cách nâng cấp nó (học trên YouTube, nhờ bạn bè, tìm người hợp tác).</p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="card">
+                    <h3>Insight 2: Phương Trình Của Sự Hoảng Loạn</h3>
+                    <div class="thesis-statement">
+                        <strong>Luận điểm</strong>
+                        Hoảng loạn (Panic) không liên quan đến độ lớn của mối đe dọa, nó liên quan trực tiếp đến THỜI GIAN. Mối đe dọa tiến đến càng nhanh, bạn càng hoảng sợ.
+                    </div>
+                    <div class="layer">
+                        <strong>Hiện tượng</strong>
+                        <p>Cơn hoảng loạn (panic attack) xảy ra khi bạn cảm thấy một sự kiện tiêu cực đang lao đến với vận tốc không thể né tránh (deadline sát nút).</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Bản chất Vật lý</strong>
+                        <p>Thuyết tương đối của thời gian và gia tốc tâm lý. Việc thời gian bị nén lại làm gia tăng áp lực lên vỏ não trước trán, khiến hệ thống chuyển sang chế độ sinh tồn.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Công thức áp dụng</strong>
+                        <p>Cắt đứt gia tốc bằng cách "thao túng thời gian": Xin hoãn deadline 2 ngày, nhờ người làm hộ để mua thêm thời gian, hoặc hủy bỏ các công việc vô bổ.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="card">
+                    <h3>Insight 3: Quy Trình Cấp Cứu 90 Giây</h3>
+                    <div class="thesis-statement">
+                        <strong>Luận điểm</strong>
+                        Sự sợ hãi là một phản ứng hóa sinh chỉ kéo dài 90 giây ban đầu. Nếu nỗi sợ vượt quá thời gian này, đó là do tâm trí logic của bạn đang tự ý duy trì nó.
+                    </div>
+                    <div class="layer">
+                        <strong>Hiện tượng</strong>
+                        <p>Đám đông để cho nỗi sợ kéo dài từ ngày này sang ngày khác vì liên tục nhai lại những kịch bản thảm họa tự chế trong đầu.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Bản chất Vật lý</strong>
+                        <p>Quán tính tâm lý. Sau khi chuỗi phản ứng hormone kết thúc, năng lượng tiêu cực chỉ tiếp tục tồn tại nếu nhận thức tiếp tục cung cấp nhiên liệu cho nó.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Công thức áp dụng</strong>
+                        <p>Bỏ qua cảm xúc và đi thẳng vào tâm trí (mind). Đặt câu hỏi lý trí sau 90 giây để ngắt nguồn nhiên liệu cung cấp cho ảo giác sợ hãi.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="card">
+                    <h3>Insight 4: Thuật Toán 3 Câu Hỏi (Sơ Đồ Hạnh Phúc)</h3>
+                    <div class="thesis-statement">
+                        <strong>Luận điểm</strong>
+                        98% những điều tiêu cực mà tâm trí vẽ ra (như "sếp ghét mình", "đối tác đang lừa mình") là hoàn toàn sai sự thật do bộ não mắc chứng thiên kiến tiêu cực.
+                    </div>
+                    <div class="layer">
+                        <strong>Hiện tượng</strong>
+                        <p>Khi gặp vấn đề nhỏ, bộ não ngay lập tức tự động phóng đại nó thành một thảm họa sinh tồn.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Bản chất Vật lý</strong>
+                        <p>Thuật toán lọc nhiễu. Sử dụng bộ lọc lý trí để loại bỏ các tín hiệu sai lệch và cô lập đúng biến số mà bạn có thể kiểm soát.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Công thức áp dụng</strong>
+                        <p>Khi stress, hỏi 3 câu: (1) Điều này có ĐÚNG không? (2) Tôi có thể làm gì để KHẮC PHỤC nó? (3) Nếu không thể khắc phục, tôi làm gì để CHẤP NHẬN nó và sống tốt hơn?</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: HÔ HẤP TẾ BÀO -->
+        <section id="respiration">
+            <h2><span>[03]</span> Hô Hấp Tế Bào</h2>
+            <div class="override-item">
+                <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 16px;">
+                    Căng thẳng thể chất là lúc cơ thể lên tiếng qua cơn đau nhức. Căng thẳng tinh thần là những suy nghĩ nhiễu loạn trong đầu, bị mắc kẹt mà không thể chuyển hóa thành hành động.
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                    <strong>Cách giải phóng pin (ATP):</strong> Để bảo toàn ATP, đừng để cảm xúc nhấn chìm bạn. Cảm xúc chỉ là những luồng tín hiệu đang đi qua tâm trí. Hãy dùng vỏ não trước trán (trung tâm logic) để lọc tín hiệu. Chỉ giữ lại những tín hiệu yêu cầu hành động giải quyết vấn đề, vứt bỏ những tín hiệu chỉ gây hao mòn sinh học.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ĐỘNG LỰC HỌC -->
+        <section id="kinetics">
+            <h2><span>[04]</span> Động Lực Học</h2>
+            <div class="override-item">
+                <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 16px;">
+                    Bạn không thể trực tiếp dùng sức người để làm thay đổi nền kinh tế vĩ mô đang đi xuống (quán tính khổng lồ của một hệ thống vĩ mô lớn hơn bạn rất nhiều). 
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                    <strong>Công thức:</strong> Hãy triệt tiêu sự lãng phí năng lượng bằng cách CHẤP NHẬN biến số vĩ mô là một hằng số cố định. Dồn toàn bộ động năng của bạn để tối ưu hóa các biến số động của hệ thống cá nhân: cắt giảm chi tiêu, dọn đến nơi ở rẻ hơn, học một kỹ năng AI mới để vượt qua thời kỳ suy thoái.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 5: SẮP ĐẶT MÔI TRƯỜNG -->
+        <section id="environment-setup">
+            <h2><span>[05]</span> Sắp Đặt Môi Trường</h2>
+            <div class="explanation-block">
+                <p><strong>BẢN CHẤT (Nó là gì?):</strong> Là việc thay đổi môi trường xung quanh để ép cơ thể phải làm việc tốt hoặc bỏ việc xấu, tuyệt đối không dùng ý chí để tự ép buộc bản thân.</p>
+                <p><strong>TẠI SAO (Tại sao phải làm thế?):</strong> Vì ý chí của con người cực kỳ yếu và nhanh hết. Nếu bạn để điện thoại ngay trên bàn làm việc và tự hứa: "Mình sẽ không sờ vào điện thoại đâu", bạn sẽ thất bại sau 5 phút vì bộ não luôn thèm bấm điện thoại. Thay vì bắt bộ não phải đấu tranh tư tưởng cực khổ, hãy giấu điện thoại đi chỗ khác.</p>
+            </div>
+            
+            <div class="override-list">
+                <div class="override-item">
+                    <h3>Ngắt Nguồn Nhiễu Loạn Thông Tin</h3>
+                    <div style="margin-left: 20px; margin-top: 10px;">
+                        <p style="margin-bottom: 8px;">🛑 <strong>Tăng ma sát hành vi xấu (Tránh bị đe dọa):</strong> Tắt tất cả các thông báo tin tức thời sự giật gân, xóa các app gieo rắc sự hoảng loạn. Hạn chế tiếp xúc với những người luôn phóng đại deadline hoặc thổi phồng mối đe dọa.</p>
+                        <p>🟢 <strong>Giảm ma sát hành vi tốt (Nâng cấp kỹ năng tự động):</strong> Đăng ký sẵn các kênh YouTube học tập hoặc mua các khóa học, để sẵn trên màn hình máy tính/điện thoại. Bất cứ khi nào cơn lo âu ập đến do cảm giác "thiếu năng lực", bật chúng lên ngay lập tức để giải quyết nguyên nhân gốc rễ.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: GÓC NHÌN NGƯỜI CHƠI -->
+        <section id="player-view">
+            <h2><span>[06]</span> Góc Nhìn Người Chơi</h2>
+            <div class="explanation-block">
+                <p><strong>BẢN CHẤT (Nó là gì?):</strong> Là việc coi cuộc đời như một trò chơi điện tử. Bạn là người chơi (Player) đang điều khiển nhân vật trong game (Avatar). Thất bại ngoài đời chỉ là nhân vật game bị mất mạng, bạn chỉ cần bấm "Chơi lại" (Load game) từ điểm đã lưu.</p>
+                <p><strong>TẠI SAO (Tại sao phải làm thế?):</strong> Để không bị buồn bã, chán nản hay tự trách bản thân khi gặp thất bại.</p>
+            </div>
+            <div class="save-point-card">
+                <p style="font-size: 1.1rem; font-weight: 300; font-style: italic; margin-bottom: 16px;">
+                    "Khi Avatar của bạn đối mặt với một trận đánh Boss mà thời gian đếm ngược sắp hết (hoảng loạn) hoặc level của bạn quá thấp so với Boss (lo âu do thiếu kỹ năng), Người Chơi ngồi ngoài màn hình không việc gì phải sợ hãi hay toát mồ hôi thay cho Avatar. Hãy xem nó như một thông báo đỏ của hệ thống game: 'Yêu cầu farm thêm kỹ năng' hoặc 'Cần sử dụng vật phẩm gia hạn thời gian'. Hãy điềm tĩnh nhấn Pause, đi luyện thêm cấp độ, nhờ đồng đội kéo rank giúp, và tận hưởng quá trình phá đảo trò chơi một cách lý trí nhất."
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 7: TRẠM DỮ LIỆU -->
+        <footer>
+            <div class="footer-logo">Trạm Dữ Liệu Hệ Thống // vietndj</div>
+            <div class="social-links">
+                <a href="https://www.youtube.com/@vietndonline" target="_blank">YouTube @vietndonline</a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank">TikTok @nguyenducviet.viral</a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank">Facebook</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+        // Grab to scroll implementation for Mermaid Wrapper
+        const wrapper = document.querySelector('.mermaid-wrapper');
+        if (wrapper) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            wrapper.addEventListener('mousedown', (e) => {
+                isDown = true;
+                wrapper.classList.add('active');
+                startX = e.pageX - wrapper.offsetLeft;
+                scrollLeft = wrapper.scrollLeft;
+            });
+            wrapper.addEventListener('mouseleave', () => {
+                isDown = false;
+                wrapper.classList.remove('active');
+            });
+            wrapper.addEventListener('mouseup', () => {
+                isDown = false;
+                wrapper.classList.remove('active');
+            });
+            wrapper.addEventListener('mousemove', (e) => {
+                if(!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - wrapper.offsetLeft;
+                const walk = (x - startX) * 2;
+                wrapper.scrollLeft = scrollLeft - walk;
+            });
+        }
+    </script>
+</body>
+</html>

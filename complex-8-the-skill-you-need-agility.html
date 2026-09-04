@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Phức Hợp #8 | Trò Chơi Bóng Quần & Thuật Toán Nhanh Nhẹn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #030712; /* Slate 950 */
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --accent-rose: #f43f5e;
+            --card-bg: rgba(30, 41, 59, 0.5);
+            --border-color: rgba(148, 163, 184, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Abstract Background Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.03) 0%, transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, var(--text-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            color: var(--accent-cyan);
+            margin-bottom: 3rem;
+            padding: 0.5rem 1rem;
+            background: rgba(6, 182, 212, 0.1);
+            display: inline-block;
+            border-radius: 4px;
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 4rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Diagnostic Modules */
+        .module {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        
+        .module::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .module-1::before { background: var(--accent-rose); }
+        .module-2::before { background: #f59e0b; }
+        .module-3::before { background: var(--accent-cyan); }
+        .module-4::before { background: var(--accent-purple); }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .module-number {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+        }
+
+        .module h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .module p {
+            margin-bottom: 1rem;
+            color: var(--text-dim);
+        }
+
+        /* Terminal block */
+        .terminal-block {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #a3e635; /* Lime */
+            margin-top: 1.5rem;
+        }
+
+        .terminal-block span {
+            color: #fff;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px dashed var(--accent-purple);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        
+        .highlight-box strong {
+            color: #c4b5fd;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hệ Thống Phức Hợp #8 | Trò Chơi Bóng Quần & Thuật Toán Nhanh Nhẹn</h1>
+            <div class="subtitle">> INIT_SEQUENCE: MÃ GIAN LẬN CỦA VŨ TRỤ</div>
+        </header>
+
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/qqV1EX9YPfM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <!-- 1. Lỗi Cấu Trúc -->
+        <div class="module module-1">
+            <div class="module-header">
+                <span class="module-number">01</span>
+                <h2>LỖI CẤU TRÚC (Mental Model Cũ)</h2>
+            </div>
+            <p><strong>Tư duy "Chơi Cờ Vua" (Linear Planning):</strong> Lỗi hệ thống lớn nhất của chúng ta là mang tư duy tĩnh để giải quyết một thế giới động. Chúng ta cố gắng lập kế hoạch chi tiết cho 4-5 năm tới, dự báo tương lai và cắm đầu thực thi theo một đường thẳng.</p>
+            <p>Trong kỷ nguyên AI - nơi mọi thứ bị bẻ cong và thay đổi cấu trúc mỗi 3 ngày - bàn cờ vua đã bị hất tung ra ngoài cửa sổ.</p>
+        </div>
+
+        <!-- 2. Cơ Chế Bù Đắp -->
+        <div class="module module-2">
+            <div class="module-header">
+                <span class="module-number">02</span>
+                <h2>CƠ CHẾ BÙ ĐẮP (Hành vi đối phó sai lầm)</h2>
+            </div>
+            <p>Khi những biến cố bất ngờ xảy ra (sương mù mù mịt), thay vì thay đổi tư thế, con người thường kích hoạt các phản xạ bù đắp vô ích:</p>
+            <ul style="padding-left: 20px; color: var(--text-dim); margin-bottom: 1rem;">
+                <li style="margin-bottom: 10px;">Cố gắng "cầm cự" và bám víu lấy kế hoạch cũ đã lỗi thời.</li>
+                <li style="margin-bottom: 10px;">Sợ hãi thất bại, coi việc đi lùi một bước là dấu chấm hết cho sự nghiệp.</li>
+                <li style="margin-bottom: 10px;">Đấu tranh cực độ với dòng chảy của cuộc sống để cố giành lấy lợi ích cá nhân, dẫn đến ma sát nội tâm khổng lồ.</li>
+            </ul>
+        </div>
+
+        <!-- 3. Sơ Đồ Thuật Toán -->
+        <div class="module module-3">
+            <div class="module-header">
+                <span class="module-number">03</span>
+                <h2>SƠ ĐỒ THUẬT TOÁN (Ghi Đè Hệ Thống)</h2>
+            </div>
+            <p>Hãy gạch bỏ bàn cờ vua. Thế giới bây giờ là một <strong>Sân Bóng Quần (Squash)</strong>.</p>
+            
+            <div class="terminal-block">
+                > Chạy giao thức [Agility.exe]<br>
+                <span>[Thực thi 1] <strong>Thuật toán Bóng Quần:</strong> Bạn không bao giờ biết quả bóng tiếp theo sẽ văng đi đâu. Hãy kiễng gót chân lên. Quả bóng nảy sang phải -> Bước hai bước sang phải -> Đánh bóng -> Quay lại vị trí trung tâm và chờ đợi. Đừng dự đoán xa, hãy phản xạ chính xác.</span><br><br>
+                
+                <span>[Thực thi 2] <strong>Fail Fast & Cheap:</strong> (Kế thừa từ Google X): Mọi ý tưởng đều được chấp nhận miễn là không trái quy luật vật lý. Nhưng bạn có đúng 2 tuần để "cố gắng chứng minh bản thân sai". Nếu thất bại, hãy ném nó đi ngay. Khả năng phạm sai lầm nhanh, rẻ và tiến lên phía trước là hình thức cao nhất của sự nhanh nhẹn.</span><br><br>
+                
+                <span>[Thực thi 3] <strong>Thuật toán Khám phá:</strong> Trong sương mù, bạn sẽ đi hai bước tới, một bước lùi, một bước sang trái, rồi hai bước tới. Đó là cách các nhà thám hiểm vĩ đại vẽ bản đồ.</span>
+            </div>
+        </div>
+
+        <!-- 4. Output -->
+        <div class="module module-4">
+            <div class="module-header">
+                <span class="module-number">04</span>
+                <h2>OUTPUT (Điểm Lưu Trữ)</h2>
+            </div>
+            <p><strong>Hãy coi cuộc đời là một trò chơi điện tử.</strong> Một Game thủ chân chính không chơi để cày cấp mù quáng, họ chơi để trở thành phiên bản xuất sắc nhất của chính mình. Nếu game quá dễ, bạn sẽ chán. Chính những đoạn Boss khó (Thử thách) mới là lúc bạn thực sự tận hưởng trò chơi.</p>
+            
+            <div class="highlight-box">
+                <p><strong><i data-lucide="key" size="18" style="display:inline; vertical-align:-3px; margin-right:5px;"></i>CHEAT CODE CỦA VŨ TRỤ:</strong> Trò chơi này có một mã gian lận ẩn giấu - đó là TÌNH YÊU.</p>
+                <p style="margin-top: 10px; color: var(--text-dim);">Khi bạn cố gắng vơ vét lợi ích cho Avatar của mình, Hệ Thống sẽ tạo ra chướng ngại vật chống lại bạn. Nhưng khi bạn dồn những món quà (chỉ số trí tuệ) của mình để phụng sự và yêu thương người khác (như việc hủy đơn hàng 4 triệu đô vì nó vô ích với học sinh), Hệ Thống sẽ tự động sắp xếp đúng người, đúng thời điểm, đúng nguồn lực để giúp bạn thắng game dễ dàng.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>END OF TRANSMISSION // vietndj</p>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

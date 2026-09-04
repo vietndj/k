@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tối Ưu Hiệu Suất #6 | Toán Học Của Sự Kiệt Sức & Thuật Toán Sửa Lỗi Lo Âu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #020617;
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-glow: rgba(14, 165, 233, 0.15);
+            --accent-color: #0ea5e9;
+            --gradient-top: linear-gradient(90deg, #0ea5e9, #3b82f6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            background: linear-gradient(to right, #f8fafc, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* Glassmorphism Section Card */
+        section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--gradient-top);
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffffff;
+        }
+
+        section h2 span {
+            color: var(--accent-color);
+            font-family: monospace;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: #ffffff;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+        }
+
+        .thesis-statement {
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 18px;
+            font-size: 0.95rem;
+            color: #bae6fd;
+        }
+
+        .thesis-statement strong {
+            color: var(--accent-color);
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .layer {
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+
+        .layer strong {
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .layer p {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        /* YouTube Button */
+        .btn-youtube {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #ef4444;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+            margin-top: 24px;
+        }
+
+        .btn-youtube:hover {
+            background-color: #dc2626;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Mermaid Wrapper */
+        .mermaid-wrapper {
+            width: 100%;
+            height: 75vh;
+            min-height: 600px;
+            overflow: auto;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: grab;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .mermaid-wrapper.active {
+            cursor: grabbing;
+        }
+
+        .mermaid-wrapper svg {
+            min-width: 1200px !important;
+            height: auto !important;
+        }
+
+        /* Override lists styling */
+        .override-list {
+            list-style: none;
+        }
+
+        .override-item {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .override-item h3 {
+            color: #ffffff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .override-item h3::before {
+            content: '⚙️';
+        }
+
+        .explanation-block {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .explanation-block p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .explanation-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Save point card styling */
+        .save-point-card {
+            background: rgba(14, 165, 233, 0.03);
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        /* Footer styling */
+        footer {
+            height: 128px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-top);
+        }
+
+        .footer-logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #ffffff;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #ffffff;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tối Ưu Hiệu Suất #6 | Toán Học Của Sự Kiệt Sức & Thuật Toán Sửa Lỗi Lo Âu</h1>
+            <p>Sự kiệt sức không đến từ chấn thương khổng lồ, mà từ bài toán cộng dồn của hàng triệu tác nhân nhỏ lẻ đánh gục CPU hệ thống.</p>
+        </header>
+
+        <!-- SECTION 1: CÔNG THỨC HIỆU SUẤT -->
+        <section id="performance-formula">
+            <h2><span>[01]</span> Công Thức Hiệu Suất</h2>
+            <p style="font-size: 1.15rem; color: var(--text-primary); margin-bottom: 24px; font-weight: 300;">
+                Sự sụp đổ của một cá nhân hiếm khi đến từ một thảm họa PTSD khổng lồ. Nó tuân theo một công thức toán học khốc liệt: Tổng (Tác nhân căng thẳng x Cường độ x Tần suất x Thời gian) vượt quá Khả năng chịu tải. Để giải phóng tài nguyên CPU, bạn không thể xử lý mù quáng mọi cảnh báo "sợ hãi", mà phải cô lập đúng mã lỗi: Lỗi quá tải (Burnout), Lỗi thiếu RAM/kỹ năng (Anxiety), hay Lỗi timeout (Panic).
+            </p>
+            
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': {'fontSize': '18px', 'fontFamily': 'Inter'}}}%%
+mindmap
+  root((Toan hoc su kiet suc))
+    Cong thuc Hieu suat
+      Burnout
+      Lo au Anxiety
+      Hoang loan Panic
+    Tai Nguyen Tinh Toan
+      Dinh ly phuc hoi
+      Dung luong chiu tai
+      Hoc ky nang moi
+      Thao tung thoi gian
+    Vi Kien Truc
+      Nhan dien sai ma loi
+      Dich lai tin hieu nao
+    He Thong Tan Nhiet
+      Tat tien trinh ngam
+      Loai bo cong rom cuoi
+    Sap Dat Moi Truong
+      Thiet lap ranh gioi
+      Kich ban gia han
+    Goc Nhin Nguoi Choi
+      Khong danh boss mu quang
+      Bom mana hoac keo time
+                </pre>
+            </div>
+
+            <a href="https://www.youtube.com/watch?v=czfVWVGBRkY" target="_blank" class="btn-youtube">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.518 3.545 12 3.545 12 3.545s-7.518 0-9.388.508a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.87.508 9.388.508 9.388.508s7.518 0 9.388-.508a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                Xem Video Gốc trên YouTube
+            </a>
+        </section>
+
+        <!-- SECTION 2: TÀI NGUYÊN TÍNH TOÁN -->
+        <section id="computation-resources">
+            <h2><span>[02]</span> Tài Nguyên Tính Toán</h2>
+            <div class="grid">
+                <!-- Insight 1 -->
+                <div class="card">
+                    <h3>Insight 1: Định Lý Phục Hồi Chấn Thương</h3>
+                    <div class="thesis-statement">
+                        <strong>Luận điểm</strong>
+                        Chấn thương tâm lý lớn (như PTSD) hiếm khi là nguyên nhân gốc của sự đình trệ hiện tại. Thống kê chứng minh hệ sinh học của bạn tự phục hồi 96.7% trong 6 tháng sau biến cố tồi tệ nhất.
+                    </div>
+                    <div class="layer">
+                        <strong>Điểm rò rỉ</strong>
+                        <p>Đổ lỗi cho một sự kiện trong quá khứ là cái cớ để bào chữa cho sự kiệt quệ ở hiện tại, từ chối việc dọn dẹp hệ thống.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Chỉ số đo lường</strong>
+                        <p>Thời gian phục hồi sinh lý tự nhiên (3-6 tháng).</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Thuật toán tối ưu</strong>
+                        <p>Ngừng biến quá khứ thành một process ngốn RAM vĩnh viễn. Hệ thống của bạn đã được lập trình để tự lành. Hãy tìm nguyên nhân ở các tác nhân vi mô hiện tại.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="card">
+                    <h3>Insight 2: Toán Học Của Sự Kiệt Sức</h3>
+                    <div class="thesis-statement">
+                        <strong>Luận điểm</strong>
+                        Sự kiệt sức (Burnout) = Tổng (Tác nhân căng thẳng x Cường độ x Tần suất x Thời gian) > Khả năng chịu tải của não bộ.
+                    </div>
+                    <div class="layer">
+                        <strong>Điểm rò rỉ</strong>
+                        <p>Ôm đồm hàng triệu tác nhân nhỏ xíu (email chưa trả lời, người bạn độc hại, tiếng ồn, tắc đường) mà không hề có bộ đệm xả tải.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Chỉ số đo lường</strong>
+                        <p>Dung lượng chịu tải (Load Capacity) tại một thời điểm.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Thuật toán tối ưu</strong>
+                        <p>Cắt bỏ triệt để các tiến trình ngầm (background stressors). Chủ động loại bỏ những người, những việc không bắt buộc phải đối mặt để lấy lại % CPU.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="card">
+                    <h3>Insight 3: Thuật Toán Giải Mã Sự Lo Âu</h3>
+                    <div class="thesis-statement">
+                        <strong>Luận điểm</strong>
+                        Lo âu KHÔNG PHẢI là "Sợ hãi một mối đe dọa". Lo âu là hệ thống báo động: "Năng lực (RAM) của bạn đang thấp hơn yêu cầu của bài toán".
+                    </div>
+                    <div class="layer">
+                        <strong>Điểm rò rỉ</strong>
+                        <p>Khi lo âu, bạn cố gắng nhìn chằm chằm vào rủi ro để giải quyết. Càng nhìn, bạn càng thấy mình kém cỏi, và lo âu lại càng tăng vọt (vòng lặp chết).</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Chỉ số đo lường</strong>
+                        <p>Độ chênh lệch giữa Skill level (Trình độ) và Challenge (Thử thách).</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Thuật toán tối ưu</strong>
+                        <p>Ngừng nhìn vào vấn đề. Xoay 180 độ, dồn tài nguyên tính toán sang nâng cấp kỹ năng, hoặc gọi API bên ngoài (nhờ chuyên gia) tới gánh team.</p>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="card">
+                    <h3>Insight 4: Gỡ Lỗi Hoảng Loạn (Panic)</h3>
+                    <div class="thesis-statement">
+                        <strong>Luận điểm</strong>
+                        Hoảng loạn không liên quan đến mức độ nguy hiểm của mối đe dọa. Hoảng loạn là cảnh báo hệ thống sắp bị "Timeout" (hết thời gian).
+                    </div>
+                    <div class="layer">
+                        <strong>Điểm rò rỉ</strong>
+                        <p>Nhầm lẫn hoảng loạn với sợ hãi. Bạn tưởng mình sợ việc thuyết trình, nhưng thực ra bạn chỉ hoảng loạn vì còn 2 phút nữa phải lên sân khấu.</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Chỉ số đo lường</strong>
+                        <p>Thời gian còn lại cho đến sự kiện (Time left).</p>
+                    </div>
+                    <div class="layer">
+                        <strong>Thuật toán tối ưu</strong>
+                        <p>Thao túng thời gian (Time manipulation). Chủ động đàm phán kéo dài deadline (ví dụ: xin dời từ 11h sang 1h), hủy các việc râu ria để dồn toàn bộ slot thời gian vào việc chính.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: VI KIẾN TRÚC -->
+        <section id="microarchitecture">
+            <h2><span>[03]</span> Vi Kiến Trúc</h2>
+            <div class="override-item">
+                <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 16px;">
+                    Điểm kẹt lớn nhất trong vi kiến trúc thần kinh là việc "Nhận diện sai mã lỗi".
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                    <strong>Biên dịch tín hiệu:</strong> Khi hệ thống thiếu Kỹ năng (Lo âu) hoặc thiếu Thời gian (Hoảng loạn), não bò sát nguyên thủy lại báo cáo chung chung là "Sợ Hãi" (giống như có con hổ đang tới). Việc bạn dùng giải pháp chống hổ (bỏ chạy hoặc đánh nhau) để đối phó với việc thiếu kiến thức sẽ làm xung đột phần mềm. Bạn phải tự tay biên dịch lại mã lỗi này trước khi xử lý.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: HỆ THỐNG TẢN NHIỆT -->
+        <section id="cooling-system">
+            <h2><span>[04]</span> Hệ Thống Tản Nhiệt</h2>
+            <div class="override-item">
+                <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 16px;">
+                    Một tiếng "Chào buổi sáng" bình thường từ vợ/chồng cũng có thể khiến bạn nổi điên. Đó không phải lỗi của họ, đó là "Cọng rơm cuối cùng" rơi xuống hệ thống đang quá tải nhiệt.
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                    <strong>Nguyên tắc tản nhiệt:</strong> Để hệ thống xả được áp suất, bạn không thể hy vọng người khác đừng ném rơm vào mình. Bạn phải chủ động "Kill process" hàng loạt các tab đang chạy ngầm trong đầu. Đưa danh sách các yếu tố gây căng thẳng về con số tối giản tuyệt đối.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 5: SẮP ĐẶT MÔI TRƯỜNG -->
+        <section id="environment-setup">
+            <h2><span>[05]</span> Sắp Đặt Môi Trường</h2>
+            <div class="explanation-block">
+                <p><strong>BẢN CHẤT (Nó là gì?):</strong> Là việc thay đổi môi trường xung quanh để ép cơ thể phải làm việc tốt hoặc bỏ việc xấu, tuyệt đối không dùng ý chí để tự ép buộc bản thân.</p>
+                <p><strong>TẠI SAO (Tại sao phải làm thế?):</strong> Vì ý chí của con người cực kỳ yếu và nhanh hết. Nếu bạn để điện thoại ngay trên bàn làm việc và tự hứa: "Mình sẽ không sờ vào điện thoại đâu", bạn sẽ thất bại sau 5 phút vì bộ não luôn thèm bấm điện thoại. Thay vì bắt bộ não phải đấu tranh tư tưởng cực khổ, hãy giấu điện thoại đi chỗ khác.</p>
+            </div>
+            
+            <div class="override-list">
+                <div class="override-item">
+                    <h3>Giới Hạn Tác Nhân Vi Mô</h3>
+                    <div style="margin-left: 20px; margin-top: 10px;">
+                        <p style="margin-bottom: 8px;">🛑 <strong>Tăng ma sát hành vi xấu (Ngăn quá tải CPU):</strong> Dọn dẹp không gian làm việc số và vật lý. Chặn các group chat vô bổ, hủy đăng ký email spam, tạo một khoảng cách an toàn (cả về vật lý lẫn online) đối với những đồng nghiệp hoặc cá nhân liên tục tỏa ra sự tiêu cực.</p>
+                        <p>🟢 <strong>Giảm ma sát hành vi tốt (Kích hoạt thao túng thời gian):</strong> Lưu sẵn trên điện thoại hoặc máy tính các đoạn văn bản (template) đàm phán thời gian lịch sự (ví dụ: xin lùi lịch, xin hỗ trợ). Khi cơn hoảng loạn vì deadline ập tới, bạn chỉ tốn 1 click để kích hoạt "quyền trợ giúp" mà không cần phải vắt óc suy nghĩ.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: GÓC NHÌN NGƯỜI CHƠI -->
+        <section id="player-view">
+            <h2><span>[06]</span> Góc Nhìn Người Chơi</h2>
+            <div class="explanation-block">
+                <p><strong>BẢN CHẤT (Nó là gì?):</strong> Là việc coi cuộc đời như một trò chơi điện tử. Bạn là người chơi (Player) đang điều khiển nhân vật trong game (Avatar). Thất bại ngoài đời chỉ là nhân vật game bị mất mạng, bạn chỉ cần bấm "Chơi lại" (Load game) từ điểm đã lưu.</p>
+                <p><strong>TẠI SAO (Tại sao phải làm thế?):</strong> Để không bị buồn bã, chán nản hay tự trách bản thân khi gặp thất bại.</p>
+            </div>
+            <div class="save-point-card">
+                <p style="font-size: 1.1rem; font-weight: 300; font-style: italic; margin-bottom: 16px;">
+                    "Khi Avatar của bạn bị dính hiệu ứng Debuff (giảm trạng thái) như Lo Âu hoặc Hoảng Loạn, Người Chơi bên ngoài màn hình tuyệt đối không được mất bình tĩnh và bấm nút đánh Boss loạn xạ. Hãy nhấn Pause (Tạm dừng), mở bảng Menu phân tích xem Avatar đang dính loại độc nào. Nếu là độc Thiếu Kỹ năng (Lo âu), hãy bơm Mana đi học hỏi. Nếu là độc Thiếu Thời gian (Hoảng loạn), hãy dùng vật phẩm đóng băng thời gian (hoãn deadline). Nhận diện đúng Debuff, Avatar sẽ tự động hóa giải và phá đảo một cách nhẹ nhàng."
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 7: TRẠM ĐIỀU KHIỂN -->
+        <footer>
+            <div class="footer-logo">Trạm Điều Khiển Hiệu Suất // vietndj</div>
+            <div class="social-links">
+                <a href="https://www.youtube.com/@vietndonline" target="_blank">YouTube @vietndonline</a>
+                <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank">TikTok @nguyenducviet.viral</a>
+                <a href="https://www.facebook.com/profile.php?id=61580845559993" target="_blank">Facebook</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+        // Grab to scroll implementation for Mermaid Wrapper
+        const wrapper = document.querySelector('.mermaid-wrapper');
+        if (wrapper) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            wrapper.addEventListener('mousedown', (e) => {
+                isDown = true;
+                wrapper.classList.add('active');
+                startX = e.pageX - wrapper.offsetLeft;
+                scrollLeft = wrapper.scrollLeft;
+            });
+            wrapper.addEventListener('mouseleave', () => {
+                isDown = false;
+                wrapper.classList.remove('active');
+            });
+            wrapper.addEventListener('mouseup', () => {
+                isDown = false;
+                wrapper.classList.remove('active');
+            });
+            wrapper.addEventListener('mousemove', (e) => {
+                if(!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - wrapper.offsetLeft;
+                const walk = (x - startX) * 2;
+                wrapper.scrollLeft = scrollLeft - walk;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -222,7 +222,7 @@
                             ⭐ FEATURED ARCHITECTURE
                         </span>
                         <span class="text-zinc-500 text-xs">•</span>
-                        <span class="text-zinc-400 text-xs font-mono">15 Phút Đọc</span>
+                        <span id="featured-read-time" class="text-zinc-400 text-xs font-mono">15 Phút Đọc</span>
                     </div>
 
                     <a id="featured-link" href="spacex-ke-hoach-vi-dai-dua-sieu-may-tinh-ai-vao-vu-tru-chia-khoa-thang-hang-van-minh-nhan-loai-len-thang-kardashev-ii.html" class="block">
@@ -390,7 +390,8 @@
         // Fetch articles JSON
         async function initFeed() {
             try {
-                const res = await fetch('articles_data.json');
+                // Cache-busting chống dính cache 600s của GitHub Pages / CDN
+                const res = await fetch('articles_data.json?t=' + Date.now());
                 if (res.ok) {
                     allArticles = await res.json();
                 } else {
@@ -399,22 +400,45 @@
             } catch (err) {
                 console.warn('Loading fallback articles list...');
                 allArticles = [
+                    { slug: "10-protocols-andrew-huberman-toi-uu-nao-bo-the-chat-diary-of-a-ceo.html", title: "10 PROTOCOLS TỐI ƯU NÃO BỘ & THỂ CHẤT | Andrew Huberman x The Diary Of A CEO", summary: "Bóc tách toàn diện hệ điều hành sinh học của GS. Andrew Huberman (Stanford School of Medicine) trên The Diary Of A CEO.", category: "Khoa Học Não Bộ", size_kb: 75.8 },
                     { slug: "spacex-ke-hoach-vi-dai-dua-sieu-may-tinh-ai-vao-vu-tru-chia-khoa-thang-hang-van-minh-nhan-loai-len-thang-kardashev-ii.html", title: "SpaceX Kế Hoạch Vĩ Đại Đưa Siêu Máy Tính AI Vào Vũ Trụ: Chìa Khóa Thăng Hạng Kardashev II", summary: "Hạ tầng điện toán không gian và năng lượng mặt trời vô hạn.", category: "AI & Công Nghệ", size_kb: 72.8 },
-                    { slug: "deeep-think-chu-nghia-khac-ky-sinh-hoc-biological-stoicism-podcast.html", title: "Chủ Nghĩa Khắc Kỷ Sinh Học - Biological Stoicism", summary: "Giải mã hóa học thần kinh và cơ chế điều hướng Dopamine nguyên bản.", category: "Khoa Học Não Bộ", size_kb: 130.7 },
-                    { slug: "giai-ma-he-sinh-thai-duong-ruot-bo-nao-thu-hai-cua-co-the-science.html", title: "Giải Mã Hệ Sinh Thái Đường Ruột - Bộ Não Thứ Hai Của Cơ Thể", summary: "Trục Não-Ruột và cơ chế 90% Serotonin sinh ra từ vi sinh vật.", category: "Sinh Học & Tế Bào", size_kb: 40.2 }
+                    { slug: "deeep-think-chu-nghia-khac-ky-sinh-hoc-biological-stoicism-podcast.html", title: "Chủ Nghĩa Khắc Kỷ Sinh Học - Biological Stoicism", summary: "Giải mã hóa học thần kinh và cơ chế điều hướng Dopamine nguyên bản.", category: "Khoa Học Não Bộ", size_kb: 130.7 }
                 ];
             }
 
             document.getElementById('total-count-badge').textContent = `${allArticles.length} BÁO CÁO`;
             document.getElementById('cat-count-all').textContent = allArticles.length;
 
+            renderFeatured();
             renderTrending();
             applyFilters();
         }
 
+        function renderFeatured() {
+            if (!allArticles || allArticles.length === 0) return;
+            const featured = allArticles.find(a => a.featured) || allArticles[0];
+            if (!featured) return;
+
+            const linkEl = document.getElementById('featured-link');
+            const titleEl = document.getElementById('featured-title');
+            const summaryEl = document.getElementById('featured-summary');
+            const btnEl = document.getElementById('featured-btn');
+            const timeEl = document.getElementById('featured-read-time');
+
+            if (linkEl) linkEl.href = featured.slug;
+            if (titleEl) titleEl.textContent = featured.title;
+            if (summaryEl) summaryEl.textContent = featured.summary;
+            if (btnEl) btnEl.href = featured.slug;
+            if (timeEl) {
+                const estMinutes = Math.max(3, Math.round((featured.size_kb || 40) / 7));
+                timeEl.textContent = `${estMinutes} Phút Đọc`;
+            }
+        }
+
         function renderTrending() {
             const trendingContainer = document.getElementById('trending-list');
-            const picks = allArticles.slice(0, 4);
+            if (!trendingContainer) return;
+            const picks = allArticles.length > 4 ? allArticles.slice(1, 5) : allArticles.slice(0, 4);
             
             trendingContainer.innerHTML = picks.map((item, idx) => `
                 <a href="${item.slug}" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all group">

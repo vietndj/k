@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trí Tuệ Hệ Thống #7 | Phương Trình Kiệt Sức & Thuật Toán Gỡ Lỗi Lo Âu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent-primary: #10b981; /* Emerald */
+            --accent-secondary: #059669;
+            --card-bg: rgba(20, 20, 20, 0.8);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #a7f3d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            border-left: 3px solid var(--accent-primary);
+            padding-left: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 span {
+            color: var(--accent-primary);
+            font-family: monospace;
+            font-size: 1.2rem;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        /* Video Section */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Content Blocks */
+        .section-block {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .section-block:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .matrix-alert {
+            background: rgba(239, 68, 68, 0.05);
+            border-left: 4px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 2rem;
+        }
+
+        .matrix-alert p {
+            margin-bottom: 0;
+        }
+
+        /* Arsenal Grid */
+        .arsenal-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .insight-card h3 {
+            color: #10b981;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .equation-box {
+            font-family: monospace;
+            background: #000;
+            padding: 1rem;
+            border-radius: 6px;
+            color: #a7f3d0;
+            margin: 1rem 0;
+            border: 1px dashed var(--accent-secondary);
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        /* Strategy Layout */
+        .strategy-row {
+            display: flex;
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .strategy-label {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 1rem;
+            font-weight: 600;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+        }
+
+        .strategy-content {
+            padding: 1rem;
+            flex: 1;
+        }
+
+        /* System Overrides */
+        .override-box {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .override-box {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .friction-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .friction-increase {
+            background: rgba(239, 68, 68, 0.05);
+            border-top: 3px solid #ef4444;
+        }
+
+        .friction-decrease {
+            background: rgba(16, 185, 129, 0.05);
+            border-top: 3px solid #10b981;
+        }
+
+        .friction-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Player View */
+        .player-view {
+            background: linear-gradient(145deg, #0f172a, #1e1b4b);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .player-view h2 span {
+            color: #818cf8;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .game-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #c7d2fe;
+            border-left: 3px solid #6366f1;
+            padding-left: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Trí Tuệ Hệ Thống #7 | Phương Trình Kiệt Sức & Thuật Toán Gỡ Lỗi Lo Âu</h1>
+            <div class="subtitle">Giải mã cơ học của sự gãy vỡ sinh học và bộ lệnh 4 cấp độ để xử lý khủng hoảng thời đại số.</div>
+        </header>
+
+        <div class="video-container">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/bFIqFPKTbAY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <!-- Section 1: The Matrix -->
+        <div class="section-block">
+            <h2><span>[01]</span> The Matrix</h2>
+            <div class="matrix-alert">
+                <p>Đám đông đang bị giam cầm trong ảo giác rằng sự suy sụp (Breakdown) đến từ những chấn thương khổng lồ (Trauma). Sự thật tàn khốc là đa số chúng ta bị nghiền nát bởi "Sự mệt mỏi vật liệu" (Fatigue) — những tác nhân căng thẳng rất nhỏ (như tiếng chuông báo thức, kẹt xe, một email trách móc) được lặp lại hàng nghìn lần cho đến khi kết cấu sinh học đứt gãy. Tồi tệ hơn, đám đông đang đánh đồng mọi cảm giác bất an thành một cục và mù quáng cố gắng "giải quyết mối đe dọa" ngay cả khi đó chỉ là ảo ảnh của tâm trí.</p>
+            </div>
+            <p>Hệ thống giáo dục và xã hội không dạy chúng ta phân tách các tầng lớp của sự căng thẳng. Khi bạn gộp chung lo âu, sợ hãi, hoảng loạn thành một, bạn sẽ luôn dùng sai công cụ để sửa chữa hệ thống, dẫn đến việc đốt sạch năng lượng mà không giải quyết được gốc rễ.</p>
+        </div>
+
+        <!-- Section 2: Arsenal -->
+        <div class="section-block">
+            <h2><span>[02]</span> Arsenal</h2>
+            <p>Trang bị góc nhìn dữ liệu và thuật toán chẩn đoán để xử lý các bug hệ thống.</p>
+
+            <div class="arsenal-grid">
+                <!-- Insight 1 -->
+                <div class="insight-card">
+                    <h3><i data-lucide="activity"></i> Công Thức Của Sự Kiệt Sức (Burnout)</h3>
+                    <p>Sự kiệt sức không đến đột ngột, nó là kết quả của một phép nhân tàn nhẫn:</p>
+                    <div class="equation-box">
+                        Kiệt Sức = [Số lượng tác nhân] × [Cường độ] × [Tần suất] × [Thời gian]
+                    </div>
+                    <p><strong>Lệnh thực thi:</strong> Nếu tổng tải trọng lớn hơn khả năng chịu đựng của bạn, hệ thống sẽ sập. Bạn không cần phải loại bỏ mọi căng thẳng. Chỉ cần chủ động cắt giảm MỘT biến số (ví dụ: giảm Tần suất bằng cách chặn thông báo, hoặc giảm Thời gian bằng cách dọn đến gần nơi làm việc hơn) là đủ để cứu hệ thống.</p>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="insight-card">
+                    <h3><i data-lucide="layers"></i> Ma Trận Phân Loại Cảm Xúc</h3>
+                    <p>Dừng ngay việc xử lý mọi cảm giác khó chịu theo cùng một cách. Chạy bộ lọc này ngay lập tức:</p>
+                    
+                    <div class="strategy-row">
+                        <div class="strategy-label">Lo Âu (Anxiety)</div>
+                        <div class="strategy-content"><strong>Nghi ngờ</strong> có mối đe dọa.<br><span style="color:var(--text-muted)">Lệnh: KHÔNG giải quyết mối đe dọa. Xác minh dữ liệu xem nó có thật không.</span></div>
+                    </div>
+                    
+                    <div class="strategy-row">
+                        <div class="strategy-label">Sợ Hãi (Fear)</div>
+                        <div class="strategy-content"><strong>Chắc chắn</strong> có mối đe dọa trong tương lai.<br><span style="color:var(--text-muted)">Lệnh: Lên chiến lược để đối phó và triệt tiêu mối đe dọa đó.</span></div>
+                    </div>
+
+                    <div class="strategy-row">
+                        <div class="strategy-label">Hoảng Loạn (Panic)</div>
+                        <div class="strategy-content">Khoảng thời gian đến lúc thảm họa xảy ra <strong>quá ngắn</strong>.<br><span style="color:var(--text-muted)">Lệnh: Đừng xử lý rủi ro, hãy xử lý Thời Gian (mua thêm thời gian, xin trợ giúp).</span></div>
+                    </div>
+
+                    <div class="strategy-row">
+                        <div class="strategy-label">Worry (Thiếu tự tin)</div>
+                        <div class="strategy-content">Biết có mối đe dọa + Nghĩ rằng <strong>mình không đủ kỹ năng xử lý</strong>.<br><span style="color:var(--text-muted)">Lệnh: Dừng hy vọng nó không xảy ra. Tập trung 100% vào việc NÂNG CẤP KỸ NĂNG.</span></div>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="insight-card">
+                    <h3><i data-lucide="trending-up"></i> Căng Thẳng (Strain) Là Đòn Bẩy Tiến Hóa</h3>
+                    <p>Trong vật lý, căng thẳng (Strain) là sự biến dạng của vật liệu để có thể chịu lực lớn hơn trong tương lai. Bạn không hề "vỡ vụn" để cần được "chữa lành". Bạn đang bị thử thách, và thông qua sự kéo giãn đó, diện tích bề mặt chịu đựng của bạn mở rộng. Lần tới khi sóng gió đến, hệ thống của bạn thậm chí không thèm chớp mắt.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: System Override -->
+        <div class="section-block">
+            <h2><span>[03]</span> Sắp Đặt Môi Trường</h2>
+            <p style="margin-bottom: 1.5rem;">Tuyệt đối không sử dụng năng lượng ý chí (willpower). Hãy thiết lập cấu trúc môi trường vật lý để tự động điều hướng bộ não:</p>
+            
+            <div class="override-box">
+                <div class="friction-card friction-increase">
+                    <h4><i data-lucide="shield-alert" style="color: #ef4444;"></i> Tăng Ma Sát (Loại Bỏ "Bẻ Nhựa")</h4>
+                    <p>Cắt đứt những tác nhân căng thẳng vi mô lặp đi lặp lại. Cấm thói quen đặt báo thức kêu 5 lần (Snooze). Loại bỏ tiếng ồn xung quanh nơi làm việc. Giảm thiểu các tác nhân gây xao nhãng liên tục. Đừng để sợi dây thun sinh học của bạn bị kéo dãn lắt nhắt hàng nghìn lần mỗi ngày.</p>
+                </div>
+
+                <div class="friction-card friction-decrease">
+                    <h4><i data-lucide="shield-check" style="color: #10b981;"></i> Giảm Ma Sát (Kích Hoạt Chẩn Đoán)</h4>
+                    <p>Chuẩn bị sẵn một cuốn sổ hoặc Note trên màn hình. Mỗi khi nhịp tim tăng, cấm hành động. Việc đầu tiên là điền vào chỗ trống: "Cảm giác này là [Lo âu / Sợ hãi / Hoảng loạn / Lo lắng về năng lực]". Khi bạn ép não bộ phải định nghĩa nó, quyền điều khiển lập tức chuyển từ hạch hạnh nhân (cảm xúc) sang vỏ não trước trán (logic).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Player View -->
+        <div class="section-block player-view">
+            <h2><span>[04]</span> Góc Nhìn Người Chơi</h2>
+            <div class="game-text">
+                "Avatar của bạn đang bị dính debuff 'Căng thẳng'. Là một Người Chơi, đừng hoảng loạn điều khiển Avatar chạy trốn một cách vô thức. Hãy tạm dừng game (Pause), mở bảng trạng thái lên phân tích: Cảnh báo này thuộc loại nào? <br><br>
+                Nếu là 'Nghi ngờ' (Lo âu), cứ đứng im quan sát. Nếu là 'Quái vật chắc chắn đến' (Sợ hãi), chuẩn bị vũ khí. Nếu 'Thờ gian sắp hết' (Hoảng loạn), hãy dùng vật phẩm tăng tốc hoặc gọi Đồng Đội. Nếu 'Quái quá mạnh so với level' (Worry), đừng cố trốn, hãy quay về thành để Farm EXP và nâng cấp kỹ năng. <br><br>
+                Căng thẳng không làm hỏng Avatar, nó là một event ép cấp bắt buộc để bạn phá vỡ giới hạn level của chính mình."
+            </div>
+        </div>
+
+        <footer>
+            <p>Trạm Điều Khiển Trung Tâm // vietndj</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
