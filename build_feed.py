@@ -141,7 +141,6 @@ def main():
         if fname in existing_items:
             item = existing_items[fname].copy()
             item["size_kb"] = size_kb
-            item["mtime"] = mtime
             articles.append(item)
             updated_count += 1
         else:
@@ -180,8 +179,8 @@ def main():
             except Exception as e:
                 print(f"  [!] Lỗi parse {fname}: {e}")
 
-    # Sắp xếp mới nhất lên đầu
-    articles.sort(key=lambda x: x.get("mtime", 0), reverse=True)
+    # Sắp xếp bài nổi bật và bài mới nhất lên đầu
+    articles.sort(key=lambda x: (x.get("featured", False), x.get("mtime", 0)), reverse=True)
 
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(articles, f, ensure_ascii=False, indent=2)
