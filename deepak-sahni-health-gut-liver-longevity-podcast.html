@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why This Generation Is In Worse Health Than The Last | System Architect Breakdown</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: "#080811",
+                            card: "#0f101f",
+                            cardBorder: "#1e2238",
+                            cyan: "#00E5FF",
+                            pink: "#FF007F",
+                            yellow: "#FFE600",
+                            green: "#10B981",
+                            purple: "#8B5CF6",
+                            text: "#E2E8F0",
+                            muted: "#94A3B8"
+                        }
+                    },
+                    fontFamily: {
+                        sans: ["'Plus Jakarta Sans'", "sans-serif"],
+                        display: ["'Space Grotesk'", "sans-serif"],
+                        mono: ["'Fira Code'", "monospace"]
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        body {
+            background-color: #080811;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 85% 65%, rgba(255, 0, 127, 0.05) 0%, transparent 40%),
+                linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+            color: #E2E8F0;
+        }
+
+        .glass-card {
+            background: rgba(15, 16, 31, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            box-shadow: 0 15px 35px -5px rgba(0, 229, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .glow-text-cyan {
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+        }
+
+        .glow-text-pink {
+            text-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
+        }
+
+        .cyber-border-left {
+            position: relative;
+        }
+        .cyber-border-left::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #00E5FF, #FF007F);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .code-box {
+            background: #05060a;
+            border: 1px solid #1a1e36;
+        }
+
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00E5FF, #FF007F, #FFE600);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #080811; }
+        ::-webkit-scrollbar-thumb { background: #1e2238; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00E5FF; }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-cyber-cyan selection:text-cyber-bg">
+
+    <div id="progress-bar"></div>
+
+    <nav class="sticky top-0 z-50 bg-[#080811]/90 backdrop-blur-md border-b border-cyber-cardBorder py-3 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="rajshamani-21-podcasts-hub.html" class="flex items-center gap-2 group">
+                    <span class="w-3 h-3 rounded-full bg-cyber-cyan animate-ping"></span>
+                    <span class="font-display font-bold text-lg tracking-wider text-white group-hover:text-cyber-cyan transition-colors">
+                        ← HUB 21 PODCASTS <span class="text-cyber-cyan text-sm font-mono">// FO552</span>
+                    </span>
+                </a>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-mono">
+                <a href="#section-meta" class="text-cyber-muted hover:text-cyber-cyan transition-colors hidden sm:inline">0. GỐC</a>
+                <a href="#section-delusion" class="text-cyber-muted hover:text-cyber-pink transition-colors hidden sm:inline">1. BÓC TRẦN</a>
+                <a href="#section-insights" class="text-cyber-cyan hover:text-white transition-colors">2. 8 INSIGHTS</a>
+                <a href="#section-environment" class="text-cyber-muted hover:text-cyber-yellow transition-colors hidden sm:inline">3. KHÔNG GIAN</a>
+                <a href="#section-emotions" class="text-cyber-muted hover:text-cyber-green transition-colors hidden sm:inline">4. TÂM LÝ</a>
+                <a href="https://www.youtube.com/watch?v=eOFLyP5SOEQ" target="_blank" class="px-3 py-1.5 rounded-lg bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/40 hover:bg-cyber-cyan hover:text-cyber-bg font-bold transition-all">
+                    YOUTUBE ↗
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative py-16 px-6 max-w-7xl mx-auto overflow-hidden">
+        <div class="flex flex-col items-center text-center space-y-6">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyber-pink/10 border border-cyber-pink/30 text-cyber-pink font-mono text-xs tracking-widest uppercase">
+                ⚡ Y HỌC DỰ PHÒNG & SỨC KHỎE TẾ BÀO // FO552
+            </div>
+            
+            <h1 class="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-5xl leading-tight">
+                Why This Generation Is In Worse Health Than The Last
+            </h1>
+
+            <p class="text-cyber-muted text-base sm:text-xl max-w-3xl leading-relaxed font-light">
+                Cảnh báo chấn động về tình trạng suy thoái sức khỏe sớm ở thế hệ trẻ: sát thủ thầm lặng gan nhiễm mỡ, sự sụp đổ của hệ vi sinh đường ruột và cạm bẫy trong các chỉ số xét nghiệm máu thông thường.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4 pt-4 font-mono text-xs">
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-cyan">👤 DIỄN GIẢ:</span>
+                    <span class="text-white font-semibold">Deepak Sahni</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-pink">🎙️ HOST:</span>
+                    <span class="text-white font-semibold">Raj Shamani</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-yellow">⏱️ THỜI LƯỢNG:</span>
+                    <span class="text-white font-semibold">1 Giờ 58 Phút</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-green">📊 QUY MÔ:</span>
+                    <span class="text-white font-semibold">Đế chế xét nghiệm chẩn đoán y tế 3.000 crore INR</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 space-y-20 pb-32">
+
+        <section class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-cyber-cyan/30">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4 pb-4 border-b border-cyber-cardBorder">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-cyber-green"></div>
+                    <span class="font-mono text-sm font-bold text-cyber-cyan">SYSTEM_PROMPT_CORE.sh</span>
+                    <span class="text-xs text-cyber-muted font-mono">// KIẾN TRÚC SƯ TRÍ TUỆ HỆ THỐNG</span>
+                </div>
+                <button onclick="copyPromptCode()" id="copy-btn" class="px-4 py-2 rounded-xl bg-cyber-cyan/20 border border-cyber-cyan/50 text-cyber-cyan hover:bg-cyber-cyan hover:text-black font-mono text-xs font-bold transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    <span>COPY PROMPT</span>
+                </button>
+            </div>
+
+            <pre class="code-box p-4 rounded-xl text-xs sm:text-sm font-mono text-emerald-400 overflow-x-auto leading-relaxed" id="prompt-content">[VAI TRÒ]: Kiến trúc sư Trí tuệ Hệ thống (System Intelligence Architect).
+[ĐẦU VÀO]: https://www.youtube.com/watch?v=eOFLyP5SOEQ (Why This Generation Is In Worse Health Than The Last).
+[MỤC TIÊU]: Bóc tách quy luật vận hành cơ học, quy luật chú ý, sinh học thần kinh và kiến trúc hệ thống đòn bẩy.
+[QUY TẮC PHÂN TÍCH 5 PHẦN]:
+0. [THÔNG TIN BẢN GỐC]: Link gốc, bối cảnh diễn giả, quy mô và bài toán cốt lõi.
+1. [BÓC TRẦN LẦM TƯỞNG]: 2 câu lục bát + 2 blockquote triệt tiêu ảo tưởng đám đông.
+2. [NGUYÊN LÝ GỐC RỄ]: Tối thiểu 8 Insights chi tiết (Dữ kiện gốc, Hiện tượng bề mặt, Giải mã bản chất theo Vật lý/Ti thể/Game, Đòn bẩy thực chiến, Lục bát đúc kết).
+3. [THIẾT KẾ KHÔNG GIAN]: Môi trường làm việc vật lý, giảm ma sát nhận thức, thiết lập trigger vô thức.
+4. [BẢO TOÀN CẢM XÚC]: Khách quan hóa thất bại, xem rủi ro là Data Game, bảo toàn dopamine nền tảng.</pre>
+        </section>
+
+        <section id="section-meta" class="glass-card rounded-2xl p-8 sm:p-10 cyber-border-left">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-3 py-1 rounded bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold">[PHẦN 00]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Thông Tin Bản Gốc & Hồ Sơ Diễn Giả</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-5 text-cyber-text leading-relaxed">
+                    <p>
+                        <strong>Tập Podcast:</strong> <span class="text-cyber-cyan font-semibold">Why This Generation Is In Worse Health Than The Last</span>.
+                    </p>
+                    <p>
+                        <strong>Kênh xuất bản:</strong> <a href="https://www.youtube.com/watch?v=eOFLyP5SOEQ" target="_blank" class="text-cyber-pink hover:underline font-semibold">Raj Shamani (Figuring Out Podcast)</a> — talkshow phỏng vấn lãnh đạo và chuyên gia hàng đầu.
+                    </p>
+                    <p>
+                        <strong>Diễn giả:</strong> <span class="text-white font-bold">Deepak Sahni</span> (Nhà sáng lập Healthians). Deepak Sahni là nhà sáng lập Healthians, một trong những chuỗi dịch vụ chẩn đoán y tế và xét nghiệm máu tại nhà lớn nhất Ấn Độ. Ông là người tiên phong thúc đẩy làn sóng y học dự phòng chủ động.
+                    </p>
+                </div>
+
+                <div class="bg-[#0b0c19] border border-cyber-cardBorder rounded-xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-mono text-cyber-muted uppercase tracking-wider mb-3">METRICS_RADAR</div>
+                        <canvas id="insightChart" class="w-full max-h-48"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-delusion" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-pink">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-3 py-1 rounded bg-cyber-pink/10 text-cyber-pink font-mono text-xs font-bold">[PHẦN 01]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Bóc Trần Lầm Tưởng Đám Đông</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-pink italic mb-6">
+                📜 <em>"Chỉ số bình thường ngỡ an / Nào ngờ mầm bệnh đã lan âm thầm"</em>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <blockquote class="p-6 rounded-xl bg-[#090a16] border border-cyber-pink/30 text-cyber-text space-y-3 relative overflow-hidden">
+                    <div class="text-2xl text-cyber-pink font-serif">“</div>
+                    <p class="text-sm sm:text-base font-medium leading-relaxed">Các dải tham chiếu xét nghiệm máu thông thường được thiết kế dựa trên số đông người đi khám bệnh — tức là dựa trên một quần thể đang ốm yếu, chứ không phải chuẩn mực của một cơ thể khỏe mạnh tối ưu.</p>
+                </blockquote>
+                <blockquote class="p-6 rounded-xl bg-[#090a16] border border-cyber-pink/30 text-cyber-text space-y-3 relative overflow-hidden">
+                    <div class="text-2xl text-cyber-pink font-serif">“</div>
+                    <p class="text-sm sm:text-base font-medium leading-relaxed">Đám đông chờ đến khi cơ thể phát ra triệu chứng đau đớn mới đi tìm bác sĩ, nhưng các căn bệnh chuyển hóa mạn tính như gan nhiễm mỡ và tiểu đường đã âm thầm phá hủy tế bào từ 10 năm trước đó.</p>
+                </blockquote>
+            </div>
+        </section>
+
+        <section id="section-insights" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold">[PHẦN 02]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Nguyên Lý Gốc Rễ: 8 Bài Học Đột Phá</h2>
+            </div>
+
+            <div class="space-y-6">
+                
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #01
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Y Học Dự Phòng & Sức Khỏe Tế Bào</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Cạm bẫy của dải tham chiếu xét nghiệm thông thường
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Chính bản thân Deepak Sahni có kết quả men gan hoàn toàn &#x27;bình thường&#x27; trên giấy xét nghiệm suốt 10 năm, cho đến khi quét chuyên sâu mới phát hiện gan của ông đã lão hóa nhanh hơn cơ thể 10 tuổi.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Cầm tờ giấy xét nghiệm thấy mọi chỉ số nằm trong ô màu xanh là yên tâm tiếp tục lối sống buông thả.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Thống kê y tế sai lệch: dải tham chiếu chỉ là mức trung bình cộng của 95% dân số; khi cả xã hội ngày càng béo phì và viêm nhiễm, mức chuẩn đó bị kéo tụt xuống đáy.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Đánh giá xét nghiệm dựa trên &#x27;Dải Tối Ưu Sinh Học&#x27; (Optimal Range) chứ không chỉ dựa vào dải tham chiếu của phòng lab.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Màu xanh trên giấy chớ mừng / Coi chừng mầm bệnh đã từng bén sâu"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #02
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Y Học Dự Phòng & Sức Khỏe Tế Bào</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Gan nhiễm mỡ không do rượu (NAFLD): Đại dịch giấu mặt của người trẻ
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Hơn 40% người trẻ làm việc văn phòng tại các đô thị mắc gan nhiễm mỡ độ 1 hoặc độ 2 dù họ không hề uống một giọt rượu nào.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Nghĩ rằng chỉ những người nghiện rượu bia nặng mới bị bệnh gan tàn phá.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Hóa sinh chuyển hóa Fructose: đường tinh luyện và siro ngô trong nước ngọt, trà sữa chỉ có thể được chuyển hóa duy nhất tại gan, lập tức biến thành mỡ nội tạng bao quanh tế bào gan.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Cắt bỏ hoàn toàn các loại nước ngọt đóng chai, đồ uống có ga chứa đường và nước ép trái cây cô đặc.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Trà sữa nước ngọt ngọt ngào / Âm thầm tẩm mỡ dạt dào lá gan"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #03
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Y Học Dự Phòng & Sức Khỏe Tế Bào</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Hệ vi sinh đường ruột (Gut Microbiome) là bộ não thứ hai quyết định tâm trạng
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Hơn 90% lượng Serotonin (hormone hạnh phúc) được sản xuất tại đường ruột chứ không phải trong hộp sọ; rối loạn tiêu hóa trực tiếp gây ra trầm cảm và lo âu.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Uống thuốc an thần và điều trị tâm lý khi cảm thấy mệt mỏi, bất an mà bỏ qua chế độ ăn uống tàn phá đường ruột.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Trục Não - Ruột (Gut-Brain Axis): khi hàng rào ruột bị rò rỉ (Leaky Gut), độc tố vi khuẩn LPS tràn vào máu gây viêm thần kinh tại não bộ.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Bổ sung thực phẩm lên men tự nhiên (kimchi, sữa chua kefir) và tăng cường chất xơ hòa tan để nuôi dưỡng lợi khuẩn.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Ruột non khỏe mạnh an lành / Não bộ minh mẫn tâm thanh thản cười"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #04
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Y Học Dự Phòng & Sức Khỏe Tế Bào</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Cơn sốt đường huyết (Glucose Spike) và lão hóa sớm
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Ăn tinh bột tinh chế vào bữa sáng khiến đường huyết tăng vọt rồi rơi tự do, kích hoạt quá trình Glycation làm giòn các mạch máu và nhăn da sớm.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Bắt đầu ngày mới bằng bánh ngọt, ngũ cốc tinh chế hoặc bánh mì trắng vì nghĩ rằng chúng tiện lợi và nhiều năng lượng.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Phản ứng Maillard trong sinh học: đường tự do gắn vào các phân tử protein tạo thành hợp chất AGEs (Advanced Glycation End-products) làm xơ cứng tế bào.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Đổi thứ tự ăn trong mỗi bữa: Ăn rau xanh và chất xơ trước -&gt; Ăn đạm và mỡ tốt -&gt; Ăn tinh bột cuối cùng.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Đổi ngôi thứ tự món ăn / Đường huyết êm ả ngăn cằn cỗi mau"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #05
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Y Học Dự Phòng & Sức Khỏe Tế Bào</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Thiếu hụt Vitamin D3 và B12 mang tính hệ thống ở dân văn phòng
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Xét nghiệm hàng triệu mẫu máu cho thấy hơn 80% người sống ở đô thị thiếu hụt nghiêm trọng Vitamin D3, làm suy giảm hệ miễn dịch và gây mệt mỏi mạn tính.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Nghĩ rằng ăn uống đủ ngày 3 bữa là cơ thể đã tự động đủ mọi vi chất cần thiết.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Sống trong nhà kính kín: thiếu ánh nắng mặt trời tự nhiên làm tê liệt quá trình tổng hợp hormone steroid D3 — chìa khóa kích hoạt hơn 1.000 gen miễn dịch.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Đo nồng độ 25-hydroxy Vitamin D định kỳ 6 tháng và bổ sung D3 kèm K2 dưới sự hướng dẫn chuyên môn.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Nắng trời ban tặng nguồn thiêng / Đừng giam mình mãi trong riêng góc phòng"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #06
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Y Học Dự Phòng & Sức Khỏe Tế Bào</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Thiếu ngủ mạn tính là tác nhân phá hủy khả năng tự thực bào (Autophagy)
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Ngủ ít hơn 6 tiếng mỗi đêm làm gián đoạn hệ thống glymphatic dọn dẹp mảng bám beta-amyloid trong não và cản trở gan đào thải mỡ thừa.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Tự hào vì chỉ cần ngủ 4-5 tiếng mỗi ngày để cày việc, coi giấc ngủ là điều lãng phí thời gian.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Bảo trì tế bào theo nhịp sinh học: ban đêm là thời điểm duy nhất cơ thể chuyển hướng năng lượng từ vận động sang sửa chữa các đột biến DNA.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Khóa chặt khung giờ ngủ tối thiểu 7-8 tiếng mỗi đêm; coi giấc ngủ là khoản đầu tư sinh lời cao nhất cho sức khỏe.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Giấc nồng gìn giữ tế bào / Sửa sang hư tổn đón chào bình minh"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #07
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Y Học Dự Phòng & Sức Khỏe Tế Bào</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Tác hại của việc lạm dụng thuốc giảm đau và kháng sinh tùy tiện
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Nhiều người có thói quen hễ đau đầu là uống Panadol, hễ sốt nhẹ là tự mua kháng sinh uống, biến ruột thành vùng đất chết không còn vi khuẩn có lợi.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Dập tắt triệu chứng khó chịu càng nhanh càng tốt mà không tìm hiểu nguyên nhân gốc rễ.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Kháng sinh phổ rộng tiêu diệt cả hại khuẩn lẫn lợi khuẩn, mất từ 6 tháng đến 1 năm để hệ sinh thái vi sinh vật đường ruột có thể hồi phục một phần.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Chỉ dùng kháng sinh khi có chỉ định bắt buộc của bác sĩ; tìm nguyên nhân đau đầu từ thiếu nước, thiếu khoáng hoặc căng thẳng cơ bắp trước.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Thuốc men chớ uống tiện tay / Nuôi thân khỏe mạnh đắp dày nội lực"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #08
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Y Học Dự Phòng & Sức Khỏe Tế Bào</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Chuyển dịch từ y tế chữa bệnh sang y tế dự phòng cá nhân hóa
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Chi phí điều trị một cơn đột quỵ hoặc suy thận giai đoạn cuối tốn gấp hàng trăm lần chi phí xét nghiệm máu định kỳ mỗi năm để phòng ngừa từ sớm.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Chỉ chi tiền cho bệnh viện khi đã nằm trên giường cấp cứu, tiếc tiền xét nghiệm tầm soát định kỳ.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Kinh tế học dự phòng: can thiệp ở giai đoạn tiền viêm nhiễm (sub-clinical) có chi phí bằng 1% và mang lại hiệu quả cứu mạng lên tới 99%.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Lên lịch xét nghiệm máu tổng quát chuyên sâu 6 tháng/lần cho bản thân và cha mẹ như một thói quen tài chính bắt buộc.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Phòng bệnh hơn chữa bệnh đau / Giữ gìn phúc đức bền lâu trọn đời"</em>
+            </div>
+        </div>
+        
+            </div>
+        </section>
+
+        <section id="section-environment" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-yellow space-y-6">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-yellow/10 text-cyber-yellow font-mono text-xs font-bold">[PHẦN 03]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Thiết Kế Không Gian & Giảm Ma Sát</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-yellow italic">
+                📜 <em>"Bếp nhà thanh lọc đồ ăn / Nước trong khí sạch đẩy ngăn độc tà"</em>
+            </div>
+
+            <p class="text-cyber-text text-sm sm:text-base leading-relaxed">
+                Thiết lập gian bếp và môi trường sống lành mạnh. Loại bỏ hoàn toàn các loại dầu ăn công nghiệp bị oxy hóa (dầu hạt, dầu ăn chiên đi chiên lại) và thức ăn nhanh ra khỏi tầm mắt.
+            </p>
+
+            <ul class="space-y-3 font-mono text-xs sm:text-sm text-cyber-muted">
+                <li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Vứt bỏ toàn bộ bánh kẹo ngọt, nước có gas và đồ ăn vặt đóng gói sẵn khỏi tủ lạnh gia đình.</span></li><li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Sử dụng máy lọc nước có bổ sung khoáng kiềm tự nhiên để bù điện giải hàng ngày.</span></li><li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Trang bị máy đo độ ẩm và máy lọc không khí trong phòng ngủ để giảm tải áp lực thải độc cho gan phổi.</span></li>
+            </ul>
+        </section>
+
+        <section id="section-emotions" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-green space-y-6">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-green/10 text-cyber-green font-mono text-xs font-bold">[PHẦN 04]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Bảo Toàn Cảm Xúc & Quản Trị Dopamine</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-green italic">
+                📜 <em>"Lắng nghe cơ thể thì thầm / Bình an nuôi dưỡng cái mầm bình yên"</em>
+            </div>
+
+            <p class="text-cyber-text text-sm sm:text-base leading-relaxed">
+                Coi các cơn mệt mỏi, đầy bụng hay dị ứng da là những tín hiệu giao tiếp khẩn cấp của cơ thể. Tôn trọng nhịp sinh học tự nhiên thay vì dùng chất kích thích để cưỡng ép năng lượng.
+            </p>
+
+            <ul class="space-y-3 font-mono text-xs sm:text-sm text-emerald-400">
+                <li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Cảm giác thèm ngọt dữ dội thường là tín hiệu cơ thể đang thiếu ngủ hoặc thiếu hụt protein, không phải là đói thực sự.</span></li><li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Tập thói quen ăn uống trong chánh niệm, không vừa ăn vừa xem điện thoại để dạ dày tiết đủ dịch vị tiêu hóa.</span></li><li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Bình thản đón nhận kết quả xét nghiệm để điều chỉnh hành vi, không hoảng loạn hay trốn tránh sự thật.</span></li>
+            </ul>
+        </section>
+
+        <footer class="pt-10 border-t border-cyber-cardBorder/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-cyber-muted">
+            <div>
+                © ARCHITECT INTELLIGENCE LAB // RAJ SHAMANI PODCAST BREAKDOWN SERIES
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="rajshamani-21-podcasts-hub.html" class="text-cyber-cyan hover:underline">← VỀ TRANG TỔNG HỢP (HUB)</a>
+                <span>|</span>
+                <a href="https://www.youtube.com/watch?v=eOFLyP5SOEQ" target="_blank" class="text-cyber-pink hover:underline">XEM VIDEO TRÊN YOUTUBE ↗</a>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        function copyPromptCode() {
+            const code = document.getElementById('prompt-content').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copy-btn');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<span class="text-white">✓ COPIED!</span>';
+                btn.classList.add('bg-cyber-green');
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.classList.remove('bg-cyber-green');
+                }, 2000);
+            });
+        }
+
+        const ctx = document.getElementById('insightChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Dự Phòng Sớm', 'Sức Khỏe Gan', 'Hệ Vi Sinh Ruột', 'Tối Ưu Đường Huyết', 'Ý Thức Tế Bào'],
+                    datasets: [{
+                        label: 'Trọng Số Năng Lực',
+                        data: [97, 99, 94, 95, 96],
+                        backgroundColor: 'rgba(0, 229, 255, 0.2)',
+                        borderColor: '#00E5FF',
+                        pointBackgroundColor: '#FF007F',
+                        pointBorderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#94A3B8', font: { size: 9 } },
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

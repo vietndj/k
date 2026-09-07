@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Most Expensive Cars Compete On Emotion, Not Engineering | System Architect Breakdown</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: "#080811",
+                            card: "#0f101f",
+                            cardBorder: "#1e2238",
+                            cyan: "#00E5FF",
+                            pink: "#FF007F",
+                            yellow: "#FFE600",
+                            green: "#10B981",
+                            purple: "#8B5CF6",
+                            text: "#E2E8F0",
+                            muted: "#94A3B8"
+                        }
+                    },
+                    fontFamily: {
+                        sans: ["'Plus Jakarta Sans'", "sans-serif"],
+                        display: ["'Space Grotesk'", "sans-serif"],
+                        mono: ["'Fira Code'", "monospace"]
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        body {
+            background-color: #080811;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 85% 65%, rgba(255, 0, 127, 0.05) 0%, transparent 40%),
+                linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+            color: #E2E8F0;
+        }
+
+        .glass-card {
+            background: rgba(15, 16, 31, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            box-shadow: 0 15px 35px -5px rgba(0, 229, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .glow-text-cyan {
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+        }
+
+        .glow-text-pink {
+            text-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
+        }
+
+        .cyber-border-left {
+            position: relative;
+        }
+        .cyber-border-left::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #00E5FF, #FF007F);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .code-box {
+            background: #05060a;
+            border: 1px solid #1a1e36;
+        }
+
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00E5FF, #FF007F, #FFE600);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #080811; }
+        ::-webkit-scrollbar-thumb { background: #1e2238; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00E5FF; }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-cyber-cyan selection:text-cyber-bg">
+
+    <div id="progress-bar"></div>
+
+    <nav class="sticky top-0 z-50 bg-[#080811]/90 backdrop-blur-md border-b border-cyber-cardBorder py-3 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="rajshamani-21-podcasts-hub.html" class="flex items-center gap-2 group">
+                    <span class="w-3 h-3 rounded-full bg-cyber-cyan animate-ping"></span>
+                    <span class="font-display font-bold text-lg tracking-wider text-white group-hover:text-cyber-cyan transition-colors">
+                        ← HUB 21 PODCASTS <span class="text-cyber-cyan text-sm font-mono">// FO551</span>
+                    </span>
+                </a>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-mono">
+                <a href="#section-meta" class="text-cyber-muted hover:text-cyber-cyan transition-colors hidden sm:inline">0. GỐC</a>
+                <a href="#section-delusion" class="text-cyber-muted hover:text-cyber-pink transition-colors hidden sm:inline">1. BÓC TRẦN</a>
+                <a href="#section-insights" class="text-cyber-cyan hover:text-white transition-colors">2. 8 INSIGHTS</a>
+                <a href="#section-environment" class="text-cyber-muted hover:text-cyber-yellow transition-colors hidden sm:inline">3. KHÔNG GIAN</a>
+                <a href="#section-emotions" class="text-cyber-muted hover:text-cyber-green transition-colors hidden sm:inline">4. TÂM LÝ</a>
+                <a href="https://www.youtube.com/watch?v=9CADz6sP40I" target="_blank" class="px-3 py-1.5 rounded-lg bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/40 hover:bg-cyber-cyan hover:text-cyber-bg font-bold transition-all">
+                    YOUTUBE ↗
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative py-16 px-6 max-w-7xl mx-auto overflow-hidden">
+        <div class="flex flex-col items-center text-center space-y-6">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyber-pink/10 border border-cyber-pink/30 text-cyber-pink font-mono text-xs tracking-widest uppercase">
+                ⚡ KỸ NGHỆ SIÊU SANG & THIẾT KẾ ĐỈNH CAO // FO551
+            </div>
+            
+            <h1 class="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-5xl leading-tight">
+                The Most Expensive Cars Compete On Emotion, Not Engineering
+            </h1>
+
+            <p class="text-cyber-muted text-base sm:text-xl max-w-3xl leading-relaxed font-light">
+                Huyền thoại kỹ nghệ cơ khí của Porsche và Bentley tiết lộ vì sao một chiếc xe có giá hàng triệu USD vẫn phải bắt đầu từ bản vẽ bút chì và mô hình đất sét, cùng bí mật cảm xúc đằng sau những cỗ máy xa xỉ bậc nhất thế giới.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4 pt-4 font-mono text-xs">
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-cyan">👤 DIỄN GIẢ:</span>
+                    <span class="text-white font-semibold">Dr. Frank-Steffen Walliser</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-pink">🎙️ HOST:</span>
+                    <span class="text-white font-semibold">Raj Shamani</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-yellow">⏱️ THỜI LƯỢNG:</span>
+                    <span class="text-white font-semibold">1 Giờ 28 Phút</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-green">📊 QUY MÔ:</span>
+                    <span class="text-white font-semibold">Lãnh đạo đế chế siêu xe hàng đầu thế giới</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 space-y-20 pb-32">
+
+        <section class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-cyber-cyan/30">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4 pb-4 border-b border-cyber-cardBorder">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-cyber-green"></div>
+                    <span class="font-mono text-sm font-bold text-cyber-cyan">SYSTEM_PROMPT_CORE.sh</span>
+                    <span class="text-xs text-cyber-muted font-mono">// KIẾN TRÚC SƯ TRÍ TUỆ HỆ THỐNG</span>
+                </div>
+                <button onclick="copyPromptCode()" id="copy-btn" class="px-4 py-2 rounded-xl bg-cyber-cyan/20 border border-cyber-cyan/50 text-cyber-cyan hover:bg-cyber-cyan hover:text-black font-mono text-xs font-bold transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    <span>COPY PROMPT</span>
+                </button>
+            </div>
+
+            <pre class="code-box p-4 rounded-xl text-xs sm:text-sm font-mono text-emerald-400 overflow-x-auto leading-relaxed" id="prompt-content">[VAI TRÒ]: Kiến trúc sư Trí tuệ Hệ thống (System Intelligence Architect).
+[ĐẦU VÀO]: https://www.youtube.com/watch?v=9CADz6sP40I (The Most Expensive Cars Compete On Emotion, Not Engineering).
+[MỤC TIÊU]: Bóc tách quy luật vận hành cơ học, quy luật chú ý, sinh học thần kinh và kiến trúc hệ thống đòn bẩy.
+[QUY TẮC PHÂN TÍCH 5 PHẦN]:
+0. [THÔNG TIN BẢN GỐC]: Link gốc, bối cảnh diễn giả, quy mô và bài toán cốt lõi.
+1. [BÓC TRẦN LẦM TƯỞNG]: 2 câu lục bát + 2 blockquote triệt tiêu ảo tưởng đám đông.
+2. [NGUYÊN LÝ GỐC RỄ]: Tối thiểu 8 Insights chi tiết (Dữ kiện gốc, Hiện tượng bề mặt, Giải mã bản chất theo Vật lý/Ti thể/Game, Đòn bẩy thực chiến, Lục bát đúc kết).
+3. [THIẾT KẾ KHÔNG GIAN]: Môi trường làm việc vật lý, giảm ma sát nhận thức, thiết lập trigger vô thức.
+4. [BẢO TOÀN CẢM XÚC]: Khách quan hóa thất bại, xem rủi ro là Data Game, bảo toàn dopamine nền tảng.</pre>
+        </section>
+
+        <section id="section-meta" class="glass-card rounded-2xl p-8 sm:p-10 cyber-border-left">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-3 py-1 rounded bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold">[PHẦN 00]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Thông Tin Bản Gốc & Hồ Sơ Diễn Giả</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-5 text-cyber-text leading-relaxed">
+                    <p>
+                        <strong>Tập Podcast:</strong> <span class="text-cyber-cyan font-semibold">The Most Expensive Cars Compete On Emotion, Not Engineering</span>.
+                    </p>
+                    <p>
+                        <strong>Kênh xuất bản:</strong> <a href="https://www.youtube.com/watch?v=9CADz6sP40I" target="_blank" class="text-cyber-pink hover:underline font-semibold">Raj Shamani (Figuring Out Podcast)</a> — talkshow phỏng vấn lãnh đạo và chuyên gia hàng đầu.
+                    </p>
+                    <p>
+                        <strong>Diễn giả:</strong> <span class="text-white font-bold">Dr. Frank-Steffen Walliser</span> (Chủ tịch &amp; CEO Bentley Motors (Cựu Giám đốc Kỹ thuật Porsche 918 Spyder &amp; 911)). Tiến sĩ Frank-Steffen Walliser là kỹ sư trưởng huyền thoại đứng sau siêu phẩm hypercar Porsche 918 Spyder và dòng xe biểu tượng Porsche 911 GT. Hiện ông là Chủ tịch kiêm CEO của Bentley Motors.
+                    </p>
+                </div>
+
+                <div class="bg-[#0b0c19] border border-cyber-cardBorder rounded-xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-mono text-cyber-muted uppercase tracking-wider mb-3">METRICS_RADAR</div>
+                        <canvas id="insightChart" class="w-full max-h-48"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-delusion" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-pink">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-3 py-1 rounded bg-cyber-pink/10 text-cyber-pink font-mono text-xs font-bold">[PHẦN 01]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Bóc Trần Lầm Tưởng Đám Đông</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-pink italic mb-6">
+                📜 <em>"Tưởng rằng thông số hơn thua / Nào ngờ cảm xúc mới mua được lòng"</em>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <blockquote class="p-6 rounded-xl bg-[#090a16] border border-cyber-pink/30 text-cyber-text space-y-3 relative overflow-hidden">
+                    <div class="text-2xl text-cyber-pink font-serif">“</div>
+                    <p class="text-sm sm:text-base font-medium leading-relaxed">Nếu bạn chỉ cạnh tranh bằng mã lực và tốc độ từ 0 lên 100 km/h, một chiếc xe điện phổ thông giá rẻ sẽ sớm đánh bại bạn; ở đỉnh cao của ngành siêu xe, người ta không mua kỹ thuật, người ta mua linh hồn của cỗ máy.</p>
+                </blockquote>
+                <blockquote class="p-6 rounded-xl bg-[#090a16] border border-cyber-pink/30 text-cyber-text space-y-3 relative overflow-hidden">
+                    <div class="text-2xl text-cyber-pink font-serif">“</div>
+                    <p class="text-sm sm:text-base font-medium leading-relaxed">Đám đông nghĩ rằng máy tính và AI sẽ thay thế hoàn toàn các nhà thiết kế xe hơi, nhưng không có phần mềm nào có thể cảm nhận được độ căng của đường cong kim loại bằng bàn tay của một nghệ nhân vuốt đất sét.</p>
+                </blockquote>
+            </div>
+        </section>
+
+        <section id="section-insights" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold">[PHẦN 02]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Nguyên Lý Gốc Rễ: 8 Bài Học Đột Phá</h2>
+            </div>
+
+            <div class="space-y-6">
+                
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #01
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Kỹ Nghệ Siêu Sang & Thiết Kế Đỉnh Cao</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Bản phác thảo bằng tay và mô hình đất sét: Nơi cảm xúc được thổi hồn
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Dù sở hữu những phần mềm mô phỏng 3D tiên tiến nhất hành tinh, mọi chiếc xe Bentley và Porsche mới đều bắt buộc phải được tạo hình bằng mô hình đất sét tỷ lệ 1:1 trong nhiều tháng.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Cho rằng vẽ tay và đắp đất sét là phương pháp thủ công lạc hậu làm chậm tiến độ ra mắt sản phẩm.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Quang học hữu cơ: mắt người và xúc giác tương tác với ánh sáng phản chiếu trên bề mặt đất sét thật tạo ra những rung động cảm xúc mà màn hình pixel không thể tái tạo.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Trong mọi quy trình sáng tạo sản phẩm, hãy luôn giữ lại khâu tạo mẫu vật lý thô (Physical Prototyping) trước khi số hóa.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Đất sét nhào nặn công phu / Hồn xe thức giấc thiên thu rạng ngời"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #02
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Kỹ Nghệ Siêu Sang & Thiết Kế Đỉnh Cao</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Âm thanh động cơ là bản giao hưởng kích hoạt adrenaline
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Frank Walliser dành hàng nghìn giờ tinh chỉnh ống xả của Porsche 918 Spyder để tạo ra âm thanh cơ khí sắc bén kích thích hạch hạnh nhân của người lái.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Xem âm thanh xe hơi chỉ là tiếng ồn ngẫu nhiên phát ra từ quá trình đốt cháy nhiên liệu.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Âm học thần kinh (Neuroacoustics): tần số âm thanh cơ khí tự nhiên tạo ra sự đồng điệu với nhịp tim, biến chiếc xe thành một phần nối dài của hệ thần kinh người lái.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Thiết kế trải nghiệm đa giác quan (âm thanh, xúc giác, mùi hương) cho bất kỳ sản phẩm dịch vụ cao cấp nào.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Tiếng gầm cỗ máy vang xa / Đánh thức bản lĩnh kiêu sa anh hùng"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #03
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Kỹ Nghệ Siêu Sang & Thiết Kế Đỉnh Cao</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Sự cân bằng tinh tế giữa di sản truyền thống và công nghệ hiện đại
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Bentley giữ nguyên kỹ thuật khâu da chữ thập bằng tay và ốp gỗ vân đối xứng từ những thân cây cổ thụ, nhưng bên dưới là hệ thống truyền động hybrid và màn hình xoay 3 mặt tối tân.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Hoặc là bảo thủ từ chối công nghệ mới, hoặc là chạy theo số hóa mù quáng biến nội thất xe thành một chiếc iPad gắn bánh xe.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Nghệ thuật đối ngẫu: giá trị tối thượng xuất hiện khi bạn kết hợp sự ấm áp của vật liệu tự nhiên lâu đời với độ chính xác lạnh lùng của vi xử lý hiện đại.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Giữ gìn giá trị cốt lõi làm nên bản sắc thương hiệu, đồng thời cấy ghép công nghệ tiên tiến nhất vào bên trong.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Gỗ thơm da quý ngàn năm / Công nghệ hòa quyện trăng rằm sáng soi"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #04
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Kỹ Nghệ Siêu Sang & Thiết Kế Đỉnh Cao</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Trọng lượng là kẻ thù số một của hiệu suất cơ khí
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Khi phát triển Porsche 918 Spyder, đội ngũ kỹ sư sẵn sàng chi hàng triệu USD chỉ để giảm bớt 10 gram trọng lượng trên từng bu-lông và khung gầm sợi carbon.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Cứ thấy xe nặng nề thì giải quyết bằng cách tăng thêm công suất động cơ để kéo lại.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Định luật 2 Newton (F = ma): khối lượng quán tính cản trở cả khả năng tăng tốc, vào cua lẫn phanh dừng; cắt giảm trọng lượng mang lại hiệu quả đa chiều không thể bù đắp.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Áp dụng tư duy tối giản triệt để: liên tục rà soát và cắt bỏ mọi quy trình thừa thãi, rườm rà trong tổ chức.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Cắt bớt gánh nặng thừa thãi / Bay cao lướt gió dặm dài thênh thang"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #05
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Kỹ Nghệ Siêu Sang & Thiết Kế Đỉnh Cao</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Cá nhân hóa tột độ (Bespoke): Nơi khách hàng trở thành đồng tác giả
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Bộ phận Mulliner của Bentley có thể đáp ứng bất kỳ yêu cầu nào: từ sơn màu xe trùng với màu chiếc váy dạ hội của khách hàng đến việc nạm đá quý vào táp-lô.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Chỉ sản xuất hàng loạt các phiên bản tiêu chuẩn để tối ưu chi phí dây chuyền lắp ráp.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Tâm lý học sở hữu độc bản: khi khách hàng được tự tay lựa chọn từng chi tiết nhỏ, chiếc xe không còn là phương tiện di chuyển mà trở thành tác phẩm nghệ thuật mang dấu ấn cá nhân.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Cung cấp các tùy chọn cá nhân hóa sâu sắc cho tệp khách hàng VIP sẵn sàng chi trả mức giá không giới hạn.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Nét riêng khắc họa dấu son / Tác phẩm độc bản sắt son một đời"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #06
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Kỹ Nghệ Siêu Sang & Thiết Kế Đỉnh Cao</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Bài học quản trị kỹ thuật: Dũng cảm gánh vác trách nhiệm khi có lỗi
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Khi mẫu xe GT3 gặp sự cố kỹ thuật trên đường đua, Frank Walliser lập tức đứng ra nhận trách nhiệm trước hội đồng quản trị và công khai minh bạch nguyên nhân lỗi với khách hàng.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Đổ lỗi cho nhà cung cấp linh kiện hoặc che giấu lỗi kỹ thuật dưới thảm vì sợ ảnh hưởng giá cổ phiếu.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Nguyên lý niềm tin thể chế: sự minh bạch và tinh thần trách nhiệm tuyệt đối trong cơn khủng hoảng tạo ra sự trung thành thương hiệu bền vững hơn nghìn lời quảng cáo.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Khi xảy ra lỗi sản phẩm, ưu tiên số một là bảo vệ an toàn của khách hàng và minh bạch giải pháp khắc phục ngay lập tức.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Thẳng thắn nhận lỗi về mình / Uy tín giữ vững trọn tình niềm tin"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #07
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Kỹ Nghệ Siêu Sang & Thiết Kế Đỉnh Cao</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Đường đua Nürburgring: Phòng thí nghiệm khắc nghiệt nhất trần đời
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Mọi chiếc xe thể thao của Porsche đều phải trải qua hàng nghìn vòng chạy bào mòn tại &#x27;Địa ngục xanh&#x27; Nürburgring Nordschleife để phơi bày mọi điểm yếu cơ khí.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Chỉ thử nghiệm xe trên bàn thử nghiệm mô phỏng trong phòng thí nghiệm máy lạnh êm ái.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Kiểm thử áp lực cực hạn (Stress Testing): chỉ có môi trường thực tế khắc nghiệt với những đoạn xóc nảy và gia tốc trọng trường G cực đại mới bộc lộ được giới hạn của vật liệu.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Đưa sản phẩm của bạn vào môi trường sử dụng khắc nghiệt nhất của khách hàng khó tính nhất trước khi thương mại hóa.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Địa ngục xanh rèn dũng khí / Thép tôi ngọn lửa tinh vi phi thường"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #08
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Kỹ Nghệ Siêu Sang & Thiết Kế Đỉnh Cao</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Tầm nhìn chuyển đổi điện hóa mà không làm mất đi cảm xúc
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Bentley cam kết tương lai không phát thải, nhưng không đánh mất cảm giác lướt đi êm ái như một tấm thảm bay ma thuật (Magic Carpet Ride) đặc trưng của thương hiệu.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Chống đối sự chuyển dịch xanh hoặc vứt bỏ toàn bộ di sản hàng thế kỷ để biến thành một hãng xe điện không cá tính.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Tiến hóa bảo tồn gen: thích nghi với luật chơi sinh thái mới nhưng phải bảo vệ nguyên vẹn bộ mã di truyền (Brand DNA) làm nên linh hồn của thương hiệu.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Định vị lại sản phẩm trong bối cảnh công nghệ mới mà vẫn giữ trọn trải nghiệm cốt lõi khiến khách hàng say đắm.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Thời thế đổi thay chuyển dời / Bản sắc gìn giữ muôn đời không phai"</em>
+            </div>
+        </div>
+        
+            </div>
+        </section>
+
+        <section id="section-environment" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-yellow space-y-6">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-yellow/10 text-cyber-yellow font-mono text-xs font-bold">[PHẦN 03]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Thiết Kế Không Gian & Giảm Ma Sát</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-yellow italic">
+                📜 <em>"Xưởng may xưởng tiện sáng soi / Mùi da thanh lịch đất trời hòa ca"</em>
+            </div>
+
+            <p class="text-cyber-text text-sm sm:text-base leading-relaxed">
+                Xưởng chế tác của Bentley tại Crewe là sự kết hợp giữa phòng lab công nghệ cao và xưởng thủ công hoàng gia. Ánh sáng dịu nhẹ, nhiệt độ ổn định để bảo tồn độ mềm mại của da bò thượng hạng.
+            </p>
+
+            <ul class="space-y-3 font-mono text-xs sm:text-sm text-cyber-muted">
+                <li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Bố trí không gian kiểm tra chất lượng bề mặt xe bằng dàn đèn quang học đa góc chiếu không tạo bóng.</span></li><li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Khu vực trưng bày mẫu vật liệu (mẫu da, mẫu gỗ, mẫu sơn) phải được sắp xếp như một phòng trưng bày nghệ thuật.</span></li><li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Loại bỏ mọi tiếng ồn cơ khí thô ráp khỏi khu vực tiếp đón khách hàng đặt xe cá nhân hóa.</span></li>
+            </ul>
+        </section>
+
+        <section id="section-emotions" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-green space-y-6">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-green/10 text-cyber-green font-mono text-xs font-bold">[PHẦN 04]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Bảo Toàn Cảm Xúc & Quản Trị Dopamine</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-green italic">
+                📜 <em>"Cầm lái làm chủ cung đường / Tự tin vững bước dặm trường phong ba"</em>
+            </div>
+
+            <p class="text-cyber-text text-sm sm:text-base leading-relaxed">
+                Cảm giác kiểm soát một cỗ máy nghìn mã lực với sự điềm tĩnh tuyệt đối. Người lái xe siêu sang không cần chứng minh bất cứ điều gì với thế giới xung quanh; sự thảnh thơi sau tay lái chính là quyền lực tối thượng.
+            </p>
+
+            <ul class="space-y-3 font-mono text-xs sm:text-sm text-emerald-400">
+                <li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Tận hưởng hành trình di chuyển như một khoảng lặng tĩnh tâm giữa hai cuộc họp căng thẳng.</span></li><li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Coi chiếc xe là tác phẩm nghệ thuật của hàng nghìn con người cống hiến, lái xe với sự trân trọng và khiêm nhường.</span></li><li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Bình thản trước mọi sự khiêu khích tốc độ trên đường phố công cộng.</span></li>
+            </ul>
+        </section>
+
+        <footer class="pt-10 border-t border-cyber-cardBorder/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-cyber-muted">
+            <div>
+                © ARCHITECT INTELLIGENCE LAB // RAJ SHAMANI PODCAST BREAKDOWN SERIES
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="rajshamani-21-podcasts-hub.html" class="text-cyber-cyan hover:underline">← VỀ TRANG TỔNG HỢP (HUB)</a>
+                <span>|</span>
+                <a href="https://www.youtube.com/watch?v=9CADz6sP40I" target="_blank" class="text-cyber-pink hover:underline">XEM VIDEO TRÊN YOUTUBE ↗</a>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        function copyPromptCode() {
+            const code = document.getElementById('prompt-content').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copy-btn');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<span class="text-white">✓ COPIED!</span>';
+                btn.classList.add('bg-cyber-green');
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.classList.remove('bg-cyber-green');
+                }, 2000);
+            });
+        }
+
+        const ctx = document.getElementById('insightChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Kỹ Nghệ Đỉnh Cao', 'Thiết Kế Cảm Xúc', 'Cá Nhân Hóa', 'Khí Động Học & Trọng Lượng', 'Di Sản Thương Hiệu'],
+                    datasets: [{
+                        label: 'Trọng Số Năng Lực',
+                        data: [99, 98, 97, 96, 99],
+                        backgroundColor: 'rgba(0, 229, 255, 0.2)',
+                        borderColor: '#00E5FF',
+                        pointBackgroundColor: '#FF007F',
+                        pointBorderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#94A3B8', font: { size: 9 } },
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

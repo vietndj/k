@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top CTO&#x27;s Advice: The Real Reason You Are Not Growing | System Architect Breakdown</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: "#080811",
+                            card: "#0f101f",
+                            cardBorder: "#1e2238",
+                            cyan: "#00E5FF",
+                            pink: "#FF007F",
+                            yellow: "#FFE600",
+                            green: "#10B981",
+                            purple: "#8B5CF6",
+                            text: "#E2E8F0",
+                            muted: "#94A3B8"
+                        }
+                    },
+                    fontFamily: {
+                        sans: ["'Plus Jakarta Sans'", "sans-serif"],
+                        display: ["'Space Grotesk'", "sans-serif"],
+                        mono: ["'Fira Code'", "monospace"]
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        body {
+            background-color: #080811;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 85% 65%, rgba(255, 0, 127, 0.05) 0%, transparent 40%),
+                linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+            color: #E2E8F0;
+        }
+
+        .glass-card {
+            background: rgba(15, 16, 31, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            box-shadow: 0 15px 35px -5px rgba(0, 229, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .glow-text-cyan {
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+        }
+
+        .glow-text-pink {
+            text-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
+        }
+
+        .cyber-border-left {
+            position: relative;
+        }
+        .cyber-border-left::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #00E5FF, #FF007F);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .code-box {
+            background: #05060a;
+            border: 1px solid #1a1e36;
+        }
+
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00E5FF, #FF007F, #FFE600);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #080811; }
+        ::-webkit-scrollbar-thumb { background: #1e2238; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00E5FF; }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-cyber-cyan selection:text-cyber-bg">
+
+    <div id="progress-bar"></div>
+
+    <nav class="sticky top-0 z-50 bg-[#080811]/90 backdrop-blur-md border-b border-cyber-cardBorder py-3 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="rajshamani-21-podcasts-hub.html" class="flex items-center gap-2 group">
+                    <span class="w-3 h-3 rounded-full bg-cyber-cyan animate-ping"></span>
+                    <span class="font-display font-bold text-lg tracking-wider text-white group-hover:text-cyber-cyan transition-colors">
+                        ← HUB 21 PODCASTS <span class="text-cyber-cyan text-sm font-mono">// FO558</span>
+                    </span>
+                </a>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-mono">
+                <a href="#section-meta" class="text-cyber-muted hover:text-cyber-cyan transition-colors hidden sm:inline">0. GỐC</a>
+                <a href="#section-delusion" class="text-cyber-muted hover:text-cyber-pink transition-colors hidden sm:inline">1. BÓC TRẦN</a>
+                <a href="#section-insights" class="text-cyber-cyan hover:text-white transition-colors">2. 8 INSIGHTS</a>
+                <a href="#section-environment" class="text-cyber-muted hover:text-cyber-yellow transition-colors hidden sm:inline">3. KHÔNG GIAN</a>
+                <a href="#section-emotions" class="text-cyber-muted hover:text-cyber-green transition-colors hidden sm:inline">4. TÂM LÝ</a>
+                <a href="https://www.youtube.com/watch?v=XwawXRaNfzM" target="_blank" class="px-3 py-1.5 rounded-lg bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/40 hover:bg-cyber-cyan hover:text-cyber-bg font-bold transition-all">
+                    YOUTUBE ↗
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative py-16 px-6 max-w-7xl mx-auto overflow-hidden">
+        <div class="flex flex-col items-center text-center space-y-6">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyber-pink/10 border border-cyber-pink/30 text-cyber-pink font-mono text-xs tracking-widest uppercase">
+                ⚡ CÔNG NGHỆ & LÃNH ĐẠO // FO558
+            </div>
+            
+            <h1 class="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-5xl leading-tight">
+                Top CTO&#x27;s Advice: The Real Reason You Are Not Growing
+            </h1>
+
+            <p class="text-cyber-muted text-base sm:text-xl max-w-3xl leading-relaxed font-light">
+                Bóc tách tư duy lãnh đạo công nghệ cấp cao, phân biệt giữa nỗ lực cơ bắp mù quáng và năng lực ra quyết định chiến lược, cùng kiến trúc thích nghi với làn sóng AI toàn diện.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4 pt-4 font-mono text-xs">
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-cyan">👤 DIỄN GIẢ:</span>
+                    <span class="text-white font-semibold">Sauvik Banerjjee</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-pink">🎙️ HOST:</span>
+                    <span class="text-white font-semibold">Raj Shamani</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-yellow">⏱️ THỜI LƯỢNG:</span>
+                    <span class="text-white font-semibold">1 Giờ 42 Phút</span>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-cyber-card border border-cyber-cardBorder flex items-center gap-2">
+                    <span class="text-cyber-green">📊 QUY MÔ:</span>
+                    <span class="text-white font-semibold">Quy mô hệ thống Enterprise Toàn cầu</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 space-y-20 pb-32">
+
+        <section class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-cyber-cyan/30">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4 pb-4 border-b border-cyber-cardBorder">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-cyber-green"></div>
+                    <span class="font-mono text-sm font-bold text-cyber-cyan">SYSTEM_PROMPT_CORE.sh</span>
+                    <span class="text-xs text-cyber-muted font-mono">// KIẾN TRÚC SƯ TRÍ TUỆ HỆ THỐNG</span>
+                </div>
+                <button onclick="copyPromptCode()" id="copy-btn" class="px-4 py-2 rounded-xl bg-cyber-cyan/20 border border-cyber-cyan/50 text-cyber-cyan hover:bg-cyber-cyan hover:text-black font-mono text-xs font-bold transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    <span>COPY PROMPT</span>
+                </button>
+            </div>
+
+            <pre class="code-box p-4 rounded-xl text-xs sm:text-sm font-mono text-emerald-400 overflow-x-auto leading-relaxed" id="prompt-content">[VAI TRÒ]: Kiến trúc sư Trí tuệ Hệ thống (System Intelligence Architect).
+[ĐẦU VÀO]: https://www.youtube.com/watch?v=XwawXRaNfzM (Top CTO&#x27;s Advice: The Real Reason You Are Not Growing).
+[MỤC TIÊU]: Bóc tách quy luật vận hành cơ học, quy luật chú ý, sinh học thần kinh và kiến trúc hệ thống đòn bẩy.
+[QUY TẮC PHÂN TÍCH 5 PHẦN]:
+0. [THÔNG TIN BẢN GỐC]: Link gốc, bối cảnh diễn giả, quy mô và bài toán cốt lõi.
+1. [BÓC TRẦN LẦM TƯỞNG]: 2 câu lục bát + 2 blockquote triệt tiêu ảo tưởng đám đông.
+2. [NGUYÊN LÝ GỐC RỄ]: Tối thiểu 8 Insights chi tiết (Dữ kiện gốc, Hiện tượng bề mặt, Giải mã bản chất theo Vật lý/Ti thể/Game, Đòn bẩy thực chiến, Lục bát đúc kết).
+3. [THIẾT KẾ KHÔNG GIAN]: Môi trường làm việc vật lý, giảm ma sát nhận thức, thiết lập trigger vô thức.
+4. [BẢO TOÀN CẢM XÚC]: Khách quan hóa thất bại, xem rủi ro là Data Game, bảo toàn dopamine nền tảng.</pre>
+        </section>
+
+        <section id="section-meta" class="glass-card rounded-2xl p-8 sm:p-10 cyber-border-left">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-3 py-1 rounded bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold">[PHẦN 00]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Thông Tin Bản Gốc & Hồ Sơ Diễn Giả</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-5 text-cyber-text leading-relaxed">
+                    <p>
+                        <strong>Tập Podcast:</strong> <span class="text-cyber-cyan font-semibold">Top CTO&#x27;s Advice: The Real Reason You Are Not Growing</span>.
+                    </p>
+                    <p>
+                        <strong>Kênh xuất bản:</strong> <a href="https://www.youtube.com/watch?v=XwawXRaNfzM" target="_blank" class="text-cyber-pink hover:underline font-semibold">Raj Shamani (Figuring Out Podcast)</a> — talkshow phỏng vấn lãnh đạo và chuyên gia hàng đầu.
+                    </p>
+                    <p>
+                        <strong>Diễn giả:</strong> <span class="text-white font-bold">Sauvik Banerjjee</span> (Group CTO - Rezolve AI PLC &amp; Chairman Rezolve India). Sauvik Banerjjee là cựu lãnh đạo công nghệ cấp cao tại Tata Digital, hiện là Group CTO của Rezolve AI PLC. Ông là kiến trúc sư trưởng đứng sau các nền tảng thương mại số và AI quy mô hàng chục tỷ USD.
+                    </p>
+                </div>
+
+                <div class="bg-[#0b0c19] border border-cyber-cardBorder rounded-xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-mono text-cyber-muted uppercase tracking-wider mb-3">METRICS_RADAR</div>
+                        <canvas id="insightChart" class="w-full max-h-48"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-delusion" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-pink">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="px-3 py-1 rounded bg-cyber-pink/10 text-cyber-pink font-mono text-xs font-bold">[PHẦN 01]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Bóc Trần Lầm Tưởng Đám Đông</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-pink italic mb-6">
+                📜 <em>"Chăm làm vùi mặt thâu đêm / Ngỡ rằng thăng tiến lại thêm nhọc nhằn"</em>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <blockquote class="p-6 rounded-xl bg-[#090a16] border border-cyber-pink/30 text-cyber-text space-y-3 relative overflow-hidden">
+                    <div class="text-2xl text-cyber-pink font-serif">“</div>
+                    <p class="text-sm sm:text-base font-medium leading-relaxed">Lao động chăm chỉ không có định hướng chỉ là hình thức trốn tránh tư duy chiến lược; hệ thống không trả tiền cho số giờ bạn ngồi mà trả cho trọng lượng của quyết định bạn đưa ra.</p>
+                </blockquote>
+                <blockquote class="p-6 rounded-xl bg-[#090a16] border border-cyber-pink/30 text-cyber-text space-y-3 relative overflow-hidden">
+                    <div class="text-2xl text-cyber-pink font-serif">“</div>
+                    <p class="text-sm sm:text-base font-medium leading-relaxed">Đám đông lầm tưởng tích lũy chứng chỉ kỹ thuật là chìa khóa thăng tiến, nhưng ở tầng cao nhất, người chiến thắng là kẻ có khả năng dịch thuật sự phức tạp của công nghệ thành bài toán kinh doanh sinh lời.</p>
+                </blockquote>
+            </div>
+        </section>
+
+        <section id="section-insights" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold">[PHẦN 02]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Nguyên Lý Gốc Rễ: 8 Bài Học Đột Phá</h2>
+            </div>
+
+            <div class="space-y-6">
+                
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #01
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Công Nghệ & Lãnh Đạo</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Năng lực ra quyết định quan trọng gấp bội nỗ lực cơ bắp
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Sauvik chỉ ra rằng một CTO đưa ra 3 quyết định kiến trúc sai lầm có thể thiêu rụi 2 năm làm việc cật lực của 500 kỹ sư hàng đầu.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Nhân viên cố gắng làm thêm giờ (overtime), giải quyết từng task vụn vặt để chứng minh sự tận tụy với ban giám đốc.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Theo vật lý đòn bẩy: điểm tựa (chất lượng quyết định) nằm càng gần trọng tâm chiến lược thì lực tác động (công sức bỏ ra) càng nhỏ mà nâng được khối tài sản khổng lồ.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Mỗi sáng dành 45 phút không màn hình để đánh giá: &#x27;Nếu hôm nay chỉ được chốt 1 quyết định kiến trúc, đâu là việc giảm 80% rác hệ thống?&#x27;.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Điểm tựa đặt đúng một phân / Đòn bẩy nâng nhẹ muôn phần gian lao"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #02
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Công Nghệ & Lãnh Đạo</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Bẫy chuyên gia kỹ thuật: Càng giỏi chuyên môn càng khó lên đỉnh
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Sauvik nhận thấy 90% Senior Engineer bị kẹt ở mức lương trần vì họ từ chối học ngôn ngữ tài chính và tâm lý học tổ chức.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Tin rằng chỉ cần viết code sạch nhất, tối ưu thuật toán nhanh nhất là đương nhiên sẽ được bổ nhiệm làm lãnh đạo cấp cao.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Hiện tượng bão hòa cục bộ trong lý thuyết đồ thị: tối ưu một nút cục bộ (code cá nhân) không làm tăng thông lượng (throughput) của toàn mạng lưới doanh nghiệp.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Chuyển dịch 30% thời gian học code sang đọc báo cáo tài chính P&amp;L và mô hình hóa dòng tiền doanh thu của sản phẩm.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Thuật toán tối ưu một mình / Không bằng mở lối chuyển mình toàn quân"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #03
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Công Nghệ & Lãnh Đạo</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Tư duy giải phóng bản thân khỏi vận hành (Redundancy Design)
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Một CTO xuất sắc phải xây dựng đội ngũ sao cho nếu ông ta biến mất 3 tháng, hệ thống vẫn tự vận hành và tăng trưởng ổn định.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Lãnh đạo giữ chặt quyền duyệt từng chi tiết nhỏ để cảm thấy bản thân quan trọng và không thể thay thế.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Định luật bảo toàn năng lượng: người làm nghẽn cổ chai (bottleneck) của tổ chức chính là người ôm đồm kiểm soát mọi dòng chảy thông tin.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Xây dựng ma trận phân quyền RACI và hệ thống tự động cảnh báo ngưỡng lỗi; tự cấm bản thân can thiệp vào các quyết định dưới 10.000 USD.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Lãnh đạo buông bớt cái tôi / Hệ thống tự chạy sinh sôi bội phần"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #04
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Công Nghệ & Lãnh Đạo</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Làn sóng AI: Thay thế kẻ gõ code, nâng tầm kẻ đóng khung bài toán
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Rezolve AI xử lý hàng triệu truy vấn ngữ nghĩa trong vài giây, biến các lập trình viên mức cơ bản thành nhân lực dư thừa nếu không biết điều phối AI.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Sợ hãi AI cướp việc hoặc thờ ơ cho rằng AI chỉ là trào lưu thổi phồng ngắn hạn của giới đầu tư mạo hiểm.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Quy luật entropy thông tin: AI hạ chi phí tạo nội dung/code xuống bằng 0, đẩy giá trị của bộ lọc (thẩm định chất lượng &amp; ngữ cảnh bài toán) lên vô cực.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Tập trung huấn luyện kỹ năng &#x27;Prompt Architecture&#x27; và &#x27;Edge-case Validation&#x27; — kiểm tra lỗi ngầm và tư duy phản biện hệ thống.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Máy làm thay việc tầm thường / Người lo định hướng mở đường tương lai"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #05
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Công Nghệ & Lãnh Đạo</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Trí tuệ cảm xúc (EQ) là hạ tầng cứng của nhà công nghệ
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Trong các cuộc sáp nhập hàng tỷ USD, thương vụ đổ vỡ 80% là do bất đồng văn hóa và cái tôi của các nhà sáng lập kỹ thuật.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Dùng logic thuần túy để tranh cãi đúng sai với hội đồng quản trị và đối tác kinh doanh.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Nguyên lý truyền sóng: hai tần số cảm xúc lệch pha sẽ triệt tiêu năng lượng của nhau; phải đồng bộ pha (pha cảm xúc) trước khi truyền tải tín hiệu logic.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Áp dụng kỹ thuật lắng nghe chủ động không ngắt lời; luôn lặp lại quan điểm của đối phương cho đến khi họ xác nhận &#x27;Anh hiểu đúng ý tôi&#x27;.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Logic chỉ dựng khung xương / Thấu hiểu cảm xúc mở đường nhân tâm"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #06
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Công Nghệ & Lãnh Đạo</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Nghệ thuật thất bại nhanh và đóng gói bài học thành tài sản số
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Các dự án thử nghiệm tại Tata Digital được cấp ngân sách &#x27;Fail-Fast&#x27; trong 6 tuần để kiểm chứng giả định trước khi rót hàng chục triệu USD.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Cố gắng bảo vệ một tính năng thất bại đến cùng vì sợ bị đánh giá là năng lực yếu kém.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Quy trình lặp Bayes: thất bại là việc thu thập dữ liệu xác suất thực địa để cập nhật niềm tin tiên nghiệm, giúp lần thử tiếp theo chính xác hơn.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Đặt ra giới hạn dừng lỗ (stop-loss) về mặt thời gian và ngân sách ngay từ ngày đầu bấm nút khởi động dự án.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Thất bại gom lại thành tài / Rút ra kinh nghiệm ngày mai huy hoàng"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #07
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Công Nghệ & Lãnh Đạo</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Sức khỏe thể chất là RAM của bộ não chiến lược
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Sauvik duy trì chế độ tập luyện kháng lực và ăn uống nghiêm ngặt vì suy giảm thể lực lập tức làm hỏng chất lượng các cuộc đàm phán kéo dài.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Đánh đổi giấc ngủ và sức khỏe thể chất để cày việc, coi đó là biểu tượng của tinh thần cống hiến.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Cơ chế sinh học ty thể: khi nồng độ lactate tăng cao và tế bào thiếu oxy, thùy trán (nơi kiểm soát tư duy dài hạn) bị ức chế, nhường chỗ cho hạch hạnh nhân kích hoạt nỗi sợ.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Khóa cố định lịch ngủ 7 tiếng và bổ sung 30 phút vận động cường độ cao mỗi sáng trước khi tiếp xúc với email hay thông báo công việc.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Thân thể yếu ớt mỏi mòn / Trí tuệ chiến lược chẳng còn sắc sảo"</em>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-cyber-cardBorder hover:border-cyber-cyan/40 transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-cyber-cardBorder/60 pb-3">
+                <span class="px-3 py-1 rounded-lg bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs font-bold tracking-wider">
+                    INSIGHT #08
+                </span>
+                <span class="text-xs font-mono text-cyber-muted">Công Nghệ & Lãnh Đạo</span>
+            </div>
+            
+            <h3 class="text-xl sm:text-2xl font-display font-bold text-white leading-snug">
+                📌 Xây dựng di sản công nghệ vượt thời gian
+            </h3>
+
+            <blockquote class="p-4 rounded-xl bg-[#0b0c1b] border-l-4 border-cyber-pink text-cyber-text text-sm sm:text-base italic leading-relaxed">
+                🎙️ <strong class="text-cyber-pink not-italic">Dữ kiện gốc:</strong> Những kiến trúc sư vĩ đại không tự hào về số dòng code họ viết, mà tự hào về việc hệ thống đó phục vụ được bao nhiêu triệu người tiêu dùng bình dân.
+            </blockquote>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm pt-2">
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-yellow font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>👁️</span> Hiện Tượng Bề Mặt
+                    </div>
+                    <p class="text-cyber-muted leading-relaxed">Theo đuổi các thuật ngữ thời thượng phức tạp (buzzwords) để khoe khoang với cộng đồng kỹ thuật.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-cyan font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>🔬</span> Giải Mã Bản Chất
+                    </div>
+                    <p class="text-cyber-text leading-relaxed">Định luật tối giản Occam: giải pháp vĩ đại nhất luôn là giải pháp giải quyết được bài toán phức tạp bằng cấu trúc thanh lịch và ít điểm gãy nhất.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cyber-card/70 border border-cyber-cardBorder/50 space-y-2">
+                    <div class="text-cyber-green font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
+                        <span>⚙️</span> Đòn Bẩy Thực Chiến
+                    </div>
+                    <p class="text-emerald-400 font-mono text-xs leading-relaxed">Mỗi giải pháp kỹ thuật đều phải trả lời được câu hỏi: &#x27;Người mẹ ở vùng nông thôn có được hưởng lợi gì trực tiếp từ tính năng này không?&#x27;.</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-cyber-cardBorder/30 border border-cyber-cardBorder/40 text-center font-mono text-xs sm:text-sm text-cyber-cyan italic">
+                📜 <em>"Đỉnh cao công nghệ đơn sơ / Giúp đời bớt khổ dựng cơ đồ bền"</em>
+            </div>
+        </div>
+        
+            </div>
+        </section>
+
+        <section id="section-environment" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-yellow space-y-6">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-yellow/10 text-cyber-yellow font-mono text-xs font-bold">[PHẦN 03]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Thiết Kế Không Gian & Giảm Ma Sát</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-yellow italic">
+                📜 <em>"Môi trường dọn sạch âu lo / Tâm an trí sáng tự do tung hoành"</em>
+            </div>
+
+            <p class="text-cyber-text text-sm sm:text-base leading-relaxed">
+                Thiết lập không gian làm việc tối giản hóa kích thích thị giác để bảo toàn năng lượng cho vỏ não thùy trán. Phân tách ranh giới vật lý giữa khu vực &#x27;Sáng tạo chiến lược&#x27; và khu vực &#x27;Xử lý tin nhắn vận hành&#x27;.
+            </p>
+
+            <ul class="space-y-3 font-mono text-xs sm:text-sm text-cyber-muted">
+                <li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Loại bỏ hoàn toàn điện thoại và thiết bị đeo thông minh khỏi phòng họp chiến lược.</span></li><li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Sử dụng bảng trắng vật lý kích thước lớn để vẽ luồng dữ liệu thay vì nhìn vào màn hình máy tính chật hẹp.</span></li><li class='flex items-start gap-2'><span class='text-cyber-yellow font-bold'>▶</span><span>Thiết lập khung giờ cố định từ 8h00 - 11h00 sáng là khoảng thời gian &#x27;Zero Interruption&#x27; (không họp, không chat Slack).</span></li>
+            </ul>
+        </section>
+
+        <section id="section-emotions" class="glass-card rounded-2xl p-8 sm:p-10 border-l-4 border-cyber-green space-y-6">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded bg-cyber-green/10 text-cyber-green font-mono text-xs font-bold">[PHẦN 04]</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase">Bảo Toàn Cảm Xúc & Quản Trị Dopamine</h2>
+            </div>
+
+            <div class="p-4 rounded-xl bg-cyber-cardBorder/30 border border-cyber-cardBorder/50 font-mono text-sm text-cyber-green italic">
+                📜 <em>"Thương trường sóng gió cuộn trào / Giữ tâm bình thản mới cao tay nghề"</em>
+            </div>
+
+            <p class="text-cyber-text text-sm sm:text-base leading-relaxed">
+                Xem mọi khủng hoảng kỹ thuật hoặc sự cố sập server là biến số ngẫu nhiên trong một trò chơi mô phỏng. Khi tách rời cái tôi cá nhân khỏi kết quả dự án, bạn sẽ giải phóng được 100% năng lực tư duy giải quyết vấn đề.
+            </p>
+
+            <ul class="space-y-3 font-mono text-xs sm:text-sm text-emerald-400">
+                <li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Coi sự cố hệ thống là bài kiểm tra tự động của thực tế giúp vá lỗ hổng kiến trúc.</span></li><li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Không phản hồi email gay gắt khi nhịp tim đang trên 90 nhịp/phút.</span></li><li class='flex items-start gap-2'><span class='text-cyber-green font-bold'>✓</span><span>Chấp nhận nguyên lý bất toàn: không có hệ thống nào hoàn hảo 100%, chỉ có hệ thống có khả năng tự phục hồi nhanh nhất.</span></li>
+            </ul>
+        </section>
+
+        <footer class="pt-10 border-t border-cyber-cardBorder/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-cyber-muted">
+            <div>
+                © ARCHITECT INTELLIGENCE LAB // RAJ SHAMANI PODCAST BREAKDOWN SERIES
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="rajshamani-21-podcasts-hub.html" class="text-cyber-cyan hover:underline">← VỀ TRANG TỔNG HỢP (HUB)</a>
+                <span>|</span>
+                <a href="https://www.youtube.com/watch?v=XwawXRaNfzM" target="_blank" class="text-cyber-pink hover:underline">XEM VIDEO TRÊN YOUTUBE ↗</a>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        function copyPromptCode() {
+            const code = document.getElementById('prompt-content').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copy-btn');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<span class="text-white">✓ COPIED!</span>';
+                btn.classList.add('bg-cyber-green');
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.classList.remove('bg-cyber-green');
+                }, 2000);
+            });
+        }
+
+        const ctx = document.getElementById('insightChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Chiến Lược', 'Kiến Trúc AI', 'Lãnh Đạo', 'Giải Mã Tài Chính', 'Kháng Áp Lực'],
+                    datasets: [{
+                        label: 'Trọng Số Năng Lực',
+                        data: [95, 90, 92, 85, 94],
+                        backgroundColor: 'rgba(0, 229, 255, 0.2)',
+                        borderColor: '#00E5FF',
+                        pointBackgroundColor: '#FF007F',
+                        pointBorderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#94A3B8', font: { size: 9 } },
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
