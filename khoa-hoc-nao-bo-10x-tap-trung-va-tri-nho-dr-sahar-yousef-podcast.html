@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiến Trúc Sư Trí Tuệ Hệ Thống: Khoa Học Não Bộ 10X Tập Trung & Trí Nhớ (Dr. Sahar Yousef)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            cyan: '#00E5FF',
+                            pink: '#FF007F',
+                            yellow: '#FFE600',
+                            green: '#10B981',
+                            purple: '#8B5CF6',
+                            dark: '#0B0B13',
+                            card: '#151522',
+                            border: '#2A2B3D'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0B0B13;
+            color: #E2E8F0;
+        }
+
+        pre, code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .neon-border-cyan {
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
+        }
+
+        .glass-panel {
+            background: rgba(21, 21, 34, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 229, 255, 0.12);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-card-insight {
+            background: linear-gradient(145deg, rgba(26, 26, 42, 0.9) 0%, rgba(17, 17, 28, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card-insight:hover {
+            border-color: rgba(0, 229, 255, 0.35);
+            transform: translateY(-3px);
+            box-shadow: 0 14px 45px -5px rgba(0, 229, 255, 0.15);
+        }
+
+        .custom-blockquote {
+            background: rgba(11, 11, 19, 0.75);
+            border-left: 4px solid #FF007F;
+            border-radius: 0 12px 12px 0;
+            padding: 1.1rem 1.35rem;
+            margin: 0.9rem 0;
+        }
+
+        .custom-blockquote-cyan {
+            background: rgba(0, 229, 255, 0.04);
+            border-left: 4px solid #00E5FF;
+            border-radius: 0 12px 12px 0;
+            padding: 1.1rem 1.35rem;
+            margin: 0.9rem 0;
+        }
+
+        .custom-blockquote-poem {
+            background: linear-gradient(90deg, rgba(255, 230, 0, 0.08) 0%, rgba(255, 230, 0, 0.02) 100%);
+            border-left: 4px solid #FFE600;
+            border-radius: 0 12px 12px 0;
+            padding: 0.95rem 1.35rem;
+            margin: 0.85rem 0;
+        }
+
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3.5px;
+            background: linear-gradient(90deg, #00E5FF, #FF007F, #FFE600);
+            z-index: 9999;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative selection:bg-brand-cyan selection:text-black">
+    <!-- Reading Progress Bar -->
+    <div id="reading-progress" style="width: 0%;"></div>
+
+    <!-- Background Ambient Gradients -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-brand-cyan/10 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/3 -right-40 w-96 h-96 bg-brand-pink/10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-brand-purple/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-[#0B0B13]/90 backdrop-blur-md border-b border-brand-border/60 px-4 sm:px-8 py-3.5 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-cyan to-brand-pink flex items-center justify-center font-bold text-black text-sm">
+                AGY
+            </div>
+            <div>
+                <span class="font-bold text-white text-sm sm:text-base tracking-wider">KIẾN TRÚC SƯ TRÍ TUỆ HỆ THỐNG</span>
+                <span class="hidden sm:inline-block text-xs text-brand-cyan font-mono ml-2 border border-brand-cyan/30 px-2 py-0.5 rounded-full">SYSTEM ARCHITECT</span>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4 text-xs font-mono">
+            <a href="https://youtu.be/4Vz6L8B73i4" target="_blank" class="flex items-center gap-1.5 text-gray-300 hover:text-brand-cyan transition-colors bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
+                <i data-lucide="youtube" class="w-4 h-4 text-red-500"></i>
+                <span class="hidden md:inline">Xem YouTube Gốc</span>
+            </a>
+            <span class="text-gray-500 hidden sm:inline">•</span>
+            <span class="text-brand-green flex items-center gap-1 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-brand-green animate-ping"></span>
+                Đã Phân Tích Xong
+            </span>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-12">
+
+        <!-- PROMPT CODE BLOCK SECTION -->
+        <section class="glass-panel p-5 sm:p-6 rounded-2xl border border-brand-cyan/20">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="terminal" class="w-4 h-4 text-brand-cyan"></i>
+                    <span class="text-xs sm:text-sm font-mono text-gray-300 font-bold uppercase tracking-wider">PROMPT NGUYÊN BẢN (SYSTEM ARCHITECT DISPATCH)</span>
+                </div>
+                <button onclick="copyPrompt()" class="flex items-center space-x-1.5 bg-brand-cyan/10 hover:bg-brand-cyan/20 text-brand-cyan px-3 py-1 rounded-lg border border-brand-cyan/30 text-xs font-mono transition-all">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    <span id="copy-text">Copy Full Prompt</span>
+                </button>
+            </div>
+            <div class="relative bg-[#07070D] rounded-xl p-4 overflow-x-auto border border-black/60 max-h-56 scrollbar-thin scrollbar-thumb-brand-border">
+                <pre id="prompt-code" class="text-xs text-gray-300 whitespace-pre-wrap leading-relaxed"><code>Đóng vai "Kiến trúc sư Trí tuệ Hệ thống". Dùng tool duyệt web đọc TOÀN BỘ transcript Link YouTube.
+
+QUY TẮC ĐẦU RA: Suy luận ngầm, KHÔNG in khối tranh biện. VĂN PHONG: Sắc bén, chuyên nghiệp, trực diện, CẤM biệt ngữ vĩ mô. CẤM self-help. 100% TIẾNG VIỆT.
+
+QUY TẮC ÉP KHUÔN UI/UX MARKDOWN (BẮT BUỘC):
+Trình bày thoáng mắt. Tiêu đề chính dùng H2 (##). Tiêu đề Insight dùng H3 (###). Dùng đường kẻ ngang (---) để phân tách cuối mỗi Insight.
+Trích dẫn gốc và Thơ lục bát BẮT BUỘC bọc trong Blockquote (>).
+Các mục phân tích dùng Gạch đầu dòng (-) và IN ĐẬM (**) tên mục con. Luôn cách 1 dòng trắng giữa các ý.
+
+CẤU TRÚC 5 PHẦN BẮT BUỘC:
+0. [THÔNG TIN BẢN GỐC]: In Link YouTube (click được). Tóm tắt video và giới thiệu Diễn giả.
+1. [BÓC TRẦN LẦM TƯỞNG]: *Sáng tác 2 câu lục bát in nghiêng giải thích phần này*. Dưới đó viết 2 câu blockquote (>) sắc lạnh đập tan ảo tưởng đám đông.
+2. [NGUYÊN LÝ GỐC RỄ]: *Sáng tác 2 câu lục bát in nghiêng giải thích*. Quét toàn video, TỐI THIỂU 8 bài học rải đều.
+MỖI INSIGHT TRÌNH BÀY ĐÚNG FORMAT SAU:
+Bắt đầu bằng `### 📌 Insight [Số]: [Tóm tắt 1 câu]`.
+Tiếp theo: `> 🎙️ **Dữ kiện gốc:** [Trích câu chuyện/số liệu/nghiên cứu thực tế]`.
+Tiếp theo là 3 gạch đầu dòng:
+- 👁️ **Hiện tượng bề mặt:** [Đám đông làm sai thế nào]
+- 🔬 **Giải mã bản chất:** [TỰ CHỌN Lăng kính Vật lý / Ti thể / Game giải thích BÌNH DÂN]
+- ⚙️ **Đòn bẩy thực chiến:** [Cách hack môi trường vật lý / quy trình]
+Kết thúc insight là: `> 📜 **Lục bát đúc kết:**` kèm 2 câu thơ in nghiêng.
+CHỐT ĐÓNG MỖI INSIGHT BẰNG ĐƯỜNG KẺ NGANG (---).
+3. [THIẾT KẾ KHÔNG GIAN]: *2 câu lục bát in nghiêng giải thích*. Hướng dẫn cụ thể bài trí môi trường vật lý.
+4. [BẢO TOÀN CẢM XÚC]: *2 câu lục bát in nghiêng giải thích*. Khách quan hóa thất bại, rủi ro là Data Game.
+
+Phân tích Link sau: https://youtu.be/4Vz6L8B73i4?si=Yc6j90ptkWGUrLVs</code></pre>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap items-center justify-between text-xs text-gray-400 gap-2">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
+                    <span>Đã quét 30,842 từ transcript gốc qua yt-dlp & Python Subtitle Engine</span>
+                </div>
+                <div>
+                    <span>Diễn giả: <code class="text-brand-cyan font-bold">Dr. Sahar Yousef (UC Berkeley Haas)</code></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- HERO HEADER -->
+        <section class="text-center space-y-4 pt-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/30 text-brand-cyan text-xs font-semibold">
+                <i data-lucide="brain" class="w-3.5 h-3.5"></i>
+                <span>BÁO CÁO GIẢI MÃ THẦN KINH HỌC THỰC CHIẾN</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto">
+                Khoa Học Não Bộ: <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-brand-pink to-brand-yellow">
+                    10X Tập Trung, Trí Nhớ & Bẻ Khóa Thói Quen
+                </span>
+            </h1>
+            <p class="text-sm sm:text-base text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                Bóc tách toàn diện 175 phút đối thoại cùng TS. Sahar Yousef (UC Berkeley): Giải mã chiếc bập bênh CEN/DMN, thí nghiệm hạ IQ của chiếc điện thoại úp màn hình, khung phục hồi 3M và sự thật về trào lưu 5 AM Club.
+            </p>
+        </section>
+
+        <!-- METRICS OVERVIEW CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-brand-card/70 border border-white/5 rounded-xl p-4 text-center">
+                <div class="text-2xl sm:text-3xl font-black text-brand-cyan font-mono">+133%</div>
+                <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Thời gian lãng phí vì Multitasking</div>
+            </div>
+            <div class="bg-brand-card/70 border border-white/5 rounded-xl p-4 text-center">
+                <div class="text-2xl sm:text-3xl font-black text-brand-pink font-mono">-35%</div>
+                <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">IQ khi để điện thoại trong tầm mắt</div>
+            </div>
+            <div class="bg-brand-card/70 border border-white/5 rounded-xl p-4 text-center">
+                <div class="text-2xl sm:text-3xl font-black text-brand-yellow font-mono">0 Phút</div>
+                <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Giá trị phục hồi khi lướt mạng xã hội</div>
+            </div>
+            <div class="bg-brand-card/70 border border-white/5 rounded-xl p-4 text-center">
+                <div class="text-2xl sm:text-3xl font-black text-brand-green font-mono">60 Giây</div>
+                <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Khoảng dừng bẻ gãy rễ cây nghiện</div>
+            </div>
+        </div>
+
+        <!-- CHARTS SECTION: INTERACTIVE DATA VISUALIZATIONS -->
+        <section class="glass-panel p-6 rounded-2xl border border-white/10 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/10 gap-2">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-brand-cyan"></i>
+                        Định Lượng Hóa Dữ Liệu Thần Kinh (Neuro-Cognitive Analytics)
+                    </h3>
+                    <p class="text-xs text-gray-400">Trực quan hóa kết quả các thí nghiệm lâm sàng đo lường hiệu suất và năng lực trí não</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs px-2.5 py-1 rounded bg-brand-cyan/20 text-brand-cyan font-mono border border-brand-cyan/30">Clinical Evidence</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Chart 1: Multitasking Cost -->
+                <div class="bg-[#07070D] p-4 rounded-xl border border-white/5 space-y-3">
+                    <div class="text-xs font-bold text-gray-300 flex items-center justify-between">
+                        <span>1. CÁI GIÁ CỦA MULTITASKING</span>
+                        <span class="text-brand-pink text-[10px] font-mono">+133% Thời Gian</span>
+                    </div>
+                    <div class="h-48 relative">
+                        <canvas id="chartMultitask"></canvas>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-snug">
+                        Thí nghiệm viết tuần tự (17.7s) so với viết xen kẽ từng ký tự (41.3s) chứng minh sự sụt giảm nghiêm trọng khi não phải liên tục nộp "thuế chuyển đổi chú ý".
+                    </p>
+                </div>
+
+                <!-- Chart 2: Phone Proximity Effect -->
+                <div class="bg-[#07070D] p-4 rounded-xl border border-white/5 space-y-3">
+                    <div class="text-xs font-bold text-gray-300 flex items-center justify-between">
+                        <span>2. HIỆU ỨNG ĐIỆN THOẠI HẠ IQ</span>
+                        <span class="text-brand-cyan text-[10px] font-mono">Brain Drain</span>
+                    </div>
+                    <div class="h-48 relative">
+                        <canvas id="chartPhone"></canvas>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-snug">
+                        Dù điện thoại tắt nguồn hoàn toàn và úp xuống, việc đặt máy trong tầm mắt khiến trí thông minh lưu động (Gf) sụt giảm vì não phải tiêu hao năng lượng để ức chế thôi thúc.
+                    </p>
+                </div>
+
+                <!-- Chart 3: 3M Framework Burnout Reduction -->
+                <div class="bg-[#07070D] p-4 rounded-xl border border-white/5 space-y-3">
+                    <div class="text-xs font-bold text-gray-300 flex items-center justify-between">
+                        <span>3. KHUNG PHỤC HỒI 3M</span>
+                        <span class="text-brand-green text-[10px] font-mono">-75% Nguy Cơ Kiệt Sức</span>
+                    </div>
+                    <div class="h-48 relative">
+                        <canvas id="chart3M"></canvas>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-snug">
+                        Phối hợp nhịp nhàng Micro (1-3p/ngày), Meso (2-4h/tuần) và Macro (1 ngày/tháng) với sự tách rời tâm lý tuyệt đối giúp triệt tiêu hoàn toàn độc tố cortisol tích tụ.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 0: THÔNG TIN BẢN GỐC -->
+        <section class="glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex items-center gap-2 text-brand-cyan font-mono text-sm font-bold uppercase tracking-wider">
+                <i data-lucide="info" class="w-4 h-4"></i>
+                <span>0. THÔNG TIN BẢN GỐC</span>
+            </div>
+            
+            <h2 class="text-xl sm:text-2xl font-bold text-white">
+                Neuroscientist's Guide To 10X Your Focus & Memory | Dr Sahar Yousef | FO559 Raj Shamani
+            </h2>
+
+            <div class="flex flex-wrap gap-4 text-xs font-mono text-gray-400 py-2 border-y border-white/10">
+                <div><span class="text-gray-500">Kênh:</span> <span class="text-white font-semibold">Raj Shamani</span></div>
+                <div><span class="text-gray-500">Thời lượng:</span> <span class="text-white font-semibold">2 giờ 55 phút</span></div>
+                <div><span class="text-gray-500">Diễn giả:</span> <span class="text-brand-cyan font-semibold">Dr. Sahar Yousef</span></div>
+                <div><span class="text-gray-500">Link trực tiếp:</span> <a href="https://youtu.be/4Vz6L8B73i4" target="_blank" class="text-brand-pink hover:underline">https://youtu.be/4Vz6L8B73i4</a></div>
+            </div>
+
+            <div class="text-sm text-gray-300 leading-relaxed space-y-3 pt-2">
+                <p>
+                    <strong>Tiến sĩ Sahar Yousef</strong> là nhà khoa học thần kinh nhận thức (Cognitive Neuroscientist) giảng dạy tại Trường Kinh doanh Haas thuộc Đại học California, Berkeley (UC Berkeley), đồng thời là nhà sáng lập phòng thí nghiệm <em>Becoming Superhuman Lab</em>. Bà đã dành hơn một thập kỷ nghiên cứu về tính khả biến thần kinh (Neuroplasticity) và đào tạo năng lực nhận thức cho các nhà sáng lập, kỹ sư cấp cao tại Google, Nvidia, Meta và các tổ chức hàng đầu thế giới.
+                </p>
+                <p>
+                    Trong tập podcast dài gần 3 tiếng này, TS. Sahar Yousef đã bóc trần sự thật về những ảo tưởng phát triển bản thân phổ biến nhất hiện nay: từ trào lưu dậy 5h sáng mù quáng, ngộ nhận về đa nhiệm, cho đến cơ chế sinh học đằng sau thói quen lướt điện thoại vô thức ban đêm. Bằng hàng loạt dữ liệu thí nghiệm lâm sàng, bà cung cấp những công cụ vật lý và tư duy chuẩn xác để bất kỳ ai cũng có thể làm chủ lại sự chú ý, phục hồi năng lượng và bảo vệ trí não trước cơn lốc công nghệ số.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 1: BÓC TRẦN LẦM TƯỞNG -->
+        <section class="glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 space-y-6">
+            <div class="flex items-center gap-2 text-brand-pink font-mono text-sm font-bold uppercase tracking-wider">
+                <i data-lucide="flame" class="w-4 h-4"></i>
+                <span>1. BÓC TRẦN LẦM TƯỞNG</span>
+            </div>
+
+            <div class="custom-blockquote-poem">
+                <p class="italic text-yellow-300 font-medium text-sm sm:text-base">
+                    "Tưởng rằng ý chí là gươm,<br/>
+                    Nào hay sinh học mới nguồn chuyển xoay."
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="custom-blockquote">
+                    <p class="text-gray-200 text-sm sm:text-base font-semibold leading-relaxed">
+                        > Ảo tưởng lớn nhất của con người thời nay là tin rằng mình có thể dùng ý chí mù quáng để chiến thắng quy luật sinh học; bạn có thể ép một cỗ máy sinh học chạy ráng thêm vài ngày bằng cà phê và động lực tạm bợ, nhưng cái giá phải trả luôn là một cú sập nguồn toàn diện ở cấp độ tế bào não.
+                    </p>
+                </div>
+                <div class="custom-blockquote">
+                    <p class="text-gray-200 text-sm sm:text-base font-semibold leading-relaxed">
+                        > Cơn nghiện lướt màn hình vô thức và hội chứng sương mù não không phải là khuyết điểm về đạo đức hay sự lười biếng, mà là phản xạ chạy trốn tuyệt vọng của một tâm trí đang bị quá tải cảm xúc nhưng bị tước đoạt hoàn toàn không gian nghỉ ngơi thực sự.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: NGUYÊN LÝ GỐC RỄ (10 INSIGHTS) -->
+        <section class="space-y-8">
+            <div class="glass-panel p-6 rounded-2xl border border-white/10">
+                <div class="flex items-center gap-2 text-brand-yellow font-mono text-sm font-bold uppercase tracking-wider mb-3">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                    <span>2. NGUYÊN LÝ GỐC RỄ</span>
+                </div>
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 font-medium text-sm sm:text-base">
+                        "Hiểu sâu quy luật căn nguyên,<br/>
+                        Mới mong gạt bớt đảo điên cõi trần."
+                    </p>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">
+                    Quét trọn vẹn 30,842 từ transcript gốc. Đúc kết 10 bài học kiến trúc hệ thống sinh học cốt lõi:
+                </p>
+            </div>
+
+            <!-- INSIGHT 1 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 01:</span> 
+                        Định Luật Sinh Học Bất Khả Thương Lượng - Chiếc Bập Bênh CEN vs DMN
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> TS. Sahar Yousef giải mã hai mạng lưới thần kinh lớn: CEN (Central Executive Network - vùng vỏ não trước trán phụ trách tập trung, điều hành tác vụ) và DMN (Default Mode Network - vùng phụ trách tự sự, danh tính, sáng tạo). Cơ chế của não là một chiếc bập bênh: khi CEN hoạt động hết công suất thì DMN bị ức chế, và ngược lại.
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Người đi làm hiện đại ép não tập trung cao độ từ sáng đến chiều, đến lúc mệt mỏi lại rút điện thoại ra lướt mạng xã hội vì tưởng rằng mình đang "giải trí".</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Cơ học - Bập bênh):</strong> Não bộ không bao giờ tắt. Chiếc bập bênh đòi hỏi phải có lúc buông xả CEN để DMN trồi lên ấp ủ ý tưởng. Khi bạn lướt điện thoại, bạn đang tiếp tục bơm hàng ngàn kích thích hình ảnh vào mắt, ép CEN tiếp tục gánh tải và triệt tiêu hoàn toàn khả năng nảy sinh sáng tạo.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Thiết lập các khoảng "buồn chán có chủ đích" (Strategic Boredom). Cho phép bản thân ngồi im 5-10 phút, tắm nước ấm, hoặc đi dạo không cầm điện thoại để DMN có cơ hội kết nối các nơ-ron thành ý tưởng đột phá.</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Bập bênh hai nhánh rõ ràng,<br/>
+                        Biết buông điều hành mới màng sáng cơ.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 2 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 02:</span> 
+                        Bộ Não Tỷ Phú & Cơ Chế Mồi Nhận Thức (Priming) Của DMN
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> Khảo sát những cá nhân xuất phát từ số 0 trở thành tỷ phú tại Silicon Valley, TS. Sahar nhận thấy điểm khác biệt duy nhất không nằm ở tài năng bẩm sinh mà ở <em>Beliefs</em> (Hệ niềm tin). Mạng lưới DMN liên tục quét dữ liệu để xác thực câu chuyện mà chủ nhân nó tin tưởng.
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Đa số người nghèo hoặc người thất bại tự kể cho mình câu chuyện nạn nhân: "Tôi không có quan hệ", "Thị trường này quá khó", "Tôi sinh ra đã không ngủ ngon được", và liên tục nhìn thấy các rào cản ngăn bước.</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Thuật toán Lọc - Search Engine):</strong> Não bộ là cỗ máy tìm kiếm dữ liệu sinh học hoạt động theo cơ chế Confirmation Bias. Khi DMN tin chắc rằng "mọi giới hạn đều do con người tự tạo ra", cơ chế Priming sẽ mồi cho mắt và tai phát hiện ngay những cơ hội hàng triệu đô ẩn giấu ngay trong môi trường hàng ngày.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Tái lập trình DMN theo công thức 4 bước: Định danh tính (Identity) ➔ Neo sự thật khoa học (Data) ➔ Lợi ích chuyển đổi (Transformation) ➔ Tuyên ngôn hành động độc nhất (Identity Habit).</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Tâm ta mồi sẵn đường đi,<br/>
+                        Mắt nhìn thấy cửa những khi ngỡ cùng.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 3 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 03:</span> 
+                        Bẫy Mục Tiêu Trừu Tượng & Kế Hoạch Tình Huống Vi Mô (Implementation Intentions)
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> Ứng dụng nghiên cứu kinh điển của nhà tâm lý học Peter Gollwitzer về <em>Implementation Intentions</em> (Situation-Action Plans). Não bộ loài người không phản ứng với những mục tiêu chung chung, nó chỉ phản ứng với các câu lệnh điều kiện If-When-Then.
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Đặt ra những lời hứa mơ hồ vào đầu năm hoặc đầu tuần: "Tôi sẽ làm việc tập trung hơn", "Tôi sẽ đi ngủ sớm", "Tôi sẽ bớt lướt điện thoại".</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Lập trình - Câu lệnh Logic):</strong> Mục tiêu trừu tượng giống như một lời nguyện ước không có mã thực thi. Não bộ cần một địa chỉ bộ nhớ cụ thể: [KHI TÌNH HUỐNG X XẢY RA] ➔ [TÔI SẼ LÀM CHÍNH XÁC HÀNH ĐỘNG Y].</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Viết kịch bản hành động chi tiết như một thước phim điện ảnh (Cinematic Detailing): "Đúng 11h đêm khi chuông reo, tôi gập máy tính, bước vào nhà tắm đánh răng, bật playlist nhạc không lời và thay đồ ngủ". Đánh răng lúc 11h tự động cắt đứt chuỗi ăn vặt đêm; thay đồ ngủ gửi tín hiệu hormone sinh học đi ngủ.</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Mục tiêu mơ ước viển vông,<br/>
+                        Gắn vào hành động mới mong thành hình.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 4 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 04:</span> 
+                        Gốc Rễ Cơn Thèm & Khoảng Dừng Nhận Thức 60 Giây (Cognitive Pause)
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> TS. Sahar vẽ mô hình "Rễ cây thần kinh" (The Neural Tree Trunk). Cơn thèm (craving) lướt mạng hay ăn đồ ngọt không bắt nguồn từ đối tượng, mà bắt nguồn từ một cảm xúc tiêu cực muốn né tránh: Quá tải (Overwhelm), Căng thẳng (Stress), hoặc Mệt mỏi (Fatigue). Lướt xong thì cảm xúc xấu tăng gấp đôi vì cộng thêm cảm giác tội lỗi (Shame).
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Cố gắng dùng ý chí cấm đoán: "Từ mai mình cấm không được lướt TikTok nữa". Kết quả là chỉ sau vài tiếng đã tái nghiện nặng hơn.</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Cầu dao Điện - Circuit Breaker):</strong> Mỗi lần bạn lặp lại hành vi lướt mạng khi căng thẳng, rãnh thần kinh lại sâu thêm một lớp. Ý chí không thể chặn đứng một đường mòn đã biến thành thân cây cổ thụ. Bạn bắt buộc phải tạo ra một nhánh rẽ nhận thức mới.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Kỹ thuật Cognitive Pause 60 giây. Khi tay vừa với lấy điện thoại, bắt quả tang cảm xúc của mình và nhắm mắt hít thở sâu đúng 60 giây. Sau 60 giây, nếu vẫn muốn lướt, bạn được quyền lướt. Việc chèn 60 giây này ngăn chặn xung điện lao thẳng vào rãnh cũ, khiến thói quen xấu tự teo nhỏ theo thời gian.</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Dừng chân sáu chục giây qua,<br/>
+                        Rãnh sâu nghiện ngập tự đà tiêu tan.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 5 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 05:</span> 
+                        Hiệu Ứng Chiếc Điện Thoại Hạ IQ (Phone Proximity Effect & Brain Drain)
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> Thí nghiệm lâm sàng kinh điển đo lường General Fluid Intelligence (Gf - Trí thông minh lưu động) và Trí nhớ làm việc (Working Memory): Cùng một người, khi điện thoại tắt nguồn hoàn toàn để ở phòng khác đạt điểm số cao nhất; để trong túi điểm trung bình; và khi điện thoại tắt nguồn úp mặt trên bàn, điểm số IQ và tập trung sụt giảm nghiêm trọng nhất.
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Vừa làm việc vừa để điện thoại bên cạnh bàn, tự trấn an rằng "mình đã tắt chuông và úp mặt máy xuống rồi nên không sao".</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Rò rỉ Bộ nhớ - RAM Leak):</strong> Điện thoại là kho lưu trữ toàn bộ kích thích xã hội của bạn. Khi nó nằm trong tầm mắt, não bộ phải liên tục tiêu tốn năng lượng glucose ở thùy trán để "ức chế" sự thôi thúc ngó vào nó. Bạn đang bị bòn rút năng lượng trí tuệ ngầm mà không hề hay biết.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Quy tắc Bất Di Bất Dịch cho Deep Work: Khi bước vào ca làm việc quan trọng, điện thoại phải được cất sang phòng khác, bỏ vào balo hoặc khóa trong ngăn kéo.</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Dù cho tắt máy úp màn,<br/>
+                        Để gần tầm mắt trí tàn lực hao.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 6 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 06:</span> 
+                        Ảo Tưởng Multitasking & Thuế Chuyển Đổi Chú Ý (Attention Switching Penalty)
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> Thí nghiệm đo thời gian thực tế: Cho một người viết câu "I am a great multitasker" và dãy số 1-20 theo trình tự tuần tự mất 17.72 giây. Khi yêu cầu viết xen kẽ (chữ I - số 1 - chữ a - số 2...), thời gian vọt lên 41.35 giây (tăng hơn 133%) kèm theo hàng loạt lỗi sai ngớ ngẩn.
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Vừa họp Zoom vừa trả lời tin nhắn Slack, vừa viết kịch bản vừa ngó qua email, tự hào khoe khoang mình là người "đa nhiệm siêu phàm".</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính CPU Đơn luồng):</strong> Não người không xử lý song song hai tác vụ đòi hỏi nhận thức cao. Nó chỉ nhảy cóc cực nhanh qua lại giữa các luồng. Mỗi cú nhảy là một khoản "thuế sinh học" làm cạn kiệt nguồn dự trữ dopamine và gây sương mù não.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Chia ngày làm việc thành các khối đơn nhiệm (Focus Blocks) từ 45 - 90 phút. Đóng toàn bộ tab không liên quan, tắt mọi thông báo đẩy và chỉ tập trung xử lý một mục tiêu duy nhất.</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Chia dòng nhảy việc lăng xăng,<br/>
+                        Thời gian đội gấp, tài năng hao mòn.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 7 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 07:</span> 
+                        Khung Nghỉ Ngơi 3M & Bằng Chứng Nature 2024: Lướt Mạng Không Phải Là Nghỉ
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> Nghiên cứu công bố trên tạp chí khoa học hàng đầu <em>Nature</em> (2024) đo lường khả năng phục hồi nhận thức qua 3 trạng thái nghỉ: Không nghỉ, Nghỉ bằng lướt mạng xã hội, và Nghỉ bằng nhìn ra thiên nhiên/đi dạo. Kết quả: Lướt mạng xã hội có chỉ số phục hồi tương đương với việc KHÔNG NGHỈ NGƠI.
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Ngồi làm việc mệt mỏi 2 tiếng liền, sau đó tự thưởng cho mình 15 phút lướt Facebook/Reels để "nạp lại năng lượng".</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Pin Sinh học):</strong> Lướt màn hình tiếp tục dội bom thông tin vào hệ thần kinh giác quan, giữ cho não luôn trong trạng thái cảnh giác cao độ. Bạn không hề cho pin não sạc lại mà đang cắm thêm một tải tiêu thụ ngầm.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Áp dụng Khung 3M (The 3M Framework): <strong>Micro breaks</strong> (vài phút mỗi ngày: nhìn xa 6 mét, vươn vai, không màn hình); <strong>Meso breaks</strong> (2-4 tiếng mỗi tuần: thể thao, đi dạo, gặp gỡ); <strong>Macro breaks</strong> (nửa ngày đến một ngày mỗi tháng: ngắt kết nối hoàn toàn). Điều kiện tiên quyết: Phải có <em>Complete Psychological Detachment</em> (Tách rời tâm lý hoàn toàn).</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Lướt màn tưởng xả âu lo,<br/>
+                        Thực ra pin cạn lại cho thêm phiền.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 8 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 08:</span> 
+                        Bóc Mẽ Ảo Tưởng "5 AM Club" & Tối Ưu Giờ Vàng Sinh Học (Chronotypes)
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> TS. Sahar gọi việc thần thánh hóa thức dậy lúc 5 giờ sáng là "5 AM Club Porn". Khoa học thần kinh chứng minh nhịp sinh học (Circadian Rhythm) do gen di truyền quyết định với 3 nhóm chính: AM-shifted (Larks - dậy sớm tự nhiên), Bi-phasic (Hummingbirds - đa số dân số), và PM-shifted (Night Owls - cú đêm).
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Cố ép bản thân dậy lúc 5h sáng theo lời khuyên của các cuốn sách self-help, trong khi cơ thể rã rời, buồn ngủ cả ngày và hiệu suất làm việc tụt dốc thảm hại.</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Đồng hồ Gen):</strong> Ép một người có gen PM-shifted dậy lúc 5h sáng sẽ làm rối loạn hormone melatonin và cortisol, gây ra nợ ngủ kinh niên (sleep debt) và hủy hoại khả năng miễn dịch.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Tôn trọng kiểu hình sinh học của bản thân. Xác định <strong>Biological Prime Time (BPT)</strong> - khung giờ 2 đến 3 tiếng mà não bạn hoạt động sáng suốt nhất trong ngày - và khóa chặt khung giờ đó cho các tác vụ quan trọng nhất thay vì chạy theo một con số 5h vô nghĩa.</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Năm giờ chẳng phải khuôn chung,<br/>
+                        Thuận theo gen tạo vẫy vùng tự do.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 9 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 09:</span> 
+                        Căng Thẳng Không Giết Bạn - Không Đóng Chu Kỳ Mới Giết Bạn (The Stress Cycle)
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> Phân biệt giữa Stress sinh lý và Kiệt sức lâm sàng (Clinical Burnout). Cơ thể người được thiết kế để trải qua hàng chục chu kỳ stress mỗi ngày: Cortisol tăng vọt để ứng phó hiểm nguy, sau đó phải hạ xuống mức cân bằng. Con người thời nay liên tục kích hoạt chu kỳ stress từ sáng tới đêm mà không bao giờ đóng lại.
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Sau một ngày làm việc ngập tràn áp lực, người ta về nhà nằm vật ra giường với hy vọng "đi ngủ là xong chuyện", nhưng sáng dậy vẫn thấy mệt mỏi rã rời.</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Van Xả Áp - Pressure Valve):</strong> Tác nhân gây stress có thể đã kết thúc (họp xong, nộp dự án xong), nhưng hormone stress (cortisol, adrenaline) vẫn đang mắc kẹt trong máu. Bạn không thể dùng lý trí bảo cơ thể "hãy bình tĩnh", bạn phải dùng hành động vật lý để xả áp.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Đóng chu kỳ stress chủ động mỗi tối: 15-20 phút vận động thể chất (chạy bộ, đạp xe, nhảy dây), thực hiện kỹ thuật thở sinh lý (Physiological Sigh: 2 hít sâu bằng mũi, 1 thở dài bằng miệng), hoặc một cái ôm ấm áp trên 20 giây với người thân.</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Căng tràn áp lực chẳng nguy,<br/>
+                        Không xả chu kỳ mới lụy thân tâm.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+            <!-- INSIGHT 10 -->
+            <article class="glass-card-insight p-6 sm:p-8 rounded-2xl space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-brand-cyan font-mono">📌 Insight 10:</span> 
+                        Short-Form Content: Kẻ Thù Của Trí Nhớ & Dịch Bệnh Cô Đơn
+                    </h3>
+                </div>
+
+                <div class="custom-blockquote-cyan">
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        🎙️ <strong>Dữ kiện gốc:</strong> Nghiên cứu của TS. Sahar về mối tương quan giữa việc tiêu thụ video ngắn (Shorts, Reels, TikTok) với sự gia tăng triệu chứng trầm cảm, lo âu và cô đơn. Video ngắn với các cú giật khung hình (jump cuts) liên tục làm tràn ngập bộ đệm và triệt tiêu khả năng nén ký ức của vùng đồi hải mã (Hippocampus).
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 text-sm text-gray-300 leading-relaxed">
+                    <p>• 👁️ <strong>Hiện tượng bề mặt:</strong> Xem hàng trăm video kiến thức ngắn mỗi ngày, tưởng rằng mình đang học hỏi nhanh nhưng ngày hôm sau hoàn toàn không thể nhớ hay ứng dụng được gì.</p>
+                    <p>• 🔬 <strong>Giải mã bản chất (Lăng kính Tràn Bộ Đệm - Buffer Overflow):</strong> Vùng đồi hải mã cần thời gian nghỉ tĩnh lặng để chuyển thông tin từ RAM (ngắn hạn) sang Ổ cứng (dài hạn). Nhịp cắt dồn dập của video ngắn xóa sạch dữ liệu cũ trước khi kịp ghi nhớ, đồng thời kích hoạt hệ thần kinh giao cảm gây cảm giác lo âu và cô độc.</p>
+                    <p>• ⚙️ <strong>Đòn bẩy thực chiến:</strong> Chuyển dịch chế độ dinh dưỡng trí não sang nội dung dài (Long-form podcasts, sách chuyên sâu, phim tài liệu). Long-form kích hoạt mạng lưới đồng cảm (Empathy Network), nuôi dưỡng khả năng chú ý bền bỉ và tạo sự gắn kết con người chân thực.</p>
+                </div>
+
+                <div class="custom-blockquote-poem">
+                    <p class="italic text-yellow-300 text-xs sm:text-sm">
+                        > 📜 <strong>Lục bát đúc kết:</strong><br/>
+                        <em>Clip nhanh ngập ngụa hời hợt,<br/>
+                        Hải mã nghẽn lối, nhớ gì nữa đâu.</em>
+                    </p>
+                </div>
+                <hr class="border-white/10 my-4"/>
+            </article>
+
+        </section>
+
+        <!-- SECTION 3: THIẾT KẾ KHÔNG GIAN -->
+        <section class="glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 space-y-6">
+            <div class="flex items-center gap-2 text-brand-green font-mono text-sm font-bold uppercase tracking-wider">
+                <i data-lucide="layout" class="w-4 h-4"></i>
+                <span>3. THIẾT KẾ KHÔNG GIAN (ENVIRONMENT ARCHITECTURE)</span>
+            </div>
+
+            <div class="custom-blockquote-poem">
+                <p class="italic text-yellow-300 font-medium text-sm sm:text-base">
+                    "Bày ra trận địa quang minh,<br/>
+                    Để cho năng suất tự mình sinh sôi."
+                </p>
+            </div>
+
+            <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                <p>
+                    Theo TS. Sahar Yousef, <strong>Môi trường vật lý luôn chiến thắng ý chí</strong>. Muốn duy trì sự tập trung cao độ, bạn không cần phải cố gắng gồng mình, mà phải kiến thiết một không gian làm việc triệt tiêu toàn bộ ma sát gây xao nhãng:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-[#07070D] p-4 rounded-xl border border-white/5 space-y-2">
+                        <div class="text-brand-cyan font-bold flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                            <i data-lucide="eye-off" class="w-3.5 h-3.5"></i>
+                            Khu Vực Bất Khả Xâm Phạm (Phone-Free Sanctuary)
+                        </div>
+                        <p class="text-xs text-gray-400">
+                            Thiết lập trạm sạc điện thoại ở ngoài phòng làm việc hoặc phòng ngủ. Khi ngồi vào bàn Deep Work, chiếc điện thoại không được phép xuất hiện trong bán kính tầm mắt, dù là ở trạng thái úp màn hình.
+                        </p>
+                    </div>
+                    <div class="bg-[#07070D] p-4 rounded-xl border border-white/5 space-y-2">
+                        <div class="text-brand-pink font-bold flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                            <i data-lucide="sun" class="w-3.5 h-3.5"></i>
+                            Ánh Sáng & Góc Nhìn Phục Hồi (Optical Anchors)
+                        </div>
+                        <p class="text-xs text-gray-400">
+                            Bàn làm việc nên đặt gần cửa sổ đón ánh sáng tự nhiên ban ngày. Áp dụng quy tắc quang học: cứ sau mỗi chu kỳ 45 phút, đưa mắt nhìn xa ít nhất 6 mét trong 60 giây để thả lỏng cơ thể mi và kích hoạt mạng lưới thần kinh phó giao cảm.
+                        </p>
+                    </div>
+                    <div class="bg-[#07070D] p-4 rounded-xl border border-white/5 space-y-2">
+                        <div class="text-brand-yellow font-bold flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                            Cò Kích Hoạt Tình Huống (Tiny Triggers)
+                        </div>
+                        <p class="text-xs text-gray-400">
+                            Sắp xếp đồ vật thành chuỗi kích hoạt: Bàn chải đánh răng và đồ ngủ chuẩn bị sẵn từ chập tối. Khi chuông báo 11h reo, chỉ cần thực hiện 1 hành động cực nhỏ (đánh răng) là toàn bộ chuỗi wind-down tự động khởi động.
+                        </p>
+                    </div>
+                    <div class="bg-[#07070D] p-4 rounded-xl border border-white/5 space-y-2">
+                        <div class="text-brand-green font-bold flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            Ranh Giới Tâm Lý Tách Biệt (Boundary Walls)
+                        </div>
+                        <p class="text-xs text-gray-400">
+                            Không bao giờ mang laptop lên giường ngủ hoặc vừa ăn trưa vừa kiểm tra email. Sự nhập nhằng về không gian vật lý sẽ khiến não bộ mất khả năng nhận diện khi nào cần dồn sức (CEN) và khi nào được phép phục hồi (DMN).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: BẢO TOÀN CẢM XÚC -->
+        <section class="glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 space-y-6">
+            <div class="flex items-center gap-2 text-brand-purple font-mono text-sm font-bold uppercase tracking-wider">
+                <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+                <span>4. BẢO TOÀN CẢM XÚC (EMOTIONAL STABILITY & DATA GAME)</span>
+            </div>
+
+            <div class="custom-blockquote-poem">
+                <p class="italic text-yellow-300 font-medium text-sm sm:text-base">
+                    "Xem như ván cược thử sai,<br/>
+                    Tâm an trí sáng chẳng nài thị phi."
+                </p>
+            </div>
+
+            <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                <p>
+                    Một trong những điểm yếu lớn nhất của người hiện đại là biến mọi vấp ngã thành sự phán xét đạo đức về bản thân. Khi bạn trót lướt mạng 1 tiếng hay ngủ muộn một đêm, cảm giác xấu hổ và dằn vặt (Shame) sẽ hủy hoại bạn nhanh hơn cả chính hành vi đó.
+                </p>
+                <div class="space-y-3 pt-1">
+                    <div class="bg-[#07070D] p-4 rounded-xl border border-white/5">
+                        <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-1">
+                            1. Khách Quan Hóa Thất Bại Dưới Dạng "Dữ Liệu Thí Nghiệm" (Data Game)
+                        </h4>
+                        <p class="text-xs text-gray-400">
+                            Nếu hôm nay bạn không thể tập trung hoặc trót bấm điện thoại, đừng nói: "Tôi là kẻ thất bại, ý chí tôi quá yếu". Hãy xem mình như một nhà khoa học trong phòng thí nghiệm: "À, hệ thống vừa ghi nhận một lỗi. Dữ liệu cho thấy khi mình bị quá tải lúc 3h chiều mà không có micro-break, rủi ro cầm điện thoại là 90%. Lần tới mình sẽ chèn khoảng dừng 60 giây vào lúc 2h50".
+                        </p>
+                    </div>
+                    <div class="bg-[#07070D] p-4 rounded-xl border border-white/5">
+                        <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-1">
+                            2. Giữ Dopamine Ổn Định Bằng Lòng Trắc Ẩn Tự Thân (Self-Compassion)
+                        </h4>
+                        <p class="text-xs text-gray-400">
+                            Cảm giác tội lỗi sẽ kích hoạt hạch hạnh nhân (Amygdala), khiến lượng cortisol tăng cao và đẩy não quay lại vòng lặp tìm kiếm dopamine rẻ tiền để xoa dịu. Bằng cách chấp nhận bản thân cũng chỉ là một sinh vật sinh học có lúc yếu lòng, bạn cắt đứt dòng điện tiêu cực và giữ cho hệ thần kinh luôn ở trạng thái cân bằng.
+                        </p>
+                    </div>
+                    <div class="bg-[#07070D] p-4 rounded-xl border border-white/5">
+                        <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-1">
+                            3. Hoàn Thành Chu Kỳ Cảm Xúc Hàng Ngày
+                        </h4>
+                        <p class="text-xs text-gray-400">
+                            Không mang sự bực tức, lo âu của ban ngày vào giấc ngủ. Hãy xả hết qua vận động, viết nhật ký hoặc chia sẻ chân thành với người đồng hành trước khi kim đồng hồ điểm 22:30.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="pt-8 pb-12 text-center text-xs text-gray-500 space-y-2 border-t border-white/10">
+            <p>Hệ Thống Phân Tích Podcast Trí Tuệ Tự Động • Bản Quyền Thuộc Về Kiến Trúc Sư Trí Tuệ Hệ Thống</p>
+            <p class="font-mono text-[11px] text-gray-600">Được biên tập và xuất bản tự động lên GitHub Pages: <a href="https://vietndj.github.io/k" target="_blank" class="text-brand-cyan hover:underline">vietndj.github.io/k</a></p>
+        </footer>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Lucide Icons Render
+        lucide.createIcons();
+
+        // Reading Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('reading-progress').style.width = scrolled + '%';
+        });
+
+        // Copy Prompt Function
+        function copyPrompt() {
+            const codeText = document.getElementById('prompt-code').innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const copyText = document.getElementById('copy-text');
+                copyText.innerText = 'Copied!';
+                setTimeout(() => {
+                    copyText.innerText = 'Copy Full Prompt';
+                }, 2000);
+            });
+        }
+
+        // CHART.JS INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Chart Multitasking
+            const ctxMulti = document.getElementById('chartMultitask').getContext('2d');
+            new Chart(ctxMulti, {
+                type: 'bar',
+                data: {
+                    labels: ['Tuần Tự', 'Xen Kẽ (Đa Nhiệm)'],
+                    datasets: [{
+                        label: 'Thời Gian (Giây)',
+                        data: [17.72, 41.35],
+                        backgroundColor: ['#00E5FF', '#FF007F'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94A3B8', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#E2E8F0', font: { size: 10, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+
+            // 2. Chart Phone Proximity
+            const ctxPhone = document.getElementById('chartPhone').getContext('2d');
+            new Chart(ctxPhone, {
+                type: 'bar',
+                data: {
+                    labels: ['Phòng Khác', 'Trong Balo', 'Trên Bàn (Úp Mặt)'],
+                    datasets: [{
+                        label: 'Dung Lượng Nhận Thức (%)',
+                        data: [100, 85, 62],
+                        backgroundColor: ['#10B981', '#FFE600', '#FF007F'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94A3B8', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#E2E8F0', font: { size: 9, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+
+            // 3. Chart 3M Framework
+            const ctx3M = document.getElementById('chart3M').getContext('2d');
+            new Chart(ctx3M, {
+                type: 'line',
+                data: {
+                    labels: ['Không Nghỉ', 'Lướt MXH', '3M Chuẩn'],
+                    datasets: [{
+                        label: 'Nguy Cơ Burnout (%)',
+                        data: [95, 92, 22],
+                        borderColor: '#00E5FF',
+                        backgroundColor: 'rgba(0, 229, 255, 0.15)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#FF007F',
+                        pointBorderColor: '#fff',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94A3B8', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#E2E8F0', font: { size: 9, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
