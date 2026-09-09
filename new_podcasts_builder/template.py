@@ -85,7 +85,7 @@ def render_podcast_html(p):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>{html.escape(p['speaker'])}: {html.escape(p['tagline'])} | Chuẩn Đọc &amp; Bố Cục FEDU</title>
+  <title>{html.escape(p['speaker'])}: {html.escape(p['tagline'])}</title>
   
   <!-- Font Definitions & System Fallbacks -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -208,6 +208,8 @@ def clean_title(title, filename):
     t = clean_text(title)
     t = re.sub(r"\s*\|\s*Kiến Trúc Sư.*$", "", t, flags=re.I)
     t = re.sub(r"\s*\|\s*System Intelligence.*$", "", t, flags=re.I)
+    t = re.sub(r"\s*\|\s*Chuẩn Đọc.*$", "", t, flags=re.I)
+    t = re.sub(r"\s*\|\s*Bố Cục FEDU.*$", "", t, flags=re.I)
     t = re.sub(r"\s*\|\s*FEDU.*$", "", t, flags=re.I)
     t = re.sub(r"\s*\|\s*fedu\.vn.*$", "", t, flags=re.I)
     t = t.strip(" -•–")

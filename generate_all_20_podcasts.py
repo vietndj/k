@@ -412,7 +412,7 @@ def render_podcast_html(meta, data, prev_meta, next_meta):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>{html.escape(speaker)}: {html.escape(title)} | Chuẩn Đọc & Bố Cục FEDU</title>
+  <title>{html.escape(speaker)}: {html.escape(title)}</title>
   
   <!-- Font Definitions & System Fallbacks -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
