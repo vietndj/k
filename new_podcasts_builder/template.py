@@ -49,9 +49,9 @@ def render_podcast_html(p):
           <div class="cb-item">
             <div class="cb-label">Bóc tách 3 tầng thấu suốt</div>
             <div class="cb-text">
-              • <strong>Bề mặt:</strong> {ins['surface']}<br>
-              • <strong>Bản chất:</strong> {ins['nature']}<br>
-              • <strong>Đòn bẩy:</strong> {ins['leverage']}
+              <div class="cb-layer">• <strong>Bề mặt:</strong> {ins['surface']}</div>
+              <div class="cb-layer">• <strong>Bản chất:</strong> {ins['nature']}</div>
+              <div class="cb-layer">• <strong>Đòn bẩy:</strong> {ins['leverage']}</div>
             </div>
           </div>
 
@@ -541,6 +541,7 @@ def render_podcast_html(p):
       text-transform: uppercase;
       color: var(--cl-text-subtle);
       margin-bottom: 8px;
+      padding-right: 110px;
     }}
     .cb-title {{
       font-family: var(--font-heading);
@@ -549,7 +550,8 @@ def render_podcast_html(p):
       line-height: 1.4;
       color: var(--cl-text-title);
       margin-bottom: 18px;
-      padding-right: 80px;
+      padding-right: 110px;
+      text-wrap: balance;
     }}
     .cb-item {{
       margin-bottom: 16px;
@@ -560,6 +562,17 @@ def render_podcast_html(p):
       font-weight: 600;
       color: var(--cl-text-hero);
       margin-bottom: 4px;
+    }}
+    .cb-layer {{
+      margin-bottom: 10px;
+      line-height: 1.75;
+    }}
+    .cb-layer:last-child {{
+      margin-bottom: 0;
+    }}
+    .cb-layer strong {{
+      color: var(--cl-text-hero);
+      font-weight: 700;
     }}
     .cb-text {{
       font-family: var(--font-body);
@@ -579,6 +592,7 @@ def render_podcast_html(p):
       padding: 10px 14px;
       margin-top: 18px;
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      text-wrap: balance;
     }}
 
     .read-footer {{
@@ -652,6 +666,14 @@ def render_podcast_html(p):
         grid-template-columns: 1fr 1fr;
         gap: 10px;
       }}
+      .podcast-meta-grid .meta-item:nth-child(2) {{
+        grid-column: 1 / -1;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed var(--cl-card-border);
+      }}
+      .top-nav__meta span:first-child {{
+        display: none;
+      }}
       .compare-grid {{
         grid-template-columns: 1fr;
       }}
@@ -660,7 +682,10 @@ def render_podcast_html(p):
       }}
       .cb-title {{
         font-size: 17px;
-        padding-right: 70px;
+        padding-right: 95px;
+      }}
+      .cb-meta {{
+        padding-right: 95px;
       }}
       .cb-text {{
         font-size: 15px;
@@ -795,7 +820,7 @@ def render_podcast_html(p):
       <div class="cl-badge">03 / BÓC TÁCH NGUYÊN LÝ // PHẦN 1</div>
       <h2 class="title-sec">4 BÀI HỌC CỐT LÕI VỀ CƠ CHẾ &amp; QUY LUẬT GỐC</h2>
       <p class="body-p">
-        Mỗi bài học được tổ chức chặt chẽ: <strong>Tiêu đề FD Aeonik</strong> &rarr; <strong>Dữ kiện thực tế</strong> &rarr; <strong>Bóc tách 3 tầng nhận thức</strong> &rarr; <strong>Mantra hành động</strong>:
+        Mỗi bài học đi từ dữ kiện thực tế, bóc tách cơ chế gốc rễ đến đòn bẩy hành động thực chiến:
       </p>
       {insights_part1_html}
     </div>

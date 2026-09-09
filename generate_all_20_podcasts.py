@@ -338,9 +338,9 @@ def render_podcast_html(meta, data, prev_meta, next_meta):
           <div class="cb-item">
             <div class="cb-label">Bóc tách 3 tầng thấu suốt</div>
             <div class="cb-text">
-              • <strong>Bề mặt:</strong> {html.escape(ins['surface'])}<br>
-              • <strong>Bản chất:</strong> {html.escape(ins['essence'])}<br>
-              • <strong>Đòn bẩy:</strong> {html.escape(ins['leverage'])}
+              <div class="cb-layer">• <strong>Bề mặt:</strong> {html.escape(ins['surface'])}</div>
+              <div class="cb-layer">• <strong>Bản chất:</strong> {html.escape(ins['essence'])}</div>
+              <div class="cb-layer">• <strong>Đòn bẩy:</strong> {html.escape(ins['leverage'])}</div>
             </div>
           </div>
 
@@ -374,9 +374,9 @@ def render_podcast_html(meta, data, prev_meta, next_meta):
           <div class="cb-item">
             <div class="cb-label">Bóc tách 3 tầng thấu suốt</div>
             <div class="cb-text">
-              • <strong>Bề mặt:</strong> {html.escape(ins['surface'])}<br>
-              • <strong>Bản chất:</strong> {html.escape(ins['essence'])}<br>
-              • <strong>Đòn bẩy:</strong> {html.escape(ins['leverage'])}
+              <div class="cb-layer">• <strong>Bề mặt:</strong> {html.escape(ins['surface'])}</div>
+              <div class="cb-layer">• <strong>Bản chất:</strong> {html.escape(ins['essence'])}</div>
+              <div class="cb-layer">• <strong>Đòn bẩy:</strong> {html.escape(ins['leverage'])}</div>
             </div>
           </div>
 
@@ -584,7 +584,7 @@ def render_podcast_html(meta, data, prev_meta, next_meta):
       <h2 class="title-sec">4 BÀI HỌC CỐT LÕI VỀ ĐÒN BẨY & NGUYÊN LÝ GỐC</h2>
       
       <p class="body-p">
-        Mỗi bài học được tổ chức chặt chẽ: <strong>Tiêu đề FD Aeonik</strong> → <strong>Dữ kiện thực tế</strong> → <strong>Bóc tách 3 tầng nhận thức</strong> → <strong>Mantra hành động</strong>:
+        Mỗi bài học đi từ dữ kiện thực tế, bóc tách cơ chế gốc rễ đến đòn bẩy hành động thực chiến:
       </p>
 
       {ins_part1_html}
