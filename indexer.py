@@ -83,6 +83,10 @@ SPEAKERS_DB = {
     "Mathis Bolt": ["mathis bolt", "motiversity"],
     "Sadhguru": ["sadhguru"],
     "Mooji": ["mooji"],
+    "Omar Eltakrori": ["omar eltakrori", "omar", "eltakrori"],
+    "Myron Golden": ["myron golden", "myron"],
+    "Dan Martell": ["dan martell", "martell"],
+    "Jasmine Star": ["jasmine star", "jasmine"],
     "Sir Roger Penrose": ["roger penrose", "penrose"]
 }
 

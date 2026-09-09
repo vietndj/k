@@ -1,0 +1,941 @@
+# -*- coding: utf-8 -*-
+"""
+template.py
+Hàm render HTML độc lập chuẩn Swiss Minimalist Reading Flow cho Podcast Raj Shamani.
+- Font Hero: FD Aeonik Extended Bold (Uppercase, letter-spacing -0.01em)
+- Font Thân bài / Khối code: Tiempos Text (weight 450/500, 16.5px, line-height 1.82)
+- Màu mực in: Slate-900 (#0f172a) tương phản 16.5:1 WCAG AAA
+- Thanh điều hướng: Tối giản, không có nhãn 30NGAYVIRAL // BỐ CỤC ĐỌC CHUẨN
+"""
+
+import html
+
+def render_omar_podcast_html(p):
+    hero_items_html = ""
+    for label, text in p['hero_summary']['items']:
+        hero_items_html += f"""
+          <div class="cb-item">
+            <div class="cb-label">{html.escape(label)}</div>
+            <div class="cb-text">{text}</div>
+          </div>"""
+
+    delusion_items_html = ""
+    for label, text in p['delusion']['matrix_items']:
+        delusion_items_html += f"""
+          <div class="cb-item">
+            <div class="cb-label">{html.escape(label)}</div>
+            <div class="cb-text">{text}</div>
+          </div>"""
+
+    def render_insight_box(ins):
+        return f"""
+      <!-- INSIGHT #{ins['num']:02d} -->
+      <div class="code-box">
+        <button class="copy-btn" onclick="copySnippet(this, 'code-insight-{ins['num']}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span>Sao chép</span>
+        </button>
+        <div class="cb-inner" id="code-insight-{ins['num']}">
+          <div class="cb-meta">INSIGHT {ins['num']:02d} // {html.escape(ins['meta'])}</div>
+          <div class="cb-title">{html.escape(ins['title'])}</div>
+
+          <div class="cb-item">
+            <div class="cb-label">Dữ kiện thực địa</div>
+            <div class="cb-text">
+              {ins['ground_truth']}
+            </div>
+          </div>
+
+          <div class="cb-item">
+            <div class="cb-label">Bóc tách 3 tầng thấu suốt</div>
+            <div class="cb-text">
+              <div class="cb-layer">• <strong>Bề mặt:</strong> {ins['surface']}</div>
+              <div class="cb-layer">• <strong>Bản chất:</strong> {ins['nature']}</div>
+              <div class="cb-layer">• <strong>Đòn bẩy:</strong> {ins['leverage']}</div>
+            </div>
+          </div>
+
+          <div class="cb-mantra">
+            "{html.escape(ins['mantra'])}"
+          </div>
+        </div>
+      </div>"""
+
+    insights_part1_html = "\n".join(render_insight_box(ins) for ins in p['insights'][:4])
+    insights_part2_html = "\n".join(render_insight_box(ins) for ins in p['insights'][4:])
+
+    env_items_html = ""
+    for label, text in p['environment']['items']:
+        env_items_html += f"""
+          <div class="cb-item">
+            <div class="cb-label">{html.escape(label)}</div>
+            <div class="cb-text">{text}</div>
+          </div>"""
+
+    emo_items_html = ""
+    for label, text in p['emotional']['items']:
+        emo_items_html += f"""
+          <div class="cb-item">
+            <div class="cb-label">{html.escape(label)}</div>
+            <div class="cb-text">{text}</div>
+          </div>"""
+
+    full_html = f"""<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{html.escape(p['speaker'])}: {html.escape(p['tagline'])}</title>
+  
+  <!-- Font Definitions & System Fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ═══ 1. FONT DECLARATIONS (FEDU DESIGN SYSTEM) ═══ */
+    @font-face {{
+      font-family: 'FD Aeonik Extended';
+      src: url('./fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+           url('./fonts/FDAeonikExtended-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'FD Aeonik Extended';
+      src: url('./fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+           url('./fonts/FDAeonikExtended-SemiBold.ttf') format('truetype');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'FD Aeonik Extended';
+      src: url('./fonts/FDAeonikExtended-Medium.woff2') format('woff2'),
+           url('./fonts/FDAeonikExtended-Medium.ttf') format('truetype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'FD Aeonik Extended';
+      src: url('./fonts/FDAeonikExtended-Regular.woff2') format('woff2'),
+           url('./fonts/FDAeonikExtended-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'FD Aeonik';
+      src: url('./fonts/FDAeonikRegular.ttf') format('truetype'),
+           url('./fonts/SVN-AEONIK-REGULAR.TTF') format('truetype'),
+           local('FD Aeonik Regular'), local('SVN-Aeonik Regular');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'FD Aeonik';
+      src: url('./fonts/FDAeonikMedium.ttf') format('truetype'),
+           url('./fonts/SVN-AEONIK-MEDIUM.TTF') format('truetype'),
+           local('FD Aeonik Medium');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'FD Aeonik';
+      src: url('./fonts/FDAeonikSemiBold.ttf') format('truetype'),
+           url('./fonts/SVN-AEONIK-BOLD.TTF') format('truetype'),
+           local('FD Aeonik SemiBold');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'FD Aeonik';
+      src: url('./fonts/FDAeonikBold.ttf') format('truetype'),
+           url('./fonts/SVN-AEONIK-BOLD.TTF') format('truetype'),
+           local('FD Aeonik Bold');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'Tiempos Text';
+      src: url('./fonts/FDTiemposText-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'Tiempos Text';
+      src: url('./fonts/FDTiemposText-RegularItalic.woff2') format('woff2');
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'Tiempos Text';
+      src: url('./fonts/FDTiemposText-Medium.woff2') format('woff2');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'Tiempos Text';
+      src: url('./fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      font-weight: 500;
+      font-style: italic;
+      font-display: swap;
+    }}
+    @font-face {{
+      font-family: 'Tiempos Text';
+      src: url('./fonts/FDTiemposText-Semibold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }}
+
+    /* ═══ 2. DESIGN TOKENS (SWISS MINIMALIST READING FLOW) ═══ */
+    :root {{
+      --cl-bg:           #ffffff;
+      --cl-bg-tint:      #f8fafc;
+      --cl-card:         #ffffff;
+      --cl-card-border:  #e2e8f0;
+      --cl-card-tint:    #f1f5f9;
+      --cl-accent:       #0f172a;
+      --cl-accent-soft:  #f8fafc;
+      --cl-accent-hover: #1e293b;
+      --cl-line:         rgba(0, 0, 0, 0.07);
+      --cl-line-strong:  rgba(0, 0, 0, 0.14);
+      --cl-text-hero:    #090d16; /* Slate 950 */
+      --cl-text-title:   #090d16; /* Slate 950 */
+      --cl-text-body:    #0f172a; /* Slate 900 - Tương phản 16.5:1 WCAG AAA */
+      --cl-text-muted:   #475569; /* Slate 600 */
+      --cl-text-subtle:  #64748b; /* Slate 500 */
+      --cl-border:       #e2e8f0;
+      
+      --font-display:    'FD Aeonik Extended', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading:    'FD Aeonik', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body:       'Tiempos Text', Georgia, 'Times New Roman', serif;
+      --font-ui:         'FD Aeonik', -apple-system, BlinkMacSystemFont, sans-serif;
+      
+      --sp-xs: 4px;
+      --sp-sm: 8px;
+      --sp-md: 16px;
+      --sp-lg: 24px;
+      --sp-xl: 32px;
+      --sp-2xl: 48px;
+      --sp-3xl: 64px;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.06);
+    }}
+
+    *, *::before, *::after {{
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }}
+    html {{
+      font-size: 16px;
+      scroll-behavior: smooth;
+      background-color: var(--cl-bg);
+      color: var(--cl-text-body);
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }}
+    body {{
+      font-family: var(--font-body);
+      font-weight: 450;
+      font-size: 16.5px;
+      line-height: 1.82;
+      color: var(--cl-text-body);
+      background-color: var(--cl-bg);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }}
+
+    /* ═══ 3. TOP STICKY NAVIGATION ═══ */
+    .top-nav {{
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--cl-card-border);
+      transition: box-shadow 0.25s ease;
+    }}
+    .top-nav__inner {{
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }}
+    .top-nav__back {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-ui);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--cl-text-title);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }}
+    .top-nav__back:hover {{
+      opacity: 0.7;
+    }}
+    .top-nav__meta {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }}
+    .top-nav__btn {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      background: var(--cl-accent);
+      color: #ffffff;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }}
+    .top-nav__btn:hover {{
+      background: var(--cl-accent-hover);
+      transform: translateY(-1px);
+    }}
+
+    .reading-progress-bar {{
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--cl-text-hero);
+      width: 0%;
+      z-index: 101;
+      transition: width 0.1s ease-out;
+    }}
+
+    .read-container {{
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }}
+    .read-section {{
+      padding: 56px 0;
+      border-bottom: 1px solid var(--cl-line);
+    }}
+    .read-section--tint {{
+      background: var(--cl-bg-tint);
+    }}
+    .read-section--light {{
+      background: var(--cl-bg);
+    }}
+
+    .cl-badge {{
+      display: inline-block;
+      font-family: var(--font-heading);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cl-text-subtle);
+      margin-bottom: 14px;
+    }}
+    .title-hero {{
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: var(--cl-text-hero);
+      margin-bottom: 8px;
+    }}
+    .title-sub {{
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.45;
+      color: var(--cl-text-muted);
+      margin-bottom: 22px;
+    }}
+    .title-sec {{
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--cl-text-title);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }}
+    .editorial-hook {{
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--cl-text-hero);
+      border-left: 3px solid var(--cl-text-hero);
+      padding-left: 16px;
+      margin: 22px 0 28px;
+    }}
+    .lead-box {{
+      background: var(--cl-bg-tint);
+      border: 1px solid var(--cl-card-border);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      margin-bottom: 28px;
+    }}
+    .lead-box p {{
+      margin-bottom: 12px;
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--cl-text-body);
+    }}
+    .lead-box p:last-child {{
+      margin-bottom: 0;
+    }}
+    .body-p {{
+      font-size: 16.5px;
+      line-height: 1.82;
+      color: var(--cl-text-body);
+      margin-bottom: 24px;
+    }}
+
+    .podcast-meta-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 36px;
+      padding: 16px 20px;
+      background: #ffffff;
+      border: 1px solid var(--cl-card-border);
+      border-radius: var(--radius-md);
+    }}
+    .meta-item {{
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }}
+    .meta-item__label {{
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--cl-text-subtle);
+    }}
+    .meta-item__val {{
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--cl-text-title);
+    }}
+
+    .compare-grid {{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }}
+    .compare-card {{
+      background: #ffffff;
+      border: 1px solid var(--cl-card-border);
+      border-radius: var(--radius-md);
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }}
+    .compare-card__badge {{
+      font-family: var(--font-ui);
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--cl-text-subtle);
+    }}
+    .compare-card__title {{
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--cl-text-title);
+    }}
+    .compare-card__text {{
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--cl-text-muted);
+    }}
+
+    .code-box {{
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--cl-card-border);
+      border-radius: var(--radius-md);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      padding: 26px 28px 24px;
+      margin-bottom: 28px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }}
+    .code-box:hover {{
+      border-color: rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+    }}
+    .copy-btn {{
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: var(--radius-sm);
+      background: var(--cl-bg-tint);
+      border: 1px solid var(--cl-card-border);
+      color: var(--cl-text-title);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      z-index: 2;
+    }}
+    .copy-btn:hover {{
+      background: var(--cl-text-hero);
+      color: #ffffff;
+      border-color: var(--cl-text-hero);
+    }}
+    .copy-btn.copied {{
+      background: #059669;
+      color: #ffffff;
+      border-color: #059669;
+    }}
+    .cb-inner {{
+      position: relative;
+    }}
+    .cb-meta {{
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cl-text-subtle);
+      margin-bottom: 8px;
+      padding-right: 110px;
+    }}
+    .cb-title {{
+      font-family: var(--font-heading);
+      font-size: 18.5px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--cl-text-title);
+      margin-bottom: 18px;
+      padding-right: 110px;
+      text-wrap: balance;
+    }}
+    .cb-item {{
+      margin-bottom: 16px;
+    }}
+    .cb-label {{
+      font-family: var(--font-heading);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--cl-text-hero);
+      margin-bottom: 4px;
+    }}
+    .cb-layer {{
+      margin-bottom: 10px;
+      line-height: 1.75;
+    }}
+    .cb-layer:last-child {{
+      margin-bottom: 0;
+    }}
+    .cb-layer strong {{
+      color: var(--cl-text-hero);
+      font-weight: 700;
+    }}
+    .cb-text {{
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--cl-text-body);
+    }}
+    .cb-mantra {{
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--cl-text-hero);
+      background: var(--cl-bg-tint);
+      border-left: 2px solid var(--cl-text-hero);
+      padding: 10px 14px;
+      margin-top: 18px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      text-wrap: balance;
+    }}
+
+    .read-footer {{
+      padding: 64px 0 80px;
+      background: var(--cl-bg-tint);
+      border-top: 1px solid var(--cl-card-border);
+      text-align: center;
+    }}
+    .read-footer__title {{
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--cl-text-title);
+      margin-bottom: 12px;
+    }}
+    .read-footer__desc {{
+      font-size: 15.5px;
+      color: var(--cl-text-muted);
+      max-width: 580px;
+      margin: 0 auto 28px;
+      line-height: 1.7;
+    }}
+    .read-footer__actions {{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }}
+    .cl-btn {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }}
+    .cl-btn--primary {{
+      background: var(--cl-accent);
+      color: #ffffff;
+    }}
+    .cl-btn--primary:hover {{
+      background: var(--cl-accent-hover);
+      transform: translateY(-1px);
+    }}
+    .cl-btn--secondary {{
+      background: #ffffff;
+      color: var(--cl-text-title);
+      border: 1px solid var(--cl-card-border);
+    }}
+    .cl-btn--secondary:hover {{
+      border-color: rgba(0,0,0,0.25);
+      transform: translateY(-1px);
+    }}
+    .read-footer__copy {{
+      font-family: var(--font-ui);
+      font-size: 12px;
+      color: var(--cl-text-subtle);
+      margin-top: 36px;
+    }}
+
+    @media (max-width: 640px) {{
+      .title-hero {{
+        font-size: 25px;
+      }}
+      .podcast-meta-grid {{
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }}
+      .podcast-meta-grid .meta-item:nth-child(2) {{
+        grid-column: 1 / -1;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed var(--cl-card-border);
+      }}
+      .top-nav__meta span:first-child {{
+        display: none;
+      }}
+      .compare-grid {{
+        grid-template-columns: 1fr;
+      }}
+      .code-box {{
+        padding: 20px 18px 18px;
+      }}
+      .cb-title {{
+        font-size: 17px;
+        padding-right: 95px;
+      }}
+      .cb-meta {{
+        padding-right: 95px;
+      }}
+      .cb-text {{
+        font-size: 15px;
+        line-height: 1.75;
+      }}
+      .copy-btn {{
+        top: 12px;
+        right: 12px;
+      }}
+      .cl-btn {{
+        width: 100%;
+      }}
+    }}
+  </style>
+</head>
+<body>
+
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+
+  <header class="top-nav">
+    <div class="top-nav__inner">
+      <a href="omarchannel.html" class="top-nav__back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span>Danh mục 40 Video Omar</span>
+      </a>
+      <div class="top-nav__meta">
+        <span style="font-size: 12.5px; color: var(--cl-text-muted);" id="readingPercent">0% ĐÃ ĐỌC</span>
+      </div>
+      <a href="{html.escape(p['youtube_url'])}" target="_blank" class="top-nav__btn">
+        <span>Xem YouTube</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- KHỐI 01: HERO -->
+  <section class="read-section read-section--light" id="sec-hero">
+    <div class="read-container">
+      <div class="cl-badge">{html.escape(p['cat_badge'])} // TẬP {html.escape(p['ep_code'])}</div>
+      <h1 class="title-hero">{html.escape(p['speaker']).upper()}<br>{html.escape(p['tagline'])}</h1>
+      <h2 class="title-sub">{html.escape(p['orig_title'])}</h2>
+      
+      <div class="editorial-hook">
+        "{html.escape(p['hero_quote'])}"
+      </div>
+
+      <div class="lead-box">
+        <p><strong>• Bối cảnh thực địa:</strong> {p['lead_points'][0]}</p>
+        <p><strong>• Trọng tâm chuyển hóa:</strong> {p['lead_points'][1]}</p>
+      </div>
+
+      <div class="podcast-meta-grid">
+        <div class="meta-item">
+          <span class="meta-item__label">Khách mời</span>
+          <span class="meta-item__val">{html.escape(p['speaker'])}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-item__label">Vai trò</span>
+          <span class="meta-item__val">{html.escape(p['speaker_role'])}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-item__label">Phát hành</span>
+          <span class="meta-item__val">{html.escape(p.get('publish_date', 'N/A'))}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-item__label">Thời lượng gốc</span>
+          <span class="meta-item__val">{html.escape(p['duration'])}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-item__label">Thời lượng đọc</span>
+          <span class="meta-item__val">{html.escape(p['read_time'])}</span>
+        </div>
+      </div>
+
+      <div class="code-box">
+        <button class="copy-btn" onclick="copySnippet(this, 'code-hero-summary')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span>Sao chép</span>
+        </button>
+        <div class="cb-inner" id="code-hero-summary">
+          <div class="cb-meta">BẢN ĐỒ TƯ DUY // MINDMAP</div>
+          <div class="cb-title">{html.escape(p['hero_summary']['title'])}</div>
+          {hero_items_html}
+          <div class="cb-mantra">
+            "{html.escape(p['hero_summary']['mantra'])}"
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KHỐI 02: BÓC TRẦN ẢO TƯỞNG -->
+  <section class="read-section read-section--tint" id="sec-delusion">
+    <div class="read-container">
+      <div class="cl-badge">02 / BÓC TRẦN ẢO TƯỞNG</div>
+      <h2 class="title-sec">{html.escape(p['delusion']['title'])}</h2>
+      <p class="body-p">{p['delusion']['desc']}</p>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <span class="compare-card__badge">{html.escape(p['delusion']['compare_left']['badge'])}</span>
+          <h3 class="compare-card__title">{html.escape(p['delusion']['compare_left']['title'])}</h3>
+          <p class="compare-card__text">{p['delusion']['compare_left']['text']}</p>
+        </div>
+        <div class="compare-card">
+          <span class="compare-card__badge">{html.escape(p['delusion']['compare_right']['badge'])}</span>
+          <h3 class="compare-card__title">{html.escape(p['delusion']['compare_right']['title'])}</h3>
+          <p class="compare-card__text">{p['delusion']['compare_right']['text']}</p>
+        </div>
+      </div>
+
+      <div class="code-box">
+        <button class="copy-btn" onclick="copySnippet(this, 'code-delusion-matrix')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span>Sao chép</span>
+        </button>
+        <div class="cb-inner" id="code-delusion-matrix">
+          <div class="cb-meta">MA TRẬN ĐỐI CHIẾU // MATRIX</div>
+          <div class="cb-title">{html.escape(p['delusion']['matrix_title'])}</div>
+          {delusion_items_html}
+          <div class="cb-mantra">
+            "{html.escape(p['delusion']['mantra'])}"
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KHỐI 03: NGUYÊN LÝ PHẦN 1 -->
+  <section class="read-section read-section--light" id="sec-insights-part1">
+    <div class="read-container">
+      <div class="cl-badge">03 / BÓC TÁCH NGUYÊN LÝ // PHẦN 1</div>
+      <h2 class="title-sec">4 BÀI HỌC CỐT LÕI VỀ CƠ CHẾ &amp; QUY LUẬT GỐC</h2>
+      <p class="body-p">
+        Mỗi bài học đi từ dữ kiện thực tế, bóc tách cơ chế gốc rễ đến đòn bẩy hành động thực chiến:
+      </p>
+      {insights_part1_html}
+    </div>
+  </section>
+
+  <!-- KHỐI 04: NGUYÊN LÝ PHẦN 2 -->
+  <section class="read-section read-section--tint" id="sec-insights-part2">
+    <div class="read-container">
+      <div class="cl-badge">04 / BÓC TÁCH NGUYÊN LÝ // PHẦN 2</div>
+      <h2 class="title-sec">4 BÀI HỌC VỀ HỆ THỐNG, NĂNG LƯỢNG &amp; THỰC THI</h2>
+      <p class="body-p">
+        Chuyển hóa nhận thức thành hệ thống phòng thủ và công cụ đòn bẩy dài hạn:
+      </p>
+      {insights_part2_html}
+    </div>
+  </section>
+
+  <!-- KHỐI 05: THIẾT KẾ KHÔNG GIAN & BẢO TOÀN CẢM XÚC -->
+  <section class="read-section read-section--light" id="sec-execution">
+    <div class="read-container">
+      <div class="cl-badge">05 / BỐ CỤC THỰC THI // CHECKLIST</div>
+      <h2 class="title-sec">THIẾT KẾ KHÔNG GIAN &amp; BẢO TOÀN TÂM THÁI</h2>
+      <p class="body-p">
+        Không để tri thức nằm yên trên giấy. Dưới đây là 2 bộ khung hành động vật lý để neo giữ thói quen và duy trì năng lượng bền bỉ:
+      </p>
+
+      <div class="code-box">
+        <button class="copy-btn" onclick="copySnippet(this, 'code-env-space')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span>Sao chép</span>
+        </button>
+        <div class="cb-inner" id="code-env-space">
+          <div class="cb-meta">THIẾT KẾ MÔI TRƯỜNG // PHYSICAL SPACE</div>
+          <div class="cb-title">{html.escape(p['environment']['title'])}</div>
+          {env_items_html}
+          <div class="cb-mantra">
+            "{html.escape(p['environment']['mantra'])}"
+          </div>
+        </div>
+      </div>
+
+      <div class="code-box">
+        <button class="copy-btn" onclick="copySnippet(this, 'code-emo-safe')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span>Sao chép</span>
+        </button>
+        <div class="cb-inner" id="code-emo-safe">
+          <div class="cb-meta">BẢO TOÀN CẢM XÚC // EMOTIONAL FORTITUDE</div>
+          <div class="cb-title">{html.escape(p['emotional']['title'])}</div>
+          {emo_items_html}
+          <div class="cb-mantra">
+            "{html.escape(p['emotional']['mantra'])}"
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KHỐI 06: ĐIỀU HƯỚNG -->
+  <footer class="read-footer" id="sec-footer">
+    <div class="read-container">
+      <div class="cl-badge">06 / ĐIỀU HƯỚNG HỆ THỐNG</div>
+      <h2 class="read-footer__title">TIẾP TỤC HÀNH TRÌNH TRI THỨC</h2>
+      <p class="read-footer__desc">
+        Bài phân tích này thuộc chuỗi tuyển tập 40 video tinh hoa của Omar Eltakrori (@OmarEltakrori) về Sáng tạo nội dung, Xây dựng thương hiệu cá nhân, YouTube & Đóng gói tri thức, được tái cấu trúc thị giác theo chuẩn hệ thống thiết kế đọc sâu Swiss Minimalist.
+      </p>
+
+      <div class="read-footer__actions">
+        <a href="omarchannel.html" class="cl-btn cl-btn--primary">
+          <span>← Khám Phá Toàn Bộ 40 Video Omar</span>
+        </a>
+        <a href="{html.escape(p['youtube_url'])}" target="_blank" class="cl-btn cl-btn--secondary">
+          <span>Xem Video Gốc YouTube ↗</span>
+        </a>
+      </div>
+
+      <div class="read-footer__copy">
+        <span>Phát triển bởi FEDU System • Chuẩn đọc &amp; Typography WCAG AAA</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function copySnippet(btn, targetId) {{
+      var el = document.getElementById(targetId);
+      if (!el) return;
+      var textToCopy = el.innerText || el.textContent;
+      navigator.clipboard.writeText(textToCopy.trim()).then(function() {{
+        var originalHTML = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg><span>Đã chép</span>';
+        setTimeout(function() {{
+          btn.classList.remove('copied');
+          btn.innerHTML = originalHTML;
+        }}, 2000);
+      }}).catch(function(err) {{
+        console.error('Lỗi chép: ', err);
+      }});
+    }}
+
+    window.addEventListener('scroll', function() {{
+      var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      var scrolled = (winScroll / height) * 100;
+      var bar = document.getElementById('readingProgressBar');
+      var percentText = document.getElementById('readingPercent');
+      if (bar) {{
+        bar.style.width = scrolled + '%';
+      }}
+      if (percentText) {{
+        percentText.innerText = Math.round(scrolled) + '% ĐÃ ĐỌC';
+      }}
+    }});
+  </script>
+</body>
+</html>
+"""
+    return full_html
