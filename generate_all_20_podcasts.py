@@ -429,7 +429,7 @@ def render_podcast_html(meta, data, prev_meta, next_meta):
   <!-- Top Sticky Navigation -->
   <header class="top-nav">
     <div class="top-nav__inner">
-      <a href="21-podcast-raj-shamani-khong-chinh-tri.html" class="top-nav__back">
+      <a href="rajchannel.html" class="top-nav__back">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         <span>Danh mục 21 Podcast</span>
       </a>
@@ -687,7 +687,7 @@ def render_podcast_html(meta, data, prev_meta, next_meta):
         <a href="{html.escape(yt_url)}" target="_blank" class="cl-btn">
           <span>Xem Podcast Gốc Trên YouTube ↗</span>
         </a>
-        <a href="21-podcast-raj-shamani-khong-chinh-tri.html" class="cl-btn cl-btn--secondary">
+        <a href="rajchannel.html" class="cl-btn cl-btn--secondary">
           <span>← Quay Về Danh Mục 21 Podcast</span>
         </a>
         <a href="{html.escape(next_meta['slug'])}" class="cl-btn cl-btn--secondary">

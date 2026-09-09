@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 update_hub_page.py
-Chuyển toàn bộ tiêu đề tiếng Anh trong 21-podcast-raj-shamani-khong-chinh-tri.html
+Chuyển toàn bộ tiêu đề tiếng Anh trong rajchannel.html
 thành tiếng Việt dễ hiểu, bộc lộ rõ nội dung bên trong, và loại bỏ hoàn toàn chữ 'Dòng 1', 'Dòng 2'.
 """
 
@@ -135,8 +135,8 @@ def transform_hub_html(content, is_course_repo=False):
     return str(soup)
 
 def main():
-    k_file = '/Users/vietmac/Documents/CODE/k/21-podcast-raj-shamani-khong-chinh-tri.html'
-    course_file = '/Users/vietmac/Documents/CODE/course/21-podcast-raj-shamani-khong-chinh-tri.html'
+    k_file = '/Users/vietmac/Documents/CODE/k/rajchannel.html'
+    course_file = '/Users/vietmac/Documents/CODE/course/rajchannel.html'
 
     with open(k_file, 'r', encoding='utf-8') as f:
         k_content = f.read()

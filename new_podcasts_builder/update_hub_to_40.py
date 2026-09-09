@@ -21,7 +21,7 @@ from podcasts_batch3 import BATCH_3
 new_episodes = BATCH_1 + BATCH_2 + BATCH_3
 print(f"Nạp {len(new_episodes)} bài podcast mới để tích hợp vào Hub...")
 
-K_HUB_PATH = "/Users/vietmac/Documents/CODE/k/21-podcast-raj-shamani-khong-chinh-tri.html"
+K_HUB_PATH = "/Users/vietmac/Documents/CODE/k/rajchannel.html"
 with open(K_HUB_PATH, 'r', encoding='utf-8') as f:
     hub_content = f.read()
 
@@ -162,10 +162,10 @@ updated_hub_html = str(soup)
 
 # Lưu cả hai định dạng: 21-podcast... và 40-podcast...
 targets = [
-    ("/Users/vietmac/Documents/CODE/k/21-podcast-raj-shamani-khong-chinh-tri.html", False),
-    ("/Users/vietmac/Documents/CODE/k/40-podcast-raj-shamani-khong-chinh-tri.html", False),
-    ("/Users/vietmac/Documents/CODE/course/21-podcast-raj-shamani-khong-chinh-tri.html", True),
-    ("/Users/vietmac/Documents/CODE/course/40-podcast-raj-shamani-khong-chinh-tri.html", True),
+    ("/Users/vietmac/Documents/CODE/k/rajchannel.html", False),
+    ("/Users/vietmac/Documents/CODE/k/rajchannel.html", False),
+    ("/Users/vietmac/Documents/CODE/course/rajchannel.html", True),
+    ("/Users/vietmac/Documents/CODE/course/rajchannel.html", True),
 ]
 
 for path, is_course in targets:
