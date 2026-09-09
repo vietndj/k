@@ -423,7 +423,7 @@ def render_podcast_html(p):
 
     .podcast-meta-grid {{
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 12px;
       margin-bottom: 36px;
       padding: 16px 20px;
@@ -720,6 +720,10 @@ def render_podcast_html(p):
         <div class="meta-item">
           <span class="meta-item__label">Vai trò</span>
           <span class="meta-item__val">{html.escape(p['speaker_role'])}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-item__label">Phát hành</span>
+          <span class="meta-item__val">{html.escape(p.get('publish_date', 'N/A'))}</span>
         </div>
         <div class="meta-item">
           <span class="meta-item__label">Thời lượng gốc</span>
