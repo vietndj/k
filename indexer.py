@@ -88,7 +88,8 @@ SPEAKERS_DB = {
     "Myron Golden": ["myron golden", "myron"],
     "Dan Martell": ["dan martell", "martell"],
     "Jasmine Star": ["jasmine star", "jasmine"],
-    "Sir Roger Penrose": ["roger penrose", "penrose"]
+    "Sir Roger Penrose": ["roger penrose", "penrose"],
+    "Vanessa Van Edwards": ["vanessa van edwards", "vanessa", "van edwards"]
 }
 
 CATEGORY_RULES = [
@@ -265,6 +266,11 @@ def infer_category(title, summary, text_sample, filename, meta_category="", spea
         return "Tâm Lý & Bản Ghi Nguyễn Việt"
     if speaker == "Nguyễn Việt":
         return "Tâm Lý & Bản Ghi Nguyễn Việt"
+    if meta_category:
+        valid_cats = ["Khoa Học Não Bộ & Tâm Trí", "Sinh Học & Tuổi Thọ", "Kinh Doanh & Đòn Bẩy", "AI, Tự Động Hóa & Tương Lai", "Triết Học & Thức Tỉnh", "Tâm Lý & Bản Ghi Nguyễn Việt"]
+        for vc in valid_cats:
+            if meta_category.strip().lower() == vc.lower():
+                return vc
     blob = f"{filename} {title} {summary} {text_sample}".lower()
     for cat_name, pattern in CATEGORY_RULES:
         if re.search(pattern, blob, flags=re.I):
