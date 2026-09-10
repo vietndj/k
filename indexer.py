@@ -23,7 +23,7 @@ SEARCH_INDEX_FILE = os.path.join(BASE_DIR, "search_index.json")
 LEGACY_DATA_FILE = os.path.join(BASE_DIR, "articles_data.json")
 
 SPEAKERS_DB = {
-    "VietMac": ["vietmac", "bản ghi nhận thức vietmac", "nhận thức vietmac", "tâm thức vietmac", "nguyễn đức việt", "nguyen duc viet", "thầy việt", "anh việt"],
+    "Nguyễn Việt": ["nguyễn việt", "nguyen viet", "nguyễn đức việt", "nguyen duc viet", "anh việt", "thầy việt", "nhận thức nguyễn việt", "bản ghi nhận thức nguyễn việt", "vietmac"],
     "Andrew Huberman": ["huberman", "andrew huberman"],
     "Mo Gawdat": ["mo gawdat", "gawdat"],
     "Dr. K (Alok Kanojia)": ["dr. k", "dr k", "alok kanojia", "healthygamer"],
@@ -92,10 +92,10 @@ SPEAKERS_DB = {
 }
 
 CATEGORY_RULES = [
-    # 0. Tâm Lý & Bản Ghi VietMac (Ưu tiên số 1 - Chiêm nghiệm, Tâm lý học & Bản ghi nhận thức của anh Việt)
+    # 0. Tâm Lý & Bản Ghi Nguyễn Việt (Ưu tiên số 1 - Chiêm nghiệm, Tâm lý học & Bản ghi nhận thức của anh Nguyễn Việt)
     (
-        "Tâm Lý & Bản Ghi VietMac",
-        r"\b(vietmac|bản ghi nhận thức|nhận thức vietmac|tâm thức vietmac|làng mai|lang mai|tản nhiệt tâm thức|thuật toán thành thật|hệ điều hành nội tâm|toàn thư tâm lý & hiệu suất|mentor nguyễn đức việt|chánh niệm - nguyễn đức việt)\b"
+        "Tâm Lý & Bản Ghi Nguyễn Việt",
+        r"\b(nguyễn việt|nguyen viet|nguyễn đức việt|bản ghi nhận thức|nhận thức nguyễn việt|làng mai|lang mai|tản nhiệt tâm thức|thuật toán thành thật|hệ điều hành nội tâm|toàn thư tâm lý & hiệu suất|mentor nguyễn đức việt|chánh niệm - nguyễn đức việt|vietmac)\b"
     ),
     # 1. AI, Tự Động Hóa & Tương Lai (dùng word boundary để không bắt nhầm các từ 'thất bại', 'tại', 'phải')
     (
@@ -244,16 +244,16 @@ def clean_title(title, filename):
     return t
 
 def detect_speaker(title, text_sample, filename, meta_author="", meta_speaker=""):
-    if meta_speaker and any(k in meta_speaker.lower() for k in ["vietmac", "nguyễn đức việt", "anh việt"]):
-        return "VietMac"
-    if meta_author and any(k in meta_author.lower() for k in ["vietmac", "nguyễn đức việt", "anh việt"]):
-        return "VietMac"
+    if meta_speaker and any(k in meta_speaker.lower() for k in ["nguyễn việt", "nguyen viet", "nguyễn đức việt", "anh việt", "vietmac"]):
+        return "Nguyễn Việt"
+    if meta_author and any(k in meta_author.lower() for k in ["nguyễn việt", "nguyen viet", "nguyễn đức việt", "anh việt", "vietmac"]):
+        return "Nguyễn Việt"
 
     blob = f"{filename} {title} {text_sample}".lower()
 
-    # Priority check for VietMac
-    if any(k in blob for k in ["bản ghi nhận thức vietmac", "nhận thức vietmac", "tâm thức vietmac", "tản nhiệt tâm thức", "thuật toán thành thật", "làng mai", "hệ điều hành nội tâm", "mentor nguyễn đức việt"]):
-        return "VietMac"
+    # Priority check for Nguyễn Việt
+    if any(k in blob for k in ["bản ghi nhận thức nguyễn việt", "nhận thức nguyễn việt", "bản ghi nhận thức vietmac", "nhận thức vietmac", "tâm thức vietmac", "tản nhiệt tâm thức", "thuật toán thành thật", "làng mai", "hệ điều hành nội tâm", "mentor nguyễn đức việt"]):
+        return "Nguyễn Việt"
 
     for spk, aliases in SPEAKERS_DB.items():
         if any(alias in blob for alias in aliases):
@@ -261,10 +261,10 @@ def detect_speaker(title, text_sample, filename, meta_author="", meta_speaker=""
     return "Chuyên Gia Đa Nguồn"
 
 def infer_category(title, summary, text_sample, filename, meta_category="", speaker=""):
-    if meta_category and ("vietmac" in meta_category.lower() or ("tâm lý" in meta_category.lower() and "bản ghi" in meta_category.lower())):
-        return "Tâm Lý & Bản Ghi VietMac"
-    if speaker == "VietMac":
-        return "Tâm Lý & Bản Ghi VietMac"
+    if meta_category and ("nguyễn việt" in meta_category.lower() or "vietmac" in meta_category.lower() or ("tâm lý" in meta_category.lower() and "bản ghi" in meta_category.lower())):
+        return "Tâm Lý & Bản Ghi Nguyễn Việt"
+    if speaker == "Nguyễn Việt":
+        return "Tâm Lý & Bản Ghi Nguyễn Việt"
     blob = f"{filename} {title} {summary} {text_sample}".lower()
     for cat_name, pattern in CATEGORY_RULES:
         if re.search(pattern, blob, flags=re.I):
@@ -321,7 +321,7 @@ def extract_tags(category, speaker, title, summary):
         "Đòn bẩy": ["đòn bẩy", "scale", "vốn"],
         "Kỷ luật": ["kỷ luật", "thói quen", "habit"],
         "Thức tỉnh": ["thức tỉnh", "bản ngã", "chánh niệm"],
-        "Bản Ghi VietMac": ["vietmac", "nhận thức", "tản nhiệt", "thành thật"],
+        "Bản Ghi Nguyễn Việt": ["nguyễn việt", "nhận thức", "tản nhiệt", "thành thật", "vietmac"],
         "Làng Mai": ["làng mai", "lang mai", "upaya", "tương duyên"],
         "Tâm thức": ["tâm thức", "hệ điều hành nội tâm", "chân thật"]
     }
@@ -330,9 +330,9 @@ def extract_tags(category, speaker, title, summary):
         if any(k in blob for k in keywords):
             tags.add(tag)
 
-    if speaker == "VietMac":
-        tags.add("VietMac")
-        tags.add("Bản Ghi VietMac")
+    if speaker == "Nguyễn Việt":
+        tags.add("Nguyễn Việt")
+        tags.add("Bản Ghi Nguyễn Việt")
 
     if not tags:
         tags.add(category.split("&")[0].strip())
