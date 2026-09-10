@@ -23,6 +23,7 @@ SEARCH_INDEX_FILE = os.path.join(BASE_DIR, "search_index.json")
 LEGACY_DATA_FILE = os.path.join(BASE_DIR, "articles_data.json")
 
 SPEAKERS_DB = {
+    "VietMac": ["vietmac", "bản ghi nhận thức vietmac", "nhận thức vietmac", "tâm thức vietmac", "nguyễn đức việt", "nguyen duc viet", "thầy việt", "anh việt"],
     "Andrew Huberman": ["huberman", "andrew huberman"],
     "Mo Gawdat": ["mo gawdat", "gawdat"],
     "Dr. K (Alok Kanojia)": ["dr. k", "dr k", "alok kanojia", "healthygamer"],
@@ -91,10 +92,15 @@ SPEAKERS_DB = {
 }
 
 CATEGORY_RULES = [
+    # 0. Tâm Lý & Bản Ghi VietMac (Ưu tiên số 1 - Chiêm nghiệm, Tâm lý học & Bản ghi nhận thức của anh Việt)
+    (
+        "Tâm Lý & Bản Ghi VietMac",
+        r"\b(vietmac|bản ghi nhận thức|nhận thức vietmac|tâm thức vietmac|làng mai|lang mai|tản nhiệt tâm thức|thuật toán thành thật|hệ điều hành nội tâm|toàn thư tâm lý & hiệu suất|mentor nguyễn đức việt|chánh niệm - nguyễn đức việt)\b"
+    ),
     # 1. AI, Tự Động Hóa & Tương Lai (dùng word boundary để không bắt nhầm các từ 'thất bại', 'tại', 'phải')
     (
         "AI, Tự Động Hóa & Tương Lai",
-        r"\b(ai|artificial intelligence|chatgpt|claude|agent|agents|computer use|deepseek|llm|agi|asi|kardashev|spacex|thuật toán|robot|siêu trí tuệ|machine learning)\b"
+        r"\b(ai|artificial intelligence|chatgpt|claude|agent|agents|computer use|deepseek|llm|agi|asi|kardashev|spacex|robot|siêu trí tuệ|machine learning)\b"
     ),
     # 2. Sinh Học & Tuổi Thọ
     (
@@ -126,6 +132,9 @@ class HTMLContentExtractor(HTMLParser):
         self.h1 = ""
         self.in_h1 = False
         self.meta_desc = ""
+        self.meta_author = ""
+        self.meta_speaker = ""
+        self.meta_category = ""
         self.paragraphs = []
         self.in_p = False
         self.cur_p = []
@@ -146,8 +155,18 @@ class HTMLContentExtractor(HTMLParser):
             self.in_title = True
         elif tag == "h1":
             self.in_h1 = True
-        elif tag == "meta" and attrs_dict.get("name", "").lower() in ["description", "fedu:summary"]:
-            self.meta_desc = attrs_dict.get("content", "")
+        elif tag == "meta":
+            m_name = attrs_dict.get("name", "").lower()
+            m_prop = attrs_dict.get("property", "").lower()
+            m_content = attrs_dict.get("content", "")
+            if m_name in ["description", "fedu:summary"] or m_prop in ["og:description"]:
+                if not self.meta_desc:
+                    self.meta_desc = m_content
+            elif m_name in ["author", "speaker"]:
+                self.meta_author = m_content
+                self.meta_speaker = m_content
+            elif m_name == "category":
+                self.meta_category = m_content
         elif tag in ["p", "div"] and ("cb-text" in attrs_dict.get("class", "") or tag == "p"):
             self.in_p = True
             self.cur_p = []
@@ -216,20 +235,36 @@ def clean_title(title, filename):
     t = re.sub(r"\s*\|\s*Bố Cục FEDU.*$", "", t, flags=re.I)
     t = re.sub(r"\s*\|\s*FEDU.*$", "", t, flags=re.I)
     t = re.sub(r"\s*\|\s*fedu\.vn.*$", "", t, flags=re.I)
+    t = re.sub(r"\s*\|\s*BẢN GHI NHẬN THỨC.*$", "", t, flags=re.I)
+    t = re.sub(r"\s*\|\s*HỆ ĐIỀU HÀNH NỘI TÂM.*$", "", t, flags=re.I)
     t = t.strip(" -•–")
     if not t or len(t) < 4:
         clean_fn = filename.replace("-podcast", "").replace("-science", "").replace("-long-form", "").replace(".html", "")
         t = " ".join(w.capitalize() for w in clean_fn.split("-"))
     return t
 
-def detect_speaker(title, text_sample, filename):
+def detect_speaker(title, text_sample, filename, meta_author="", meta_speaker=""):
+    if meta_speaker and any(k in meta_speaker.lower() for k in ["vietmac", "nguyễn đức việt", "anh việt"]):
+        return "VietMac"
+    if meta_author and any(k in meta_author.lower() for k in ["vietmac", "nguyễn đức việt", "anh việt"]):
+        return "VietMac"
+
     blob = f"{filename} {title} {text_sample}".lower()
+
+    # Priority check for VietMac
+    if any(k in blob for k in ["bản ghi nhận thức vietmac", "nhận thức vietmac", "tâm thức vietmac", "tản nhiệt tâm thức", "thuật toán thành thật", "làng mai", "hệ điều hành nội tâm", "mentor nguyễn đức việt"]):
+        return "VietMac"
+
     for spk, aliases in SPEAKERS_DB.items():
         if any(alias in blob for alias in aliases):
             return spk
     return "Chuyên Gia Đa Nguồn"
 
-def infer_category(title, summary, text_sample, filename):
+def infer_category(title, summary, text_sample, filename, meta_category="", speaker=""):
+    if meta_category and ("vietmac" in meta_category.lower() or ("tâm lý" in meta_category.lower() and "bản ghi" in meta_category.lower())):
+        return "Tâm Lý & Bản Ghi VietMac"
+    if speaker == "VietMac":
+        return "Tâm Lý & Bản Ghi VietMac"
     blob = f"{filename} {title} {summary} {text_sample}".lower()
     for cat_name, pattern in CATEGORY_RULES:
         if re.search(pattern, blob, flags=re.I):
@@ -285,12 +320,19 @@ def extract_tags(category, speaker, title, summary):
         "LLM & Prompt": ["claude", "chatgpt", "prompt", "llm"],
         "Đòn bẩy": ["đòn bẩy", "scale", "vốn"],
         "Kỷ luật": ["kỷ luật", "thói quen", "habit"],
-        "Thức tỉnh": ["thức tỉnh", "bản ngã", "chánh niệm"]
+        "Thức tỉnh": ["thức tỉnh", "bản ngã", "chánh niệm"],
+        "Bản Ghi VietMac": ["vietmac", "nhận thức", "tản nhiệt", "thành thật"],
+        "Làng Mai": ["làng mai", "lang mai", "upaya", "tương duyên"],
+        "Tâm thức": ["tâm thức", "hệ điều hành nội tâm", "chân thật"]
     }
 
     for tag, keywords in tag_mappings.items():
         if any(k in blob for k in keywords):
             tags.add(tag)
+
+    if speaker == "VietMac":
+        tags.add("VietMac")
+        tags.add("Bản Ghi VietMac")
 
     if not tags:
         tags.add(category.split("&")[0].strip())
@@ -365,9 +407,9 @@ def main():
             title = clean_title(parser.title or parser.h1 or "", fname)
             sample_text = " ".join(parser.paragraphs[:4]) + " " + " ".join(parser.insights)
             
-            speaker = detect_speaker(title, sample_text, fname)
+            speaker = detect_speaker(title, sample_text, fname, parser.meta_author, parser.meta_speaker)
             summary = extract_smart_summary(parser.meta_desc, parser.quotes, parser.paragraphs, title)
-            category = infer_category(title, summary, sample_text, fname)
+            category = infer_category(title, summary, sample_text, fname, parser.meta_category, speaker)
             tags = extract_tags(category, speaker, title, summary)
             theme_ver = get_theme_version(content)
 
