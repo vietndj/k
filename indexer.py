@@ -89,7 +89,8 @@ SPEAKERS_DB = {
     "Dan Martell": ["dan martell", "martell"],
     "Jasmine Star": ["jasmine star", "jasmine"],
     "Sir Roger Penrose": ["roger penrose", "penrose"],
-    "Vanessa Van Edwards": ["vanessa van edwards", "vanessa", "van edwards"]
+    "Vanessa Van Edwards": ["vanessa van edwards", "vanessa", "van edwards"],
+    "Lauren Tan": ["lauren tan", "laurentan", "grokbot", "pstack", "dune"]
 }
 
 CATEGORY_RULES = [
