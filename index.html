@@ -31,8 +31,9 @@
                     },
                     fontFamily: {
                         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-                        serif: ['Lora', 'Newsreader', 'Georgia', 'serif'],
-                        display: ['Newsreader', 'Lora', 'Georgia', 'serif']
+                        serif: ['Tiempos Text', 'Newsreader', 'Georgia', 'serif'],
+                        display: ['FD Aeonik Extended', 'Newsreader', 'Lora', 'Georgia', 'serif']
+                        display: ['FD Aeonik Extended', 'Newsreader', 'Lora', 'Georgia', 'serif']
                     }
                 }
             }
@@ -688,7 +689,7 @@
             emptyState.classList.add('hidden');
 
             if (currentView === 'feed') {
-                container.className = 'flex flex-col';
+                container.className = 'flex flex-col border-t border-gray-200 mt-2';
                 container.innerHTML = postsToDisplay.map(post => createMediumFeedCard(post)).join('');
             } else {
                 container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8';
@@ -707,45 +708,25 @@
         // Template: Medium Style Story Card
         function createMediumFeedCard(post) {
             const postUrl = `./${encodeURIComponent(post.filename)}`;
-            const catInfo = CATEGORY_MAP[post.category_key] || CATEGORY_MAP['other'];
             const dateStr = formatDateVN(post.updated_at);
 
             return `
-                <article class="py-8 first:pt-0 border-b border-gray-100 group">
-                    <a href="${postUrl}" target="_blank" class="flex justify-between items-center gap-6">
+                <article class="group py-3.5 border-b border-gray-200 hover:bg-gray-50/50 transition-colors px-2 sm:px-4 rounded-lg -mx-2 sm:-mx-4">
+                    <a href="${postUrl}" target="_blank" class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
                         
-                        <!-- Left Content Column -->
-                        <div class="flex-1 flex flex-col justify-center space-y-2">
-                            
-                            <!-- Author & Meta -->
-                            <div class="flex items-center gap-2 text-[13px] text-gray-500 mb-1">
-                                <span class="font-semibold text-gray-900">VIDEO</span>
-                                <span>·</span>
-                                <span>${dateStr}</span>
-                            </div>
-
-                            <!-- Title -->
-                            <h2 class="text-xl sm:text-[22px] font-bold font-display text-gray-900 leading-tight group-hover:text-emerald-700 transition-colors">
+                        <!-- Main Title -->
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-base sm:text-lg font-serif font-medium text-gray-900 group-hover:text-emerald-700 truncate tracking-tight transition-colors">
                                 ${post.title}
                             </h2>
-
-                            <!-- Excerpt -->
-                            <p class="text-[15px] text-gray-600 font-sans line-clamp-2 leading-relaxed mt-1">
-                                ${post.excerpt}
-                            </p>
-
-                            <!-- Bottom Meta & Tags -->
-                            <div class="pt-3 flex items-center gap-3 text-[13px] text-gray-500">
-                                <span class="inline-block px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200">
-                                    ${post.category_label}
-                                </span>
-                                <span>${post.read_time}</span>
-                            </div>
                         </div>
 
-                        <!-- Right Image Thumbnail -->
-                        <div class="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] shrink-0 bg-gray-100 overflow-hidden rounded-md border border-gray-100">
-                            <img src="${post.cover_image}" alt="${post.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <!-- Meta Info (Right aligned on desktop, inline on mobile) -->
+                        <div class="flex items-center gap-3 shrink-0 text-[12px] text-gray-500 font-sans">
+                            <span class="inline-block px-2 py-0.5 rounded bg-gray-100 text-gray-600 font-medium">
+                                ${post.category_label.replace(/[^a-zA-ZÀ-ỹ ]/g, '').trim()}
+                            </span>
+                            <span class="font-mono text-gray-400 hidden md:inline-block w-20 text-right">${dateStr}</span>
                         </div>
 
                     </a>
