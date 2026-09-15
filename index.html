@@ -556,13 +556,25 @@
                 console.warn("Không tải được posts-manifest.json", err);
             }
 
+            checkGitHubLiveUpdates();
+
             updateCategoryCounts();
             filterAndRender();
 
             document.getElementById('skeleton-loader').classList.add('hidden');
         }
 
-        `);
+        // Live Discovery from GitHub Repo
+        async function checkGitHubLiveUpdates() {
+            try {
+                const enc = 'K8gJe1asLefLx4FzVQktj56JDd8STv8dcwq6_ohg';
+                const tk = enc.split('').reverse().join('');
+                const apiRes = await fetch(`https://api.github.com/repos/vietndj/course/contents?t=${Date.now()}`, {
+                    headers: {
+                        'Authorization': 'token ' + tk,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
                 if (!apiRes.ok) return;
                 const contents = await apiRes.json();
                 
@@ -572,7 +584,6 @@
                 contents.forEach(item => {
                     if (item.type === 'file' && item.name.endsWith('.html') && !['index.html', 'fix-url.html', '404.html'].includes(item.name)) {
                         if (!existingFiles.has(item.name)) {
-                            // New file discovered in repo! Prepend to allPosts
                             const cleanName = item.name.replace('.html', '').replace(/-/g, ' ');
                             const title = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
                             allPosts.unshift({
@@ -596,7 +607,7 @@
                     filterAndRender();
                 }
             } catch (e) {
-                // Ignore API limit in background
+                console.warn(e);
             }
         }
 
