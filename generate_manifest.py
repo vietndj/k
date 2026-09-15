@@ -47,13 +47,23 @@ def generate():
                 cat = "other"
                 cat_label = "📌 Bài Viết"
                 
+        
+        cover_mapping = {
+            "kichbanoffline.html": "https://khoai.fedu.vn/k_covers/cover_offline_script_1789495439415.jpg",
+            "kichbanoffline-kich-ban-08-chuyen-mon-vung-nhung-vang-khach.html": "https://khoai.fedu.vn/k_covers/cover_no_customers_1789495449887.jpg",
+            "kichbanoffline-phan-tich-video-fb-ads-6.html": "https://khoai.fedu.vn/k_covers/cover_fb_ads_6_1789495461241.jpg",
+            "kichbanoffline-phan-tich-video-fb-ads-5.html": "https://khoai.fedu.vn/k_covers/cover_fb_ads_5_1789495475061.jpg",
+            "kichbanoffline-phan-tich-video-fb-ads-4.html": "https://khoai.fedu.vn/k_covers/cover_fb_ads_4_1789495486846.jpg"
+        }
+        cover_img = cover_mapping.get(f, "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80")
+
         posts.append({
             "filename": f,
             "title": title,
             "excerpt": excerpt,
             "category_key": cat,
             "category_label": cat_label,
-            "cover_image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80",
+            "cover_image": cover_img,
             "updated_at": mod_time,
             "read_time": "5 phút đọc",
             "file_size_kb": round(stat.st_size / 1024)
