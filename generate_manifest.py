@@ -53,7 +53,13 @@ def generate():
             "kichbanoffline-kich-ban-08-chuyen-mon-vung-nhung-vang-khach.html": "https://khoai.fedu.vn/k_covers/cover_no_customers_1789495449887.jpg",
             "kichbanoffline-phan-tich-video-fb-ads-6.html": "https://khoai.fedu.vn/k_covers/cover_fb_ads_6_1789495461241.jpg",
             "kichbanoffline-phan-tich-video-fb-ads-5.html": "https://khoai.fedu.vn/k_covers/cover_fb_ads_5_1789495475061.jpg",
-            "kichbanoffline-phan-tich-video-fb-ads-4.html": "https://khoai.fedu.vn/k_covers/cover_fb_ads_4_1789495486846.jpg"
+            "kichbanoffline-phan-tich-video-fb-ads-4.html": "https://khoai.fedu.vn/k_covers/cover_fb_ads_4_1789495486846.jpg",
+            "an-toan-ai-02-podcast.html": "https://khoai.fedu.vn/k_covers/cover_sieu_tri_tue_1789496176228.jpg",
+            "hau-qua-cua-nhin-linh-tinh-science.html": "https://khoai.fedu.vn/k_covers/cover_khoa_hoc_than_kinh_1789496194402.jpg",
+            "complex-5-anxiety-is-not-what-you-think.html": "https://khoai.fedu.vn/k_covers/cover_phuong_trinh_lo_au_1789496224482.jpg",
+            "suyash-saraf-d2c-branding-gen-z-marketing-podcast.html": "https://khoai.fedu.vn/k_covers/cover_branding_trieu_do_1789496241900.jpg",
+            "law-5-stress-is-not-what-happens-to-you.html": "https://khoai.fedu.vn/k_covers/cover_quy_tac_90_giay_1789496255411.jpg",
+
         }
         cover_img = cover_mapping.get(f, "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80")
 
