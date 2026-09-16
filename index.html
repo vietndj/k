@@ -243,7 +243,7 @@
     <div id="app-view" style="display: none;" class="min-h-screen flex flex-col md:flex-row flex-grow bg-white">
         
         <!-- LEFT SIDEBAR -->
-        <aside class="hidden md:flex flex-col w-16 lg:w-64 border-r border-gray-100 bg-white sticky top-0 h-screen py-6 px-2 lg:px-4">
+        <aside id="left-sidebar" class="hidden md:flex flex-col w-16 lg:w-64 border-r border-gray-100 bg-white sticky top-0 h-screen py-6 px-2 lg:px-4 transition-all duration-300">
             <a href="https://go.fedu.vn" class="flex items-center gap-3 mb-8 px-2 lg:px-4 group">
                 <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-serif font-black text-xl shadow-sm group-hover:bg-emerald-600 transition-colors shrink-0">
                     F
@@ -319,7 +319,7 @@
         </aside>
 
         <!-- CENTER FEED -->
-        <main class="flex-grow flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-8 w-full xl:border-r xl:border-gray-100">
+        <main id="main-content" class="flex-grow flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-8 w-full xl:border-r xl:border-gray-100 transition-all duration-300">
             
             <!-- Mobile Header (Visible only on mobile) -->
             <header class="md:hidden flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
@@ -349,6 +349,9 @@
                 <div class="flex items-center bg-gray-100 p-1 rounded-full border border-gray-200 text-xs font-medium">
                     <button id="view-feed-btn" title="Dạng Substack" class="px-3 py-1.5 rounded-full transition bg-white text-black shadow-sm font-medium">
                         Feed
+                    </button>
+                    <button id="view-fluid-btn" title="Dạng tràn viền" class="px-3 py-1.5 rounded-full transition text-gray-500 hover:text-black font-medium">
+                        All
                     </button>
                     <button id="view-grid-btn" title="Dạng lưới thẻ hình ảnh" class="px-3 py-1.5 rounded-full transition text-gray-500 hover:text-black font-medium">
                         Grid
@@ -400,7 +403,7 @@
         </main>
 
         <!-- RIGHT SIDEBAR -->
-        <aside class="hidden xl:block w-80 py-8 px-6 sticky top-0 h-screen overflow-y-auto no-scrollbar bg-gray-50/30">
+        <aside id="right-sidebar" class="hidden xl:block w-80 py-8 px-6 sticky top-0 h-screen overflow-y-auto no-scrollbar bg-gray-50/30 transition-all duration-300">
             
             <!-- Search Widget -->
             <div class="mb-8">
@@ -724,6 +727,9 @@
             if (currentView === 'feed') {
                 container.className = 'flex flex-col border-t border-gray-200 mt-2';
                 container.innerHTML = postsToDisplay.map(post => createMediumFeedCard(post)).join('');
+            } else if (currentView === 'fluid') {
+                container.className = 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 gap-4 space-y-4';
+                container.innerHTML = postsToDisplay.map(post => createVisualGridCard(post)).join('');
             } else {
                 container.className = 'grid grid-cols-2 gap-3 sm:gap-6';
                 container.innerHTML = postsToDisplay.map(post => createVisualGridCard(post)).join('');
@@ -806,7 +812,7 @@
             const dateStr = formatDateVN(post.updated_at);
 
             return `
-                <article class="story-card group flex flex-col bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
+                <article class="story-card break-inside-avoid w-full mb-4 group flex flex-col bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
                     <a href="${postUrl}" target="_blank" class="flex flex-col h-full">
                         
                         <!-- Top Image -->
@@ -957,20 +963,34 @@
             // Layout Switcher
             const feedBtn = document.getElementById('view-feed-btn');
             const gridBtn = document.getElementById('view-grid-btn');
+            const fluidBtn = document.getElementById('view-fluid-btn');
+            const leftSidebar = document.getElementById('left-sidebar');
+            const rightSidebar = document.getElementById('right-sidebar');
+            const mainContent = document.getElementById('main-content');
 
-            feedBtn.addEventListener('click', () => {
-                currentView = 'feed';
-                feedBtn.className = 'px-2.5 py-1.5 rounded-full transition bg-white text-black shadow-sm flex items-center gap-1.5 font-medium';
-                gridBtn.className = 'px-2.5 py-1.5 rounded-full transition text-gray-500 hover:text-black flex items-center gap-1.5 font-medium';
+            function updateLayoutStyles() {
+                const activeCls = 'px-3 py-1.5 rounded-full transition bg-white text-black shadow-sm font-medium';
+                const inactiveCls = 'px-3 py-1.5 rounded-full transition text-gray-500 hover:text-black font-medium';
+                
+                feedBtn.className = currentView === 'feed' ? activeCls : inactiveCls;
+                gridBtn.className = currentView === 'grid' ? activeCls : inactiveCls;
+                fluidBtn.className = currentView === 'fluid' ? activeCls : inactiveCls;
+                
+                if (currentView === 'fluid') {
+                    leftSidebar.style.display = 'none';
+                    rightSidebar.style.display = 'none';
+                    mainContent.classList.remove('max-w-2xl');
+                } else {
+                    leftSidebar.style.display = '';
+                    rightSidebar.style.display = '';
+                    mainContent.classList.add('max-w-2xl');
+                }
                 renderPosts();
-            });
+            }
 
-            gridBtn.addEventListener('click', () => {
-                currentView = 'grid';
-                gridBtn.className = 'px-2.5 py-1.5 rounded-full transition bg-white text-black shadow-sm flex items-center gap-1.5 font-medium';
-                feedBtn.className = 'px-2.5 py-1.5 rounded-full transition text-gray-500 hover:text-black flex items-center gap-1.5 font-medium';
-                renderPosts();
-            });
+            feedBtn.addEventListener('click', () => { currentView = 'feed'; updateLayoutStyles(); });
+            gridBtn.addEventListener('click', () => { currentView = 'grid'; updateLayoutStyles(); });
+            fluidBtn.addEventListener('click', () => { currentView = 'fluid'; updateLayoutStyles(); });
 
             // Load More Button
             document.getElementById('load-more-btn').addEventListener('click', () => {
