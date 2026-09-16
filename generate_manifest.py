@@ -88,6 +88,9 @@ def generate():
         "su-thuc-tinh-ky-nguyen-ai-mentor-insight-podcast.html": "https://khoai.fedu.vn/k_covers/poster_cast_away_1789520547871.jpg",
         "ganh-nang-cua-su-dang-do-science.html": "https://khoai.fedu.vn/k_covers/poster_drive_1789520559001.jpg",
         "hanh-trinh-thuc-tinh-nhe-nhang-podcast.html": "https://khoai.fedu.vn/k_covers/poster_catch_me_if_you_can_1789520567656.jpg",
+
+        # 30 Movie Poster AI Covers
+        "dung-cho-doi-dong-luc-vi-no-la-mot-loi-noi-doi-su-thay-doi-thuc-su-chi-bat-dau-khi-ban-ep-ban-than-hanh-dong-truoc-khi-cam-xuc-kip-len.html": "https://khoai.fedu.vn/k_covers/poster_jurassic_park_1789521024715.jpg",
     }
 
     for f in files:
