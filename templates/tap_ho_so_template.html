@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} • Tập Hồ Sơ</title>
+    <!-- Gắn file CSS chuẩn (Single Source of Truth) -->
+    <link rel="stylesheet" href="./css/tap_ho_so.css">
+</head>
+<body>
+    <!-- BẢO MẬT PIN 0070 -->
+    <div id="gatekeeper">
+        <div class="gk-title">NHẬP MÃ PIN ĐỂ TRUY CẬP</div>
+        <input type="password" id="pin-input" class="gk-input" maxlength="4" placeholder="••••" autofocus>
+        <div id="gk-error" style="color: red; margin-top: 10px; opacity: 0; font-size: 14px;">Mã PIN không đúng</div>
+    </div>
+
+    <!-- DUAL-TRACK LAYOUT -->
+    <div class="layout-wrapper" id="main-layout">
+        <!-- CỘT 1: STICKY SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-title">MỤC LỤC TẬP HỒ SƠ</div>
+            <ul class="toc-list" id="toc">
+                {toc_html}
+            </ul>
+        </aside>
+        
+        <!-- CỘT 2: ĐỌC CHUYÊN SÂU -->
+        <main class="canvas">
+            <h1 class="title-hero">{title}</h1>
+            {content_html}
+        </main>
+    </div>
+
+    <!-- HỆ THỐNG LOGIC LÕI -->
+    <script>
+        // 1. Gatekeeper Logic (Bảo mật 0070)
+        const input = document.getElementById('pin-input');
+        const gatekeeper = document.getElementById('gatekeeper');
+        const layout = document.getElementById('main-layout');
+        const errorMsg = document.getElementById('gk-error');
+        
+        if (localStorage.getItem('fedu_vault_auth_v1') === 'ok') {
+            gatekeeper.style.display = 'none';
+            layout.classList.add('auth-ok');
+        }
+
+        input.addEventListener('input', (e) => {
+            if (e.target.value === '0070') {
+                localStorage.setItem('fedu_vault_auth_v1', 'ok');
+                gatekeeper.style.opacity = '0';
+                setTimeout(() => {
+                    gatekeeper.style.display = 'none';
+                    layout.classList.add('auth-ok');
+                }, 300);
+            } else if (e.target.value.length === 4) {
+                errorMsg.style.opacity = '1';
+                setTimeout(() => { errorMsg.style.opacity = '0'; e.target.value = ''; }, 1000);
+            }
+        });
+
+        // 2. Scrollspy Logic (Bắt dính mục lục khi cuộn)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.toc-list a').forEach(a => a.classList.remove('active'));
+                    const activeLink = document.querySelector(`.toc-list a[href="#${entry.target.id}"]`);
+                    if (activeLink) activeLink.classList.add('active');
+                }
+            });
+        }, { rootMargin: "-20% 0px -70% 0px" });
+
+        document.querySelectorAll('h2, h3').forEach(section => observer.observe(section));
+    </script>
+</body>
+</html>
