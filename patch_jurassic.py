@@ -1,0 +1,7 @@
+import json
+
+mapping = {
+    "dung-cho-doi-dong-luc-vi-no-la-mot-loi-noi-doi-su-thay-doi-thuc-su-chi-bat-dau-khi-ban-ep-ban-than-hanh-dong-truoc-khi-cam-xuc-kip-len.html": "https://khoai.fedu.vn/k_covers/poster_jurassic_park_1789521024715.jpg"
+}
+with open("temp_jp.json", "w") as f:
+    json.dump(mapping, f)
