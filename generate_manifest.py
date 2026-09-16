@@ -301,6 +301,9 @@ def generate():
         "kichbanoffline-phau-thuat-kich-ban-6.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_castle_in_the_sky.jpg",
         "vi-sao-nguoi-khac-khong-thich-ban-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_nausicaa_valley.jpg",
         "shubhanshu-shukla-astronaut-space-zero-gravity-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_neon_genesis_evangelion.jpg",
+
+        # 30 Movie Poster AI Covers
+        "bill-ackman-kich-ban-dau-tu.html": "./assets/covers/poster_256_mad_men.jpg",
     }
 
     for f in files:
