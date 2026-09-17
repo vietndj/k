@@ -348,6 +348,19 @@ def generate():
         "ngon-ngu-co-the-khong-phai-vo-boc-no-la-ban-gioi-thieu-cua-tam-tri-science-long-form.html": "./assets/covers/poster_291_1789613131027.jpg",
         "tamlyhoc.html": "./assets/covers/poster_282_1789613041805.jpg",
         "the-new-way-to-make-money-online-podcast.html": "./assets/covers/poster_288_1789613094818.jpg",
+
+        # 30 Movie Poster AI Covers
+        "giac-ngu-ngan-20-phut-science.html": "./assets/covers/poster_298_1789613337071.jpg",
+        "ky-nguyen-ai-va-bien-dong-tot-do-science.html": "./assets/covers/poster_295_1789613299042.jpg",
+        "10-thien-kien-tien-hoa-science.html": "./assets/covers/poster_296_1789613313929.jpg",
+        "gioi-han-cua-y-chi-nguoi-quan-tuong-02-spiritual-sto.html": "./assets/covers/poster_300_1789613362843.jpg",
+        "family-time-entrepreneur-wake-up-call-podcast.html": "./assets/covers/poster_289_1789613108788.jpg",
+        "truc-giac-la-he-thong-phong-thu-sinh-ton-toi-thuong-vuot-troi-hon-logic-science.html": "./assets/covers/poster_293_1789613273938.jpg",
+        "sovereignty-vitality-masterclass-podcast.html": "./assets/covers/poster_297_1789613323067.jpg",
+        "law-8-were-massively-underestimating-ai.html": "./assets/covers/poster_290_1789613262649.jpg",
+        "ai-co-y-thuc-stuart_russell-science.html": "./assets/covers/poster_294_1789613286524.jpg",
+        "giai-ma-tien-loi-chet-nguoi-learning-landing-page-podcast.html": "./assets/covers/poster_278_1789613248069.jpg",
+        "de-che-tam-tri-cua-simon-cowell-science.html": "./assets/covers/poster_299_1789613349759.jpg",
     }
 
     for f in files:
