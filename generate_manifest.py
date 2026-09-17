@@ -304,6 +304,13 @@ def generate():
 
         # 30 Movie Poster AI Covers
         "bill-ackman-kich-ban-dau-tu.html": "./assets/covers/poster_256_mad_men.jpg",
+
+        # 30 Movie Poster AI Covers
+        "youtube-masterclass-highest-paid-strategist.html": "./assets/covers/poster_257_my_hero_academia.jpg",
+        "boc-tran-cu-lua-diet-vong.html": "./assets/covers/poster_258_ice_age.jpg",
+        "banner.html": "./assets/covers/poster_259_thien_menh_anh_hung.jpg",
+        "banner-phan-tich-2-mau-poster-tatler-va-ket-qua-hinh-anh.html": "./assets/covers/poster_260_halt_and_catch_fire.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-5.html": "./assets/covers/poster_261_made_in_abyss.jpg",
     }
 
     for f in files:
