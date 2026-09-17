@@ -578,6 +578,11 @@ def generate():
         "simon-sinek-trust-crisis-gen-z-burnout-leadership-podcast.html": "assets/covers/poster_35.jpg",
         "de-che-mrbeast-podcast.html": "assets/covers/poster_36.jpg",
         "kiran-mazumdar-shaw-biotech-founder-india-podcast.html": "assets/covers/poster_37.jpg",
+        "how-to-charge-more-for-knowledge-value-pricing-podcast.html": "assets/covers/poster_38.jpg",
+        "so-tay-rucking-thuc-chien-science-long-form.html": "assets/covers/poster_39.jpg",
+        "ban-khong-chon-ban-doi-chi-de-chup-nhung-tam-anh-dep-vao-ngay-cuoi-podcast.html": "assets/covers/poster_40.jpg",
+        "y-hoc-30-chu-dong-can-thiep-tu-som-coi-tap-luyen-la-loai-thuoc-manh-nhat-va-muc-tieu-la-keo-dai-tuoi-tho-khoe-manh-healthspan-thay-vi-chi.html": "assets/covers/poster_41.jpg",
+        "sinh-vat-sinh-hoc-bi-chi-phoi-manh-me-boi-khao-khat-sinh-ton-va-duy-tri-noi-giong-khoa-hoc-khong-dung-de-bien-minh-cho-toi-loi-ma-de-cap-cho-ta-tam-ban-do-dieu-huong-nhung-phan-con-ben-trong-minh-podcast-science.html": "assets/covers/poster_42.jpg",
     }
 
     for f in files:
