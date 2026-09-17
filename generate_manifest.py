@@ -402,6 +402,11 @@ def generate():
         "tu-bo-y-chi-bat-dau-tu-dong-hoa-khoi-tai-san-podcast.html": "assets/covers/tu-bo-y-chi-bat-dau-tu-dong-hoa-khoi-tai-san-podcast.jpg",
         "so-tay-tu-duy-kien-tao-suc-manh-dich-thuc-podcast.html": "assets/covers/so-tay-tu-duy-kien-tao-suc-manh-dich-thuc-podcast.jpg",
         "su-that-ve-ung-thu-nang-luong-te-bao-science.html": "assets/covers/su-that-ve-ung-thu-nang-luong-te-bao-science.jpg",
+        "su-that-ve-thuc-tai-la-kinh-vr-science-long-form.html": "assets/covers/su-that-ve-thuc-tai-la-kinh-vr-science-long-form.jpg",
+        "podcast-deepthink-05-science-podcast.html": "assets/covers/podcast-deepthink-05-science-podcast.jpg",
+        "truc-giac-chinh-la-thu-du-lieu-toc-do-cao-ma-ly-tri-chua-kip-giai-ma-podcast.html": "assets/covers/truc-giac-chinh-la-thu-du-lieu-toc-do-cao-ma-ly-tri-chua-kip-giai-ma-podcast.jpg",
+        "danh-thuc-tam-thuc-kien-tao-podcast.html": "assets/covers/danh-thuc-tam-thuc-kien-tao-podcast.jpg",
+        "lat-do-dinh-menh-khai-mo-tam-tri-podcast.html": "assets/covers/lat-do-dinh-menh-khai-mo-tam-tri-podcast.jpg",
     }
 
     for f in files:
