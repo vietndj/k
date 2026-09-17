@@ -385,6 +385,11 @@ def generate():
         "ban-chat-cua-cam-nhan-thien-nhien-01.html": "assets/covers/ban-chat-cua-cam-nhan-thien-nhien-01.jpg",
         "kichbanoffline-03-vuong-quy-trinh-solo.html": "assets/covers/kichbanoffline-03-vuong-quy-trinh-solo.jpg",
         "danh-thuc-le-song-bang-dharma-tim-su-can-bang-giua-niem-vui-noi-tai-va-su-menh-phung-su-the-gioi-danh-cho-nhung-ai-dang-tran-tro-ve-dinh.html": "assets/covers/danh-thuc-le-song-bang-dharma-tim-su-can-bang-giua-niem-vui-noi-tai-va-su-menh-phung-su-the-gioi-danh-cho-nhung-ai-dang-tran-tro-ve-dinh.jpg",
+        "tai-sao-chi-2-moi-nguoi-thuc-su-but-pha-science-long-form.html": "assets/covers/tai-sao-chi-2-moi-nguoi-thuc-su-but-pha-science-long-form.jpg",
+        "dan-ong-tre-dang-mat-di-moi-truong-ren-luyen-su-ben-bi-tron-tranh-that-bai-bang-cac-lieu-dopamine-re-tien-porn-mxh-game-de-sinh-ton-nam-gioi-phai-dinh-nghia-lai-su-nam-tinh-podcast.html": "assets/covers/dan-ong-tre-dang-mat-di-moi-truong-ren-luyen-su-ben-bi-tron-tranh-that-bai-bang-cac-lieu-dopamine-re-tien-porn-mxh-game-de-sinh-ton-nam-gioi-phai-dinh-nghia-lai-su-nam-tinh-podcast.jpg",
+        "1m-dollar-content-strategy-any-business-podcast.html": "assets/covers/1m-dollar-content-strategy-any-business-podcast.jpg",
+        "met-moi-di-chuyen-xa-science.html": "assets/covers/met-moi-di-chuyen-xa-science.jpg",
+        "hinh-thanh-myelin-the-nao-science.html": "assets/covers/hinh-thanh-myelin-the-nao-science.jpg",
     }
 
     for f in files:
