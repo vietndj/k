@@ -390,6 +390,10 @@ def generate():
         "1m-dollar-content-strategy-any-business-podcast.html": "assets/covers/1m-dollar-content-strategy-any-business-podcast.jpg",
         "met-moi-di-chuyen-xa-science.html": "assets/covers/met-moi-di-chuyen-xa-science.jpg",
         "hinh-thanh-myelin-the-nao-science.html": "assets/covers/hinh-thanh-myelin-the-nao-science.jpg",
+        "dung-de-chiec-ghe-an-mon-tri-tue-cua-ban-science-long-form.html": "assets/covers/dung-de-chiec-ghe-an-mon-tri-tue-cua-ban-science-long-form.jpg",
+        "ky-nguyen-ai-tinh-nguoi-science.html": "assets/covers/ky-nguyen-ai-tinh-nguoi-science.jpg",
+        "dung-hy-sinh-su-can-bang-de-doi-lay-thanh-cong-podcast-science.html": "assets/covers/dung-hy-sinh-su-can-bang-de-doi-lay-thanh-cong-podcast-science.jpg",
+        "system-architecture-the-4-types-of-stress.html": "assets/covers/system-architecture-the-4-types-of-stress.jpg",
     }
 
     for f in files:
