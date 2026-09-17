@@ -409,6 +409,8 @@ def generate():
         "lat-do-dinh-menh-khai-mo-tam-tri-podcast.html": "assets/covers/lat-do-dinh-menh-khai-mo-tam-tri-podcast.jpg",
         "dr-bhaskar-rao-hospital-economics-healthcare-truth-podcast.html": "assets/covers/dr-bhaskar-rao-hospital-economics-healthcare-truth-podcast.jpg",
         "viec-hoc-bay-thuc-an-nhanh-tri-thuc-science.html": "assets/covers/viec-hoc-bay-thuc-an-nhanh-tri-thuc-science.jpg",
+        "su-tai-sinh-cua-mot-huyen-thoai-busta-rhymes-science-long-form.html": "assets/covers/su-tai-sinh-cua-mot-huyen-thoai-busta-rhymes-science-long-form.jpg",
+        "stop-being-overlooked-become-famous-any-industry-podcast.html": "assets/covers/stop-being-overlooked-become-famous-any-industry-podcast.jpg",
     }
 
     for f in files:
