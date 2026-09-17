@@ -1,30 +1,38 @@
 import json
+import re
+import os
+import datetime
 
-manifest_file = "generate_manifest.py"
-mapping_file = "new_30_covers.json"
+cutoff = datetime.datetime.strptime("2026-09-17 14:00:00", "%Y-%m-%d %H:%M:%S").timestamp()
 
-with open(mapping_file, 'r', encoding='utf-8') as f:
-    new_covers = json.load(f)
+with open("generate_manifest.py", "r") as f: content = f.read()
+mapping_block = re.search(r'cover_mapping\s*=\s*\{([\s\S]*?)\}', content)
+mapping_text = mapping_block.group(1)
+pattern = re.compile(r'"([^"]+\.html)"\s*:\s*"([^"]+)"')
+current_covers = dict(pattern.findall(mapping_text))
 
-with open(manifest_file, 'r', encoding='utf-8') as f:
-    lines = f.readlines()
+faulty_count = 0
+good_count = 0
 
-end_idx = -1
-for i, line in enumerate(lines):
-    if line.strip() == "}":
-        end_idx = i
-        break
+for html, url in list(current_covers.items()):
+    if url.startswith("./assets/covers/") or url.startswith("assets/covers/"):
+        local_path = url.replace("./", "")
+        if os.path.exists(local_path):
+            mtime = os.path.getmtime(local_path)
+            if mtime < cutoff:
+                del current_covers[html]
+                faulty_count += 1
+            else:
+                good_count += 1
+        else:
+            # path does not exist
+            pass
 
-if end_idx != -1:
-    # Add comma to the line before if missing
-    if not lines[end_idx-1].strip().endswith(","):
-        lines[end_idx-1] = lines[end_idx-1].rstrip('\n') + ",\n"
+print(f"Removed {faulty_count} faulty mappings.")
+print(f"Kept {good_count} good mappings.")
 
-    additions = []
-    for html_file, r2_url in new_covers.items():
-        additions.append(f'        "{html_file}": "{r2_url}",\n')
-    
-    new_lines = lines[:end_idx] + additions + lines[end_idx:]
-    with open(manifest_file, 'w', encoding='utf-8') as f:
-        f.writelines(new_lines)
-
+new_mapping_text = ",\n".join([f'        "{k}": "{v}"' for k, v in current_covers.items()])
+new_mapping_text += ",\n"
+new_content = content[:mapping_block.start(1)] + "\n" + new_mapping_text + "    " + content[mapping_block.end(1):]
+with open("generate_manifest.py", "w") as f:
+    f.write(new_content)
