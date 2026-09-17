@@ -339,6 +339,15 @@ def generate():
         "blueprint-xay-kenh-jun-yuh-2026-podcast.html": "./assets/covers/poster_277_1789612731209.jpg",
         "lap-trinh-bo-nao-02-science.html": "./assets/covers/poster_279_1789612783772.jpg",
         "gat-bo-noi-so-bi-danh-gia-sao-chep-y-het-nhung-mo-hinh-dang-hoat-dong-tot-o-noi-khac-va-lien-tuc-kiem-chung-y-tuong-re-tien-thong-qua-internet-podcast.html": "./assets/covers/poster_280_1789612830358.jpg",
+
+        # 30 Movie Poster AI Covers
+        "so-tay-mentor-peak-span-giai-ma-sinh-hoc-podcast.html": "./assets/covers/poster_287_1789613082475.jpg",
+        "complex-7-anxiety-is-not-what-you-think.html": "./assets/covers/poster_292_1789613142475.jpg",
+        "performance-9-ai-is-starting-replacement-cycle.html": "./assets/covers/poster_286_1789613068457.jpg",
+        "kien-tao-thuc-tai-learning-landing-page.html": "./assets/covers/poster_285_1789613054083.jpg",
+        "ngon-ngu-co-the-khong-phai-vo-boc-no-la-ban-gioi-thieu-cua-tam-tri-science-long-form.html": "./assets/covers/poster_291_1789613131027.jpg",
+        "tamlyhoc.html": "./assets/covers/poster_282_1789613041805.jpg",
+        "the-new-way-to-make-money-online-podcast.html": "./assets/covers/poster_288_1789613094818.jpg",
     }
 
     for f in files:
