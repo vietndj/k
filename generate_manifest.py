@@ -573,6 +573,11 @@ def generate():
         "chung-ta-dang-tu-tao-ra-mot-the-gioi-qua-mong-manh-va-xa-la-so-voi-sinh-hoc-cua-chinh-minh-su-nguy-hiem-lon-nhat-khong-nam-o-ben-ngoai-ma-nam-o-toc-do-thay-doi-vuot-qua-kha-nang-thich-nghi-cua-nhan-loai-podcast-science.html": "assets/covers/cover_135.jpg",
         "11-years-content-creation-what-actually-works-podcast.html": "assets/covers/cover_139.jpg",
         "how-to-get-your-personal-brand-unstuck-podcast.html": "assets/covers/cover_140.jpg",
+        "ban-sinh-ra-khong-phai-de-thuan-theo-conform-cai-khuon-duc-san-cua-xa-hoi-ma-de-chuyen-hoa-podcast.html": "assets/covers/poster_33.jpg",
+        "giai-ma-hanh-vi-loi-ich-vo-ly-01-science.html": "assets/covers/poster_34.jpg",
+        "simon-sinek-trust-crisis-gen-z-burnout-leadership-podcast.html": "assets/covers/poster_35.jpg",
+        "de-che-mrbeast-podcast.html": "assets/covers/poster_36.jpg",
+        "kiran-mazumdar-shaw-biotech-founder-india-podcast.html": "assets/covers/poster_37.jpg",
     }
 
     for f in files:
