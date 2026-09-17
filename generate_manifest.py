@@ -502,6 +502,11 @@ def generate():
         "kichbanoffline-phau-thuat-kich-ban-5.html": "assets/covers/poster_3.jpg",
         "kichbanoffline-phau-thuat-kich-ban-4.html": "assets/covers/poster_4.jpg",
         "kichbanoffline-phau-thuat-kich-ban-3.html": "assets/covers/poster_5.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-2.html": "assets/covers/poster_6.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-1.html": "assets/covers/poster_7.jpg",
+        "hanh-trinh-chua-lanh-nguyen-ban-podcast.html": "assets/covers/poster_8.jpg",
+        "vi-du-ve-thue-bang-thong-va-giam-iq-science.html": "assets/covers/poster_9.jpg",
+        "1000-ngay-sap-toi-gia-tri-lao-dong-tu-duy-cua-con-nguoi-mang-chi-so-am-podcast.html": "assets/covers/poster_10.jpg",
     }
 
     for f in files:
