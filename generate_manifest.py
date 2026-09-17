@@ -420,6 +420,11 @@ def generate():
         "giai-ma-co-the-tien-su-trong-the-gioi-hien-dai-science-long-form.html": "./assets/covers/giai-ma-co-the-tien-su-trong-the-gioi-hien-dai-science-long-form.jpg",
         "performance-2-the-90-second-rule-most-people-never-learn.html": "./assets/covers/performance-2-the-90-second-rule-most-people-never-learn.jpg",
         "ky-nguyen-agent-ai-computer-use-vs-chatgpt.html": "./assets/covers/ky-nguyen-agent-ai-computer-use-vs-chatgpt.jpg",
+
+        # 30 Movie Poster AI Covers
+        "law-7-ai-made-iq-and-eq-accessible.html": "assets/covers/poster_584.jpg",
+        "performance-10-the-real-danger-of-ai.html": "assets/covers/poster_585.jpg",
+        "ao-giac-nang-luc-khoa-hoc-cua-su-thuc-hanh-podcast-science.html": "assets/covers/poster_586.jpg",
     }
 
     for f in files:
