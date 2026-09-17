@@ -11,7 +11,6 @@ def generate():
     posts = []
 
     cover_mapping = {
-        # Kịch bản offline (Mới nhất)
         "kichbanoffline-phau-thuat-kich-ban-offline-phan-6.html": "https://media.fedu.vn/k_covers/cover_fb_ads_6_1789495461241.jpg",
         "kichbanoffline-phau-thuat-kich-ban-offline-phan-5.html": "https://media.fedu.vn/k_covers/cover_fb_ads_5_1789495475061.jpg",
         "kichbanoffline-phau-thuat-kich-ban-offline-phan-4.html": "https://media.fedu.vn/k_covers/cover_fb_ads_4_1789495486846.jpg",
@@ -24,21 +23,15 @@ def generate():
         "kichbanoffline-phan-tich-video-fb-ads-6.html": "https://media.fedu.vn/k_covers/cover_fb_ads_6_1789495461241.jpg",
         "kichbanoffline-phan-tich-video-fb-ads-5.html": "https://media.fedu.vn/k_covers/cover_fb_ads_5_1789495475061.jpg",
         "kichbanoffline-phan-tich-video-fb-ads-4.html": "https://media.fedu.vn/k_covers/cover_fb_ads_4_1789495486846.jpg",
-
-        # 4 Bài Master Top Podcast (Studio 16:9 Bold Typography)
         "cong-thuc-1-kenh-de-phat-trien-podcast.html": "https://media.fedu.vn/k_covers/cover_growth_playbook.jpg",
         "so-tay-thuc-chien-khoi-nghiep-ky-nguyen-ai-podcast.html": "https://media.fedu.vn/k_covers/cover_khoi_nghiep_ai.jpg",
         "how-to-teach-and-grow-rich-business-model-podcast.html": "https://media.fedu.vn/k_covers/cover_day_hoc_lam_giau.jpg",
         "10-protocols-andrew-huberman-toi-uu-nao-bo-the-chat-diary-of-a-ceo.html": "https://media.fedu.vn/k_covers/cover_protocols_nao_bo.jpg",
-
-        # 5 Bài Bối Cảnh Phòng Làm Việc Thực Tế (Home Workroom Anchor)
         "an-toan-ai-02-podcast.html": "https://media.fedu.vn/k_covers/cover_sieu_tri_tue.jpg",
         "hau-qua-cua-nhin-linh-tinh-science.html": "https://media.fedu.vn/k_covers/cover_khoa_hoc_than_kinh.jpg",
         "complex-5-anxiety-is-not-what-you-think.html": "https://media.fedu.vn/k_covers/cover_phuong_trinh_lo_au.jpg",
         "suyash-saraf-d2c-branding-gen-z-marketing-podcast.html": "https://media.fedu.vn/k_covers/cover_branding_trieu_do.jpg",
         "law-5-stress-is-not-what-happens-to-you.html": "https://media.fedu.vn/k_covers/cover_quy_tac_90_giay.jpg",
-
-        # Nhóm bài chuyên sâu khác đã có ảnh R2
         "toi-uu-hieu-suat-nao-bo-suc-manh-nootropic-tu-creatine-va-che-do-an-thit-carnivore-dinh-cao-toi-gian-nang-luong-tu-joe-rogan-elon-musk.html": "https://media.fedu.vn/k_covers/toi_uu_hieu_suat_nao_bo_1789497940470.jpg",
         "su-giau-co-va-thanh-cong-tot-dinh-khong-bat-dau-tu-chien-thuat-kinh-doanh-hao-nhoang-ma-khoi-nguon-tu-nang-luc-quan-tri-tam-tri-ban-phai-thiet-ke-mot-moi-truong-khien-ky-luat-tro-nen-de-dang.html": "https://media.fedu.vn/k_covers/su_giau_co_va_thanh_cong_1789497961114.jpg",
         "no-den-tu-long-dung-cam-dam-lam-ra-nhung-video-toi-te-ban-dau-kien-tri-cai-thien-1-moi-ngay-va-tap-trung-phuc-vu-sau-sac-cho-nhom-khan-gia-ngach-dang-chiu-chung-noi-dau-ma-ban-tung-vuot-qua-podcast.html": "https://media.fedu.vn/k_covers/no_den_tu_long_dung_cam_1789497983814.jpg",
@@ -88,11 +81,7 @@ def generate():
         "su-thuc-tinh-ky-nguyen-ai-mentor-insight-podcast.html": "https://media.fedu.vn/k_covers/poster_cast_away_1789520547871.jpg",
         "ganh-nang-cua-su-dang-do-science.html": "https://media.fedu.vn/k_covers/poster_drive_1789520559001.jpg",
         "hanh-trinh-thuc-tinh-nhe-nhang-podcast.html": "https://media.fedu.vn/k_covers/poster_catch_me_if_you_can_1789520567656.jpg",
-
-        # 30 Movie Poster AI Covers
         "dung-cho-doi-dong-luc-vi-no-la-mot-loi-noi-doi-su-thay-doi-thuc-su-chi-bat-dau-khi-ban-ep-ban-than-hanh-dong-truoc-khi-cam-xuc-kip-len.html": "https://media.fedu.vn/k_covers/poster_jurassic_park_1789521024715.jpg",
-
-        # 30 Movie Poster AI Covers
         "brilliant-content-ideas-easier-than-ai-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_scarface.jpg",
         "sieu-tri-tue-asi-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_oppenheimer.jpg",
         "hanh-trinh-tim-kiem-ban-doi-loi-giai-tu-noi-tam-science-long-form.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_dune_two.jpg",
@@ -143,8 +132,6 @@ def generate():
         "sales-khong-phai-la-thao-tung-no-la-quyen-luc-mem-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_speed.jpg",
         "5-nganh-nghe-bien-mat-khi-ai-tang-toc.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_edge_of_tomorrow.jpg",
         "troi-buoc-tien-hoa-science.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_constantine.jpg",
-
-        # 30 Movie Poster AI Covers
         "deepthink-03-podcast-dashboard-science-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_good_bad_ugly.jpg",
         "thanh-cong-tot-dinh-khong-den-tu-viec-sao-chep-nhung-ke-dung-dau-ma-den-tu-viec-ban-kien-nhan-chiu-dung-su-nhat-nheo-trong-bong-toi-suot.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_once_upon_hollywood.jpg",
         "how-to-make-100k-selling-your-knowledge-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_joker_2019.jpg",
@@ -195,8 +182,6 @@ def generate():
         "giai-ma-spotify-tu-duy-cua-mot-ceo-huong-noi-science-long-form.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_the_grandmaster.jpg",
         "wtf-is-wealth-ray-dalio-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_crouching_tiger.jpg",
         "giai-ma-tam-thuc-tu-day-vuc-den-trieu-phu-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_hero_2002.jpg",
-
-        # 30 Movie Poster AI Covers
         "suc-manh-cua-su-gioi-han-david-epstein-science-long-form.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_enter_the_dragon.jpg",
         "richard-teng-binance-crypto-future-of-money-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_ip_man.jpg",
         "tri-tue-he-thong-prompt-1-bao-cao-co-hoc-dong-luc-hoc-hanh-vi.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_oldboy.jpg",
@@ -247,8 +232,6 @@ def generate():
         "kichbanoffline-dong-goi-bai-tu-van-thanh-video-1-phut.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_tenet.jpg",
         "deepak-sahni-health-gut-liver-longevity-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_dunkirk.jpg",
         "ban-khong-he-hong-hoc-ban-chi-dang-can-kiet-nguyen-lieu-de-van-hanh-science.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_the_aviator.jpg",
-
-        # 30 Movie Poster AI Covers
         "kenh.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_empire_strikes_back.jpg",
         "tai-sao-ban-lai-giam-iq-khi-co-tiet-kiem-bac-le-science.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_big_short.jpg",
         "nhin-mat-tre-em-va-nguoi-lon-science.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_matrix_reloaded.jpg",
@@ -256,9 +239,9 @@ def generate():
         "giai-ma-tam-tri-loi-thoat-cho-mot-the-he-co-don-nghien-ngap-dr-k-science-long-form.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_twelve_angry_men.jpg",
         "mark-manson-psychology-of-love-toxic-relationships-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_casablanca_1942.jpg",
         "architecture-of-an-ai-native-generation.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_lawrence_of_arabia.jpg",
-        "law-7-ai-made-iq-and-eq-accessible.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_rashomon.jpg",
-        "performance-10-the-real-danger-of-ai.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_sunset_boulevard.jpg",
-        "ao-giac-nang-luc-khoa-hoc-cua-su-thuc-hanh-podcast-science.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_the_third_man.jpg",
+        "law-7-ai-made-iq-and-eq-accessible.html": "assets/covers/poster_584.jpg",
+        "performance-10-the-real-danger-of-ai.html": "assets/covers/poster_585.jpg",
+        "ao-giac-nang-luc-khoa-hoc-cua-su-thuc-hanh-podcast-science.html": "assets/covers/poster_586.jpg",
         "ky-nguyen-abundance-tu-do-cong-nghe-giai-ma-elon-musk-science-long-form.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_north_by_northwest.jpg",
         "tri-tue-ban-dia-siberi-snow-raven.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_dial_m_for_murder.jpg",
         "masterclass-giai-phau-ma-tran-ky-luat-thep-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_chinatown_1974.jpg",
@@ -274,8 +257,6 @@ def generate():
         "xa-hoi-da-lua-chung-ta-rang-hanh-phuc-la-mot-loai-cam-xuc-thuc-chat-cam-xuc-chi-la-tin-hieu-hanh-phuc-thuc-su-la-mot-ky-nang-va-su-lua-chon.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_good_will_hunting.jpg",
         "kichbanoffline-05-tiec-30-phut-lam-video-cho-ca-ngay.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_dead_poets_society.jpg",
         "how-to-get-rich-living-in-your-purpose-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_beautiful_mind.jpg",
-
-        # 30 Movie Poster AI Covers
         "thu-gian-va-tieu-hoa-co-che.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_imitation_game.jpg",
         "top-sales-expert-simple-sales-trick-money-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_apollo_13.jpg",
         "suc-khoe-tinh-duc-tuoi-tho-science.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_first_man.jpg",
@@ -301,46 +282,32 @@ def generate():
         "kichbanoffline-phau-thuat-kich-ban-6.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_castle_in_the_sky.jpg",
         "vi-sao-nguoi-khac-khong-thich-ban-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_nausicaa_valley.jpg",
         "shubhanshu-shukla-astronaut-space-zero-gravity-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_neon_genesis_evangelion.jpg",
-
-        # 30 Movie Poster AI Covers
         "bill-ackman-kich-ban-dau-tu.html": "./assets/covers/poster_256_mad_men.jpg",
-
-        # 30 Movie Poster AI Covers
         "youtube-masterclass-highest-paid-strategist.html": "./assets/covers/poster_257_my_hero_academia.jpg",
         "boc-tran-cu-lua-diet-vong.html": "./assets/covers/poster_258_ice_age.jpg",
         "banner.html": "./assets/covers/poster_259_thien_menh_anh_hung.jpg",
         "banner-phan-tich-2-mau-poster-tatler-va-ket-qua-hinh-anh.html": "./assets/covers/poster_260_halt_and_catch_fire.jpg",
         "kichbanoffline-phau-thuat-kich-ban-5.html": "./assets/covers/poster_261_made_in_abyss.jpg",
-
-        # 30 Movie Poster AI Covers
         "kichbanoffline-phau-thuat-kich-ban-4.html": "./assets/covers/poster_262_chicken_run.jpg",
         "kichbanoffline-phau-thuat-kich-ban-3.html": "./assets/covers/poster_263_that_son_tam_linh.jpg",
         "kichbanoffline-phau-thuat-kich-ban-2.html": "./assets/covers/poster_264_severance.jpg",
         "kichbanoffline-phau-thuat-kich-ban-1.html": "./assets/covers/poster_265_kill_la_kill.jpg",
-
-        # 30 Movie Poster AI Covers
         "hanh-trinh-chua-lanh-nguyen-ban-podcast.html": "./assets/covers/poster_266_lion_king.jpg",
         "vi-du-ve-thue-bang-thong-va-giam-iq-science.html": "./assets/covers/poster_267_vi.jpg",
         "1000-ngay-sap-toi-gia-tri-lao-dong-tu-duy-cua-con-nguoi-mang-chi-so-am-podcast.html": "./assets/covers/poster_268_dexter.jpg",
         "new-way-to-win-as-content-creator-podcast.html": "./assets/covers/poster_269_death_parade.jpg",
         "make-first-100k-in-business-beginner-podcast.html": "./assets/covers/poster_271_quy_cau.jpg",
-
-        # 30 Movie Poster AI Covers
         "so-tay-xay-kenh-thuat-toan-mentor-nguyen-duc-viet-podcast.html": "./assets/covers/poster_272_ozark.jpg",
         "mo-gawdat-giai-ma-hanh-phuc-ky-nguyen-ai-podcast.html": "./assets/covers/poster_273_fate_stay_night.jpg",
         "hau-het-met-moi-suong-mu-nao-lao-hoa-va-con-them-an-khong-phai-do-ban-thieu-y-chi-ma-do-tau-luon-sieu-toc-cua-glucose-trong-mau-khong-can.html": "./assets/covers/poster_274_kim_possible.jpg",
         "ky-luat-khac-ky-lam-chu-ban-than-giai-phong-tu-do-science-long-form.html": "./assets/covers/poster_275_chi_chi_em_em.jpg",
         "tu-duy-ai-tu-dong-hoa-science.html": "./assets/covers/poster_276_itaewon_class.jpg",
-
-        # 30 Movie Poster AI Covers
         "giai-ma-noi-co-don-ty-do-brian-chesky-learning-experience-science-long-form.html": "./assets/covers/poster_281_1789612862471.jpg",
         "lauren-tan-kien-truc-agentic-1000-pr-dune-xai-cursor-podcast.html": "./assets/covers/poster_283_1789612886392.jpg",
         "tich-tru-ky-thuat-so-nguy-bien-suu-tam.html": "./assets/covers/poster_284_1789612900428.jpg",
         "blueprint-xay-kenh-jun-yuh-2026-podcast.html": "./assets/covers/poster_277_1789612731209.jpg",
         "lap-trinh-bo-nao-02-science.html": "./assets/covers/poster_279_1789612783772.jpg",
         "gat-bo-noi-so-bi-danh-gia-sao-chep-y-het-nhung-mo-hinh-dang-hoat-dong-tot-o-noi-khac-va-lien-tuc-kiem-chung-y-tuong-re-tien-thong-qua-internet-podcast.html": "./assets/covers/poster_280_1789612830358.jpg",
-
-        # 30 Movie Poster AI Covers
         "so-tay-mentor-peak-span-giai-ma-sinh-hoc-podcast.html": "./assets/covers/poster_287_1789613082475.jpg",
         "complex-7-anxiety-is-not-what-you-think.html": "./assets/covers/poster_292_1789613142475.jpg",
         "performance-9-ai-is-starting-replacement-cycle.html": "./assets/covers/poster_286_1789613068457.jpg",
@@ -348,8 +315,6 @@ def generate():
         "ngon-ngu-co-the-khong-phai-vo-boc-no-la-ban-gioi-thieu-cua-tam-tri-science-long-form.html": "./assets/covers/poster_291_1789613131027.jpg",
         "tamlyhoc.html": "./assets/covers/poster_282_1789613041805.jpg",
         "the-new-way-to-make-money-online-podcast.html": "./assets/covers/poster_288_1789613094818.jpg",
-
-        # 30 Movie Poster AI Covers
         "giac-ngu-ngan-20-phut-science.html": "./assets/covers/poster_298_1789613337071.jpg",
         "ky-nguyen-ai-va-bien-dong-tot-do-science.html": "./assets/covers/poster_295_1789613299042.jpg",
         "10-thien-kien-tien-hoa-science.html": "./assets/covers/poster_296_1789613313929.jpg",
@@ -361,8 +326,6 @@ def generate():
         "ai-co-y-thuc-stuart_russell-science.html": "./assets/covers/poster_294_1789613286524.jpg",
         "giai-ma-tien-loi-chet-nguoi-learning-landing-page-podcast.html": "./assets/covers/poster_278_1789613248069.jpg",
         "de-che-tam-tri-cua-simon-cowell-science.html": "./assets/covers/poster_299_1789613349759.jpg",
-
-        # 30 Movie Poster AI Covers
         "nam-cot-loi-don-dau-chu-ky-hack-ban-nga-ray-dalio-science.html": "./assets/covers/poster_331_bay_rong.jpg",
         "giai-ma-giao-tiep-giai-tru-thao-tung-science.html": "./assets/covers/poster_332_arcane.jpg",
         "ban-sinh-ra-khong-phai-de-thuan-theo-conform-cai-khuon-duc-san-cua-xa-hoi-ma-de-chuyen-hoa-podcast.html": "./assets/covers/poster_333_no_game.jpg",
@@ -388,8 +351,6 @@ def generate():
         "du-doan-va-quan-ly-ngan-sach-nang-luong-cua-co-the-science.html": "./assets/covers/poster_353_chainsaw_man.jpg",
         "khoa-hoc-nao-bo-10x-tap-trung-va-tri-nho-dr-sahar-yousef-podcast.html": "./assets/covers/poster_354_cars.jpg",
         "giai-ma-hoi-rosicrucian-kien-truc-hoa-nang-luong-thuc-tinh-tam-linh.html": "./assets/covers/poster_355_tam_cam.jpg",
-
-        # 30 Movie Poster AI Covers
         "su-binh-yen-nam-ngoai-vung-tap-am-science-long-form.html": "./assets/covers/su-binh-yen-nam-ngoai-vung-tap-am-science-long-form.jpg",
         "prasad-chalavadi-retail-brand-scaling-ai-systems-podcast.html": "./assets/covers/prasad-chalavadi-retail-brand-scaling-ai-systems-podcast.jpg",
         "giau-co-thuc-su-khong-den-tu-viec-chay-theo-nhung-loi-thoi-phong-tan-the-ma-den-tu-ky-luat-tich-luy-cham-rai-su-kien-cuong-truoc-loi-tu-choi-podcast.html": "./assets/covers/giau-co-thuc-su-khong-den-tu-viec-chay-theo-nhung-loi-thoi-phong-tan-the-ma-den-tu-ky-luat-tich-luy-cham-rai-su-kien-cuong-truoc-loi-tu-choi-podcast.jpg",
@@ -420,11 +381,10 @@ def generate():
         "giai-ma-co-the-tien-su-trong-the-gioi-hien-dai-science-long-form.html": "./assets/covers/giai-ma-co-the-tien-su-trong-the-gioi-hien-dai-science-long-form.jpg",
         "performance-2-the-90-second-rule-most-people-never-learn.html": "./assets/covers/performance-2-the-90-second-rule-most-people-never-learn.jpg",
         "ky-nguyen-agent-ai-computer-use-vs-chatgpt.html": "./assets/covers/ky-nguyen-agent-ai-computer-use-vs-chatgpt.jpg",
-
-        # 30 Movie Poster AI Covers
-        "law-7-ai-made-iq-and-eq-accessible.html": "assets/covers/poster_584.jpg",
-        "performance-10-the-real-danger-of-ai.html": "assets/covers/poster_585.jpg",
-        "ao-giac-nang-luc-khoa-hoc-cua-su-thuc-hanh-podcast-science.html": "assets/covers/poster_586.jpg",
+        "giai-ma-he-dieu-hanh-cua-elon-musk-podcast.html": "assets/covers/giai-ma-he-dieu-hanh-cua-elon-musk-podcast.jpg",
+        "ban-chat-cua-cam-nhan-thien-nhien-01.html": "assets/covers/ban-chat-cua-cam-nhan-thien-nhien-01.jpg",
+        "kichbanoffline-03-vuong-quy-trinh-solo.html": "assets/covers/kichbanoffline-03-vuong-quy-trinh-solo.jpg",
+        "danh-thuc-le-song-bang-dharma-tim-su-can-bang-giua-niem-vui-noi-tai-va-su-menh-phung-su-the-gioi-danh-cho-nhung-ai-dang-tran-tro-ve-dinh.html": "assets/covers/danh-thuc-le-song-bang-dharma-tim-su-can-bang-giua-niem-vui-noi-tai-va-su-menh-phung-su-the-gioi-danh-cho-nhung-ai-dang-tran-tro-ve-dinh.jpg",
     }
 
     for f in files:
