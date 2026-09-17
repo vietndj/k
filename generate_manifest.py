@@ -512,6 +512,8 @@ def generate():
         "make-first-100k-in-business-beginner-podcast.html": "assets/covers/poster_13.jpg",
         "mo-gawdat-giai-ma-hanh-phuc-ky-nguyen-ai-podcast.html": "assets/covers/poster_14.jpg",
         "hau-het-met-moi-suong-mu-nao-lao-hoa-va-con-them-an-khong-phai-do-ban-thieu-y-chi-ma-do-tau-luon-sieu-toc-cua-glucose-trong-mau-khong-can.html": "assets/covers/poster_15.jpg",
+        "ky-luat-khac-ky-lam-chu-ban-than-giai-phong-tu-do-science-long-form.html": "assets/covers/poster_16.jpg",
+        "blueprint-xay-kenh-jun-yuh-2026-podcast.html": "assets/covers/poster_17.jpg",
     }
 
     for f in files:
