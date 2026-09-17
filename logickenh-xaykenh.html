@@ -547,134 +547,552 @@
       </p>
 
       <style>
-        .flow-container {
+        .flow-stage {
           background: #ffffff;
           border: 1px solid var(--cl-line);
-          border-radius: 20px;
-          padding: 40px 20px;
+          border-radius: 24px;
+          padding: 36px 32px 32px 32px;
           margin-top: 24px;
-          box-shadow: 0 4px 20px rgba(9, 13, 22, 0.03);
+          box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.04);
           font-family: var(--font-display-long);
+          position: relative;
         }
-        .flow-node {
+
+        /* Thanh trạng thái kiểm tra tương tác */
+        .flow-status-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 16px;
           background: var(--cl-tint);
           border: 1px solid var(--cl-line);
           border-radius: 12px;
-          padding: 16px;
+          margin-bottom: 28px;
+          font-size: 13px;
+          color: var(--cl-text-muted);
+          transition: all 0.3s ease;
+        }
+        .flow-status-bar__left {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-weight: 600;
+          color: var(--cl-text-base);
+        }
+        .flow-status-bar__dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #10b981;
+          display: inline-block;
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+          animation: flowPulse 2s infinite;
+        }
+        @keyframes flowPulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.25); opacity: 0.7; }
+        }
+        .flow-status-bar__hint {
+          font-size: 12px;
+          color: var(--cl-text-muted);
+        }
+        .flow-status-reset {
+          background: none;
+          border: none;
+          color: var(--cl-accent);
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          display: none;
+          padding: 2px 8px;
+          border-radius: 4px;
+        }
+        .flow-status-reset:hover {
+          text-decoration: underline;
+        }
+
+        /* ROOT NODE */
+        .flow-root {
+          max-width: 440px;
+          margin: 0 auto;
+          background: #0b0f19;
+          color: #ffffff;
+          border-radius: 14px;
+          padding: 20px 24px;
           text-align: center;
           position: relative;
+          z-index: 2;
+          box-shadow: 0 10px 25px -5px rgba(11, 15, 25, 0.25);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
         }
-        .flow-node--root {
-          max-width: 400px;
-          margin: 0 auto 40px auto;
-          background: var(--cl-text-base);
-          color: white;
+        .flow-root:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 16px 35px -5px rgba(11, 15, 25, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.2);
         }
-        .flow-node__title {
+        .flow-root__title {
+          font-family: var(--font-display-short);
           font-weight: 700;
           font-size: 15px;
-          margin-bottom: 4px;
+          letter-spacing: 0.08em;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          color: #ffffff;
+          margin-bottom: 5px;
         }
-        .flow-node__desc {
+        .flow-root__desc {
           font-size: 13.5px;
-          opacity: 0.8;
+          color: #94a3b8;
           font-weight: 500;
         }
+
+        /* CONNECTORS */
+        .flow-connectors {
+          position: relative;
+          height: 28px;
+          margin: 0 auto;
+          max-width: 720px;
+        }
+        .flow-line-v-top {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 2px;
+          height: 14px;
+          background: #cbd5e1;
+          transition: background 0.3s ease;
+        }
+        .flow-line-h {
+          position: absolute;
+          top: 14px;
+          left: 25%;
+          right: 25%;
+          height: 2px;
+          background: #cbd5e1;
+          transition: background 0.3s ease;
+        }
+        .flow-line-v-left {
+          position: absolute;
+          top: 14px;
+          left: 25%;
+          width: 2px;
+          height: 14px;
+          background: #cbd5e1;
+          transition: background 0.3s ease;
+        }
+        .flow-line-v-right {
+          position: absolute;
+          top: 14px;
+          right: 25%;
+          width: 2px;
+          height: 14px;
+          background: #cbd5e1;
+          transition: background 0.3s ease;
+        }
+
+        /* Active highlight for connectors */
+        .flow-stage:has(.flow-col--visual:hover) .flow-line-v-top,
+        .flow-stage:has(.flow-col--visual:hover) .flow-line-v-left {
+          background: #3b82f6;
+        }
+        .flow-stage:has(.flow-col--visual:hover) .flow-line-h {
+          background: linear-gradient(to right, #3b82f6 50%, #cbd5e1 50%);
+        }
+
+        .flow-stage:has(.flow-col--intellect:hover) .flow-line-v-top,
+        .flow-stage:has(.flow-col--intellect:hover) .flow-line-v-right {
+          background: #8b5cf6;
+        }
+        .flow-stage:has(.flow-col--intellect:hover) .flow-line-h {
+          background: linear-gradient(to right, #cbd5e1 50%, #8b5cf6 50%);
+        }
+
+        .flow-stage:has(.flow-root:hover) .flow-line-v-top,
+        .flow-stage:has(.flow-root:hover) .flow-line-h,
+        .flow-stage:has(.flow-root:hover) .flow-line-v-left,
+        .flow-stage:has(.flow-root:hover) .flow-line-v-right {
+          background: #0b0f19;
+        }
+
+        /* GRID COLUMNS */
         .flow-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 40px;
+          gap: 32px;
+          position: relative;
+          z-index: 1;
         }
-        .flow-branch {
+        .flow-col {
           display: flex;
           flex-direction: column;
-          gap: 24px;
+          gap: 16px;
         }
-        .flow-node--branch-head {
-          border-color: var(--cl-accent);
-          background: var(--cl-accent-soft);
+
+        /* HEADER CARDS */
+        .flow-header-card {
+          border-radius: 14px;
+          padding: 18px 24px;
+          text-align: center;
+          transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
         }
-        .flow-node--branch-head .flow-node__title {
-          color: var(--cl-accent);
+        .flow-header-card--visual {
+          background: #eff6ff;
+          border: 1.5px solid #3b82f6;
         }
-        .flow-items {
+        .flow-header-card--visual:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 24px -4px rgba(59, 130, 246, 0.22);
+          background: #e8f2ff;
+        }
+        .flow-header-card--visual .flow-header-title {
+          color: #2563eb;
+        }
+
+        .flow-header-card--intellect {
+          background: #faf5ff;
+          border: 1.5px solid #a855f7;
+        }
+        .flow-header-card--intellect:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 24px -4px rgba(168, 85, 247, 0.22);
+          background: #f4ecff;
+        }
+        .flow-header-card--intellect .flow-header-title {
+          color: #7c3aed;
+        }
+
+        .flow-header-title {
+          font-family: var(--font-display-short);
+          font-weight: 700;
+          font-size: 15px;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          margin-bottom: 4px;
+        }
+        .flow-header-desc {
+          font-size: 13.5px;
+          color: #475569;
+          font-weight: 500;
+        }
+
+        /* ITEM STACK */
+        .flow-stack {
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: 12px;
         }
         .flow-item {
           background: #ffffff;
           border: 1px solid var(--cl-line);
-          border-radius: 8px;
-          padding: 12px;
-          font-size: 14px;
-          font-weight: 500;
+          border-radius: 12px;
+          padding: 15px 20px;
           text-align: center;
-          color: var(--cl-text-body);
+          box-shadow: 0 2px 5px rgba(15, 23, 42, 0.02);
+          transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
         }
-        .flow-result {
-          margin-top: auto;
+        .flow-item::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 3.5px;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+        .flow-col--visual .flow-item::before {
+          background: #2563eb;
+        }
+        .flow-col--intellect .flow-item::before {
+          background: #7c3aed;
+        }
+
+        .flow-col--visual .flow-item:hover {
+          transform: translateY(-2px);
+          border-color: #3b82f6;
+          background: #f8faff;
+          box-shadow: 0 10px 22px -4px rgba(59, 130, 246, 0.15);
+        }
+        .flow-col--intellect .flow-item:hover {
+          transform: translateY(-2px);
+          border-color: #8b5cf6;
+          background: #fdfaff;
+          box-shadow: 0 10px 22px -4px rgba(139, 92, 246, 0.15);
+        }
+        .flow-item:hover::before {
+          opacity: 1;
+        }
+
+        .flow-item__name {
+          font-size: 15px;
+          font-weight: 600;
+          color: #0f172a;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .flow-item__check {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          border: 1.5px solid #cbd5e1;
+          font-size: 11px;
+          color: transparent;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+        .flow-item.is-checked {
+          background: #f0fdf4 !important;
+          border-color: #86efac !important;
+        }
+        .flow-item.is-checked .flow-item__check {
+          background: #16a34a;
+          border-color: #16a34a;
+          color: #ffffff;
+        }
+        .flow-item.is-checked .flow-item__name {
+          color: #14532d;
+        }
+
+        .flow-item__tip {
+          font-size: 12px;
+          font-weight: 500;
+          color: #64748b;
+          margin-top: 0;
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: max-height 0.25s ease, opacity 0.25s ease, margin-top 0.25s ease;
+        }
+        .flow-item:hover .flow-item__tip,
+        .flow-item.is-checked .flow-item__tip {
+          max-height: 48px;
+          opacity: 1;
+          margin-top: 6px;
+        }
+
+        /* RESULT CARDS */
+        .flow-result-card {
           background: #f0fdf4;
-          border-color: #bbf7d0;
+          border: 1.5px solid #86efac;
+          border-radius: 14px;
+          padding: 18px 22px;
+          text-align: center;
+          margin-top: auto;
+          transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
         }
-        .flow-result .flow-node__title {
+        .flow-result-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 28px -4px rgba(22, 163, 74, 0.22);
+          border-color: #4ade80;
+          background: #eafaf0;
+        }
+        .flow-result-title {
+          font-family: var(--font-display-short);
+          font-weight: 700;
+          font-size: 15px;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
           color: #16a34a;
+          margin-bottom: 4px;
         }
+        .flow-result-desc {
+          font-size: 13.5px;
+          color: #374151;
+          font-weight: 500;
+        }
+
+        /* Mobile responsiveness */
         @media (max-width: 640px) {
+          .flow-stage {
+            padding: 24px 16px;
+            border-radius: 18px;
+          }
           .flow-grid {
             grid-template-columns: 1fr;
+            gap: 28px;
+          }
+          .flow-connectors {
+            display: none;
+          }
+          .flow-root {
+            margin-bottom: 20px;
           }
         }
       </style>
 
-      <div class="flow-container">
-        <!-- ROOT -->
-        <div class="flow-node flow-node--root">
-          <div class="flow-node__title">VIDEO CHUYÊN MÔN</div>
-          <div class="flow-node__desc">Mục tiêu: Đạt mốc 7 Giờ Tích Lũy Sự An Tâm</div>
+      <div class="flow-stage">
+        <!-- Interactive Tooltip / Status Header -->
+        <div class="flow-status-bar">
+          <div class="flow-status-bar__left">
+            <span class="flow-status-bar__dot"></span>
+            <span id="flowStatusText">Chạm vào từng tiêu chí để kiểm tra tiêu chuẩn video</span>
+          </div>
+          <button type="button" class="flow-status-reset" id="flowResetBtn" onclick="resetFlowChecks()">Đặt lại</button>
+        </div>
+
+        <!-- ROOT NODE -->
+        <div class="flow-root" onclick="highlightAllFlow()">
+          <div class="flow-root__title">VIDEO CHUYÊN MÔN</div>
+          <div class="flow-root__desc">Mục tiêu: Đạt mốc 7 Giờ Tích Lũy Sự An Tâm</div>
+        </div>
+
+        <!-- CONNECTORS -->
+        <div class="flow-connectors" aria-hidden="true">
+          <div class="flow-line-v-top"></div>
+          <div class="flow-line-h"></div>
+          <div class="flow-line-v-left"></div>
+          <div class="flow-line-v-right"></div>
         </div>
 
         <!-- 2 BRANCHES -->
         <div class="flow-grid">
           
-          <!-- BRANCH 1 -->
-          <div class="flow-branch">
-            <div class="flow-node flow-node--branch-head">
-              <div class="flow-node__title">THỎA MÃN THỊ GIÁC (VÒNG GỬI XE)</div>
-              <div class="flow-node__desc">Hạ rào phòng vệ - Mắt không mỏi</div>
+          <!-- BRANCH 1: THỊ GIÁC -->
+          <div class="flow-col flow-col--visual">
+            <div class="flow-header-card flow-header-card--visual" onclick="toggleBranch('visual')">
+              <div class="flow-header-title">THỎA MÃN THỊ GIÁC</div>
+              <div class="flow-header-desc">Giữ chân - Mắt không mỏi</div>
             </div>
-            <div class="flow-items">
-              <div class="flow-item">Khung hình tươm tất, sáng sủa</div>
-              <div class="flow-item">Cắt cúp dứt khoát vứt sạch "ờ, à"</div>
-              <div class="flow-item">Thu mic rõ tiếng, chuyển cảnh êm ái</div>
+
+            <div class="flow-stack">
+              <div class="flow-item" onclick="toggleFlowCheck(this)" data-branch="visual">
+                <div class="flow-item__name">
+                  <span class="flow-item__check">✓</span>
+                  <span>Nhịp điệu trơn tru</span>
+                </div>
+                <div class="flow-item__tip">120–140 từ/phút, không ậm ừ, bắt nhịp tự nhiên</div>
+              </div>
+
+              <div class="flow-item" onclick="toggleFlowCheck(this)" data-branch="visual">
+                <div class="flow-item__name">
+                  <span class="flow-item__check">✓</span>
+                  <span>Cắt cúp dứt khoát</span>
+                </div>
+                <div class="flow-item__tip">Cắt sạch khoảng lặng chết, ngắt đúng câu 2 dòng</div>
+              </div>
+
+              <div class="flow-item" onclick="toggleFlowCheck(this)" data-branch="visual">
+                <div class="flow-item__name">
+                  <span class="flow-item__check">✓</span>
+                  <span>Âm thanh, nhạc nền êm ái</span>
+                </div>
+                <div class="flow-item__tip">Âm thanh sạch tạp âm, BGM tôn rõ âm lượng giọng nói</div>
+              </div>
             </div>
-            <div class="flow-node flow-result">
-              <div class="flow-node__title">Mắt xem êm ru</div>
-              <div class="flow-node__desc">Hạ rào phòng vệ tâm lý</div>
+
+            <div class="flow-result-card">
+              <div class="flow-result-title">MẮT XEM ÊM RU</div>
+              <div class="flow-result-desc">Cuốn theo mạch video</div>
             </div>
           </div>
 
-          <!-- BRANCH 2 -->
-          <div class="flow-branch">
-            <div class="flow-node flow-node--branch-head" style="border-color: #8b5cf6; background: rgba(139, 92, 246, 0.05);">
-              <div class="flow-node__title" style="color: #8b5cf6;">THỎA MÃN TRÍ TUỆ (PHẦN LÕI)</div>
-              <div class="flow-node__desc">Thấy được tay nghề thật ở bề sâu</div>
+          <!-- BRANCH 2: TRÍ TUỆ -->
+          <div class="flow-col flow-col--intellect">
+            <div class="flow-header-card flow-header-card--intellect" onclick="toggleBranch('intellect')">
+              <div class="flow-header-title">THỎA MÃN TRÍ TUỆ</div>
+              <div class="flow-header-desc">Thấy được tay nghề thật</div>
             </div>
-            <div class="flow-items">
-              <div class="flow-item">Vạch đúng bệnh như thợ sửa bugi xe</div>
-              <div class="flow-item">Phân tích cặn kẽ, đúng trải nghiệm thật</div>
-              <div class="flow-item">Dùng độ sâu để sàng lọc đúng khách</div>
+
+            <div class="flow-stack">
+              <div class="flow-item" onclick="toggleFlowCheck(this)" data-branch="intellect">
+                <div class="flow-item__name">
+                  <span class="flow-item__check">✓</span>
+                  <span>Nói đúng khó khăn thực tế</span>
+                </div>
+                <div class="flow-item__tip">Chạm đúng chỗ ngứa, bóc sự thật ngượng miệng thực chiến</div>
+              </div>
+
+              <div class="flow-item" onclick="toggleFlowCheck(this)" data-branch="intellect">
+                <div class="flow-item__name">
+                  <span class="flow-item__check">✓</span>
+                  <span>Phân tích cặn kẽ, rõ ràng</span>
+                </div>
+                <div class="flow-item__tip">Mổ xẻ nhiều tầng nguyên nhân gốc rễ, có giải pháp cụ thể</div>
+              </div>
+
+              <div class="flow-item" onclick="toggleFlowCheck(this)" data-branch="intellect">
+                <div class="flow-item__name">
+                  <span class="flow-item__check">✓</span>
+                  <span>Cách làm việc chỉn chu</span>
+                </div>
+                <div class="flow-item__tip">Trình bày mạch lạc, tôn trọng thời gian và giữ thể diện</div>
+              </div>
             </div>
-            <div class="flow-node flow-result">
-              <div class="flow-node__title">Giao chìa khóa không hỏi giá</div>
-              <div class="flow-node__desc">Uy quyền tạo ra tiền</div>
+
+            <div class="flow-result-card">
+              <div class="flow-result-title">NGHE TRÚNG TIM ĐEN</div>
+              <div class="flow-result-desc">Gật gù tin tưởng</div>
             </div>
           </div>
 
         </div>
       </div>
+
+      <script>
+        function toggleFlowCheck(el) {
+          el.classList.toggle('is-checked');
+          updateFlowStatus();
+        }
+
+        function updateFlowStatus() {
+          const checked = document.querySelectorAll('.flow-item.is-checked').length;
+          const total = document.querySelectorAll('.flow-item').length;
+          const textEl = document.getElementById('flowStatusText');
+          const resetBtn = document.getElementById('flowResetBtn');
+
+          if (resetBtn) resetBtn.style.display = checked > 0 ? 'inline-block' : 'none';
+
+          if (checked === 0) {
+            textEl.textContent = 'Chạm vào từng tiêu chí để kiểm tra tiêu chuẩn video';
+          } else if (checked === total) {
+            textEl.innerHTML = '🎉 <b style="color: #16a34a;">ĐẠT 6/6 TIÊU CHÍ:</b> Video trọn vẹn Thị Giác & Trí Tuệ, sẵn sàng tích lũy 7 giờ niềm tin!';
+          } else {
+            textEl.innerHTML = `Đã kiểm tra: <b>${checked}/${total} tiêu chuẩn</b> (${checked < 3 ? 'Cần bổ sung thêm' : 'Đang rất tốt, tiếp tục hoàn thiện!'})`;
+          }
+        }
+
+        function resetFlowChecks() {
+          document.querySelectorAll('.flow-item.is-checked').forEach(el => el.classList.remove('is-checked'));
+          updateFlowStatus();
+        }
+
+        function toggleBranch(branch) {
+          const items = document.querySelectorAll(`.flow-item[data-branch="${branch}"]`);
+          const allChecked = Array.from(items).every(el => el.classList.contains('is-checked'));
+          items.forEach(el => {
+            if (allChecked) {
+              el.classList.remove('is-checked');
+            } else {
+              el.classList.add('is-checked');
+            }
+          });
+          updateFlowStatus();
+        }
+
+        function highlightAllFlow() {
+          const items = document.querySelectorAll('.flow-item');
+          const allChecked = Array.from(items).every(el => el.classList.contains('is-checked'));
+          items.forEach(el => {
+            if (allChecked) {
+              el.classList.remove('is-checked');
+            } else {
+              el.classList.add('is-checked');
+            }
+          });
+          updateFlowStatus();
+        }
+      </script>
     </div>
   </section>
 
