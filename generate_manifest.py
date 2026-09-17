@@ -507,6 +507,11 @@ def generate():
         "hanh-trinh-chua-lanh-nguyen-ban-podcast.html": "assets/covers/poster_8.jpg",
         "vi-du-ve-thue-bang-thong-va-giam-iq-science.html": "assets/covers/poster_9.jpg",
         "1000-ngay-sap-toi-gia-tri-lao-dong-tu-duy-cua-con-nguoi-mang-chi-so-am-podcast.html": "assets/covers/poster_10.jpg",
+        "new-way-to-win-as-content-creator-podcast.html": "assets/covers/poster_11.jpg",
+        "den-tu-viec-thiet-ke-mot-moi-truong-noi-viec-lam-dung-tro-thanh-con-duong-de-dang-va-hien-nhien-nhat-podcast.html": "assets/covers/poster_12.jpg",
+        "make-first-100k-in-business-beginner-podcast.html": "assets/covers/poster_13.jpg",
+        "mo-gawdat-giai-ma-hanh-phuc-ky-nguyen-ai-podcast.html": "assets/covers/poster_14.jpg",
+        "hau-het-met-moi-suong-mu-nao-lao-hoa-va-con-them-an-khong-phai-do-ban-thieu-y-chi-ma-do-tau-luon-sieu-toc-cua-glucose-trong-mau-khong-can.html": "assets/covers/poster_15.jpg",
     }
 
     for f in files:
