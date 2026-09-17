@@ -95,7 +95,7 @@ def render_omar_podcast_html(p):
   <style>
     /* ═══ 1. FONT DECLARATIONS (FEDU DESIGN SYSTEM) ═══ */
     @font-face {{
-      font-family: 'FD Aeonik Extended';
+      font-family: 'FD Aeonik Extended'; text-transform: uppercase;
       src: url('./fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
            url('./fonts/FDAeonikExtended-Bold.ttf') format('truetype');
       font-weight: 700;
@@ -103,7 +103,7 @@ def render_omar_podcast_html(p):
       font-display: swap;
     }}
     @font-face {{
-      font-family: 'FD Aeonik Extended';
+      font-family: 'FD Aeonik Extended'; text-transform: uppercase;
       src: url('./fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
            url('./fonts/FDAeonikExtended-SemiBold.ttf') format('truetype');
       font-weight: 600;
@@ -111,7 +111,7 @@ def render_omar_podcast_html(p):
       font-display: swap;
     }}
     @font-face {{
-      font-family: 'FD Aeonik Extended';
+      font-family: 'FD Aeonik Extended'; text-transform: uppercase;
       src: url('./fonts/FDAeonikExtended-Medium.woff2') format('woff2'),
            url('./fonts/FDAeonikExtended-Medium.ttf') format('truetype');
       font-weight: 500;
@@ -119,7 +119,7 @@ def render_omar_podcast_html(p):
       font-display: swap;
     }}
     @font-face {{
-      font-family: 'FD Aeonik Extended';
+      font-family: 'FD Aeonik Extended'; text-transform: uppercase;
       src: url('./fonts/FDAeonikExtended-Regular.woff2') format('woff2'),
            url('./fonts/FDAeonikExtended-Regular.ttf') format('truetype');
       font-weight: 400;
