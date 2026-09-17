@@ -317,6 +317,13 @@ def generate():
         "kichbanoffline-phau-thuat-kich-ban-3.html": "./assets/covers/poster_263_that_son_tam_linh.jpg",
         "kichbanoffline-phau-thuat-kich-ban-2.html": "./assets/covers/poster_264_severance.jpg",
         "kichbanoffline-phau-thuat-kich-ban-1.html": "./assets/covers/poster_265_kill_la_kill.jpg",
+
+        # 30 Movie Poster AI Covers
+        "hanh-trinh-chua-lanh-nguyen-ban-podcast.html": "./assets/covers/poster_266_lion_king.jpg",
+        "vi-du-ve-thue-bang-thong-va-giam-iq-science.html": "./assets/covers/poster_267_vi.jpg",
+        "1000-ngay-sap-toi-gia-tri-lao-dong-tu-duy-cua-con-nguoi-mang-chi-so-am-podcast.html": "./assets/covers/poster_268_dexter.jpg",
+        "new-way-to-win-as-content-creator-podcast.html": "./assets/covers/poster_269_death_parade.jpg",
+        "make-first-100k-in-business-beginner-podcast.html": "./assets/covers/poster_271_quy_cau.jpg",
     }
 
     for f in files:

@@ -9,10 +9,11 @@ repo_dir = "/Users/vietmac/Documents/CODE/k"
 covers_dir = os.path.join(repo_dir, "assets", "covers")
 
 targets = {
-    "poster_262_chicken_run": "kichbanoffline-phau-thuat-kich-ban-4.html",
-    "poster_263_that_son_tam_linh": "kichbanoffline-phau-thuat-kich-ban-3.html",
-    "poster_264_severance": "kichbanoffline-phau-thuat-kich-ban-2.html",
-    "poster_265_kill_la_kill": "kichbanoffline-phau-thuat-kich-ban-1.html"
+    "poster_266_lion_king": "hanh-trinh-chua-lanh-nguyen-ban-podcast.html",
+    "poster_267_vi": "vi-du-ve-thue-bang-thong-va-giam-iq-science.html",
+    "poster_268_dexter": "1000-ngay-sap-toi-gia-tri-lao-dong-tu-duy-cua-con-nguoi-mang-chi-so-am-podcast.html",
+    "poster_269_death_parade": "new-way-to-win-as-content-creator-podcast.html",
+    "poster_271_quy_cau": "make-first-100k-in-business-beginner-podcast.html"
 }
 
 mapping = {}
@@ -32,6 +33,6 @@ if mapping:
     
     subprocess.run(["python3", "update_covers.py", "temp_mapping.json"])
     subprocess.run(["git", "add", "."])
-    subprocess.run(["git", "commit", "-m", f"feat: add posters 262-265"])
+    subprocess.run(["git", "commit", "-m", f"feat: add posters 266-269, 271"])
     subprocess.run(["git", "push"])
     print(f"Processed and pushed {len(mapping)} images.")
