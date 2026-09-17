@@ -514,6 +514,9 @@ def generate():
         "hau-het-met-moi-suong-mu-nao-lao-hoa-va-con-them-an-khong-phai-do-ban-thieu-y-chi-ma-do-tau-luon-sieu-toc-cua-glucose-trong-mau-khong-can.html": "assets/covers/poster_15.jpg",
         "ky-luat-khac-ky-lam-chu-ban-than-giai-phong-tu-do-science-long-form.html": "assets/covers/poster_16.jpg",
         "blueprint-xay-kenh-jun-yuh-2026-podcast.html": "assets/covers/poster_17.jpg",
+        "banner-kho-120-mau-banner-face-dna-fluid-smart-grid-special-fx.html": "banner_kho_120_1789678629746.jpg",
+        "Bill_Ackman_Full_Tap_Ho_So.html": "bill_ackman_full_1789678674174.jpg",
+        "dom.html": "dom_1789678680800.jpg",
     }
 
     for f in files:
