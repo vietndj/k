@@ -398,6 +398,10 @@ def generate():
         "su-vo-nghia-ma-ban-dang-cam-thay-khong-phai-vi-ban-yeu-kem-ma-vi-ban-dang-dung-nao-trai-tu-duy-ky-thuat-thuat-toan-cuon-man-hinh-de-co-giai.html": "assets/covers/su-vo-nghia-ma-ban-dang-cam-thay-khong-phai-vi-ban-yeu-kem-ma-vi-ban-dang-dung-nao-trai-tu-duy-ky-thuat-thuat-toan-cuon-man-hinh-de-co-giai.jpg",
         "system-9-the-biggest-ai-opportunity-is-missed.html": "assets/covers/system-9-the-biggest-ai-opportunity-is-missed.jpg",
         "titlesu-that-ve-gan-nhiem-mo-tieu-duong-type-2-cach-chuyen-hoa-carbohydrate-thai-doc-co-the-va-dao-nguoc-benh-ly-bang-phuong-phap-low-carb.html": "assets/covers/titlesu-that-ve-gan-nhiem-mo-tieu-duong-type-2-cach-chuyen-hoa-carbohydrate-thai-doc-co-the-va-dao-nguoc-benh-ly-bang-phuong-phap-low-carb.jpg",
+        "20-gio-de-hoc-bat-cu-thu-gi-podcast.html": "assets/covers/20-gio-de-hoc-bat-cu-thu-gi-podcast.jpg",
+        "tu-bo-y-chi-bat-dau-tu-dong-hoa-khoi-tai-san-podcast.html": "assets/covers/tu-bo-y-chi-bat-dau-tu-dong-hoa-khoi-tai-san-podcast.jpg",
+        "so-tay-tu-duy-kien-tao-suc-manh-dich-thuc-podcast.html": "assets/covers/so-tay-tu-duy-kien-tao-suc-manh-dich-thuc-podcast.jpg",
+        "su-that-ve-ung-thu-nang-luong-te-bao-science.html": "assets/covers/su-that-ve-ung-thu-nang-luong-te-bao-science.jpg",
     }
 
     for f in files:
