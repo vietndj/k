@@ -497,6 +497,11 @@ def generate():
         "performance-6-ai-is-starting-the-biggest-replacement-cycle-ever.html": "./assets/covers/poster_194_fallback.jpg",
         "performance-2-the-90-second-rule-most-people-never-learn.html": "./assets/covers/poster_49.jpg",
         "ram-dopamin-re-tien-science.html": "./assets/covers/poster_193_fallback.jpg",
+        "boc-tran-cu-lua-diet-vong.html": "assets/covers/poster_1.jpg",
+        "banner-phan-tich-2-mau-poster-tatler-va-ket-qua-hinh-anh.html": "assets/covers/poster_2.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-5.html": "assets/covers/poster_3.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-4.html": "assets/covers/poster_4.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-3.html": "assets/covers/poster_5.jpg",
     }
 
     for f in files:
