@@ -361,6 +361,33 @@ def generate():
         "ai-co-y-thuc-stuart_russell-science.html": "./assets/covers/poster_294_1789613286524.jpg",
         "giai-ma-tien-loi-chet-nguoi-learning-landing-page-podcast.html": "./assets/covers/poster_278_1789613248069.jpg",
         "de-che-tam-tri-cua-simon-cowell-science.html": "./assets/covers/poster_299_1789613349759.jpg",
+
+        # 30 Movie Poster AI Covers
+        "nam-cot-loi-don-dau-chu-ky-hack-ban-nga-ray-dalio-science.html": "./assets/covers/poster_331_bay_rong.jpg",
+        "giai-ma-giao-tiep-giai-tru-thao-tung-science.html": "./assets/covers/poster_332_arcane.jpg",
+        "ban-sinh-ra-khong-phai-de-thuan-theo-conform-cai-khuon-duc-san-cua-xa-hoi-ma-de-chuyen-hoa-podcast.html": "./assets/covers/poster_333_no_game.jpg",
+        "giai-ma-hanh-vi-loi-ich-vo-ly-01-science.html": "./assets/covers/poster_334_sing.jpg",
+        "simon-sinek-trust-crisis-gen-z-burnout-leadership-podcast.html": "./assets/covers/poster_335_bi_dung_so.jpg",
+        "de-che-mrbeast-podcast.html": "./assets/covers/poster_336_fallout.jpg",
+        "kiran-mazumdar-shaw-biotech-founder-india-podcast.html": "./assets/covers/poster_337_hunter_x_hunter.jpg",
+        "how-to-charge-more-for-knowledge-value-pricing-podcast.html": "./assets/covers/poster_338_shrek.jpg",
+        "so-tay-rucking-thuc-chien-science-long-form.html": "./assets/covers/poster_339_qua_tim_mau.jpg",
+        "ban-khong-chon-ban-doi-chi-de-chup-nhung-tam-anh-dep-vao-ngay-cuoi-podcast.html": "./assets/covers/poster_340_witcher.jpg",
+        "y-hoc-30-chu-dong-can-thiep-tu-som-coi-tap-luyen-la-loai-thuoc-manh-nhat-va-muc-tieu-la-keo-dai-tuoi-tho-khoe-manh-healthspan-thay-vi-chi.html": "./assets/covers/poster_341_rezero.jpg",
+        "sinh-vat-sinh-hoc-bi-chi-phoi-manh-me-boi-khao-khat-sinh-ton-va-duy-tri-noi-giong-khoa-hoc-khong-dung-de-bien-minh-cho-toi-loi-ma-de-cap-cho-ta-tam-ban-do-dieu-huong-nhung-phan-con-ben-trong-minh-podcast-science.html": "./assets/covers/poster_342_powerpuff.jpg",
+        "khoi-nghiep-ky-nguyen-moi-science.html": "./assets/covers/poster_343_trang_quynh.jpg",
+        "hay-ngung-dua-vao-y-chi-hay-cam-tinh-de-ra-quyet-dinh-song-bang-cach-thiet-lap-thuat-toan-ky-luat-blueprint-va-de-du-lieu-len-tieng-ban-co.html": "./assets/covers/poster_344_money_heist.jpg",
+        "system-7-the-3-ways-pressure-breaks-you.html": "./assets/covers/poster_345_psycho_pass.jpg",
+        "ban-co-the-an-kieng-hoan-hao-tap-gym-moi-ngay-ngu-du-8-tieng-nhung-neu-ban-hit-tho-sai-cach-ban-van-se-luon-luon-om-yeu-99-nhan-loai-dang.html": "./assets/covers/poster_346_monsters_inc.jpg",
+        "tam-ly-follow-instagram-vo-thuc.html": "./assets/covers/poster_347_ao_lua_ha_dong.jpg",
+        "duong-ruot-gut-va-tam-tri-feelings-la-hai-mat-cua-cung-mot-dong-xu-de-chua-lanh-su-kiet-que-va-benh-tat-ban-khong-the-chi-uong-thuoc-ban.html": "./assets/covers/poster_348_peaky_blinders.jpg",
+        "complex-9-happiness-is-a-choice.html": "./assets/covers/poster_349_kengan_ashura.jpg",
+        "lam-chu-tam-tri-dung-de-nao-bo-huy-hoai-cuoc-doi-ban-podcast-dan-kief.html": "./assets/covers/poster_350_turning_red.jpg",
+        "giai-ma-trang-thai-flow-song-cuoc-doi-troi-chay-podcast.html": "./assets/covers/poster_351_co_hau_gai.jpg",
+        "tinh-yeu-ben-vung-khong-phai-la-dinh-menh-may-rui-hay-tia-lua-tinh-yeu-bung-chay-trong-lan-gap-dau-tien-no-la-ket-qua-cua-mot-chuoi-nhung.html": "./assets/covers/poster_352_silicon_valley.jpg",
+        "du-doan-va-quan-ly-ngan-sach-nang-luong-cua-co-the-science.html": "./assets/covers/poster_353_chainsaw_man.jpg",
+        "khoa-hoc-nao-bo-10x-tap-trung-va-tri-nho-dr-sahar-yousef-podcast.html": "./assets/covers/poster_354_cars.jpg",
+        "giai-ma-hoi-rosicrucian-kien-truc-hoa-nang-luong-thuc-tinh-tam-linh.html": "./assets/covers/poster_355_tam_cam.jpg",
     }
 
     for f in files:
