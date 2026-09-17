@@ -407,6 +407,8 @@ def generate():
         "truc-giac-chinh-la-thu-du-lieu-toc-do-cao-ma-ly-tri-chua-kip-giai-ma-podcast.html": "assets/covers/truc-giac-chinh-la-thu-du-lieu-toc-do-cao-ma-ly-tri-chua-kip-giai-ma-podcast.jpg",
         "danh-thuc-tam-thuc-kien-tao-podcast.html": "assets/covers/danh-thuc-tam-thuc-kien-tao-podcast.jpg",
         "lat-do-dinh-menh-khai-mo-tam-tri-podcast.html": "assets/covers/lat-do-dinh-menh-khai-mo-tam-tri-podcast.jpg",
+        "dr-bhaskar-rao-hospital-economics-healthcare-truth-podcast.html": "assets/covers/dr-bhaskar-rao-hospital-economics-healthcare-truth-podcast.jpg",
+        "viec-hoc-bay-thuc-an-nhanh-tri-thuc-science.html": "assets/covers/viec-hoc-bay-thuc-an-nhanh-tri-thuc-science.jpg",
     }
 
     for f in files:
