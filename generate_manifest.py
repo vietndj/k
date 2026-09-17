@@ -11,10 +11,10 @@ def generate():
     posts = []
 
     cover_mapping = {
-        "kichbanoffline-phau-thuat-kich-ban-offline-phan-6.html": "https://media.fedu.vn/k_covers/cover_fb_ads_6_1789495461241.jpg",
-        "kichbanoffline-phau-thuat-kich-ban-offline-phan-5.html": "https://media.fedu.vn/k_covers/cover_fb_ads_5_1789495475061.jpg",
-        "kichbanoffline-phau-thuat-kich-ban-offline-phan-4.html": "https://media.fedu.vn/k_covers/cover_fb_ads_4_1789495486846.jpg",
-        "kichbanoffline-phau-thuat-kich-ban-offline-phan-3.html": "https://media.fedu.vn/k_covers/cover_no_customers_1789495449887.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-offline-phan-6.html": "assets/covers/kichbanoffline-phau-thuat-kich-ban-offline-phan-6.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-offline-phan-5.html": "assets/covers/kichbanoffline-phau-thuat-kich-ban-offline-phan-5.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-offline-phan-4.html": "assets/covers/kichbanoffline-phau-thuat-kich-ban-offline-phan-4.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-offline-phan-3.html": "assets/covers/kichbanoffline-phau-thuat-kich-ban-offline-phan-3.jpg",
         "kichbanoffline-phau-thuat-kich-ban-offline-phan-2.html": "https://media.fedu.vn/k_covers/cover_offline_script_1789495439415.jpg",
         "kichbanoffline-phau-thuat-kich-ban-offline-phan-1.html": "assets/covers/kichbanoffline-phau-thuat-kich-ban-offline-phan-1.jpg",
         "kichbanoffline-kich-ban-bds-30-phut-dap-tan-su-tri-hoan.html": "assets/covers/kichbanoffline-kich-ban-bds-30-phut-dap-tan-su-tri-hoan.jpg",
