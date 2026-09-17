@@ -9,11 +9,11 @@ repo_dir = "/Users/vietmac/Documents/CODE/k"
 covers_dir = os.path.join(repo_dir, "assets", "covers")
 
 targets = {
-    "poster_266_lion_king": "hanh-trinh-chua-lanh-nguyen-ban-podcast.html",
-    "poster_267_vi": "vi-du-ve-thue-bang-thong-va-giam-iq-science.html",
-    "poster_268_dexter": "1000-ngay-sap-toi-gia-tri-lao-dong-tu-duy-cua-con-nguoi-mang-chi-so-am-podcast.html",
-    "poster_269_death_parade": "new-way-to-win-as-content-creator-podcast.html",
-    "poster_271_quy_cau": "make-first-100k-in-business-beginner-podcast.html"
+    "poster_272_ozark": "so-tay-xay-kenh-thuat-toan-mentor-nguyen-duc-viet-podcast.html",
+    "poster_273_fate_stay_night": "mo-gawdat-giai-ma-hanh-phuc-ky-nguyen-ai-podcast.html",
+    "poster_274_kim_possible": "hau-het-met-moi-suong-mu-nao-lao-hoa-va-con-them-an-khong-phai-do-ban-thieu-y-chi-ma-do-tau-luon-sieu-toc-cua-glucose-trong-mau-khong-can.html",
+    "poster_275_chi_chi_em_em": "ky-luat-khac-ky-lam-chu-ban-than-giai-phong-tu-do-science-long-form.html",
+    "poster_276_itaewon_class": "tu-duy-ai-tu-dong-hoa-science.html"
 }
 
 mapping = {}
@@ -33,6 +33,6 @@ if mapping:
     
     subprocess.run(["python3", "update_covers.py", "temp_mapping.json"])
     subprocess.run(["git", "add", "."])
-    subprocess.run(["git", "commit", "-m", f"feat: add posters 266-269, 271"])
+    subprocess.run(["git", "commit", "-m", f"feat: add posters 272-276"])
     subprocess.run(["git", "push"])
     print(f"Processed and pushed {len(mapping)} images.")
