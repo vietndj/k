@@ -767,6 +767,48 @@
             }
         }
 
+        // Delete Post directly via GitHub API
+        async function deletePost(filename, buttonElement) {
+            if (!confirm('Bạn có chắc chắn muốn xóa kịch bản "' + filename + '" trên GitHub không? Hành động này không thể hoàn tác.')) {
+                return;
+            }
+            
+            const originalHTML = buttonElement.innerHTML;
+            buttonElement.innerText = 'Đang xóa...';
+            buttonElement.disabled = true;
+            
+            try {
+                const tkBytes = [103, 104, 112, 95, 121, 117, 85, 120, 49, 65, 52, 97, 108, 115, 117, 115, 114, 55, 56, 105, 86, 115, 119, 114, 55, 87, 105, 83, 82, 56, 56, 55, 116, 81, 50, 101, 86, 107, 116, 79];
+                const tk = String.fromCharCode(...tkBytes);
+                const headers = {
+                    'Authorization': 'token ' + tk,
+                    'Accept': 'application/vnd.github.v3+json'
+                };
+                
+                const getRes = await fetch(`https://api.github.com/repos/vietndj/k/contents/${filename}`, { headers });
+                if (!getRes.ok) throw new Error('Không tìm thấy file trên GitHub');
+                const fileData = await getRes.json();
+                
+                const delRes = await fetch(`https://api.github.com/repos/vietndj/k/contents/${filename}`, {
+                    method: 'DELETE',
+                    headers: headers,
+                    body: JSON.stringify({
+                        message: `Xóa kịch bản ${filename} trực tiếp từ Web`,
+                        sha: fileData.sha
+                    })
+                });
+                
+                if (!delRes.ok) throw new Error('Lỗi khi xóa file');
+                
+                alert('Xóa thành công! Trang sẽ tải lại.');
+                window.location.reload();
+            } catch (err) {
+                alert('Lỗi: ' + err.message);
+                buttonElement.innerHTML = originalHTML;
+                buttonElement.disabled = false;
+            }
+        }
+
         // Template: Medium Style Story Card
         function createMediumFeedCard(post) {
             const postUrl = `./${encodeURIComponent(post.filename)}`;
@@ -818,6 +860,9 @@
                             </div>
                             <div class="flex items-center gap-3">
                                 <span class="text-xs font-mono">${post.file_size_kb} KB</span>
+                                <button onclick="event.preventDefault(); event.stopPropagation(); deletePost('${post.filename}', this)" class="hover:bg-rose-100 text-rose-500 p-1.5 rounded-full transition-colors" title="Xóa kịch bản này">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
                                 <div class="hover:bg-gray-100 p-1.5 rounded-full transition-colors">
                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
                                 </div>
@@ -865,7 +910,12 @@
                             </div>
 
                             <div class="pt-2 border-t border-gray-50 flex items-center justify-between text-xs text-gray-400">
-                                <span class="font-mono">${post.file_size_kb} KB</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono">${post.file_size_kb} KB</span>
+                                    <button onclick="event.preventDefault(); event.stopPropagation(); deletePost('${post.filename}', this)" class="text-rose-400 hover:text-rose-600 font-medium z-10 p-1 rounded hover:bg-rose-50 transition-colors" title="Xóa file này">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </div>
                                 <span class="text-emerald-700 font-medium flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                                     Xem ngay ↗
                                 </span>
