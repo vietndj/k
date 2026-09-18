@@ -1,99 +1,6 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LOGIC XÂY KÊNH HỮU VIỆT - Ghost Casper Style</title>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #ffffff;
-      --text: #15171a;
-      --gray: #738a94;
-      --brand: #e10b4f;
-      --border: #e3e9ed;
-    }
-    body {
-      margin: 0; padding: 0;
-      background: var(--bg); color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    .site-header {
-      background: #090a0b; color: #fff;
-      padding: 10vmin 4vw; text-align: center;
-      position: relative; overflow: hidden;
-    }
-    .site-nav {
-      position: absolute; top: 0; left: 0; right: 0;
-      display: flex; justify-content: space-between; padding: 24px 4vw;
-      font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .site-nav a { color: #fff; text-decoration: none; opacity: 0.8; }
-    .site-nav a:hover { opacity: 1; }
-    
-    .header-content { max-width: 800px; margin: 40px auto 0; }
-    .post-tag {
-      color: var(--brand); font-weight: 600; text-transform: uppercase;
-      font-size: 13px; letter-spacing: 0.5px; margin-bottom: 8px; display: block;
-    }
-    .post-title {
-      font-size: clamp(32px, 5vw, 50px); font-weight: 700;
-      margin: 0 0 16px; line-height: 1.15;
-    }
-    .post-meta { font-size: 15px; opacity: 0.8; font-weight: 500; }
-    
-    .container {
-      max-width: 720px; margin: -40px auto 0; padding: 60px 4vw;
-      background: #fff; border-radius: 5px 5px 0 0; position: relative; z-index: 10;
-    }
-    
-    .article-content { font-family: 'Libre Baskerville', serif; font-size: 20px; line-height: 1.7; color: #15171a; }
-    .article-content p { margin-bottom: 1.5em; }
-    .article-content .lead { font-size: 24px; line-height: 1.5; margin-bottom: 2em; }
-    
-    .article-content h2 {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-weight: 700; font-size: 32px; margin: 1.5em 0 0.5em; line-height: 1.25;
-    }
-    .article-content h3 {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-weight: 600; font-size: 24px; margin: 1.5em 0 0.5em;
-    }
-    .article-content ul, .article-content ol { margin-bottom: 1.5em; padding-left: 1.5em; }
-    .article-content li { margin-bottom: 0.5em; }
-    .article-content blockquote {
-      margin: 2em 0; padding: 0 0 0 1.5em;
-      border-left: 3px solid var(--brand);
-      font-style: italic; font-size: 22px; color: #3eb0ef; /* Caspers blueish quote */
-    }
-    .columns { display: flex; gap: 24px; margin: 2em 0; font-family: -apple-system, sans-serif; font-size: 16px; }
-    .col { flex: 1; padding: 24px; border-radius: 5px; border: 1px solid var(--border); }
-    .col h3 { margin-top: 0; font-size: 18px; }
-    hr { border: 0; border-top: 1px solid var(--border); margin: 3em 0; }
-    
-    @media (max-width: 600px) {
-      .columns { flex-direction: column; }
-      .article-content { font-size: 18px; }
-    }
-  </style>
-</head>
-<body>
-  <header class="site-header">
-    <nav class="site-nav">
-      <a href="#">Hữu Việt Hub</a>
-      <a href="#">Subscribe</a>
-    </nav>
-    <div class="header-content">
-      <span class="post-tag">Case Study</span>
-      <h1 class="post-title">Từ Thợ Tóc Giỏi Đến Chuyên Gia Quản Trị Salon</h1>
-      <div class="post-meta">Nguyễn Đức Việt • Sep 18, 2026 • 5 min read</div>
-    </div>
-  </header>
-  <div class="container">
-    
-<div class="article-content">
+import re
+
+content = """<div class="article-content">
   <p class="lead">Hữu Việt — chủ chuỗi salon tóc, đồng thời là nhà phân phối mỹ phẩm sỉ và phát triển App AI quản lý salon. Vấn đề lớn nhất: <b>anh ta giỏi nghề nhưng chưa ai biết đến ngoài khách quen.</b> Kênh cá nhân cần xây từ đầu để chuyển từ "thợ tóc uy tín tại địa phương" sang "chuyên gia quản trị salon có tiếng trên mạng xã hội."</p>
 
   <blockquote>
@@ -185,8 +92,17 @@
     <li><b>Lộ trình:</b> B-Roll câm → Walk & Talk ngắn → Case study dài → Chuyển đổi bán hàng. Không nhảy bước.</li>
     <li><b>Uy tín:</b> Xây bằng hành động chịu thiệt — từ chối khách không đủ chuẩn, cắt đứt đối tác phá giá, công khai số liệu thật.</li>
   </ol>
-</div>
+</div>"""
 
-  </div>
-</body>
-</html>
+files = ['logickenh-huuviet-pa1.html', 'logickenh-huuviet-pa2.html', 'logickenh-huuviet-pa3.html']
+
+for f in files:
+    with open(f, 'r') as file:
+        data = file.read()
+    
+    new_data = re.sub(r'<div class="article-content">.*?</div>\s*</div>\s*</body>', content + '\n\n  </div>\n</body>', data, flags=re.DOTALL)
+    
+    with open(f, 'w') as file:
+        file.write(new_data)
+        
+print("Updated successfully")
