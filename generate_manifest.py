@@ -248,7 +248,7 @@ def generate():
         "hanh-trinh-tai-sinh-su-nu-tinh-thau-hieu-bong-toi-ban-nga-nghe-thuat-can-bang-cuc-tinh-science-long-form.html": "./assets/covers/cover_162.jpg",
         "nexus-kien-truc-thong-tin-science.html": "assets/covers/nexus-kien-truc-thong-tin-science.jpg",
         "ky-luat-giao-tiep-giai-ma-tam-ly-science.html": "assets/covers/ky-luat-giao-tiep-giai-ma-tam-ly-science.jpg",
-        "giai-ma-vu-tru-thuyet-tu-gia-lap-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_casino_opening.jpg",
+        "giai-ma-vu-tru-thuyet-tu-gia-lap-podcast.html": "assets/covers/giai-ma-vu-tru-thuyet-tu-gia-lap-podcast.jpg",
         "xa-hoi-da-lua-chung-ta-rang-hanh-phuc-la-mot-loai-cam-xuc-thuc-chat-cam-xuc-chi-la-tin-hieu-hanh-phuc-thuc-su-la-mot-ky-nang-va-su-lua-chon.html": "assets/covers/xa-hoi-da-lua-chung-ta-rang-hanh-phuc-la-mot-loai-cam-xuc-thuc-chat-cam-xuc-chi-la-tin-hieu-hanh-phuc-thuc-su-la-mot-ky-nang-va-su-lua-chon.jpg",
         "kichbanoffline-05-tiec-30-phut-lam-video-cho-ca-ngay.html": "assets/covers/kichbanoffline-05-tiec-30-phut-lam-video-cho-ca-ngay.jpg",
         "how-to-get-rich-living-in-your-purpose-podcast.html": "https://pub-447bd44dfdac4938912655c855b8631c.r2.dev/k_covers/poster_beautiful_mind.jpg",
