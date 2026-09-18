@@ -557,8 +557,8 @@ def generate():
         "5-cong-thuc-pho-bien-cho-thuong-hieu-ca-nhan.html": "/assets/covers/cover_5-cong-thuc-pho-bien-cho-thuong-hieu-ca-nhan.jpg",
         "duong-ruot-khong-don-thuan-la-co-may-tieu-hoa-thuc-an-no-la-bo-nao-thu-hai-va-la-trung-tam-dieu-khien-70-he-mien-dich-cua-ban-viem-nhiem.html": "/assets/covers/cover_duong-ruot-khong-don-thuan-la-co-may-tieu-hoa-thuc-an-no-la-bo-nao-thu-hai-va-la-trung-tam-dieu-khien-70-he-mien-dich-cua-ban-viem-nhiem.jpg",
         "kichbanoffline-07-dong-goi-bai-tu-van-thanh-video-1-phut.html": "/assets/covers/cover_kichbanoffline-07-dong-goi-bai-tu-van-thanh-video-1-phut.jpg",
-        "gioi-han-cua-su-kiem-soat-podcast.html": "/assets/covers/cover_gioi-han-cua-su-kiem-soat-podcast.jpg",
-        "con-duong-don-gian-toi-cua-cai-science.html": "/assets/covers/cover_con-duong-don-gian-toi-cua-cai-science.jpg",
+        "gioi-han-cua-su-kiem-soat-podcast.html": "assets/covers/gioi-han-cua-su-kiem-soat-podcast.jpg",
+        "con-duong-don-gian-toi-cua-cai-science.html": "assets/covers/con-duong-don-gian-toi-cua-cai-science.jpg",
         "lam-chu-duong-huyet-podcast.html": "./assets/covers/poster_30.jpg",
         "ban-chat-cua-su-thao-tung-than-kinh-trong-ky-nguyen-so-science.html": "./assets/covers/poster_31.jpg",
         "suc-manh-chua-lanh-tu-tra-dao-trung-hoa-co-dai-kham-pha-nghe-thuat-song-cham-ket-noi-tam-hon-va-trai-nghiem-thuc-tinh-chachi-cung-co-van.html": "./assets/covers/poster_32.jpg",
@@ -625,6 +625,9 @@ def generate():
         "lam-giau-khong-phai-la-mot-canh-bac-on-ao-do-la-mot-he-thong-ky-luat-nham-chan-den-kinh-ngac-podcast.html": "./assets/covers/poster_82.jpg",
         "ma-hoa-su-ben-bi-xay-dung-he-sinh-thai-loi-science.html": "./assets/covers/poster_83.jpg",
         "thuat-toan-thanh-that-va-cong-nghe-tan-nhiet-tam-thuc.html": "./assets/covers/poster_84.jpg",
+        "co-dep-soleus-la-gi-va-tai-sao-no-dac-biet-science-podcast.html": "assets/covers/co-dep-soleus-la-gi-va-tai-sao-no-dac-biet-science-podcast.jpg",
+        "hanh-trinh-tu-ton-thuong-den-coi-nguon-suc-manh.html": "assets/covers/hanh-trinh-tu-ton-thuong-den-coi-nguon-suc-manh.jpg",
+        "tai-thiet-lap-nao-bo-ky-luat-ky-nguyen-so-science.html": "assets/covers/tai-thiet-lap-nao-bo-ky-luat-ky-nguyen-so-science.jpg",
     }
 
     for f in files:
