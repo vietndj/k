@@ -575,6 +575,10 @@ def generate():
         "sovereignty-vitality-masterclass-podcast.html": "assets/covers/poster_22_1789861229588.jpg",
         "giac-ngu-ngan-20-phut-science.html": "assets/covers/poster_23_1789861240061.jpg",
         "de-che-tam-tri-cua-simon-cowell-science.html": "assets/covers/poster_24_1789861250289.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-2.html": "poster_1_severance_1789861213029.jpg",
+        "kichbanoffline-phau-thuat-kich-ban-1.html": "poster_2_kill_la_kill_1789861221590.jpg",
+        "hanh-trinh-chua-lanh-nguyen-ban-podcast.html": "poster_3_the_lion_king_1789861231506.jpg",
+        "vi-du-ve-thue-bang-thong-va-giam-iq-science.html": "poster_4_vi_1789861241605.jpg",
     }
 
     for f in files:
