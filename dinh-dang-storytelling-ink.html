@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ĐỈNH CAO CỦA PHỄU NỘI DUNG</title>
+  
+  <!-- FAVICON SVG INLINE: CHUẨN "VIDEO" (REC MONOGRAM) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f172a'/%3E%3Ctext x='32' y='28' font-family='Arial, sans-serif' font-weight='900' font-size='16' fill='%23ffffff' text-anchor='middle' letter-spacing='1'%3EVI%3C/text%3E%3Ccircle cx='44' cy='22' r='4' fill='%23EF4444'/%3E%3Ctext x='32' y='46' font-family='Arial, sans-serif' font-weight='900' font-size='16' fill='%23ffffff' text-anchor='middle' letter-spacing='1'%3EDEO%3C/text%3E%3C/svg%3E">
+
+  <!-- FONTS: Fedu CDN -->
+  <style>
+    @font-face { font-family: 'FD Aeonik Extended'; src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+    @font-face { font-family: 'FD Aeonik Extended'; src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+    @font-face { font-family: 'FD Aeonik'; src: url('https://fedu.vn/k/fonts/FDAeonikMedium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
+    @font-face { font-family: 'FD Aeonik'; src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'Tiempos Text'; src: url('https://fedu.vn/k/fonts/FDTiemposText-Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+    @font-face { font-family: 'Tiempos Text'; src: url('https://fedu.vn/k/fonts/FDTiemposText-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+    @font-face { font-family: 'Tiempos Text'; src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap');
+  </style>
+
+  <style>
+    /* ==========================================================================
+       INKDOC CSS - ZERO ANIMATION, SLATE MONOCHROME
+       ========================================================================== */
+    :root {
+      /* Colors: Slate Grayscale */
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --ink-accent: #0f172a; /* Neutral accent instead of colors */
+      --ink-dialogue-bg: #f8fafc;
+      
+      /* Typography */
+      --font-display: 'FD Aeonik Extended', -apple-system, sans-serif;
+      --font-heading: 'FD Aeonik', -apple-system, sans-serif;
+      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      /* Layout Config */
+      --sidebar-width: 260px;
+      --content-max-width: 720px; /* Default for Article */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background-color: var(--ink-bg);
+      color: var(--ink-text);
+      font-family: var(--font-body);
+      line-height: 1.82;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--ink-text);
+      font-weight: 600;
+      line-height: 1.35;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-family: var(--font-heading);
+    }
+    
+    /* Short Titles (<8 words) use Extended */
+    h1.is-short, .title-short {
+      font-family: var(--font-display);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.15;
+    }
+    
+    h1:not(.is-short) { font-size: clamp(24px, 3.5vw, 34px); font-weight: 600; }
+    h2 { font-size: clamp(20px, 2.5vw, 24px); border-bottom: 1px solid var(--ink-border); padding-bottom: 0.5rem; margin-top: 3rem; }
+    h3 { font-size: 1.15rem; }
+    
+    p, ul, ol, blockquote, pre, table { margin-bottom: 1.5rem; font-size: 1.125rem; /* 18px */ }
+    ul, ol { padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+    
+    a { color: var(--ink-accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--ink-muted); transition: text-decoration-color 0.2s; }
+    a:hover { text-decoration-color: var(--ink-accent); }
+    
+    blockquote {
+      border-left: 3px solid var(--ink-border);
+      padding-left: 1.25rem;
+      font-style: italic;
+      color: var(--ink-text);
+      font-weight: 500;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background-color: var(--ink-hover);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+    }
+    pre {
+      background-color: var(--ink-sidebar);
+      padding: 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--ink-border);
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.9em; }
+
+    hr { border: 0; border-top: 1px solid var(--ink-border); margin: 3rem 0; }
+
+    /* Bảng biểu */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; font-family: var(--font-heading); font-size: 0.95rem; }
+    th, td { padding: 12px 16px; border-bottom: 1px solid var(--ink-border); text-align: left; }
+    th { font-weight: 600; color: var(--ink-muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; border-bottom: 2px solid var(--ink-border); }
+
+    /* LAYOUT: SIDEBAR */
+    .ink-sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background-color: var(--ink-sidebar);
+      border-right: 1px solid var(--ink-border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+      padding: 2rem 1.5rem;
+      font-family: var(--font-heading);
+    }
+    .ink-sidebar-header { margin-bottom: 2rem; }
+    .ink-brand { font-family: var(--font-display); font-weight: 700; font-size: 1rem; letter-spacing: 1px; color: var(--ink-text); text-decoration: none; text-transform: uppercase;}
+    
+    .ink-toc-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--ink-muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 0.25rem; }
+    .ink-toc-link {
+      display: block;
+      padding: 0.4rem 0.75rem;
+      color: var(--ink-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .ink-toc-link:hover { background-color: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active {
+      background-color: var(--ink-hover);
+      color: var(--ink-text);
+      font-weight: 600;
+    }
+    .ink-toc-nested { padding-left: 1rem; margin-top: 0.25rem; display: none; }
+    .ink-toc-link.is-active + .ink-toc-nested, .ink-toc-nested:has(.is-active) { display: block; } /* Auto expand nested TOC */
+
+    /* LAYOUT: CONTENT */
+    .ink-main-wrapper {
+      flex-grow: 1;
+      padding: 4rem 3rem;
+      display: flex;
+      justify-content: center;
+    }
+    .ink-content {
+      width: 100%;
+      max-width: var(--content-max-width);
+    }
+    
+    .ink-meta {
+      display: flex;
+      gap: 1rem;
+      font-family: var(--font-heading);
+      font-size: 0.875rem;
+      color: var(--ink-muted);
+      margin-bottom: 2.5rem;
+      align-items: center;
+    }
+    .ink-badge {
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border: 1px solid var(--ink-border);
+      border-radius: 99px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--ink-text);
+    }
+
+    /* ==========================================================================
+       MODE 1: ARTICLE (Default)
+       ========================================================================== */
+    .ink-mode-article {
+      --content-max-width: 720px;
+    }
+
+    /* ==========================================================================
+       MODE 2: DIALOGUE (Chat/Q&A)
+       ========================================================================== */
+    .ink-mode-dialogue {
+      --content-max-width: 760px;
+    }
+    .dialogue-turn { margin-bottom: 2.5rem; }
+    .dialogue-prompt {
+      background-color: var(--ink-dialogue-bg);
+      border: 1px solid var(--ink-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      font-family: var(--font-heading);
+    }
+    .dialogue-prompt summary {
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--ink-text);
+      list-style-position: inside;
+    }
+    .dialogue-prompt summary::-webkit-details-marker { display: none; } /* Hide default arrow */
+    .dialogue-prompt summary::before { content: 'Q: '; color: var(--ink-muted); font-family: var(--font-mono); font-size: 0.85em; }
+    .dialogue-prompt[open] summary { margin-bottom: 1rem; border-bottom: 1px solid var(--ink-border); padding-bottom: 0.5rem; }
+    .dialogue-response {
+      padding-left: 1rem;
+      border-left: 2px solid var(--ink-border);
+    }
+
+    /* ==========================================================================
+       MODE 3: REFERENCE (Wiki/Doc)
+       ========================================================================== */
+    .ink-mode-reference {
+      --content-max-width: 800px;
+    }
+    /* Right aligned InfoBox typical of Wikipedia */
+    .ink-infobox {
+      float: right;
+      width: 280px;
+      margin: 0 0 1.5rem 2rem;
+      border: 1px solid var(--ink-border);
+      background-color: var(--ink-sidebar);
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: var(--font-heading);
+      font-size: 0.875rem;
+    }
+    .ink-infobox-title { font-weight: 700; text-align: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--ink-border); }
+    .ink-infobox dl { display: grid; grid-template-columns: 1fr 2fr; gap: 0.5rem; }
+    .ink-infobox dt { font-weight: 600; color: var(--ink-muted); }
+    .ink-infobox dd { margin: 0; color: var(--ink-text); }
+
+    /* MOBILE MENU TOGGLE */
+    .ink-mobile-nav {
+      display: none;
+      position: sticky;
+      top: 0;
+      background: var(--ink-bg);
+      border-bottom: 1px solid var(--ink-border);
+      padding: 1rem;
+      z-index: 100;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ink-menu-btn {
+      background: none; border: 1px solid var(--ink-border); border-radius: 4px;
+      padding: 0.5rem; cursor: pointer; font-family: var(--font-heading);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+      .ink-mobile-nav { display: flex; }
+      .ink-sidebar {
+        position: fixed;
+        left: -100%;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+      }
+      .ink-sidebar.is-open { left: 0; }
+      .ink-main-wrapper { padding: 2rem 1.5rem; }
+      .ink-infobox { float: none; width: 100%; margin: 0 0 2rem 0; }
+    }
+    
+    /* PRINT MEDIA */
+    @media print {
+      .ink-sidebar, .ink-mobile-nav { display: none !important; }
+      .ink-main-wrapper { padding: 0; }
+      .ink-content { max-width: 100%; }
+      body { font-size: 12pt; color: #000; background: #fff; }
+      a { text-decoration: none; color: #000; }
+      h1, h2, h3 { page-break-after: avoid; }
+      img { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE NAV -->
+  <div class="ink-mobile-nav">
+    <a href="#" class="ink-brand">VIDEO DOCS</a>
+    <button class="ink-menu-btn" onclick="document.querySelector('.ink-sidebar').classList.toggle('is-open')">MỤC LỤC</button>
+  </div>
+
+  <!-- SIDEBAR TOC -->
+  <aside class="ink-sidebar">
+    <div class="ink-sidebar-header">
+      <a href="#" class="ink-brand">VIDEO DOCS</a>
+    </div>
+    
+    <div class="ink-toc-title">MỤC LỤC</div>
+    <ul class="ink-toc-list">
+      <!-- MẪU RÁP TOC:
+      <li>
+        <a href="#sec-1" class="ink-toc-link">1. Khái niệm cốt lõi</a>
+        <ul class="ink-toc-list ink-toc-nested">
+          <li><a href="#sec-1-1" class="ink-toc-link">1.1. Chi tiết A</a></li>
+        </ul>
+      </li>
+      -->
+      
+<li><a href="#sec-logic" class="ink-toc-link">1. Vị trí của Storytelling</a></li>
+<li><a href="#sec-truth" class="ink-toc-link">2. Nút thắt sự thật</a></li>
+<li><a href="#sec-competitor" class="ink-toc-link">3. Khác biệt cốt lõi</a></li>
+<li><a href="#sec-science" class="ink-toc-link">4. Tính khoa học & Mô hình hóa</a></li>
+
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="ink-main-wrapper">
+    <!-- CẦN THAY THẾ CLASS THEO MODE: ink-mode-article | ink-mode-dialogue | ink-mode-reference -->
+    <article class="ink-content ink-mode-article">
+      
+      <div class="ink-meta">
+        <span class="ink-badge">STORYTELLING 2.5</span>
+        <span>Nguyễn Việt</span>
+        <span>•</span>
+        <span>5 Phút đọc</span>
+      </div>
+
+      <h1 class="is-short" id="top">ĐỈNH CAO CỦA PHỄU NỘI DUNG</h1>
+      
+      <!-- NỘI DUNG CHÍNH -->
+      
+<blockquote>
+"Lòng tin của con người không hình thành từ các kịch bản tô vẽ hay danh xưng tự phong. Nó vận hành chặt chẽ dựa trên những cơ chế tâm lý học cốt lõi."
+</blockquote>
+<p>Định dạng Storytelling 2.5 không dành cho giai đoạn bắt đầu. Nó là điểm chạm cuối cùng, nơi sự thật về niềm tin được định đoạt.</p>
+
+<h2 id="sec-logic">1. Vị trí của Storytelling</h2>
+<p>Trong hệ thống 5 bước xây kênh chuyển đổi, Storytelling 2.5 nằm ở giai đoạn số 4 - độ khó cao nhất, tạo đột phá niềm tin.</p>
+
+<ul>
+  <li><strong>GĐ 1: Tư Duy Nền Tảng</strong> - Hiểu quy luật 90-9-1 (Lurker) và cơ chế Dark Social. Thoát bẫy vanity metrics (like/view ảo).</li>
+  <li><strong>GĐ 2: Chốt Chặn Thị Giác</strong> - Đạt ngưỡng Minimum Viable Quality (MVQ) để vượt qua 3 giây sinh tử của người xem.</li>
+  <li><strong>GĐ 3: Giờ Bay Tích Lũy</strong> - Luyện tập "trí nhớ cơ bắp" trước ống kính. Vượt qua rào cản lóng ngóng, gượng gạo.</li>
+  <li><strong>GĐ 4: Storytelling 2.5</strong> - Bóc tách 4 tầng tâm lý (Goffman). Nhắm thẳng vào Insider Moment. Vũ khí cuối cùng.</li>
+  <li><strong>GĐ 5: Chuyển Đổi Im Lặng</strong> - Lurker tích lũy đủ 7 giờ niềm tin, chủ động chốt hợp đồng giá trị cao qua inbox/Zalo.</li>
+</ul>
+
+<h2 id="sec-truth">2. Trải Nghiệm Là Màng Lọc Không Thể Giả Mạo</h2>
+<blockquote>
+"Muốn có lòng tin, bạn phải THẬT. Mọi đạo lý đều có thể sao chép, nhưng trải nghiệm vi mô thì không."
+</blockquote>
+<ul>
+  <li><strong>Nguyên lý chẩn đoán vi mô:</strong> Nếu bạn có thể mô tả vấn đề của khách hàng ở cấp độ vi mô chính xác hơn chính họ, họ mặc định tin bạn đang nắm thuốc giải.</li>
+  <li><strong>Bắt buộc tự trải qua:</strong> Không thể liệt kê được 10 hành vi lóng ngóng, giấu giếm thể diện nếu chưa trực tiếp quan sát hàng trăm ca thực tế.</li>
+  <li><strong>Yếu tố độ tuổi:</strong> Xác suất cao người nhiều tuổi trải qua nhiều biến cố hơn, từ đó sở hữu mật độ trải nghiệm (Insider Moments) sắc nét hơn.</li>
+  <li><strong>Sự nhạy bén của Lurker:</strong> Tệp khách hàng giá trị cao (người im lặng) có "radar" cực nhạy. Họ dễ dàng nhận ra ai chỉ đọc lý thuyết và ai đã thực sự trải đời.</li>
+</ul>
+
+<h2 id="sec-competitor">3. Khác biệt cốt lõi: So sánh thị trường</h2>
+<p>Bóc tách sự khác biệt giữa phương pháp xây nhân hiệu bề mặt (Vanity Metrics) và phương pháp chuyển đổi chiều sâu (Deep Storytelling).</p>
+<table>
+  <thead>
+    <tr>
+      <th>Tiêu chí</th>
+      <th>Khoá học thị trường (VD: Storiple)</th>
+      <th>Hệ thống Video Storytelling 2.5</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Cơ sở niềm tin</b></td>
+      <td>Số lượng follower, view (Vanity Metrics)</td>
+      <td>Nguyên lý Chẩn đoán Vi Mô + Trải nghiệm thực chứng</td>
+    </tr>
+    <tr>
+      <td><b>Khách hàng mục tiêu</b></td>
+      <td>Creator trẻ, người mới xây kênh, muốn nổi tiếng</td>
+      <td>Chủ kinh doanh, chuyên gia, người làm nghề muốn chốt VIP</td>
+    </tr>
+    <tr>
+      <td><b>Chiều sâu & Công cụ</b></td>
+      <td>"10+ câu lệnh AI" (Surface level, thiếu cơ chế)</td>
+      <td>Mega Prompt 5 tầng xử lý + Khung tâm lý 7 câu nhịp thở</td>
+    </tr>
+    <tr>
+      <td><b>Phương pháp luận</b></td>
+      <td>"Nghệ thuật" chung chung, bọc bí ẩn</td>
+      <td>Khoa học: Carl Rogers, Goffman (T2.5 Thể diện), 5 Whys</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="sec-science">4. Bí Ẩn Đã Được Giải Mã Thành Thuật Toán</h2>
+<blockquote>
+"Bất cứ thứ gì có thể mô hình hóa thành Mega Prompt — tức nó không còn là một phép thuật huyền bí."
+</blockquote>
+<p>Khung Pipeline Nhân Hiệu là bằng chứng đanh thép cho thấy Storytelling sâu hoàn toàn có tính khoa học:</p>
+<ul>
+  <li><strong>Động Cơ 1: Hook DNA</strong> - Quét qua 5 tầng: Hành vi vật lý bề mặt → Hành vi lúng túng → Cớ giữ thể diện → Nỗi sợ gốc rễ → Câu nội tâm.</li>
+  <li><strong>Động Cơ 2: Storytelling</strong> - Khung 7 câu/7 nhịp thở cố định: Tả hiện trường → Hạ cái tôi → Bắt bài T2.5 → Bóc vỏ → Gọi tên T3 → Giải tỏa.</li>
+</ul>
+
+
+    </article>
+  </main>
+
+  <!-- SCROLLSPY SCRIPT (ZERO ANIMATION) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. ScrollSpy functionality
+      const headings = document.querySelectorAll('h2[id], h3[id]');
+      const tocLinks = document.querySelectorAll('.ink-toc-link');
+      
+      if(headings.length > 0 && "IntersectionObserver" in window) {
+        const observerOptions = {
+          root: null,
+          rootMargin: '0px 0px -80% 0px', // Trigger when heading is in top 20% of viewport
+          threshold: 0
+        };
+        
+        // Track the currently active section to avoid unnecessary DOM updates
+        let activeId = null;
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const id = entry.target.getAttribute('id');
+              if (id !== activeId) {
+                // Remove active from all
+                tocLinks.forEach(link => link.classList.remove('is-active'));
+                
+                // Add active to current
+                const activeLink = document.querySelector(`.ink-toc-link[href="#${id}"]`);
+                if (activeLink) {
+                  activeLink.classList.add('is-active');
+                }
+                activeId = id;
+              }
+            }
+          });
+        }, observerOptions);
+
+        headings.forEach(heading => observer.observe(heading));
+      }
+
+      // 2. Mobile Menu auto-close on click
+      tocLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          document.querySelector('.ink-sidebar').classList.remove('is-open');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
