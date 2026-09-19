@@ -571,6 +571,10 @@ def generate():
         "temp_template.html": "./assets/covers/temp_template.jpg",
         "algolia-test.html": "./assets/covers/algolia-test.jpg",
         "poster_audit_dashboard.html": "./assets/covers/poster_audit_dashboard.jpg",
+        "10-thien-kien-tien-hoa-science.html": "assets/covers/poster_21_1789861219442.jpg",
+        "sovereignty-vitality-masterclass-podcast.html": "assets/covers/poster_22_1789861229588.jpg",
+        "giac-ngu-ngan-20-phut-science.html": "assets/covers/poster_23_1789861240061.jpg",
+        "de-che-tam-tri-cua-simon-cowell-science.html": "assets/covers/poster_24_1789861250289.jpg",
     }
 
     for f in files:
