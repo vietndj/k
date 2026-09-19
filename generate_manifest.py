@@ -579,6 +579,10 @@ def generate():
         "kichbanoffline-phau-thuat-kich-ban-1.html": "poster_2_kill_la_kill_1789861221590.jpg",
         "hanh-trinh-chua-lanh-nguyen-ban-podcast.html": "poster_3_the_lion_king_1789861231506.jpg",
         "vi-du-ve-thue-bang-thong-va-giam-iq-science.html": "poster_4_vi_1789861241605.jpg",
+        "y-hoc-30-chu-dong-can-thiep-tu-som-coi-tap-luyen-la-loai-thuoc-manh-nhat-va-muc-tieu-la-keo-dai-tuoi-tho-khoe-manh-healthspan-thay-vi-chi.html": "./assets/covers/poster_61.jpg",
+        "khoi-nghiep-ky-nguyen-moi-science.html": "./assets/covers/poster_63.jpg",
+        "hay-ngung-dua-vao-y-chi-hay-cam-tinh-de-ra-quyet-dinh-song-bang-cach-thiet-lap-thuat-toan-ky-luat-blueprint-va-de-du-lieu-len-tieng-ban-co.html": "./assets/covers/poster_64.jpg",
+        "system-7-the-3-ways-pressure-breaks-you.html": "./assets/covers/poster_65.jpg",
     }
 
     for f in files:
