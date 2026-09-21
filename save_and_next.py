@@ -11,10 +11,14 @@ os.makedirs(fixes_dir, exist_ok=True)
 with open("fix_progress.json", "r") as f:
     progress = json.load(f)
 
-with open("current_chunk.json", "r") as f:
-    current_chunk = json.load(f)
+# The current chunk we just generated
+if os.path.exists("current_chunk.json"):
+    with open("current_chunk.json", "r") as f:
+        current_chunk = json.load(f)
+else:
+    current_chunk = []
 
-# we need to lookup url from bad_list
+# Map filenames to their original URLs from bad_prompts_list to update progress correctly
 with open("bad_prompts_list.json", "r") as f:
     bad_list = json.load(f)
 url_map = {item["img_url"].split("/")[-1]: item["img_url"] for item in bad_list}
@@ -27,8 +31,9 @@ def find_latest_artifact(pattern):
 
 urls = []
 for item in current_chunk:
-    # safe glob match because ImageName could have been truncated
-    short_name = item["image_name"][:15].replace("poster_poster_", "poster_") # normalize to what we actually passed to the tool
+    # Handle the fact that some items in current_chunk might still be the old movie formats.
+    # The image_name could be truncated.
+    short_name = item["image_name"][:15].replace("poster_poster_", "poster_") 
     pattern = short_name + "*.jpg"
     latest = find_latest_artifact(pattern)
     if latest:
@@ -41,31 +46,32 @@ for item in current_chunk:
 
 # update progress
 progress.extend(urls)
+# Deduplicate just in case
+progress = list(set(progress))
 with open("fix_progress.json", "w") as f:
     json.dump(progress, f)
 
 print(f"Total progress: {len(progress)}/486")
 
-# Now prepare NEXT chunk (Chunk 3)
+# Now prepare NEXT chunk using the NEW Anime Prompts pool!
 processed_urls = set(progress)
-DNA = "Featuring a Vietnamese man with an oval face, high cheekbones, expressive Asian monolids, a radiant smile with upper teeth showing, and a signature spiky brush-up hairstyle. He is wearing a dark tailored suit. "
+
+with open("new_anime_prompts.json", "r") as f:
+    new_anime_prompts = json.load(f)
 
 next_chunk = []
-for item in bad_list:
-    if item["img_url"] not in processed_urls:
-        old = item["old_prompt"]
-        if "Movie poster style," in old:
-            new_prompt = old.replace("Movie poster style,", f"Movie poster style, {DNA}", 1)
-        else:
-            new_prompt = f"{DNA} {old}"
-        
-        filename = item["img_url"].split("/")[-1]
+for item in new_anime_prompts:
+    # Map back to original URL to check if it's processed
+    original_url = url_map[item["filename"]]
+    if original_url not in processed_urls:
+        filename = item["filename"]
+        # Make a safe short name for the agent to use
         safe_name = "poster_" + re.sub(r'[^a-z0-9_]', '', filename.lower().replace('.jpg', ''))
         safe_name = safe_name[:25]
         
         next_chunk.append({
             "image_name": safe_name,
-            "prompt": new_prompt,
+            "prompt": item["prompt"],
             "filename": filename
         })
         
@@ -75,4 +81,4 @@ for item in bad_list:
 with open("current_chunk.json", "w") as f:
     json.dump(next_chunk, f, ensure_ascii=False, indent=2)
 
-print(f"Prepared next chunk of {len(next_chunk)} items.")
+print(f"Prepared next chunk of {len(next_chunk)} items (ANIME STYLE).")
