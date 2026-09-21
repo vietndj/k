@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B-Roll Bank #01 | 65 Khoảnh Khắc Giảng Dạy Thực Chiến (4K)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --tag-fire: #ef4444;
+      --tag-smile: #10b981;
+      --tag-fast: #f59e0b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 18px 28px;
+      background: rgba(9, 10, 15, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge-broll {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .stats-item strong { color: var(--text); }
+    
+    .container {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 58% 42%;
+      gap: 24px;
+      flex: 1;
+    }
+    @media (max-width: 1024px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    
+    /* Left Panel: Video Player */
+    .player-section {
+      position: sticky;
+      top: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: fit-content;
+    }
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 */
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+    .video-wrapper iframe, .video-wrapper #player {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+    }
+    .player-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .now-playing {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+    }
+    .now-title { font-weight: 600; }
+    .btn-action {
+      background: #1e293b;
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      background: #334155;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    
+    /* Description & Metadata Accordion */
+    .metadata-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .metadata-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .desc-preview {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      color: #94a3b8;
+      max-height: 140px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    
+    /* Right Panel: Clips Feed */
+    .clips-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .control-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: sticky;
+      top: 90px;
+      background: rgba(9, 10, 15, 0.95);
+      backdrop-filter: blur(12px);
+      padding-bottom: 8px;
+      z-index: 10;
+    }
+    .search-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+    .search-input:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .filter-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    
+    .clips-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .clip-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .clip-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(4px);
+    }
+    .clip-card.active {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: var(--accent);
+    }
+    .clip-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .clip-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 700;
+      width: 24px;
+    }
+    .clip-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #60a5fa;
+      background: rgba(59, 130, 246, 0.1);
+      padding: 3px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .clip-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .clip-title {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .clip-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      display: inline-block;
+      width: fit-content;
+    }
+    .tag-fire { color: #f87171; }
+    .tag-smile { color: #34d399; }
+    .tag-fast { color: #fbbf24; }
+    
+    .clip-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.2s;
+    }
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+    .btn-icon.copied {
+      background: #10b981;
+      color: #fff;
+      border-color: #10b981;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span class="badge-broll">B-ROLL BANK</span>
+      <span class="brand-title">Offline K3 · Giảng Dạy Thực Chiến (4K)</span>
+    </div>
+    <div class="stats-bar">
+      <div class="stats-item">Tổng clips: <strong>65 mốc</strong></div>
+      <div class="stats-item">Độ phân giải: <strong>4K UHD</strong></div>
+      <div class="stats-item">Tỉ lệ: <strong>16:9 Gốc</strong></div>
+      <div class="stats-item">Kênh: <strong>Nguyễn Đức Việt</strong></div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Left: Video Player -->
+    <div class="player-section">
+      <div class="video-wrapper">
+        <div id="player"></div>
+      </div>
+      
+      <div class="player-status">
+        <div class="now-playing">
+          <span class="indicator"></span>
+          <span id="current-clip-name" class="now-title">Chọn một mốc clip bên phải để phát</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-action" id="btn-copy-timestamp-link">🔗 Copy Link Timestamp</button>
+          <button class="btn-action" id="btn-open-yt">↗ Mở trên YouTube</button>
+        </div>
+      </div>
+
+      <!-- Description & SEO Accordion -->
+      <div class="metadata-box">
+        <div class="metadata-header">
+          <span>📋 MÔ TẢ YOUTUBE CHUẨN SEO (65 CHAPTERS)</span>
+          <button class="btn-action" id="btn-copy-desc">Sao chép Description</button>
+        </div>
+        <div class="desc-preview" id="desc-box">Đang tải metadata mô tả...</div>
+      </div>
+    </div>
+
+    <!-- Right: Clip Feed -->
+    <div class="clips-section">
+      <div class="control-bar">
+        <input type="text" id="search-box" class="search-input" placeholder="🔍 Tìm kiếm mốc thời gian (VD: 04:32, vung tay, cười tươi)...">
+        <div class="filter-tags">
+          <button class="filter-btn active" data-filter="all">Tất cả (65)</button>
+          <button class="filter-btn" data-filter="quyetto">Nói quyết liệt (58)</button>
+          <button class="filter-btn" data-filter="smile">Cười tươi & Thần thái (5)</button>
+          <button class="filter-btn" data-filter="fast">Nhịp điệu dồn dập (2)</button>
+        </div>
+      </div>
+
+      <div class="clips-list" id="clips-container">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let currentVideoId = "olP0MZSWLDk";
+    let ytPlayer = null;
+    let clipsData = [];
+    let currentActiveIndex = 0;
+
+    // Load Plan JSON
+    async function init() {
+      try {
+        // Fetch plan
+        const res = await fetch("65_clips_plan.json");
+        clipsData = await res.json();
+        
+        // Fetch upload result if available
+        try {
+          const ytRes = await fetch("youtube_upload_result.json");
+          const ytData = await ytRes.json();
+          currentVideoId = ytData.video_id;
+          document.getElementById("desc-box").textContent = ytData.description;
+        } catch(e) {
+          // If not yet uploaded, we will poll or show status
+          document.getElementById("desc-box").textContent = "Tiến trình upload YouTube đang chạy ngầm. Video ID sẽ tự cập nhật ngay khi hoàn tất.";
+        }
+        
+        renderClips(clipsData);
+        loadYouTubeIframeAPI();
+      } catch(err) {
+        console.error("Lỗi nạp dữ liệu:", err);
+      }
+    }
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = Math.floor(sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function renderClips(items) {
+      const container = document.getElementById("clips-container");
+      container.innerHTML = "";
+
+      items.forEach((c, idx) => {
+        const timeStr = `${formatTime(c.start)} - ${formatTime(c.end)}`;
+        const dur = (c.end - c.start) + 4;
+        
+        let badgeClass = "tag-fire";
+        let badgeText = "QUYẾT LIỆT";
+        let filterCat = "quyetto";
+
+        if (c.logic.includes("cười") || c.logic.includes("rạng rỡ")) {
+          badgeClass = "tag-smile";
+          badgeText = "THẦN THÁI";
+          filterCat = "smile";
+        } else if (c.logic.includes("dồn dập")) {
+          badgeClass = "tag-fast";
+          badgeText = "DỒN DẬP";
+          filterCat = "fast";
+        }
+
+        const card = document.createElement("div");
+        card.className = `clip-card ${idx === 0 ? 'active' : ''}`;
+        card.dataset.index = idx;
+        card.dataset.start = c.start;
+        card.dataset.category = filterCat;
+        card.dataset.logic = c.logic.toLowerCase();
+
+        card.innerHTML = `
+          <div class="clip-left">
+            <span class="clip-num">${(idx + 1).toString().padStart(2, '0')}</span>
+            <span class="clip-time">${formatTime(c.start)}</span>
+            <div class="clip-info">
+              <span class="clip-title">${c.logic}</span>
+              <span class="clip-badge ${badgeClass}">${badgeText} · ~${dur}S</span>
+            </div>
+          </div>
+          <div class="clip-actions">
+            <button class="btn-icon btn-copy-link" title="Sao chép link YouTube mốc này">🔗</button>
+            <button class="btn-icon btn-play" title="Phát ngay">▶</button>
+          </div>
+        `;
+
+        card.addEventListener("click", () => seekToClip(idx));
+        card.querySelector(".btn-copy-link").addEventListener("click", (e) => {
+          e.stopPropagation();
+          copyTimestampLink(c.start);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function seekToClip(idx) {
+      currentActiveIndex = idx;
+      const c = clipsData[idx];
+      if (!c) return;
+
+      document.querySelectorAll(".clip-card").forEach(el => el.classList.remove("active"));
+      const activeCard = document.querySelector(`.clip-card[data-index="${idx}"]`);
+      if (activeCard) activeCard.classList.add("active");
+
+      document.getElementById("current-clip-name").textContent = `Clip ${idx+1:02d} (${formatTime(c.start)}): ${c.logic}`;
+
+      if (ytPlayer && typeof ytPlayer.seekTo === "function") {
+        ytPlayer.seekTo(c.start, true);
+        ytPlayer.playVideo();
+      }
+    }
+
+    function copyTimestampLink(seconds) {
+      const url = `https://youtu.be/${currentVideoId}?t=${Math.floor(seconds)}`;
+      navigator.clipboard.writeText(url).then(() => {
+        alert(`Đã chép link: ${url}`);
+      });
+    }
+
+    document.getElementById("btn-copy-timestamp-link").addEventListener("click", () => {
+      const c = clipsData[currentActiveIndex];
+      if (c) copyTimestampLink(c.start);
+    });
+
+    document.getElementById("btn-open-yt").addEventListener("click", () => {
+      const c = clipsData[currentActiveIndex];
+      const t = c ? Math.floor(c.start) : 0;
+      window.open(`https://youtu.be/${currentVideoId}?t=${t}`, "_blank");
+    });
+
+    document.getElementById("btn-copy-desc").addEventListener("click", () => {
+      const text = document.getElementById("desc-box").textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Đã sao chép toàn bộ Mô tả YouTube chuẩn 65 Chapters!");
+      });
+    });
+
+    // Search & Filter
+    document.getElementById("search-box").addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll(".clip-card").forEach(card => {
+        const text = card.dataset.logic + " " + card.querySelector(".clip-time").textContent;
+        card.style.display = text.includes(q) ? "flex" : "none";
+      });
+    });
+
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const filter = btn.dataset.filter;
+
+        document.querySelectorAll(".clip-card").forEach(card => {
+          if (filter === "all" || card.dataset.category === filter) {
+            card.style.display = "flex";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    });
+
+    // YouTube API
+    function loadYouTubeIframeAPI() {
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+
+    window.onYouTubeIframeAPIReady = function() {
+      if (currentVideoId && currentVideoId !== "PENDING") {
+        createPlayer(currentVideoId);
+      } else {
+        // Check periodically until upload completes
+        const checkTimer = setInterval(async () => {
+          try {
+            const res = await fetch("youtube_upload_result.json");
+            const data = await res.json();
+            if (data.video_id) {
+              clearInterval(checkTimer);
+              currentVideoId = data.video_id;
+              document.getElementById("desc-box").textContent = data.description;
+              createPlayer(data.video_id);
+            }
+          } catch(e) {}
+        }, 5000);
+      }
+    };
+
+    function createPlayer(id) {
+      ytPlayer = new YT.Player('player', {
+        videoId: id,
+        playerVars: {
+          'playsinline': 1,
+          'rel': 0,
+          'modestbranding': 1
+        },
+        events: {
+          'onReady': () => {
+            console.log("YouTube Player Sẵn Sàng!");
+            if (clipsData.length > 0) seekToClip(0);
+          }
+        }
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
