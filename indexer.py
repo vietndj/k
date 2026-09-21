@@ -90,7 +90,10 @@ SPEAKERS_DB = {
     "Jasmine Star": ["jasmine star", "jasmine"],
     "Sir Roger Penrose": ["roger penrose", "penrose"],
     "Vanessa Van Edwards": ["vanessa van edwards", "vanessa", "van edwards"],
-    "Lauren Tan": ["lauren tan", "laurentan", "grokbot", "pstack", "dune"]
+    "Rick Rubin": ["rick rubin"],
+    "Dr. Rachel Rubin": ["dr. rachel rubin", "rachel rubin"],
+    "Lauren Tan": ["lauren tan", "laurentan", "grokbot", "pstack", "dune"],
+    "Oren John": ["oren john", "oren meets world", "oren"]
 }
 
 CATEGORY_RULES = [
