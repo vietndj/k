@@ -1,17 +1,16 @@
-import re
+import json
 from collections import Counter
 
-with open("generate_manifest.py", "r") as f: content = f.read()
-mapping_text = re.search(r'cover_mapping\s*=\s*\{([\s\S]*?)\}', content).group(1)
-current_covers = dict(re.findall(r'"([^"]+\.html)"\s*:\s*"([^"]+)"', mapping_text))
+with open("all_unique_posters.json", "r") as f:
+    items = json.load(f)
 
-urls = list(current_covers.values())
-counter = Counter(urls)
-duplicates = {url: count for url, count in counter.items() if count > 1}
+# check duplicate paths
+paths = [item["path"] for item in items]
+path_counts = Counter(paths)
 
-print(f"Total unique HTMLs mapped: {len(current_covers)}")
-print(f"Total unique images used: {len(set(urls))}")
-print(f"Images mapped multiple times: {len(duplicates)}")
-if duplicates:
-    for url, count in list(duplicates.items())[:10]:
-        print(f"  {url}: mapped {count} times")
+duplicate_paths = {k:v for k,v in path_counts.items() if v > 1}
+print(f"Duplicate paths found: {len(duplicate_paths)}")
+
+if duplicate_paths:
+    for k, v in duplicate_paths.items():
+        print(f"{k}: {v} times")
