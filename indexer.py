@@ -24,6 +24,7 @@ LEGACY_DATA_FILE = os.path.join(BASE_DIR, "articles_data.json")
 
 SPEAKERS_DB = {
     "Nguyễn Việt": ["nguyễn việt", "nguyen viet", "nguyễn đức việt", "nguyen duc viet", "anh việt", "thầy việt", "nhận thức nguyễn việt", "bản ghi nhận thức nguyễn việt", "vietmac"],
+    "Po-Shen Loh": ["po-shen loh", "po shen loh", "poshen loh", "gs. po-shen loh"],
     "Andrew Huberman": ["huberman", "andrew huberman"],
     "Mo Gawdat": ["mo gawdat", "gawdat"],
     "Dr. K (Alok Kanojia)": ["dr. k", "dr k", "alok kanojia", "healthygamer"],
