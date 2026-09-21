@@ -18,10 +18,12 @@ success = []
 for p in pending:
     filename = p["filename"]
     prefix = filename.replace(".jpg", "")
+    prefix_under = prefix.replace("-", "_")
     
     # Search across all subdirectories in brain_root
     pattern = os.path.join(brain_root, "*", prefix + "_*.jpg")
-    matches = glob.glob(pattern)
+    pattern_under = os.path.join(brain_root, "*", prefix_under + "_*.jpg")
+    matches = glob.glob(pattern) + glob.glob(pattern_under)
     
     valid_matches = [m for m in matches if os.path.getctime(m) > 1726940000]
     if valid_matches:
