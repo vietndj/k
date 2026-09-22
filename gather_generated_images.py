@@ -2,13 +2,9 @@ import json
 import os
 import glob
 import shutil
-import time
 
-brain_root = "/Users/vietmac/.gemini/antigravity/brain"
+brain_dir = "/Users/vietmac/.gemini/antigravity/brain/66d764d7-72c7-410f-ad50-3858ded5125a"
 covers_dir = "/Users/vietmac/Documents/CODE/k/assets/covers"
-# Only look for files created in the last 2 hours (this session's reset)
-# Current time is ~ 1790050000. Let's use 1790040000.
-cutoff_time = time.time() - 7200 
 
 with open("cotrang_progress.json", "r") as f:
     progress = json.load(f)
@@ -23,19 +19,16 @@ for p in pending:
     filename = p["filename"]
     prefix = filename.replace(".jpg", "")
     
-    # Search across all subdirectories in brain_root
-    pattern = os.path.join(brain_root, "*", prefix + "_*.jpg")
+    # Search only in the current brain directory to avoid pulling garbage from old chats
+    pattern = os.path.join(brain_dir, prefix + "_*.jpg")
     matches = glob.glob(pattern)
     
-    valid_matches = [m for m in matches if os.path.getctime(m) > cutoff_time]
-    if valid_matches:
-        latest = max(valid_matches, key=os.path.getctime)
+    if matches:
+        latest = max(matches, key=os.path.getctime)
         dest = os.path.join(covers_dir, filename)
         shutil.copy(latest, dest)
         success.append(filename)
         print(f"Found and copied {filename}")
-    else:
-        pass # silently skip to avoid spam
 
 progress.extend(success)
 with open("cotrang_progress.json", "w") as f:
