@@ -7,8 +7,8 @@ import time
 brain_root = "/Users/vietmac/.gemini/antigravity/brain"
 covers_dir = "/Users/vietmac/Documents/CODE/k/assets/covers"
 
-# Search files from the last 12 hours to safely cover Batch 1 and Batch 2 today
-cutoff_time = time.time() - 43200 
+# Search files from the last 24 hours
+cutoff_time = time.time() - 86400 
 
 with open("cotrang_progress.json", "r") as f:
     progress = json.load(f)
@@ -21,9 +21,9 @@ pending = [p for p in all_prompts if p["filename"] not in progress]
 success = []
 for p in pending:
     filename = p["filename"]
-    prefix = filename.replace(".jpg", "")
+    # The image generation tool sanitizes hyphens into underscores
+    prefix = filename.replace(".jpg", "").replace("-", "_")
     
-    # Search across all subdirectories in brain_root
     pattern = os.path.join(brain_root, "*", prefix + "_*.jpg")
     matches = glob.glob(pattern)
     
