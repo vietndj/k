@@ -55,9 +55,11 @@ html_output = """
 
 count = 1
 for img_src, title_encoded in cards:
-    title = html.unescape(title_encoded.replace(r'\u', '\\u').encode().decode('unicode_escape')) if r'\u' in title_encoded else html.unescape(title_encoded)
+    try:
+        title = html.unescape(title_encoded.replace(r'\u', '\\u').encode().decode('unicode_escape')) if r'\u' in title_encoded else html.unescape(title_encoded)
+    except Exception:
+        title = title_encoded
     
-    # Assign a random fantasy concept for now to fill the plan
     film = random.choice(movies)
     concept = f"<strong>Style:</strong> {film}<br><strong>Concept:</strong> Áp dụng bối cảnh sử thi, trang phục giáp/lụa cổ đại, ánh sáng cinematic kịch tính. Nạp 2 mỏ neo Face DNA."
     
@@ -78,7 +80,8 @@ html_output += """
 </html>
 """
 
-with open('/Users/vietmac/Documents/CODE/k/check_anh.html', 'w', encoding='utf-8') as f:
+# Write while ignoring unicode encoding issues
+with open('/Users/vietmac/Documents/CODE/k/check_anh.html', 'w', encoding='utf-8', errors='ignore') as f:
     f.write(html_output.replace('{total}', str(count - 1)))
 
 print(f"Generated check_anh.html with {count - 1} images.")
