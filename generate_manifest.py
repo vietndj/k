@@ -11,12 +11,12 @@ def generate():
     posts = []
 
     cover_mapping = {
-        "anton-osika-lovable.html": "./assets/covers/3_body_problem.jpg",
-        "ma-sat-noi-tam.html": "./assets/covers/severance.jpg",
-        "gs-po-shen-loh-ly-thuyet-tro-choi-giai-phap-song-sot-cho-con-nguoi-ky-nguyen-ai-podcast.html": "./assets/covers/queens_gambit.jpg",
-        "rick-rubin-ky-nang-duy-nhat-ai-khong-the-danh-cap-podcast.html": "./assets/covers/dune_two.jpg",
-        "tuong-lai-marketing-ban-do-phan-phoi-tu-0-dong-den-vo-han-ngan-sach-oren-john-podcast.html": "./assets/covers/gentlemen.jpg",
-        "logickenh-he-thong-hoa-storytelling-lat-cat-vi-mo.html": "./assets/covers/shogun.jpg",
+        "anton-osika-lovable.html": "./assets/covers/3_body_problem_v2.jpg",
+        "ma-sat-noi-tam.html": "./assets/covers/severance_v2.jpg",
+        "gs-po-shen-loh-ly-thuyet-tro-choi-giai-phap-song-sot-cho-con-nguoi-ky-nguyen-ai-podcast.html": "./assets/covers/queens_gambit_v2.jpg",
+        "rick-rubin-ky-nang-duy-nhat-ai-khong-the-danh-cap-podcast.html": "./assets/covers/dune_two_v2.jpg",
+        "tuong-lai-marketing-ban-do-phan-phoi-tu-0-dong-den-vo-han-ngan-sach-oren-john-podcast.html": "./assets/covers/gentlemen_v2.jpg",
+        "logickenh-he-thong-hoa-storytelling-lat-cat-vi-mo.html": "./assets/covers/shogun_v2.jpg",
         "kichbanoffline-phau-thuat-kich-ban-offline-phan-6.html": "./assets/covers/kichbanoffline-phau-thuat-kich-ban-offline-phan-6.jpg",
         "kichbanoffline-phau-thuat-kich-ban-offline-phan-5.html": "./assets/covers/kichbanoffline-phau-thuat-kich-ban-offline-phan-5.jpg",
         "kichbanoffline-phau-thuat-kich-ban-offline-phan-4.html": "./assets/covers/kichbanoffline-phau-thuat-kich-ban-offline-phan-4.jpg",
