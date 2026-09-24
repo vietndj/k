@@ -471,6 +471,9 @@ html_content = f"""<!DOCTYPE html>
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }}
+    .card-btns .btn-full {{
+      grid-column: 1 / -1;
+    }}
     .btn-sm {{
       padding: 6px 10px;
       border-radius: 8px;
@@ -828,8 +831,8 @@ html_content = f"""<!DOCTYPE html>
 
           <!-- Action buttons -->
           <div class="card-btns">
-            <button class="btn btn-accent btn-sm" onclick="tryFavicon('${{uri}}', '${{item.name}}')">
-              👁️ Đổi Tab Thật
+            <button class="btn btn-accent btn-sm btn-full" onclick="tryFavicon('${{uri}}', '${{item.name}}')">
+              👁️ Đổi Tab Thật (Chrome 16px)
             </button>
             <button class="btn btn-subtle btn-sm" onclick="copyText('${{uri}}', 'Đã copy Data URI Favicon ${{item.name}}')">
               🔗 Copy URI
@@ -839,6 +842,9 @@ html_content = f"""<!DOCTYPE html>
             </button>
             <button class="btn btn-subtle btn-sm" onclick="downloadSvgFile('${{item.id}}')">
               ⬇️ Tải SVG
+            </button>
+            <button class="btn btn-subtle btn-sm" onclick="downloadPngFile('${{item.id}}')">
+              ⬇️ Tải PNG (512px)
             </button>
           </div>
         `;
@@ -867,6 +873,20 @@ html_content = f"""<!DOCTYPE html>
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       showToast(`Đã tải về tệp: logo_${{item.id}}_${{currentStyle}}.svg`);
+    }}
+
+    function downloadPngFile(id) {{
+      const item = GMAIL_DATA.find(a => a.id === id);
+      if (!item) return;
+      const fileName = `${{item.id}}_${{currentStyle}}_512.png`;
+      const url = `assets/logos/gmail/png/${{fileName}}`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast(`Đang tải về: ${{fileName}}`);
     }}
 
     function copyFullData() {{

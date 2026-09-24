@@ -237,29 +237,28 @@ async def main():
         await page.screenshot(path=OUT_POSTER, full_page=True)
         print(f"✅ Đã chụp thành công Showcase Poster: {OUT_POSTER}")
         
-        # Render một vài avatar đơn lẻ 512x512 tiêu biểu (vietndj, aidesign, nddviet, 04, feduvn, vocuaviet)
-        key_accounts = ['vietndj', 'aidesginforwork', 'nddviet', 'vietnd4', 'vietndluutruanh', 'feduvn', 'vocuaviet01', 'vietndseo01']
-        for key in key_accounts:
-            acc = next((a for a in items if a['id'] == key), None)
-            if not acc: continue
+        print("📸 Bắt đầu render 512px PNG cho tất cả 38 tài khoản (cả dark và solid)...")
+        if not os.path.exists(OUT_SINGLE_DIR):
+            os.makedirs(OUT_SINGLE_DIR)
             
-            single_html = f"""
-            <!DOCTYPE html>
-            <html>
-            <body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 512px; height: 512px;">
-              <div style="width: 512px; height: 512px;">
-                {acc['svg_dark']}
-              </div>
-            </body>
-            </html>
-            """
+        for acc in items:
+            key = acc['id']
             spage = await browser.new_page(viewport={"width": 512, "height": 512}, device_scale_factor=1)
-            await spage.set_content(single_html)
-            await spage.wait_for_timeout(300)
-            single_png = os.path.join(OUT_SINGLE_DIR, f"{key}_512.png")
-            await spage.screenshot(path=single_png)
+            
+            # Dark
+            html_dark = f'<!DOCTYPE html><html><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 512px; height: 512px;"><div style="width: 512px; height: 512px;">{acc["svg_dark"]}</div></body></html>'
+            await spage.set_content(html_dark)
+            await spage.wait_for_timeout(50)
+            await spage.screenshot(path=os.path.join(OUT_SINGLE_DIR, f"{key}_dark_512.png"), omit_background=True)
+            
+            # Solid
+            html_solid = f'<!DOCTYPE html><html><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 512px; height: 512px;"><div style="width: 512px; height: 512px;">{acc["svg_solid"]}</div></body></html>'
+            await spage.set_content(html_solid)
+            await spage.wait_for_timeout(50)
+            await spage.screenshot(path=os.path.join(OUT_SINGLE_DIR, f"{key}_solid_512.png"), omit_background=True)
+            
             await spage.close()
-            print(f"  ✓ Rendered avatar 512px: {key}_512.png")
+            print(f"  ✓ Rendered 512px PNG: {key}")
             
         await browser.close()
     print("🎉 Hoàn tất render toàn bộ ảnh!")
