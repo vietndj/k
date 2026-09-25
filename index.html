@@ -483,22 +483,7 @@
         </div>
     </div>
 
-    <div id="preview-modal" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 md:p-8 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-5xl h-full max-h-[90vh] rounded-xl shadow-2xl flex flex-col relative overflow-hidden">
-            <div class="p-4 border-b flex justify-between items-center bg-gray-50">
-                <h3 class="font-bold text-lg truncate" id="preview-title">Preview</h3>
-                <div class="flex gap-2">
-                    <a id="preview-open-btn" href="#" target="_blank" class="px-3 py-1 bg-gray-200 text-xs rounded hover:bg-gray-300">Mở tab mới</a>
-                    <button id="close-preview-btn" class="p-1 rounded hover:bg-gray-200">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-            </div>
-            <div class="flex-1 overflow-auto p-0 bg-white">
-                <iframe id="preview-frame" class="w-full h-full border-none"></iframe>
-            </div>
-        </div>
-    </div>
+
 
     <script>
         // ================= AUTHENTICATION & GATEKEEPER =================
@@ -783,12 +768,12 @@
                     return `
                     <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:border-gray-300 hover:shadow-sm transition bg-white relative group">
                         ${isBatchMode ? `<input type="checkbox" class="post-checkbox w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" value="${post.filename}" ${isSelected ? 'checked' : ''}>` : ''}
-                        <div class="flex-1 min-w-0 flex items-center gap-2 cursor-pointer" onclick="openPreview('${post.filename}', '${post.title}')">
+                        <a href="./${post.filename}" target="_blank" onclick="markAsRead('${post.filename}')" class="flex-1 min-w-0 flex items-center gap-2 cursor-pointer">
                             <div class="truncate text-sm font-semibold text-gray-900 group-hover:text-emerald-700 transition">${post.title}</div>
                             ${readHtml}
                             <div class="flex gap-1 ml-auto overflow-hidden hidden sm:flex">${tagsHtml}</div>
-                        </div>
-                        <a href="./${post.filename}" target="_blank" class="p-1.5 text-gray-400 hover:text-black opacity-0 group-hover:opacity-100 transition" title="Mở tab mới">
+                        </a>
+                        <a href="./${post.filename}" target="_blank" onclick="markAsRead('${post.filename}')" class="p-1.5 text-gray-400 hover:text-black opacity-0 group-hover:opacity-100 transition" title="Mở tab mới">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                         </a>
                     </div>`;
@@ -798,7 +783,7 @@
                     <div class="rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-md transition bg-white overflow-hidden relative flex flex-col group h-full">
                         ${badgeHtml}
                         ${isBatchMode ? `<div class="absolute top-2 left-2 z-10 p-1.5 bg-white/50 backdrop-blur-sm rounded-br-lg"><input type="checkbox" class="post-checkbox w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 shadow-sm cursor-pointer" value="${post.filename}" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()"></div>` : ''}
-                        <div class="flex-1 flex flex-col cursor-pointer" onclick="openPreview('${post.filename}', '${post.title}')">
+                        <a href="./${post.filename}" target="_blank" onclick="markAsRead('${post.filename}')" class="flex-1 flex flex-col cursor-pointer">
                             ${coverImgHtml}
                             <div class="p-4 flex-1 flex flex-col">
                                 <div class="flex items-start justify-between gap-2 mb-2">
@@ -812,12 +797,12 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                         <div class="bg-gray-50 border-t border-gray-100 px-4 py-2 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
                             <span class="text-[10px] text-gray-500">${post.read_time || '5 min'}</span>
                             <div class="flex items-center gap-2">
                                 <a href="https://github.com/vietndj/k/delete/main/${post.filename}" target="_blank" class="text-[10px] text-rose-500 hover:text-rose-700 uppercase" onclick="event.stopPropagation()">Xóa file</a>
-                                <a href="./${post.filename}" target="_blank" class="text-[10px] font-bold text-gray-900 hover:text-emerald-600 uppercase tracking-wide flex items-center gap-1" onclick="event.stopPropagation()">
+                                <a href="./${post.filename}" target="_blank" class="text-[10px] font-bold text-gray-900 hover:text-emerald-600 uppercase tracking-wide flex items-center gap-1" onclick="markAsRead('${post.filename}'); event.stopPropagation()">
                                     Đọc <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                 </a>
                             </div>
@@ -940,11 +925,7 @@
                 }
             });
 
-            // Preview Modal
-            document.getElementById('close-preview-btn').addEventListener('click', () => {
-                document.getElementById('preview-modal').classList.add('hidden');
-                document.getElementById('preview-frame').src = '';
-            });
+
 
             // Drag and Drop initialization
             initDragAndDrop();
@@ -1249,27 +1230,27 @@
             recs = recs.sort(() => 0.5 - Math.random()).slice(0, 3);
             
             rc.innerHTML = recs.map(post => `
-                <div class="p-2 bg-white rounded border border-gray-100 cursor-pointer hover:border-gray-300" onclick="openPreview('${post.filename}', '${post.title}')">
+                <a href="./${post.filename}" target="_blank" onclick="markAsRead('${post.filename}')" class="block p-2 bg-white rounded border border-gray-100 cursor-pointer hover:border-gray-300">
                     <div class="text-xs font-bold text-gray-800 line-clamp-1">${post.title}</div>
                     <div class="text-[10px] text-gray-500 mt-1">${post.tags.map(t => SMART_TAGS[t].label.split(' ')[1] || SMART_TAGS[t].label.split(' ')[0]).join(', ')}</div>
-                </div>
+                </a>
             `).join('');
         }
 
         // ================= ACTIONS =================
-        window.openPreview = function(filename, title) {
-            document.getElementById('preview-title').innerText = title;
-            document.getElementById('preview-frame').src = `./${filename}`;
-            document.getElementById('preview-open-btn').href = `./${filename}`;
-            document.getElementById('preview-modal').classList.remove('hidden');
-            
+        window.markAsRead = function(filename) {
             if (!readProgress.includes(filename)) {
                 readProgress.push(filename);
                 localStorage.setItem('fedu_read_progress', JSON.stringify(readProgress));
                 updateStats();
-                renderPosts();
+                // Avoid re-rendering posts immediately if it breaks user click flow,
+                // but since it's opening in a new tab, a slight delay is fine.
+                setTimeout(() => renderPosts(), 100);
             }
         };
+
+        // Note: openPreview has been removed to disable the iframe modal per user request
+
 
         window.openCollection = function(idx) {
             const col = customCollections[idx];
