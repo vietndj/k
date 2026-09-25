@@ -209,7 +209,7 @@ poster_html = f"""
     <div class="badge">FD ANGUITA SANS BLACK • SIGNATURE DOT • 38 GMAIL PROFILES</div>
     <h1 class="title">BỘ NHẬN DIỆN LOGO 38 TÀI KHOẢN GMAIL • NGUYỄN VIỆT</h1>
     <p class="subtitle">
-      Định danh thị giác độc quyền theo triết lý <strong>brand.html</strong>: Monogram nét 900 Black condensed chiếm 85% khung hình, góc bo rx=16, dấu chấm nhận diện quang học cx=52, cy=13. Tối ưu cực đại từ 16px Chrome Tab đến 512px Profile Avatar.
+      Định danh thị giác độc quyền theo triết lý <strong>brand.html</strong>: Monogram nét 900 Black condensed chiếm 85% khung hình, góc bo rx=16, dấu chấm nhận diện quang học cx=52, cy=13. Tối ưu cực đại từ 16px Chrome Tab đến 1024px Profile Avatar.
     </p>
   </div>
 
@@ -237,28 +237,28 @@ async def main():
         await page.screenshot(path=OUT_POSTER, full_page=True)
         print(f"✅ Đã chụp thành công Showcase Poster: {OUT_POSTER}")
         
-        print("📸 Bắt đầu render 512px PNG cho tất cả 38 tài khoản (cả dark và solid)...")
+        print("📸 Bắt đầu render 1024px PNG cho tất cả 38 tài khoản (cả dark và solid)...")
         if not os.path.exists(OUT_SINGLE_DIR):
             os.makedirs(OUT_SINGLE_DIR)
             
         for acc in items:
             key = acc['id']
-            spage = await browser.new_page(viewport={"width": 512, "height": 512}, device_scale_factor=1)
+            spage = await browser.new_page(viewport={"width": 1024, "height": 1024}, device_scale_factor=1)
             
             # Dark
-            html_dark = f'<!DOCTYPE html><html><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 512px; height: 512px;"><div style="width: 512px; height: 512px;">{acc["svg_dark"]}</div></body></html>'
+            html_dark = f'<!DOCTYPE html><html><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 1024px; height: 1024px;"><div style="width: 1024px; height: 1024px;">{acc["svg_dark"]}</div></body></html>'
             await spage.set_content(html_dark)
             await spage.wait_for_timeout(50)
-            await spage.screenshot(path=os.path.join(OUT_SINGLE_DIR, f"{key}_dark_512.png"), omit_background=True)
+            await spage.screenshot(path=os.path.join(OUT_SINGLE_DIR, f"{key}_dark_1024.png"), omit_background=True)
             
             # Solid
-            html_solid = f'<!DOCTYPE html><html><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 512px; height: 512px;"><div style="width: 512px; height: 512px;">{acc["svg_solid"]}</div></body></html>'
+            html_solid = f'<!DOCTYPE html><html><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 1024px; height: 1024px;"><div style="width: 1024px; height: 1024px;">{acc["svg_solid"]}</div></body></html>'
             await spage.set_content(html_solid)
             await spage.wait_for_timeout(50)
-            await spage.screenshot(path=os.path.join(OUT_SINGLE_DIR, f"{key}_solid_512.png"), omit_background=True)
+            await spage.screenshot(path=os.path.join(OUT_SINGLE_DIR, f"{key}_solid_1024.png"), omit_background=True)
             
             await spage.close()
-            print(f"  ✓ Rendered 512px PNG: {key}")
+            print(f"  ✓ Rendered 1024px PNG: {key}")
             
         await browser.close()
     print("🎉 Hoàn tất render toàn bộ ảnh!")
