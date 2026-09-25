@@ -1,0 +1,851 @@
+import os
+
+with open('/Users/vietmac/Documents/CODE/k/index.html', 'r', encoding='utf-8') as f:
+    lines = f.readlines()
+
+# Extract gatekeeper (1 to 268)
+gatekeeper = "".join(lines[:268])
+
+new_app_view = """
+    <!-- ================= MAIN APP VIEW ================= -->
+    <div id="app-view" style="display: none;" class="min-h-screen flex flex-col md:flex-row flex-grow bg-white text-sm">
+        
+        <!-- LEFT SIDEBAR -->
+        <aside id="left-sidebar" class="hidden md:flex flex-col w-64 border-r border-gray-100 bg-[#fbfbfb] sticky top-0 h-screen transition-all duration-300">
+            <div class="px-4 py-6 border-b border-gray-200 flex items-center justify-between">
+                <a href="https://go.fedu.vn" class="flex items-center gap-2 group">
+                    <div class="w-8 h-8 rounded-md bg-black text-white flex items-center justify-center font-display font-bold text-lg">F</div>
+                    <div class="font-display font-bold text-lg text-gray-900 tracking-tight">VIDEO</div>
+                </a>
+                <button id="lock-screen-btn" class="p-2 text-gray-400 hover:text-rose-500 rounded-md transition" title="Khóa">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto no-scrollbar px-3 py-4 space-y-6">
+                <!-- Navigation -->
+                <div class="draggable-container" id="sidebar-nav-container">
+                    <!-- Groups will be inserted here dynamically -->
+                </div>
+
+                <!-- Custom Collections -->
+                <div class="pt-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between px-2 mb-2">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Bộ Sưu Tập</span>
+                    </div>
+                    <div id="collections-container" class="space-y-1"></div>
+                </div>
+
+                <!-- Custom Links -->
+                <div class="pt-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between px-2 mb-2">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Liên Kết</span>
+                        <button id="add-link-btn" class="text-gray-400 hover:text-black">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        </button>
+                    </div>
+                    <div id="custom-links-container" class="space-y-1"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTER FEED -->
+        <main id="main-content" class="flex-grow flex-1 max-w-4xl mx-auto w-full flex flex-col xl:border-r xl:border-gray-100 transition-all duration-300 relative h-screen overflow-y-auto">
+            
+            <!-- Mobile Header -->
+            <header class="md:hidden flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white sticky top-0 z-20">
+                 <a href="https://go.fedu.vn" class="flex items-center gap-2 group">
+                    <div class="w-8 h-8 rounded-md bg-black text-white flex items-center justify-center font-display font-bold text-lg">F</div>
+                    <div class="font-display font-bold text-lg text-gray-900 tracking-tight">VIDEO</div>
+                </a>
+                <button class="p-2 text-gray-500 bg-gray-100 rounded-md" id="mobile-search-btn">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </button>
+            </header>
+
+            <!-- Top Bar / Search (Desktop) -->
+            <div class="hidden md:flex sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4 items-center justify-between">
+                <div class="relative w-full max-w-lg group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <input type="text" id="desktop-search-input" placeholder="Tìm kiếm... (Cmd+K)" 
+                        class="w-full pl-9 pr-10 py-2 text-sm bg-gray-50 border border-transparent rounded-md focus:outline-none focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-gray-100 transition-all placeholder:text-gray-400">
+                    <div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+                        <span class="text-xs text-gray-400 border border-gray-200 rounded px-1.5 py-0.5">⌘K</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button id="batch-mode-btn" class="px-3 py-1.5 text-xs font-medium bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition">
+                        Chế độ chọn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-4 sm:p-6 flex-grow">
+                
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 id="section-title" class="font-display text-2xl font-bold text-gray-900 tracking-tight">Tất Cả Bài Viết</h2>
+                        <div class="text-sm text-gray-500 mt-1" id="results-count">0 bài</div>
+                    </div>
+                    
+                    <!-- View toggle -->
+                    <div class="flex bg-gray-100 p-0.5 rounded-md text-gray-500">
+                        <button class="view-btn p-1.5 rounded bg-white text-black shadow-sm" data-view="grid">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                        </button>
+                        <button class="view-btn p-1.5 rounded hover:text-black" data-view="list">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Batch Actions -->
+                <div id="batch-actions" class="hidden mb-4 p-3 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center justify-between">
+                    <div class="text-sm text-emerald-800 font-medium">Đã chọn <span id="selected-count">0</span> bài</div>
+                    <div class="flex gap-2">
+                        <button id="group-selected-btn" class="px-3 py-1 bg-emerald-600 text-white text-xs rounded hover:bg-emerald-700">Nhóm lại</button>
+                        <button id="cancel-batch-btn" class="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300">Hủy</button>
+                    </div>
+                </div>
+
+                <div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Cards -->
+                </div>
+
+                <div id="empty-state" class="hidden py-12 text-center text-gray-500">
+                    Không tìm thấy kết quả phù hợp.
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside id="right-sidebar" class="hidden xl:flex flex-col w-72 py-6 px-4 sticky top-0 h-screen overflow-y-auto no-scrollbar bg-white border-l border-gray-100 transition-all duration-300">
+            <div id="widgets-container" class="draggable-container space-y-6">
+                <!-- Tag Cloud Widget -->
+                <div class="widget bg-gray-50 p-4 rounded-xl border border-gray-100 cursor-move" draggable="true" data-id="tags">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
+                        Phân Loại 
+                        <span class="text-gray-300">⣿</span>
+                    </h3>
+                    <div id="tag-cloud" class="flex flex-wrap gap-1.5"></div>
+                </div>
+                
+                <!-- Stats Widget -->
+                <div class="widget bg-gray-50 p-4 rounded-xl border border-gray-100 cursor-move" draggable="true" data-id="stats">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
+                        Thống Kê
+                        <span class="text-gray-300">⣿</span>
+                    </h3>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div class="flex justify-between"><span>Tổng số:</span> <strong id="stat-total">0</strong></div>
+                        <div class="flex justify-between"><span>Đã đọc:</span> <strong id="stat-read">0</strong></div>
+                        <div class="flex justify-between"><span>Mới (24h):</span> <strong id="stat-new">0</strong></div>
+                    </div>
+                </div>
+
+                <!-- Suggestions Widget -->
+                <div class="widget bg-gray-50 p-4 rounded-xl border border-gray-100 cursor-move" draggable="true" data-id="suggest">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
+                        Có thể bạn quan tâm
+                        <span class="text-gray-300">⣿</span>
+                    </h3>
+                    <div id="suggestions-list" class="space-y-2"></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modals -->
+    <div id="add-link-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="font-bold text-lg mb-4">Thêm Liên Kết</h3>
+            <div class="space-y-3">
+                <input type="text" id="new-link-url" placeholder="URL (vd: https://...)" class="w-full p-2 border border-gray-200 rounded">
+                <input type="text" id="new-link-name" placeholder="Tên hiển thị (để trống tự detect nếu repo)" class="w-full p-2 border border-gray-200 rounded">
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button id="cancel-link-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded">Hủy</button>
+                <button id="save-link-btn" class="px-4 py-2 bg-black text-white rounded">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="create-group-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="font-bold text-lg mb-4">Tạo Bộ Sưu Tập</h3>
+            <input type="text" id="new-group-name" placeholder="Tên bộ sưu tập..." class="w-full p-2 border border-gray-200 rounded">
+            <div class="flex justify-end gap-2 mt-6">
+                <button id="cancel-group-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded">Hủy</button>
+                <button id="save-group-btn" class="px-4 py-2 bg-black text-white rounded">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="preview-modal" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 md:p-8 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-4xl h-full max-h-[90vh] rounded-xl shadow-2xl flex flex-col relative overflow-hidden">
+            <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                <h3 class="font-bold text-lg truncate" id="preview-title">Preview</h3>
+                <div class="flex gap-2">
+                    <a id="preview-open-btn" href="#" target="_blank" class="px-3 py-1 bg-gray-200 text-xs rounded hover:bg-gray-300">Mở tab mới</a>
+                    <button id="close-preview-btn" class="p-1 rounded hover:bg-gray-200">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-0 bg-white">
+                <iframe id="preview-frame" class="w-full h-full border-none"></iframe>
+            </div>
+        </div>
+    </div>
+"""
+
+scripts = """
+    <script>
+        // ================= AUTHENTICATION & GATEKEEPER =================
+        const AUTH_STORAGE_KEY = 'fedu_vault_auth_v1';
+        const PASSCODE_PLAIN = '0070';
+        const PASSCODE_HASH = '71ffe84afd528a0365d6ec95c89a64cd6979b4a15730649feddf2dc390db9e3c';
+
+        async function sha256Hex(str) {
+            try {
+                const buffer = new TextEncoder().encode(str);
+                const hash = await crypto.subtle.digest('SHA-256', buffer);
+                return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch (e) { return ''; }
+        }
+
+        function isUserUnlocked() {
+            return localStorage.getItem(AUTH_STORAGE_KEY) === PASSCODE_HASH;
+        }
+
+        let appInitialized = false;
+        function unlockVault() {
+            localStorage.setItem(AUTH_STORAGE_KEY, PASSCODE_HASH);
+            const gate = document.getElementById('gatekeeper-screen');
+            const app = document.getElementById('app-view');
+            if (gate) gate.style.display = 'none';
+            if (app) app.style.display = 'flex';
+            if (!appInitialized) {
+                appInitialized = true;
+                initApp();
+            }
+        }
+
+        function lockVault() {
+            localStorage.removeItem(AUTH_STORAGE_KEY);
+            window.location.reload();
+        }
+
+        async function verifyPasscode(rawPin) {
+            const pin = (rawPin || '').trim();
+            const pinCard = document.getElementById('pin-card');
+            const pinFeedback = document.getElementById('pin-feedback');
+            const pinInput = document.getElementById('pin-input');
+
+            if (!pin) {
+                if (pinFeedback) {
+                    pinFeedback.textContent = 'Vui lòng nhập mật khẩu';
+                    pinFeedback.className = 'text-xs min-h-[18px] text-amber-400 font-mono';
+                }
+                return;
+            }
+
+            let isCorrect = (pin === PASSCODE_PLAIN);
+            if (!isCorrect) {
+                const hash = await sha256Hex(pin);
+                if (hash === PASSCODE_HASH) isCorrect = true;
+            }
+
+            if (isCorrect) {
+                if (pinFeedback) {
+                    pinFeedback.textContent = '✅ Mật khẩu chính xác! Đang mở khóa...';
+                    pinFeedback.className = 'text-xs min-h-[18px] text-emerald-400 font-mono font-semibold';
+                }
+                if (pinCard) pinCard.classList.remove('animate-shake');
+                setTimeout(() => unlockVault(), 200);
+            } else {
+                if (pinCard) {
+                    pinCard.classList.remove('animate-shake');
+                    void pinCard.offsetWidth; // trigger reflow
+                    pinCard.classList.add('animate-shake');
+                }
+                if (pinFeedback) {
+                    pinFeedback.textContent = '❌ Mật khẩu không đúng. Vui lòng thử lại!';
+                    pinFeedback.className = 'text-xs min-h-[18px] text-rose-400 font-mono font-semibold';
+                }
+                if (pinInput) {
+                    pinInput.value = '';
+                    pinInput.focus();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const pinInput = document.getElementById('pin-input');
+            const unlockBtn = document.getElementById('submit-unlock-btn');
+
+            if (isUserUnlocked()) {
+                unlockVault();
+            } else {
+                if (pinInput) {
+                    pinInput.focus();
+                    pinInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') verifyPasscode(pinInput.value);
+                    });
+                }
+                if (unlockBtn) unlockBtn.addEventListener('click', () => {
+                    if (pinInput) verifyPasscode(pinInput.value);
+                });
+            }
+
+            document.querySelectorAll('.key-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!pinInput) return;
+                    const key = btn.dataset.key;
+                    if (key === 'clear') pinInput.value = '';
+                    else if (key === 'del') pinInput.value = pinInput.value.slice(0, -1);
+                    else if (pinInput.value.length < 6) pinInput.value += key;
+                    pinInput.dispatchEvent(new Event('input'));
+                });
+            });
+        });
+
+        // ================= NEW APP LOGIC =================
+
+        // Constants & State
+        const SMART_TAGS = {
+            'triet-ly': { keywords: ['triet-ly', 'thoi-quen', 'khac-ky', 'tu-chu', 'bay-tien-nghi', 'lo-au'], label: '🧭 Triết lý sống & Thói quen' },
+            'ai-tech': { keywords: ['ai', 'cong-nghe', 'sam-altman', 'mo-gawdat', 'lovable', 'second-brain'], label: '🤖 AI & Công nghệ' },
+            'tam-ly': { keywords: ['tam-ly', 'nao-bo', 'phan-xa', 'the-dien', 'neuroplasticity', 'hach-hanh-nhan'], label: '🧠 Tâm lý học & Não bộ' },
+            'kinh-doanh': { keywords: ['kinh-doanh', 'tai-chinh', 'bill-ackman', 'ray-dalio', 'high-ticket', 'd2c'], label: '💰 Kinh doanh & Tài chính' },
+            'suc-khoe': { keywords: ['suc-khoe', 'tieu-duong', 'carnivore', 'giac-ngu', 'biohacking'], label: '🏋️ Sức khỏe & Y sinh' },
+            'marketing': { keywords: ['marketing', 'xay-kenh', 'retention', 'niche', 'vo-boc-video'], label: '🎬 Marketing & Xây Kênh' },
+            'offline': { keywords: ['kich-ban-offline', 'case-study', 'video-offline'], label: '📝 Kịch bản Offline' },
+            'hub': { keywords: ['hub', 'dashboard', 'quan-tri', 'hub-kenh'], label: '🏠 Hub & Dashboard' }
+        };
+
+        let allPosts = [];
+        let filteredPosts = [];
+        let activeTags = new Set();
+        let currentView = 'grid'; // grid | list
+        let isBatchMode = false;
+        let selectedPosts = new Set();
+
+        let customCollections = JSON.parse(localStorage.getItem('fedu_custom_collections') || '[]');
+        let customLinks = JSON.parse(localStorage.getItem('fedu_custom_links') || '[]');
+        let readProgress = JSON.parse(localStorage.getItem('fedu_read_progress') || '[]');
+        let sidebarOrder = JSON.parse(localStorage.getItem('fedu_sidebar_order') || '[]');
+        let widgetsOrder = JSON.parse(localStorage.getItem('fedu_widgets_order') || '[]');
+
+        function removeAccents(str) {
+            if (!str) return '';
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        }
+
+        // Init App
+        async function initApp() {
+            try {
+                const res = await fetch(`./posts-manifest.json?t=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    allPosts = data.posts || [];
+                }
+            } catch (err) {
+                console.warn("Không tải được posts-manifest.json", err);
+            }
+
+            processPostsData();
+            checkGitHubLiveUpdates();
+            setupUI();
+            filterAndRender();
+        }
+
+        function processPostsData() {
+            const now = new Date();
+            allPosts.forEach(post => {
+                // Auto tag detection
+                post.tags = [];
+                const searchStr = removeAccents((post.title + ' ' + post.filename + ' ' + (post.excerpt||'')).toLowerCase());
+                
+                for (const [tagKey, tagData] of Object.entries(SMART_TAGS)) {
+                    if (tagData.keywords.some(kw => searchStr.includes(removeAccents(kw)))) {
+                        post.tags.push(tagKey);
+                    }
+                }
+                
+                // If no tag found, use 'hub' as a fallback since no 'other' is specified in the 8 tags requirement
+                if (post.tags.length === 0) post.tags.push('hub');
+
+                // Auto update badges
+                if (post.updated_at) {
+                    const postDate = new Date(post.updated_at.replace(' ', 'T'));
+                    if (!isNaN(postDate.getTime())) {
+                        const diffHours = (now - postDate) / (1000 * 60 * 60);
+                        if (diffHours < 24) post.badge = 'new';
+                        else if (diffHours < 72) post.badge = 'updated';
+                        else post.badge = null;
+                    }
+                }
+            });
+        }
+
+        async function checkGitHubLiveUpdates() {
+            try {
+                // Anonymous fetch without token to avoid security issues
+                const res = await fetch(`https://api.github.com/repos/vietndj/k/contents?t=${Date.now()}`, {
+                    headers: { 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (!res.ok) return;
+                const contents = await res.json();
+                const existing = new Set(allPosts.map(p => p.filename));
+                let newFound = false;
+
+                contents.forEach(item => {
+                    if (item.type === 'file' && item.name.endsWith('.html') && !['index.html', 'fix-url.html', '404.html'].includes(item.name)) {
+                        if (!existing.has(item.name)) {
+                            allPosts.unshift({
+                                filename: item.name,
+                                title: item.name.replace('.html', '').replace(/-/g, ' '),
+                                excerpt: 'Tài liệu mới',
+                                updated_at: new Date().toISOString(),
+                                tags: ['hub'], // Default tag
+                                badge: 'new'
+                            });
+                            newFound = true;
+                        }
+                    }
+                });
+                if (newFound) {
+                    processPostsData();
+                    filterAndRender();
+                }
+            } catch (e) {}
+        }
+
+        function toggleTag(tagKey) {
+            if (activeTags.has(tagKey)) activeTags.delete(tagKey);
+            else {
+                activeTags.clear();
+                activeTags.add(tagKey);
+            }
+            filterAndRender();
+        }
+
+        function filterAndRender(query = '') {
+            query = removeAccents(query.trim());
+            
+            filteredPosts = allPosts.filter(post => {
+                // Filter by tags
+                if (activeTags.size > 0 && !Array.from(activeTags).some(t => post.tags.includes(t))) return false;
+                
+                // Search query
+                if (query) {
+                    const searchArea = removeAccents(`${post.title} ${post.filename} ${post.excerpt||''}`);
+                    if (!searchArea.includes(query)) return false;
+                }
+                return true;
+            });
+
+            document.getElementById('results-count').innerText = `${filteredPosts.length} bài`;
+            renderPosts();
+            renderTagCloud();
+            updateStats();
+            renderRecommendations();
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (filteredPosts.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            container.className = currentView === 'list' 
+                ? 'space-y-3' 
+                : 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+
+            container.innerHTML = filteredPosts.map(post => {
+                const isRead = readProgress.includes(post.filename);
+                const isSelected = selectedPosts.has(post.filename);
+                const tagsHtml = post.tags.map(t => `<span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 truncate max-w-[80px]" title="${SMART_TAGS[t].label}">${SMART_TAGS[t].label.split(' ')[1]}</span>`).join('');
+                
+                let badgeHtml = '';
+                if (post.badge === 'new') badgeHtml = '<span class="absolute top-2 right-2 bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">Mới</span>';
+                else if (post.badge === 'updated') badgeHtml = '<span class="absolute top-2 right-2 bg-blue-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">Cập nhật</span>';
+
+                const readHtml = isRead ? '<span class="text-emerald-500" title="Đã đọc">✓</span>' : '';
+
+                if (currentView === 'list') {
+                    return `
+                    <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:border-gray-300 hover:shadow-sm transition bg-white relative group">
+                        ${isBatchMode ? `<input type="checkbox" class="post-checkbox w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" value="${post.filename}" ${isSelected ? 'checked' : ''}>` : ''}
+                        <div class="flex-1 min-w-0 flex items-center gap-2 cursor-pointer" onclick="openPreview('${post.filename}', '${post.title}')">
+                            <div class="truncate text-sm font-semibold text-gray-900 group-hover:text-emerald-700 transition">${post.title}</div>
+                            ${readHtml}
+                            <div class="flex gap-1 ml-auto overflow-hidden hidden sm:flex">${tagsHtml}</div>
+                        </div>
+                        <a href="./${post.filename}" target="_blank" class="p-1.5 text-gray-400 hover:text-black opacity-0 group-hover:opacity-100 transition" title="Mở tab mới">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>`;
+                } else {
+                    return `
+                    <div class="rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-md transition bg-white overflow-hidden relative flex flex-col group h-full">
+                        ${badgeHtml}
+                        ${isBatchMode ? `<div class="absolute top-2 left-2 z-10"><input type="checkbox" class="post-checkbox w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 shadow-sm" value="${post.filename}" ${isSelected ? 'checked' : ''}></div>` : ''}
+                        <div class="p-4 flex-1 flex flex-col cursor-pointer" onclick="openPreview('${post.filename}', '${post.title}')">
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <h3 class="font-bold text-gray-900 leading-tight group-hover:text-emerald-700 transition line-clamp-2">${post.title}</h3>
+                            </div>
+                            <p class="text-xs text-gray-500 line-clamp-2 mb-3 flex-1">${post.excerpt || 'Không có mô tả'}</p>
+                            <div class="flex items-center justify-between mt-auto">
+                                <div class="flex flex-wrap gap-1">${tagsHtml}</div>
+                                <div class="text-xs text-gray-400 flex items-center gap-1">
+                                    ${readHtml}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 border-t border-gray-100 px-4 py-2 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-[10px] text-gray-500">${post.read_time || '5 min'}</span>
+                            <div class="flex items-center gap-2">
+                                <a href="https://github.com/vietndj/k/delete/main/${post.filename}" target="_blank" class="text-[10px] text-rose-500 hover:text-rose-700 uppercase" onclick="event.stopPropagation()">Xóa file</a>
+                                <a href="./${post.filename}" target="_blank" class="text-[10px] font-bold text-gray-900 hover:text-emerald-600 uppercase tracking-wide flex items-center gap-1">
+                                    Đọc <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            }).join('');
+
+            // Batch mode bindings
+            document.querySelectorAll('.post-checkbox').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    if (e.target.checked) selectedPosts.add(e.target.value);
+                    else selectedPosts.delete(e.target.value);
+                    document.getElementById('selected-count').innerText = selectedPosts.size;
+                });
+            });
+        }
+
+        // UI & Events Setup
+        function setupUI() {
+            // Lock btn
+            document.getElementById('lock-screen-btn').addEventListener('click', () => {
+                if (confirm('Khóa lại kho kịch bản?')) lockVault();
+            });
+
+            // View toggle
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const target = e.currentTarget;
+                    currentView = target.dataset.view;
+                    document.querySelectorAll('.view-btn').forEach(b => {
+                        b.classList.remove('bg-white', 'shadow-sm', 'text-black');
+                        b.classList.add('hover:text-black', 'text-gray-500');
+                    });
+                    target.classList.add('bg-white', 'shadow-sm', 'text-black');
+                    target.classList.remove('hover:text-black', 'text-gray-500');
+                    renderPosts();
+                });
+            });
+
+            // Search
+            const searchInput = document.getElementById('desktop-search-input');
+            let searchTimeout;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    filterAndRender(e.target.value);
+                }, 300);
+            });
+            
+            // Cmd+K hotkey
+            document.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+
+            // Batch Mode
+            const batchBtn = document.getElementById('batch-mode-btn');
+            const batchActions = document.getElementById('batch-actions');
+            batchBtn.addEventListener('click', () => {
+                isBatchMode = !isBatchMode;
+                selectedPosts.clear();
+                document.getElementById('selected-count').innerText = 0;
+                
+                if (isBatchMode) {
+                    batchBtn.classList.add('bg-gray-800', 'text-white');
+                    batchActions.classList.remove('hidden');
+                } else {
+                    batchBtn.classList.remove('bg-gray-800', 'text-white');
+                    batchActions.classList.add('hidden');
+                }
+                renderPosts();
+            });
+            
+            document.getElementById('cancel-batch-btn').addEventListener('click', () => {
+                batchBtn.click();
+            });
+
+            document.getElementById('group-selected-btn').addEventListener('click', () => {
+                if (selectedPosts.size === 0) return alert('Chọn ít nhất 1 bài');
+                document.getElementById('create-group-modal').classList.remove('hidden');
+            });
+
+            // Modal Group Save
+            document.getElementById('cancel-group-btn').addEventListener('click', () => {
+                document.getElementById('create-group-modal').classList.add('hidden');
+            });
+            document.getElementById('save-group-btn').addEventListener('click', () => {
+                const name = document.getElementById('new-group-name').value.trim();
+                if (name) {
+                    customCollections.push({ name, files: Array.from(selectedPosts) });
+                    localStorage.setItem('fedu_custom_collections', JSON.stringify(customCollections));
+                    renderCollections();
+                    document.getElementById('create-group-modal').classList.add('hidden');
+                    document.getElementById('new-group-name').value = '';
+                    batchBtn.click(); // exit batch mode
+                }
+            });
+
+            // Add Link Modal
+            document.getElementById('add-link-btn').addEventListener('click', () => {
+                document.getElementById('add-link-modal').classList.remove('hidden');
+            });
+            document.getElementById('cancel-link-btn').addEventListener('click', () => {
+                document.getElementById('add-link-modal').classList.add('hidden');
+            });
+            document.getElementById('save-link-btn').addEventListener('click', () => {
+                const url = document.getElementById('new-link-url').value.trim();
+                let name = document.getElementById('new-link-name').value.trim();
+                if (url) {
+                    if (!name) name = url.split('/').pop().replace('.html', '') || 'Link mới';
+                    customLinks.push({ name, url });
+                    localStorage.setItem('fedu_custom_links', JSON.stringify(customLinks));
+                    renderLinks();
+                    document.getElementById('add-link-modal').classList.add('hidden');
+                    document.getElementById('new-link-url').value = '';
+                    document.getElementById('new-link-name').value = '';
+                }
+            });
+
+            // Preview Modal
+            document.getElementById('close-preview-btn').addEventListener('click', () => {
+                document.getElementById('preview-modal').classList.add('hidden');
+                document.getElementById('preview-frame').src = '';
+            });
+
+            // Drag and Drop initialization
+            initDragAndDrop();
+
+            // Initial renders
+            renderSidebarNav();
+            renderCollections();
+            renderLinks();
+            renderWidgets();
+        }
+
+        // Drag and Drop (Native HTML5)
+        function initDragAndDrop() {
+            document.querySelectorAll('.draggable-container').forEach(container => {
+                container.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElement(container, e.clientY);
+                    const draggable = document.querySelector('.dragging');
+                    if (!draggable) return;
+                    if (afterElement == null) {
+                        container.appendChild(draggable);
+                    } else {
+                        container.insertBefore(draggable, afterElement);
+                    }
+                });
+
+                container.addEventListener('drop', e => {
+                    saveOrder(container.id);
+                });
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('[draggable="true"]:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function makeDraggable(el) {
+            el.addEventListener('dragstart', () => {
+                el.classList.add('dragging', 'opacity-50');
+            });
+            el.addEventListener('dragend', () => {
+                el.classList.remove('dragging', 'opacity-50');
+            });
+        }
+
+        function saveOrder(containerId) {
+            const container = document.getElementById(containerId);
+            const items = [...container.querySelectorAll('[draggable="true"]')].map(el => el.dataset.id);
+            if (containerId === 'widgets-container') {
+                localStorage.setItem('fedu_widgets_order', JSON.stringify(items));
+            } else if (containerId === 'sidebar-nav-container') {
+                localStorage.setItem('fedu_sidebar_order', JSON.stringify(items));
+            }
+        }
+
+        // Renders
+        function renderSidebarNav() {
+            const container = document.getElementById('sidebar-nav-container');
+            container.innerHTML = '';
+            
+            const defaultOrder = Object.keys(SMART_TAGS);
+            const order = sidebarOrder.length ? sidebarOrder : defaultOrder;
+
+            order.forEach(tagKey => {
+                if (!SMART_TAGS[tagKey]) return;
+                const div = document.createElement('div');
+                div.className = 'group flex items-center justify-between p-2 rounded-lg cursor-move hover:bg-gray-100 transition mb-1';
+                div.draggable = true;
+                div.dataset.id = tagKey;
+                
+                const isActive = activeTags.has(tagKey);
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-2 cursor-pointer w-full" onclick="toggleTag('${tagKey}')">
+                        <span class="text-gray-300 group-hover:text-gray-400">⣿</span>
+                        <span class="text-sm font-medium ${isActive ? 'text-emerald-600 font-bold' : 'text-gray-700'}">${SMART_TAGS[tagKey].label}</span>
+                    </div>
+                `;
+                makeDraggable(div);
+                container.appendChild(div);
+            });
+        }
+        
+        function renderWidgets() {
+            const container = document.getElementById('widgets-container');
+            if (widgetsOrder.length) {
+                const widgets = {};
+                [...container.children].forEach(w => widgets[w.dataset.id] = w);
+                container.innerHTML = '';
+                widgetsOrder.forEach(id => {
+                    if (widgets[id]) container.appendChild(widgets[id]);
+                });
+            }
+            [...container.children].forEach(w => makeDraggable(w));
+        }
+
+        function renderTagCloud() {
+            const tc = document.getElementById('tag-cloud');
+            if (!tc) return;
+            tc.innerHTML = Object.entries(SMART_TAGS).map(([key, data]) => {
+                const isActive = activeTags.has(key);
+                return `<button onclick="toggleTag('${key}')" class="px-2 py-1 text-[11px] rounded border ${isActive ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'} transition">${data.label.split(' ')[1] || data.label.split(' ')[0]}</button>`;
+            }).join('');
+        }
+
+        function renderCollections() {
+            const c = document.getElementById('collections-container');
+            c.innerHTML = customCollections.map((col, idx) => `
+                <div class="flex justify-between items-center p-2 rounded-lg hover:bg-gray-100 group">
+                    <span class="text-sm text-gray-700 font-medium cursor-pointer truncate" onclick="openCollection(${idx})">📁 ${col.name}</span>
+                    <button class="text-gray-400 hover:text-rose-500 hidden group-hover:block" onclick="deleteCollection(${idx})">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        function renderLinks() {
+            const c = document.getElementById('custom-links-container');
+            c.innerHTML = customLinks.map((link, idx) => `
+                <div class="flex justify-between items-center p-2 rounded-lg hover:bg-gray-100 group">
+                    <a href="${link.url}" target="_blank" class="text-sm text-gray-700 font-medium truncate">🔗 ${link.name}</a>
+                    <button class="text-gray-400 hover:text-rose-500 hidden group-hover:block" onclick="deleteLink(${idx})">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').innerText = allPosts.length;
+            document.getElementById('stat-read').innerText = readProgress.length;
+            document.getElementById('stat-new').innerText = allPosts.filter(p => p.badge === 'new').length;
+        }
+
+        function renderRecommendations() {
+            const rc = document.getElementById('suggestions-list');
+            if (!rc) return;
+            // Get random 3 posts that share tags with currently active tags, or just random
+            let recs = allPosts.filter(p => activeTags.size === 0 || p.tags.some(t => activeTags.has(t)));
+            recs = recs.sort(() => 0.5 - Math.random()).slice(0, 3);
+            
+            rc.innerHTML = recs.map(post => `
+                <div class="p-2 bg-white rounded border border-gray-100 cursor-pointer hover:border-gray-300" onclick="openPreview('${post.filename}', '${post.title}')">
+                    <div class="text-xs font-bold text-gray-800 line-clamp-1">${post.title}</div>
+                    <div class="text-[10px] text-gray-500 mt-1">${post.tags.map(t => SMART_TAGS[t].label.split(' ')[1] || SMART_TAGS[t].label.split(' ')[0]).join(', ')}</div>
+                </div>
+            `).join('');
+        }
+
+        // Actions
+        window.openPreview = function(filename, title) {
+            document.getElementById('preview-title').innerText = title;
+            document.getElementById('preview-frame').src = `./${filename}`;
+            document.getElementById('preview-open-btn').href = `./${filename}`;
+            document.getElementById('preview-modal').classList.remove('hidden');
+            
+            // Mark as read
+            if (!readProgress.includes(filename)) {
+                readProgress.push(filename);
+                localStorage.setItem('fedu_read_progress', JSON.stringify(readProgress));
+                updateStats();
+                renderPosts();
+            }
+        };
+
+        window.openCollection = function(idx) {
+            const col = customCollections[idx];
+            filteredPosts = allPosts.filter(p => col.files.includes(p.filename));
+            document.getElementById('results-count').innerText = `${filteredPosts.length} bài (Bộ sưu tập: ${col.name})`;
+            renderPosts();
+        };
+
+        window.deleteCollection = function(idx) {
+            if(confirm('Xóa bộ sưu tập này?')) {
+                customCollections.splice(idx, 1);
+                localStorage.setItem('fedu_custom_collections', JSON.stringify(customCollections));
+                renderCollections();
+            }
+        };
+
+        window.deleteLink = function(idx) {
+            if(confirm('Xóa link này?')) {
+                customLinks.splice(idx, 1);
+                localStorage.setItem('fedu_custom_links', JSON.stringify(customLinks));
+                renderLinks();
+            }
+        };
+
+    </script>
+</body>
+</html>
+"""
+
+final_content = gatekeeper + new_app_view + scripts
+with open('/Users/vietmac/Documents/CODE/k/index.html', 'w', encoding='utf-8') as f:
+    f.write(final_content)
+
+print("Done generating index.html")

@@ -246,13 +246,13 @@ async def main():
             spage = await browser.new_page(viewport={"width": 1024, "height": 1024}, device_scale_factor=1)
             
             # Dark
-            html_dark = f'<!DOCTYPE html><html><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 1024px; height: 1024px;"><div style="width: 1024px; height: 1024px;">{acc["svg_dark"]}</div></body></html>'
+            html_dark = f'<!DOCTYPE html><html><head><style>svg{{width:1024px!important;height:1024px!important;}}</style></head><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 1024px; height: 1024px;"><div style="width: 1024px; height: 1024px;">{acc["svg_dark"]}</div></body></html>'
             await spage.set_content(html_dark)
             await spage.wait_for_timeout(50)
             await spage.screenshot(path=os.path.join(OUT_SINGLE_DIR, f"{key}_dark_1024.png"), omit_background=True)
             
             # Solid
-            html_solid = f'<!DOCTYPE html><html><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 1024px; height: 1024px;"><div style="width: 1024px; height: 1024px;">{acc["svg_solid"]}</div></body></html>'
+            html_solid = f'<!DOCTYPE html><html><head><style>svg{{width:1024px!important;height:1024px!important;}}</style></head><body style="margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; width: 1024px; height: 1024px;"><div style="width: 1024px; height: 1024px;">{acc["svg_solid"]}</div></body></html>'
             await spage.set_content(html_solid)
             await spage.wait_for_timeout(50)
             await spage.screenshot(path=os.path.join(OUT_SINGLE_DIR, f"{key}_solid_1024.png"), omit_background=True)
