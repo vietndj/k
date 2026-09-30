@@ -1,0 +1,2024 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🎬 Shot-List Master — Tra Cứu</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --surface: #141824;
+    --surface2: #1c2235;
+    --border: #252d42;
+    --text: #e2e8f0;
+    --text-muted: #8892a4;
+    --accent: #4f8ef7;
+    --fire: #ff4d4d;
+    --bolt: #fbbf24;
+    --check: #34d399;
+    --ecu: #ef4444;
+    --cu: #f97316;
+    --mcu: #eab308;
+    --ws: #22c55e;
+    --ots: #8b5cf6;
+    --top: #06b6d4;
+    --tab-active: #4f8ef7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* STICKY HEADER */
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px 0;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .header-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.3px;
+  }
+  .header-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px 10px 38px;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .search-wrap input::placeholder { color: var(--text-muted); }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--text-muted);
+  }
+  .search-clear {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    display: none;
+    padding: 2px 6px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 1px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    color: var(--tab-active);
+    border-bottom-color: var(--tab-active);
+  }
+  .tab-btn:hover { color: var(--text); }
+
+  /* CONTENT */
+  .content {
+    padding: 16px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin: 20px 0 10px;
+    padding-left: 4px;
+  }
+
+  /* ACCORDION CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #353f5a; }
+  .card.hidden { display: none; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .card-header:active { background: var(--surface2); }
+
+  .priority-badge {
+    font-size: 20px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .card-info { flex: 1; min-width: 0; }
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .card-summary {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-chevron {
+    color: var(--text-muted);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: transform 0.25s;
+  }
+  .card.open .card-chevron { transform: rotate(180deg); }
+
+  .card-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .card.open .card-body { display: block; }
+
+  /* EMOTION BOX */
+  .emotion-box {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    margin: 14px 0;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  /* SCENE ITEM */
+  .scene-item {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 8px 0;
+  }
+  .scene-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .shot-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .shot-ecu { background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+  .shot-cu  { background: rgba(249,115,22,0.2); color: #f97316; border: 1px solid rgba(249,115,22,0.3); }
+  .shot-mcu { background: rgba(234,179,8,0.2);  color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
+  .shot-ws  { background: rgba(34,197,94,0.2);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+  .shot-ots { background: rgba(139,92,246,0.2); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3); }
+  .shot-top { background: rgba(6,182,212,0.2);  color: #06b6d4; border: 1px solid rgba(6,182,212,0.3); }
+
+  .scene-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+  .scene-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .scene-action {
+    font-size: 13px;
+    color: var(--text);
+    margin-top: 4px;
+  }
+  .scene-duration {
+    font-size: 11px;
+    color: var(--bolt);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .scene-link {
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .scene-link a {
+    color: var(--accent);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .scene-link a:hover { text-decoration: underline; }
+
+  /* ACTION LIST */
+  .action-list {
+    margin: 6px 0 0 0;
+    padding-left: 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .action-list li { margin-bottom: 3px; }
+
+  /* DIALOGUE COPY */
+  .dialogue-wrap {
+    background: #0d1521;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 12px 0;
+    position: relative;
+  }
+  .dialogue-text {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 500;
+    line-height: 1.5;
+    padding-right: 44px;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text-muted);
+    font-size: 16px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .copy-btn:active, .copy-btn.copied {
+    background: rgba(79,142,247,0.2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .copy-btn.copied::after { content: '✓'; }
+
+  /* VARIANTS */
+  .variants-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin: 14px 0 8px;
+  }
+  .variant-item {
+    background: rgba(79,142,247,0.05);
+    border: 1px solid rgba(79,142,247,0.15);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .variant-label {
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .variant-desc { color: var(--text-muted); }
+
+  /* BROLL SECTION */
+  .broll-section { margin-top: 14px; }
+  .broll-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .broll-list { list-style: none; }
+  .broll-list li {
+    font-size: 13px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .broll-list li:last-child { border-bottom: none; }
+  .broll-list a { color: var(--accent); text-decoration: none; }
+  .broll-list a:hover { text-decoration: underline; }
+  .broll-icon { margin-right: 6px; }
+
+  /* SWAP TABLE */
+  .swap-table-wrap {
+    overflow-x: auto;
+    margin-top: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .swap-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+  }
+  .swap-table th {
+    background: var(--surface2);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .swap-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  .swap-table tr:last-child td { border-bottom: none; }
+  .swap-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .swap-orig { color: var(--text); font-weight: 600; }
+  .swap-new { color: var(--accent); font-weight: 600; }
+  .swap-note { font-size: 12px; }
+
+  /* PRIORITY LEGEND */
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .check-icon {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* REF TABLE */
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ref-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .ref-table td:first-child { color: var(--text-muted); width: 45%; }
+  .ref-table a { color: var(--accent); text-decoration: none; }
+  .ref-table a:hover { text-decoration: underline; }
+
+  /* PLACEHOLDER PANEL */
+  .placeholder-panel {
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 40px 24px;
+    text-align: center;
+    margin: 20px 0;
+  }
+  .placeholder-icon { font-size: 48px; margin-bottom: 12px; }
+  .placeholder-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .placeholder-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+  .placeholder-badge {
+    display: inline-block;
+    background: rgba(251,191,36,0.15);
+    border: 1px solid rgba(251,191,36,0.3);
+    color: var(--bolt);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-top: 12px;
+  }
+
+  /* VANG NANG CARD */
+  .vn-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .vn-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .vn-header:active { background: var(--surface2); }
+  .vn-num {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .vn-title { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
+  .vn-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .vn-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .vn-card.open .vn-body { display: block; }
+  .vn-card.open .card-chevron { transform: rotate(180deg); }
+
+  .vn-why {
+    background: rgba(79,142,247,0.07);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    margin: 14px 0 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .usable-for {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0;
+  }
+  .usable-tag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .timing-steps { margin: 10px 0; }
+  .timing-step {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .timing-step:last-child { border-bottom: none; }
+  .timing-time {
+    color: var(--bolt);
+    font-weight: 700;
+    font-size: 12px;
+    white-space: nowrap;
+    padding-top: 1px;
+    min-width: 72px;
+  }
+  .timing-desc { color: var(--text-muted); flex: 1; }
+
+  /* PRIORITY BLOCK */
+  .priority-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .priority-block-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .priority-num {
+    background: var(--accent);
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .priority-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .priority-time { font-size: 12px; color: var(--bolt); margin-left: auto; }
+  .priority-desc { font-size: 13px; color: var(--text-muted); }
+
+  /* SEARCH HIGHLIGHT */
+  mark {
+    background: rgba(251,191,36,0.3);
+    color: var(--bolt);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* SCROLLBACK BTN */
+  .scroll-top-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 16px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(79,142,247,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .scroll-top-btn.visible { display: flex; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 72px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1c2235;
+    border: 1px solid var(--accent);
+    color: var(--text);
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 300;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  /* MISC */
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .fw-700 { font-weight: 700; }
+  .color-fire { color: var(--fire); }
+  .color-bolt { color: var(--bolt); }
+  .color-check { color: var(--check); }
+  .color-accent { color: var(--accent); }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 12px; }
+
+  @media (min-width: 600px) {
+    .content { padding: 20px 24px; }
+    .card-title { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- STICKY HEADER -->
+<div class="sticky-header">
+  <div class="header-top">
+    <div>
+      <div class="header-title" id="current-tab-title">🎬 Shot-List Master</div>
+      <div class="header-subtitle">Tra cứu nhanh trên điện thoại • Sep 2026</div>
+    </div>
+    <div style="font-size:24px">📋</div>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Tìm câu, cảnh, action..." autocomplete="off">
+    <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('tat-tang-hinh', this)" id="tab-tat">🕵️ Tắt Tàng Hình</button>
+    <button class="tab-btn" onclick="switchTab('ky-nguyen', this)" id="tab-ky">🤖 Kỷ Nguyên NN</button>
+    <button class="tab-btn" onclick="switchTab('ban-cong', this)" id="tab-ban">🌿 Ban Công</button>
+    <button class="tab-btn" onclick="switchTab('van-nang', this)" id="tab-van">⚡ Vạn Năng</button>
+  </div>
+</div>
+
+<!-- PRIORITY LEGEND -->
+<div class="legend">
+  <span><span style="font-size:16px">🔥</span> Phải quay</span>
+  <span><span style="font-size:16px">⚡</span> Nên quay</span>
+  <span><span style="font-size:16px">✅</span> Bonus</span>
+  <span style="margin-left:8px">|</span>
+  <span><span class="shot-tag shot-ecu" style="font-size:10px">ECU</span> Cực cận</span>
+  <span><span class="shot-tag shot-cu" style="font-size:10px">CU</span> Cận</span>
+  <span><span class="shot-tag shot-mcu" style="font-size:10px">MCU</span> Nửa người</span>
+  <span><span class="shot-tag shot-ws" style="font-size:10px">WS</span> Rộng</span>
+</div>
+
+<div class="content">
+
+<!-- ========== TAB 1: TẮT TÀNG HÌNH ========== -->
+<div class="tab-panel active" id="panel-tat-tang-hinh">
+
+  <div class="section-title">Thứ tự ưu tiên quay</div>
+  <div class="priority-block">
+    <div class="priority-block-header">
+      <div class="priority-num">1</div>
+      <div class="priority-name">🔥 Câu 13 — CTA</div>
+      <div class="priority-time">~25 phút</div>
+    </div>
+    <div class="priority-desc">Bàn làm việc, nhìn thẳng ống kính — quan trọng nhất</div>
+  </div>
+  <div class="priority-block">
+    <div class="priority-block-header">
+      <div class="priority-num">2</div>
+      <div class="priority-name">🔥 Câu 3 — "Vô hình"</div>
+      <div class="priority-time">~20 phút</div>
+    </div>
+    <div class="priority-desc">Phone hiện 0 view / màn hình trống</div>
+  </div>
+  <div class="priority-block">
+    <div class="priority-block-header">
+      <div class="priority-num">3</div>
+      <div class="priority-name">🔥 Câu 1 — "Kỷ nguyên AI"</div>
+      <div class="priority-time">~30 phút</div>
+    </div>
+    <div class="priority-desc">Màn hình dashboard + thao tác phân vân</div>
+  </div>
+  <div class="priority-block">
+    <div class="priority-block-header">
+      <div class="priority-num">4</div>
+      <div class="priority-name">⚡ Câu 5 — "Tay nghề chết"</div>
+      <div class="priority-time">~15 phút</div>
+    </div>
+    <div class="priority-desc">Ngón tay gõ thái dương, bế tắc</div>
+  </div>
+  <div class="priority-block">
+    <div class="priority-block-header">
+      <div class="priority-num">5</div>
+      <div class="priority-name">⚡ Câu 9 — "Ông giáo làm được"</div>
+      <div class="priority-time">~25 phút</div>
+    </div>
+    <div class="priority-desc">Nhìn thẳng + micro-action</div>
+  </div>
+
+  <div class="section-title" style="margin-top:24px">🔴 Phần 1 — Mở đầu (Hook 10 giây)</div>
+
+  <!-- CÂU 1 -->
+  <div class="card" id="cau1">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">🔥</div>
+      <div class="card-info">
+        <div class="card-label">Câu 1</div>
+        <div class="card-title">Kỷ Nguyên AI... Vạn Vật Kết Nối Bằng Dữ Liệu</div>
+        <div class="card-summary">Bối cảnh: Bàn làm việc + Màn hình dashboard</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Cái kỷ nguyên AI bây giờ nó khốc liệt như vậy. Vạn vật kết nối bằng dữ liệu.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Cái kỷ nguyên AI bây giờ nó khốc liệt như vậy. Vạn vật kết nối bằng dữ liệu.')">📋</button>
+      </div>
+      <div class="emotion-box">🎯 Cảm giác cần đạt: Người xem phải CẢM được nhịp độ dữ liệu không ngừng nghỉ — bị cuốn vào guồng máy đó. Áp lực, tốc độ.</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 8px">🎬 Setup bối cảnh</div>
+      <div style="font-size:13px;color:var(--text-muted)">Mở sẵn 1 trong 3 màn hình: <strong style="color:var(--text)">A</strong> — Facebook Ads Manager | <strong style="color:var(--text)">B</strong> — GA4 | <strong style="color:var(--text)">C</strong> — Nhiều tab cùng lúc</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:16px 0 8px">📐 Cảnh cần quay</div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ecu">ECU</span>
+          <div class="scene-name">1.1 — Macro tay gõ phím, nhịp nhanh</div>
+        </div>
+        <div class="scene-desc">Cực cận chỉ thấy ngón tay + phím, nền blur. Gõ liên tục không dừng.</div>
+        <div class="scene-action">⚡ Action: Gõ mạnh chuỗi phím → dừng đột ngột</div>
+        <div class="scene-duration">⏱ Raw: 8–12s | Dùng: 2–3s</div>
+        <div class="scene-link">📎 <a href="https://ytuong.fedu.vn/reports/IG_@kortafilms_DcdthwaTM3J_Camera_Angles_Mastery.html" target="_blank">7 Góc Bàn Làm Việc ↗</a></div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-top">TOP</span>
+          <div class="scene-name">1.2 — Bird's-eye nhìn từ trên xuống</div>
+        </div>
+        <div class="scene-desc">Máy thẳng từ trên, thấy bàn phím, tay, màn hình, ly cà phê/sổ.</div>
+        <div class="scene-action">⚡ Action: Tay lướt màn hình → dừng → chỉ vào con số → lướt tiếp</div>
+        <div class="scene-duration">⏱ Raw: 10–15s | Dùng: 3–4s</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ots">OTS</span>
+          <div class="scene-name">1.3 — Qua vai, nhìn vào màn hình</div>
+        </div>
+        <div class="scene-desc">Đứng sau vai phải, thấy vai + cổ + màn hình dashboard.</div>
+        <div class="scene-action">⚡ Action: Nghiêng người về màn hình, cuộn chuột chậm rãi</div>
+        <div class="scene-duration">⏱ Raw: 8–10s</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-mcu">MCU</span>
+          <div class="scene-name">1.4 — Mặt + tay — thao tác & suy nghĩ ⭐ QUAN TRỌNG NHẤT</div>
+        </div>
+        <div class="scene-desc">Từ ngực lên, thấy mặt và tay trên bàn phím.</div>
+        <div style="margin-top:6px">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Action chuỗi (quay liên tục):</div>
+          <ol class="action-list">
+            <li>Nhìn màn hình gõ liên tục</li>
+            <li>Dừng tay → chống cằm → nhìn mông lung ra ngoài</li>
+            <li>Thở dài nhẹ</li>
+            <li>Quay lại màn hình → cuộn số liệu mới</li>
+            <li>Nhíu mày nhẹ — biểu cảm phân vân</li>
+          </ol>
+        </div>
+        <div class="scene-duration">⏱ Raw: 25–30s | Dùng nhiều đoạn 2–3s</div>
+        <div class="scene-link">📎 <a href="https://www.instagram.com/reel/DdKGq2TMhf4/" target="_blank">Sự Thật Khắc Nghiệt Khi Làm Creator ↗</a></div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-cu">CU</span>
+          <div class="scene-name">1.5 — Cận mặt, ánh mắt chuyển động</div>
+        </div>
+        <div class="scene-desc">Cận mặt từ bên hông 45°, ánh phản chiếu màn hình trên mắt.</div>
+        <div class="scene-action">⚡ Action: Mắt di chuyển đọc số từ trái sang phải → dừng → nheo</div>
+      </div>
+
+      <div class="variants-title">🔄 Biến thể khai thác cùng lúc</div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể A — "Làm việc khuya"</div>
+        <div class="variant-desc">Tắt đèn phòng, chỉ ánh sáng màn hình chiếu mặt. Quay cảnh 1.3 + 1.4 → dùng cho kịch bản sự hy sinh, thức khuya học.</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể B — "Nhận kết quả"</div>
+        <div class="variant-desc">Màn hình hiện biểu đồ tăng → dừng tay → nụ cười khẽ → dùng cho CTA hoặc kịch bản chứng minh kết quả.</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể C — "Quá tải thông tin"</div>
+        <div class="variant-desc">Nhiều tab cùng lúc, tay lướt nhanh qua nhiều màn hình, thở dài → dùng cho kịch bản burnout hoặc học nhiều quá.</div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=WnNzCZFqhR4" target="_blank">Gõ Phím & Lướt Màn Hình - Tập Trung Tuyệt Đối</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=Weo9Yr1glIo" target="_blank">Cảnh Trám: OTS - Working laptop</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=341CuU86G84" target="_blank">Cảnh Trám: Chuỗi 2 - Nhiễu loạn, quá tải</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 2 -->
+  <div class="card" id="cau2">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">✅</div>
+      <div class="card-info">
+        <div class="card-label">Câu 2</div>
+        <div class="card-title">Làm Nghề Lâu Năm Mà Không Để Lại Dấu Vết Gì Trên Mạng...</div>
+        <div class="card-summary">Bối cảnh: Không gian mộc mạc, thủ công</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Nếu mà bạn làm nghề lâu năm. Mà bạn không để lại một dấu vết gì trên mạng...»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Nếu mà bạn làm nghề lâu năm. Mà bạn không để lại một dấu vết gì trên mạng...')">📋</button>
+      </div>
+      <div class="emotion-box">🎯 Cảm giác cần đạt: Mộc mạc, làm nghề truyền thống offline, không gian trống vắng.</div>
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=hHb3K1SUK9w" target="_blank">Cutaway - Đặt Ly Trà Mời Trà</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=lT6Dy55wyf4" target="_blank">Viết Sổ Ghi Chép Ý Tưởng</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=yH0QSt905IM" target="_blank">Negative Space - Không Gian Tĩnh Lặng</a></li>
+        </ul>
+        <div class="broll-section-title color-check" style="margin-top:12px">🎬 Tham khảo góc quay</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">🔗</span><a href="https://ytuong.fedu.vn/reports/IG_@jeromememe_DQmKgPDEWgJ_Artisans_of_Venice.html" target="_blank">Artisans of Venice — Nghề Thủ Công</a></li>
+          <li><span class="broll-icon">🔗</span><a href="https://www.instagram.com/reel/DdNq5CxszVl/" target="_blank">Nghệ Thuật Xăm Mini Tô Bún Bò Huế</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 3 -->
+  <div class="card" id="cau3">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">🔥</div>
+      <div class="card-info">
+        <div class="card-label">Câu 3</div>
+        <div class="card-title">AI Coi Như Bạn Vô Hình — Hệ Thống Không Trả Khách Nào</div>
+        <div class="card-summary">Bối cảnh: Phone + màn hình 0 view</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Thì ấy AI nó coi như bạn vô hình! Hệ thống sẽ không trả cho bạn một khách hàng nào đâu.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Thì ấy AI nó coi như bạn vô hình! Hệ thống sẽ không trả cho bạn một khách hàng nào đâu.')">📋</button>
+      </div>
+      <div class="emotion-box">🎯 Cảm giác cần đạt: Đau lặng — không phải drama, mà là sự thật hiển nhiên đến thẫn thờ.</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 8px">📐 Cảnh cần quay</div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ecu">ECU</span>
+          <div class="scene-name">3.1 — Cực cận màn hình phone — con số 0 ⭐</div>
+        </div>
+        <div class="scene-desc"><strong>Quan trọng:</strong> Phải thấy rõ số "0" trên màn hình — đây là bằng chứng thị giác cốt lõi.</div>
+        <div class="scene-action">⚡ Action: Ngón cái lướt nhẹ → số liệu hiện ra → dừng → không động</div>
+        <div class="scene-duration">⏱ Giữ con số 0 đầy màn hình 3 giây</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-mcu">MCU</span>
+          <div class="scene-name">3.2 — Tay cầm phone + phản ứng mặt</div>
+        </div>
+        <div class="scene-desc">Từ ngực lên, thấy tay cầm phone và khuôn mặt phía sau.</div>
+        <div class="scene-action">⚡ Action: Lướt vào bài → thấy số thấp → nhíu mày nhẹ → đặt phone xuống</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ws">WS</span>
+          <div class="scene-name">3.3 — Góc rộng, người ngồi, phone, không gian trống</div>
+        </div>
+        <div class="scene-desc">Góc rộng từ xa, nhiều khoảng trống xung quanh — ẩn dụ "vô hình".</div>
+        <div class="scene-action">⚡ Action: Ngồi yên nhìn phone, ngón cái lướt chậm → thả tay xuống</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-top">TOP</span>
+          <div class="scene-name">3.4 — Bird's-eye — bàn tay + phone + bàn trống</div>
+        </div>
+        <div class="scene-desc">Từ trên nhìn xuống: phone trên bàn, bàn tay đặt cạnh.</div>
+        <div class="scene-action">⚡ Action: Nhấc phone xem → đặt úp xuống (động tác từ bỏ)</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-cu">CU</span>
+          <div class="scene-name">3.5 — Cận ngón tay gõ/xóa caption</div>
+        </div>
+        <div class="scene-desc">Cận bàn tay đang gõ caption trên phone.</div>
+        <div class="scene-action">⚡ Action: Gõ vài chữ → xóa → gõ lại → xóa → bỏ phone</div>
+        <div class="scene-link">📎 <a href="https://www.youtube.com/watch?v=mDWuPcAOmjw" target="_blank">Metaphor - Ngập Ngừng Mở Lời ↗</a></div>
+      </div>
+
+      <div class="variants-title">🔄 Biến thể khai thác cùng lúc</div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể A — "Đăng bài xong chờ"</div>
+        <div class="variant-desc">Vừa đăng → đặt phone → nhìn xa → nhìn lại → vẫn 0 → dùng cho kịch bản kiên nhẫn và nhất quán.</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể B — "So sánh"</div>
+        <div class="variant-desc">Mở phone xem trang người khác (nhiều view) → nhìn lại trang mình (ít view) → thở dài → dùng cho kịch bản so sánh trước/sau.</div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=V5no2Ty72Is" target="_blank">Metaphor - Nỗi Đau Xóa Video & Sự Tự Ti</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=mDWuPcAOmjw" target="_blank">Metaphor - Ngập Ngừng Mở Lời</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=C1j4vJh381s" target="_blank">Metaphor - Xóa video, rồi đặt xuống bàn</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">🟡 Phần 2 — Vấn đề & Bằng chứng</div>
+
+  <!-- CÂU 4 -->
+  <div class="card" id="cau4">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">✅</div>
+      <div class="card-info">
+        <div class="card-label">Câu 4</div>
+        <div class="card-title">Cứ Nghĩ Khách Sẽ Tự Tìm Đến — Tự Nhận Phần Thiệt</div>
+        <div class="card-summary">Bối cảnh: Chờ đợi mòn mỏi, tâm thế thụ động</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Nhiều người đi làm nghề thì cứ nghĩ rằng là mình giỏi thì khách sẽ tự tìm đến. Nhưng nghĩ như vậy là tự nhận phần thiệt.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Nhiều người đi làm nghề thì cứ nghĩ rằng là mình giỏi thì khách sẽ tự tìm đến. Nhưng nghĩ như vậy là tự nhận phần thiệt.')">📋</button>
+      </div>
+      <div class="emotion-box">🎯 Cảm giác cần đạt: Chờ đợi mòn mỏi, tâm thế thụ động, thu mình trong ảo tưởng.</div>
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=flcl2vHN-xI" target="_blank">Khoảng Lặng Ban Chiều - Ngồi Chill Đợi Con</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=H2834SYk8iw" target="_blank">Cà Phê Nhỏ Giọt - Ẩn Dụ Thời Gian & Bế Tắc</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=bFixXq9U3QE" target="_blank">Negative Space - Thiền Định & Tĩnh Tâm</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 5 -->
+  <div class="card" id="cau5">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">⚡</div>
+      <div class="card-info">
+        <div class="card-label">Câu 5</div>
+        <div class="card-title">Tay Nghề Giấu Trong Đầu Là Tay Nghề Chết</div>
+        <div class="card-summary">Bối cảnh: Bàn làm việc / ghế thư giãn</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Tự dưng làm gì có ai đem tiền đến gõ cửa nhà mình đâu. Tay nghề mà giấu trong đầu ấy, là tay nghề chết.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Tự dưng làm gì có ai đem tiền đến gõ cửa nhà mình đâu. Tay nghề mà giấu trong đầu ấy, là tay nghề chết.')">📋</button>
+      </div>
+      <div class="emotion-box">🎯 Cảm giác cần đạt: Đặc tả đúng hành động vật lý "giấu trong đầu" — đầu óc bế tắc, không thoát ra được.</div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-cu">CU</span>
+          <div class="scene-name">5.1 — Cận mặt, ngón tay gõ thái dương</div>
+        </div>
+        <ol class="action-list">
+          <li>Nhìn vào khoảng không trước mặt</li>
+          <li>Ngón trỏ gõ nhẹ lên thái dương 2–3 cái</li>
+          <li>Tay buông xuống</li>
+          <li>Thở dài</li>
+        </ol>
+        <div class="scene-duration">✂️ Cắt lúc: Khi ngón tay đang gõ (action rõ ràng)</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-mcu">MCU</span>
+          <div class="scene-name">5.2 — Người ngồi bế tắc</div>
+        </div>
+        <div class="scene-action">⚡ Action: Ngồi trước bàn → cúi đầu → ôm đầu 2 tay → ngẩng nhìn trần</div>
+        <div class="scene-link">📎 <a href="https://www.youtube.com/watch?v=zs0bIRMEgus" target="_blank">Đặc Tả Ánh Mắt Mở Ra - Đột Phá Nhận Thức ↗</a></div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ecu">ECU</span>
+          <div class="scene-name">5.3 — Cực cận mắt nhìn vào khoảng không</div>
+        </div>
+        <div class="scene-desc">Chỉ thấy vùng mắt và mũi, nhìn thẳng nhưng không focus.</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ws">WS</span>
+          <div class="scene-name">5.4 — Người ngồi, tay không làm gì</div>
+        </div>
+        <div class="scene-desc">Góc rộng, người ngồi nhỏ giữa không gian lớn, bất động.</div>
+      </div>
+
+      <div class="variants-title">🔄 Biến thể</div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể A — "Phá vỡ"</div>
+        <div class="variant-desc">Sau chuỗi bế tắc, quay thêm: mở máy tính lên → gõ mạnh → mặt tập trung → kịch bản chuyển đổi tích cực.</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể B — Nói chuyện một mình</div>
+        <div class="variant-desc">Nhìn thẳng camera rồi lắc đầu + nụ cười tự trào → kịch bản hài hước về sai lầm cũ.</div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=zs0bIRMEgus" target="_blank">Đặc Tả Ánh Mắt Mở Ra - Đột Phá Nhận Thức</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=Evf6ebQMRcc" target="_blank">Negative Space - Căn Phòng Lá</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=mtC7fgiTBXI" target="_blank">Cảnh Trám: Tương phản trong ngoài</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 6 -->
+  <div class="card" id="cau6">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">✅</div>
+      <div class="card-info">
+        <div class="card-label">Câu 6</div>
+        <div class="card-title">Đóng Góp Dữ Liệu Bằng Cách Nào? Thời Đó Qua Rồi.</div>
+        <div class="card-summary">Bối cảnh: Làm việc thực tế, không diễn</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Vậy đóng góp dữ liệu bằng cách nào? Không phải là lên hình diễn hay câu view. Cái thời đó qua rồi.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Vậy đóng góp dữ liệu bằng cách nào? Không phải là lên hình diễn hay câu view. Cái thời đó qua rồi.')">📋</button>
+      </div>
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=WnNzCZFqhR4" target="_blank">Gõ Phím & Lướt Màn Hình - Tập Trung Tuyệt Đối</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=kc5FgG8cEps" target="_blank">Cảnh Trám: ko ekip ko phong thu broll</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=VVvRVubNgxE" target="_blank">B-Roll: Bài tập tân thủ - gõ máy tính</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 7 -->
+  <div class="card" id="cau7">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">✅</div>
+      <div class="card-info">
+        <div class="card-label">Câu 7</div>
+        <div class="card-title">Mình Chính Là Bằng Chứng — Không Hào Nhoáng, Không Diễn</div>
+        <div class="card-summary">Bối cảnh: Biểu cảm chân thực, bằng chứng sống</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Mình chính là bằng chứng. Mình không hào nhoáng, không diễn.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Mình chính là bằng chứng. Mình không hào nhoáng, không diễn.')">📋</button>
+      </div>
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=JhC826LIJTs" target="_blank">Giảng Dạy Tại Giảng Đường FPT</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=h4NWcH62fkY" target="_blank">Thoại In-Situ - Review Loa Bluetooth Hài Hước</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=hHb3K1SUK9w" target="_blank">Cutaway - Đặt Ly Trà Mời Trà</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 8 -->
+  <div class="card" id="cau8">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">✅</div>
+      <div class="card-info">
+        <div class="card-label">Câu 8</div>
+        <div class="card-title">40k Page, 15k TikTok Trong Vài Tháng — Bằng Bài Giảng Thật</div>
+        <div class="card-summary">Bối cảnh: Đứng lớp giảng dạy thực tế</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Mình mang nguyên những gì mình dạy trên lớp lên video mà vẫn có 40k Page, 15k TikTok trong vài tháng.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Mình mang nguyên những gì mình dạy trên lớp lên video mà vẫn có 40k Page, 15k TikTok trong vài tháng.')">📋</button>
+      </div>
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=vot4KeNzyqQ" target="_blank">B-Roll: Offline 3 Trên Lớp</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=MkD2mA7xzbo" target="_blank">B-Roll: Offline 3 Hướng Dẫn Thực Chiến</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=9JvaFTC_KJY" target="_blank">Giảng Dạy & Tương Tác Tại Giảng Đường FPT</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 9 -->
+  <div class="card" id="cau9">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">⚡</div>
+      <div class="card-info">
+        <div class="card-label">Câu 9</div>
+        <div class="card-title">Ông Giáo Như Mình Làm Được — Anh Chị Kinh Doanh Chắc Chắn Làm Được</div>
+        <div class="card-summary">Bối cảnh: Talking head — đỉnh cảm xúc toàn video</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Nếu một ông giáo như mình làm được bằng sự chân thành, thì những anh chị lăn lộn kinh doanh chắc chắn cũng sẽ làm được.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Nếu một ông giáo như mình làm được bằng sự chân thành, thì những anh chị lăn lộn kinh doanh chắc chắn cũng sẽ làm được.')">📋</button>
+      </div>
+      <div class="emotion-box">🎯 Đỉnh cảm xúc toàn video — Chuyển từ thách thức sang kết nối. Năng lượng ĐỒNG HÀNH. "Mình đã đi qua, mình biết anh/chị làm được."</div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-mcu">MCU</span>
+          <div class="scene-name">9.1 — Nhìn thẳng, micro-action mạnh ⭐</div>
+        </div>
+        <div style="margin-top:6px;font-size:12px;color:var(--text-muted);margin-bottom:4px">Máy đặt thấp hơn tầm mắt 10cm. Action chuỗi:</div>
+        <ol class="action-list">
+          <li>Nói: <em>"Nếu một ông giáo như mình làm được..."</em></li>
+          <li>Dừng một nhịp — nhìn thẳng ống kính</li>
+          <li>Nghiêng người về phía trước nhẹ</li>
+          <li>Tay đặt lên ngực một cái nhẹ</li>
+          <li>Tiếp: <em>"...thì anh chị chắc chắn làm được."</em></li>
+          <li>Gật đầu một cái chậm — khẳng định</li>
+        </ol>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-cu">CU</span>
+          <div class="scene-name">9.2 — Cận mặt, ánh mắt tin tưởng</div>
+        </div>
+        <div class="scene-desc">Nhìn thẳng ống kính, ánh mắt ấm và cương quyết. Giữ 5 giây — silent beat trước CTA.</div>
+        <div class="scene-link">📎 <a href="https://www.youtube.com/watch?v=wc-ZQhFQy6w" target="_blank">Cutaway - Ánh Mắt Thấu Cảm & Lắng Nghe ↗</a></div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ots">OTS</span>
+          <div class="scene-name">9.3 — Qua vai, nhìn về phía trước</div>
+        </div>
+        <div class="scene-desc">Nhân vật đã "từng ở đó" — bây giờ đang nhìn lại con đường mình đã đi.</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ws">WS</span>
+          <div class="scene-name">9.4 — Góc rộng bàn làm việc — context chuyên môn</div>
+        </div>
+        <div class="scene-desc">Thấy toàn bộ: sách, laptop, ghi chú — "ông giáo" trong môi trường thực tế.</div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=wc-ZQhFQy6w" target="_blank">Cutaway - Ánh Mắt Thấu Cảm & Lắng Nghe</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=BCI1w4pM4SY" target="_blank">Thoại In-Situ - Nụ Cười Thấu Cảm</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=xA3j9vrXWug" target="_blank">Giảng Dạy Tại Giảng Đường FPT</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">🟢 Phần 3 — Giải pháp & CTA</div>
+
+  <!-- CÂU 10 -->
+  <div class="card" id="cau10">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">✅</div>
+      <div class="card-info">
+        <div class="card-label">Câu 10</div>
+        <div class="card-title">Thả Bừa Dữ Liệu Là Không Được — AI Loại Từ Vòng Gửi Xe</div>
+        <div class="card-summary">Bối cảnh: Sự lộn xộn, nhồi nhét</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Nhưng có một vấn đề, thả bừa dữ liệu là không được. Video chất đến mấy mà hình xấu, lộn xộn thì AI loại từ vòng gửi xe.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Nhưng có một vấn đề, thả bừa dữ liệu là không được. Video chất đến mấy mà hình xấu, lộn xộn thì AI loại từ vòng gửi xe.')">📋</button>
+      </div>
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=U-7zLo5tgws" target="_blank">Ẩn Dụ Về Sự Chần Chừ & Nhồi Nhét Quá Tải</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=C1j4vJh381s" target="_blank">Metaphor - Nỗi Đau Xóa Video & Sự Tự Ti</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=7guNacRopeo" target="_blank">Màn Hình Dựng Phim & Thao Tác Chuyên Sâu</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 11 -->
+  <div class="card" id="cau11">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">✅</div>
+      <div class="card-info">
+        <div class="card-label">Câu 11</div>
+        <div class="card-title">Quy Trình Bài Bản — Dứt Khoát — Không Tốn Thời Gian Râu Ria</div>
+        <div class="card-summary">Bối cảnh: Làm việc tập trung, thao tác dứt khoát</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Bạn phải có một quy trình làm tại bàn bài bản, dứt khoát, không tốn thời gian cho thứ râu ria.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Bạn phải có một quy trình làm tại bàn bài bản, dứt khoát, không tốn thời gian cho thứ râu ria.')">📋</button>
+      </div>
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=pvNLtKseJI0" target="_blank">Viết Sổ Ghi Chép Ý Tưởng - Lập Kế Hoạch Chiến Lược</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=Weo9Yr1glIo" target="_blank">Cảnh Trám: OTS - Working laptop</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=u0QKxiih7NU" target="_blank">Gõ Phím & Lướt Màn Hình - Tập Trung Tuyệt Đối</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 12 -->
+  <div class="card" id="cau12">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">✅</div>
+      <div class="card-info">
+        <div class="card-label">Câu 12</div>
+        <div class="card-title">Lớp Offline 2 Ngày — Hỗ Trợ 1-1 Tới Khi Ra Kết Quả</div>
+        <div class="card-summary">Bối cảnh: Lớp học thực chiến, hướng dẫn 1-1</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Cuối tháng 10 này, mình có lớp offline 2 ngày tại Hà Nội. Làm đúng các bước mà chưa ra việc, mình hỗ trợ 1-1 tới khi ra kết quả thì thôi.»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Cuối tháng 10 này, mình có lớp offline 2 ngày tại Hà Nội. Làm đúng các bước mà chưa ra việc, mình hỗ trợ 1-1 tới khi ra kết quả thì thôi.')">📋</button>
+      </div>
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=CFreGF4lud8" target="_blank">Lớp Học Thực Chiến Fedu (Hướng Dẫn Bài Tập)</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=IWP8Y1bT-nM" target="_blank">Lớp Học Thực Chiến Fedu: broll offline 1</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=WzOh9gQO1UE" target="_blank">Lớp Học Thực Chiến Fedu: INSITU</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÂU 13 -->
+  <div class="card" id="cau13">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="priority-badge">🔥</div>
+      <div class="card-info">
+        <div class="card-label">Câu 13 — CTA #1 ƯU TIÊN</div>
+        <div class="card-title">Tắt Chế Độ Tàng Hình Và Đăng Ký Ở Link Bên Dưới</div>
+        <div class="card-summary">Bối cảnh: Bàn làm việc, talking head trực diện</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="card-body">
+      <div class="dialogue-wrap">
+        <div class="dialogue-text">«Tắt chế độ tàng hình và đăng ký ở link bên dưới nhé!»</div>
+        <button class="copy-btn" onclick="copyText(this, 'Tắt chế độ tàng hình và đăng ký ở link bên dưới nhé!')">📋</button>
+      </div>
+      <div class="emotion-box">🎯 CTA — Năng lượng DỨT KHOÁT, TIN TƯỞNG, ẤM ÁP. Không van xin, không năn nỉ. Người xem nhìn vào mắt và tự thấy muốn click.</div>
+
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Setup: Đặt máy ngang tầm mắt, ánh sáng đầy đủ, nền gọn gàng.</div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-mcu">MCU</span>
+          <div class="scene-name">13.1 — Nhìn thẳng ống kính — câu CTA chính ⭐</div>
+        </div>
+        <ol class="action-list">
+          <li>Nhìn thẳng vào ống kính, biểu cảm bình thản, tin tưởng</li>
+          <li>Nói câu CTA</li>
+          <li>Nghiêng người nhẹ về phía trước, tay chỉ xuống phía dưới</li>
+          <li>Mỉm cười tự nhiên — không cười rộng quá</li>
+        </ol>
+        <div class="scene-action">✂️ Cắt lúc: Đang nói "Đăng ký ở link bên dưới" — giữ eye contact đến hết</div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-cu">CU</span>
+          <div class="scene-name">13.2 — Cận mặt, biểu cảm chân thành</div>
+        </div>
+        <div class="scene-desc">Cực cận từ cổ lên, thấy mắt và nụ cười rõ nét.</div>
+        <div class="scene-action">⚡ Action: Nói xong CTA → mỉm cười → gật đầu nhẹ xác nhận</div>
+        <div class="scene-link">📎 <a href="https://ytuong.fedu.vn/reports/IG_@neolumo.uralsk_DdF-qr0s4Kk_Spa_Y_Khoa.html" target="_blank">Phóng Sự Trị Liệu Da Liễu — kết thúc nhìn thẳng mắt ↗</a></div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-ecu">ECU</span>
+          <div class="scene-name">13.3 — Cận tay bấm nút — hành động dứt khoát</div>
+        </div>
+        <div class="scene-desc">Cực cận tay đặt trên phone/máy tính, ngón tay bấm một cái dứt khoát.</div>
+        <div class="scene-link">📎 <a href="https://www.youtube.com/watch?v=uPecjowvqLc" target="_blank">Cảnh Trám: Phone Cam StartRecord ↗</a></div>
+      </div>
+
+      <div class="scene-item">
+        <div class="scene-header">
+          <span class="shot-tag shot-mcu">MCU</span>
+          <div class="scene-name">13.4 — Nhìn thẳng — biến thể không nói (Silent CTA)</div>
+        </div>
+        <div class="scene-desc">Nhìn thẳng ống kính, gật đầu chậm một lần, mỉm cười → chờ 3 giây. Dùng làm cảnh trám cuối video.</div>
+      </div>
+
+      <div class="variants-title">🔄 Biến thể khai thác cùng lúc</div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể A — Hook cho video khác</div>
+        <div class="variant-desc">Quay thêm cảnh đứng dậy khỏi bàn → quay ra nhìn thẳng camera → dùng cho hook mở đầu video sau.</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể B — Reaction ngắn</div>
+        <div class="variant-desc">2–3 biểu cảm: gật đầu mạnh, tay vỗ đùi, cười to hơn → dùng xen cho video năng lượng cao hơn.</div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 B-Roll có sẵn</div>
+        <ul class="broll-list">
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=BCI1w4pM4SY" target="_blank">Thoại In-Situ - Nụ Cười Thấu Cảm & Kết Nối</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=uPecjowvqLc" target="_blank">Cảnh Trám: Phone Cam StartRecord</a></li>
+          <li><span class="broll-icon">▶</span><a href="https://www.youtube.com/watch?v=wc-ZQhFQy6w" target="_blank">Cutaway - Ánh Mắt Thấu Cảm & Lắng Nghe</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="section-title" style="margin-top:24px">📋 Checklist trước khi bấm máy</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+    <div style="font-size:13px;font-weight:700;color:var(--text-muted);margin-bottom:10px">Thiết bị</div>
+    <ul class="checklist">
+      <li><div class="check-icon"></div>Điện thoại pin đầy, dung lượng đủ</li>
+      <li><div class="check-icon"></div>Chân máy + gimbal (nếu có)</li>
+      <li><div class="check-icon"></div>Microphone cài áo</li>
+      <li><div class="check-icon"></div>Đèn fill light (nếu quay buổi tối)</li>
+    </ul>
+    <div style="font-size:13px;font-weight:700;color:var(--text-muted);margin:14px 0 10px">Màn hình cần mở sẵn</div>
+    <ul class="checklist">
+      <li><div class="check-icon"></div>Facebook Ads Manager (số liệu thật)</li>
+      <li><div class="check-icon"></div>Phone: vào FB → bài đăng ít view → số liệu hiện rõ</li>
+      <li><div class="check-icon"></div>Nhiều tab trình duyệt mở cùng lúc</li>
+    </ul>
+    <div style="font-size:13px;font-weight:700;color:var(--text-muted);margin:14px 0 10px">Thứ tự quay tối ưu (~90 phút)</div>
+    <ul class="checklist">
+      <li><div class="check-icon"></div>Nhóm "Bàn làm việc + Màn hình": Câu 1 + biến thể — ~30 phút</li>
+      <li><div class="check-icon"></div>Nhóm "Phone + Vô hình": Câu 3 + biến thể — ~20 phút</li>
+      <li><div class="check-icon"></div>Nhóm "Talking head CTA": Câu 13 + Câu 9 — ~25 phút</li>
+      <li><div class="check-icon"></div>Nhóm "Bế tắc nội tâm": Câu 5 + biến thể — ~15 phút</li>
+    </ul>
+  </div>
+
+  <!-- REF TABLE -->
+  <div class="section-title">🔗 Tham khảo phong cách quay nhanh</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px">
+    <table class="ref-table">
+      <tr><td>Góc bàn làm việc 7 kiểu</td><td><a href="https://ytuong.fedu.vn/reports/IG_@kortafilms_DcdthwaTM3J_Camera_Angles_Mastery.html" target="_blank">kortafilms ↗</a></td></tr>
+      <tr><td>Đặt máy một mình — không ekip</td><td><a href="https://ytuong.fedu.vn/reports/IG_@turapinaanastasiia_DdBorQ2KEli_How_I_Film_Alone_Cafe_UGC_Suction_Mount.html" target="_blank">turapinaanastasiia ↗</a></td></tr>
+      <tr><td>Talking head kết thúc nhìn thẳng mắt</td><td><a href="https://ytuong.fedu.vn/reports/IG_@neolumo.uralsk_DdF-qr0s4Kk_Spa_Y_Khoa.html" target="_blank">neolumo ↗</a></td></tr>
+      <tr><td>Quy trình làm việc có lớp lang</td><td><a href="https://ytuong.fedu.vn/reports/IG_@shogentle_DcJDJjVJGy6_The_Invisible_Prep_in_Video.html" target="_blank">shogentle ↗</a></td></tr>
+      <tr><td>3 thói quen — nhịp cắt kỷ luật</td><td><a href="https://ytuong.fedu.vn/reports/IG_@joshdiazfilms_Dctj7NfNimM_Life_Feel_Put_Together.html" target="_blank">joshdiazfilms ↗</a></td></tr>
+    </table>
+  </div>
+</div>
+<!-- END PANEL TAT TANG HINH -->
+
+
+<!-- ========== TAB 2: KỶ NGUYÊN NN (PLACEHOLDER) ========== -->
+<div class="tab-panel" id="panel-ky-nguyen">
+  <div class="placeholder-panel">
+    <div class="placeholder-icon">🤖</div>
+    <div class="placeholder-title">Kịch Bản Kỷ Nguyên NN</div>
+    <div class="placeholder-desc">
+      File <code>SHOT_LIST_KY_NGUYEN.md</code> chưa tồn tại.<br><br>
+      Khi file được tạo, nội dung sẽ được tổng hợp vào đây: shot-list các cảnh, b-roll, biến thể và checklist cho kịch bản Kỷ Nguyên Neural Networks.
+    </div>
+    <div class="placeholder-badge">⏳ Đang chờ file</div>
+  </div>
+</div>
+
+<!-- ========== TAB 3: BAN CÔNG (PLACEHOLDER) ========== -->
+<div class="tab-panel" id="panel-ban-cong">
+  <div class="placeholder-panel">
+    <div class="placeholder-icon">🌿</div>
+    <div class="placeholder-title">Kịch Bản Ban Công 3H</div>
+    <div class="placeholder-desc">
+      File <code>CANH_BAN_CONG_3H.md</code> chưa tồn tại.<br><br>
+      Khi file được tạo, nội dung sẽ được tổng hợp vào đây: shot-list các cảnh ban công, b-roll ngoại cảnh, biến thể và checklist riêng.
+    </div>
+    <div class="placeholder-badge">⏳ Đang chờ file</div>
+  </div>
+</div>
+
+<!-- ========== TAB 4: VẠN NĂNG ========== -->
+<div class="tab-panel" id="panel-van-nang">
+
+  <div class="section-title">Phân tích — Cảnh dùng nhiều nhất</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px">
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <tr style="background:var(--surface2)">
+          <th style="padding:10px 12px;text-align:left;color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap">Loại cảnh</th>
+          <th style="padding:10px 12px;text-align:left;color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:0.8px">Câu</th>
+          <th style="padding:10px 12px;text-align:left;color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:0.8px">Nguy cơ lặp</th>
+        </tr>
+        <tr style="border-top:1px solid var(--border)">
+          <td style="padding:10px 12px;color:var(--text);font-weight:600">Gõ phím (ECU tay)</td>
+          <td style="padding:10px 12px;color:var(--text-muted)">1, 6, 11</td>
+          <td style="padding:10px 12px"><span style="color:#ef4444;font-weight:700">🔴 Cao</span></td>
+        </tr>
+        <tr style="border-top:1px solid var(--border)">
+          <td style="padding:10px 12px;color:var(--text);font-weight:600">Talking head MCU</td>
+          <td style="padding:10px 12px;color:var(--text-muted)">7, 9, 13</td>
+          <td style="padding:10px 12px"><span style="color:#ef4444;font-weight:700">🔴 Cao</span></td>
+        </tr>
+        <tr style="border-top:1px solid var(--border)">
+          <td style="padding:10px 12px;color:var(--text);font-weight:600">Cầm phone (MCU/CU)</td>
+          <td style="padding:10px 12px;color:var(--text-muted)">3, 10</td>
+          <td style="padding:10px 12px"><span style="color:#eab308;font-weight:700">🟡 TB</span></td>
+        </tr>
+        <tr style="border-top:1px solid var(--border)">
+          <td style="padding:10px 12px;color:var(--text);font-weight:600">Ngồi bất động (WS)</td>
+          <td style="padding:10px 12px;color:var(--text-muted)">4, 5</td>
+          <td style="padding:10px 12px"><span style="color:#eab308;font-weight:700">🟡 TB</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">5 Cảnh Vạn Năng Mới</div>
+  <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Thứ tự ưu tiên quay bổ sung: <strong style="color:var(--text)">#3 → #1 → #4 → #5 → #2</strong> | Tổng thêm: ~45 phút</div>
+
+  <!-- VN #1 -->
+  <div class="vn-card" id="vn1">
+    <div class="vn-header" onclick="toggleVN(this)">
+      <div class="vn-num">1</div>
+      <div style="flex:1">
+        <div class="vn-title">Nhìn Qua Cửa Sổ / Ban Công</div>
+        <div class="vn-subtitle">Cảnh Thở — Nhịp thở thị giác • ~15 phút</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="vn-body">
+      <div class="vn-why">Toàn bộ 18 cảnh trong shot-list đóng kín trong bàn làm việc. Cảnh này tạo ra nhịp thở thị giác — punctuation mark thị giác.</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px">Dùng được cho câu</div>
+      <div class="usable-for">
+        <span class="usable-tag">Câu 2</span>
+        <span class="usable-tag">Câu 4</span>
+        <span class="usable-tag">Câu 9</span>
+        <span class="usable-tag">Câu 11</span>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Setup kỹ thuật</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.6">
+        <strong style="color:var(--text)">Cỡ cảnh:</strong> MS → pull back ra WS trong cùng 1 take<br>
+        <strong style="color:var(--text)">Góc:</strong> 3/4 profile — thấy 2/3 mặt + 1/3 khung cửa sổ<br>
+        <strong style="color:var(--text)">Focal length:</strong> 35–50mm (thấy cả người lẫn ngoại cảnh)
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Action từng nhịp</div>
+      <div class="timing-steps">
+        <div class="timing-step"><div class="timing-time">0s–1s</div><div class="timing-desc">Đang nhìn xuống → từ từ ngẩng đầu lên</div></div>
+        <div class="timing-step"><div class="timing-time">1s–2.5s</div><div class="timing-desc">Mắt chuyển hướng ra cửa sổ. Vai thả xuống — phản xạ buông thư</div></div>
+        <div class="timing-step"><div class="timing-time">2.5s–4s</div><div class="timing-desc">Giữ nguyên. Mắt nhìn xa không focus. Thở ra qua mũi</div></div>
+        <div class="timing-step"><div class="timing-time">4s–5.5s</div><div class="timing-desc">Gật đầu rất nhẹ (như vừa quyết định). Mắt bắt đầu quay lại bàn</div></div>
+        <div class="timing-step"><div class="timing-time">5.5s–7s</div><div class="timing-desc">Tay bắt đầu chuyển động — hành động mới bắt đầu</div></div>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Biến thể</div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể A — "Quyết định"</div>
+        <div class="variant-desc">Nhìn ra cửa sổ → thở sâu → gật đầu mạnh hơn → quay vào làm việc ngay</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể B — "Hoài niệm"</div>
+        <div class="variant-desc">Nhìn ra ngoài → ánh mắt mơ xa → nụ cười nhẹ thoáng qua → kịch bản kể chuyện quá khứ</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể C — ECU mắt phản chiếu</div>
+        <div class="variant-desc">Chỉ quay cực cận mắt trong khi ánh sáng cửa sổ phản chiếu → kịch bản triết lý</div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-check">🔗 Tham khảo</div>
+        <ul class="broll-list">
+          <li><a href="https://www.instagram.com/reel/DZVHH27S7Lf/" target="_blank">Zen Mind & Mountain Mist ↗</a></li>
+          <li><a href="https://ytuong.fedu.vn/reports/IG_@iman.lizi_Dc6qXoKoYKh.html" target="_blank">ASMR Trà Chiều & Cozy Homebody ↗</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- VN #2 -->
+  <div class="vn-card" id="vn2">
+    <div class="vn-header" onclick="toggleVN(this)">
+      <div class="vn-num">2</div>
+      <div style="flex:1">
+        <div class="vn-title">Bàn Tay Viết Trên Giấy</div>
+        <div class="vn-subtitle">Cảnh Quá Trình Tư Duy • ~10 phút</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="vn-body">
+      <div class="vn-why">Gõ phím = nhập liệu cơ học. Viết tay = kiến thức đang được tạo ra từ bên trong. Tránh lặp cảnh gõ phím overused (câu 1, 6, 11).</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px">Dùng được cho câu</div>
+      <div class="usable-for">
+        <span class="usable-tag">Câu 2</span>
+        <span class="usable-tag">Câu 6</span>
+        <span class="usable-tag">Câu 7</span>
+        <span class="usable-tag">Câu 11</span>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Setup kỹ thuật</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.6">
+        <strong style="color:var(--text)">Cỡ cảnh:</strong> ECU tay (60%) xen kẽ CU mặt nhìn xuống (40%)<br>
+        <strong style="color:var(--text)">Focal length:</strong> 50mm macro hoặc 85mm f/1.8
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Action từng nhịp</div>
+      <div class="timing-steps">
+        <div class="timing-step"><div class="timing-time">0s–0.5s</div><div class="timing-desc">Bút đặt lên trang giấy — dừng 0.5s (suy nghĩ trước khi viết)</div></div>
+        <div class="timing-step"><div class="timing-time">0.5s–2s</div><div class="timing-desc">Bắt đầu viết — chữ chậm, rõ nét. Nghe tiếng bút cọ giấy</div></div>
+        <div class="timing-step"><div class="timing-time">2s–3s</div><div class="timing-desc">Dừng bút. Ngón tay gõ nhẹ lên trang giấy (ra quyết định)</div></div>
+        <div class="timing-step"><div class="timing-time">3s–4s</div><div class="timing-desc">CUT sang CU mặt — mắt đọc lại từ trái sang phải</div></div>
+        <div class="timing-step"><div class="timing-time">4s–5s</div><div class="timing-desc">Gật đầu nhẹ xác nhận. Cầm bút lên tiếp</div></div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-accent">📥 Thay thế cho</div>
+        <ul class="broll-list">
+          <li>Cảnh 1.1 ECU gõ phím (câu 1) — khi đã dùng gõ phím câu 6 hoặc 11</li>
+          <li>Viết Sổ Ghi Chép Ý Tưởng (câu 11) — cảnh mới thêm phản ứng mặt</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- VN #3 -->
+  <div class="vn-card" id="vn3">
+    <div class="vn-header" onclick="toggleVN(this)">
+      <div class="vn-num">3</div>
+      <div style="flex:1">
+        <div class="vn-title">Khoảnh Khắc "Bật Công Tắc"</div>
+        <div class="vn-subtitle">🔥 Ưu tiên #1 — Cảnh Chuyển Trạng Thái • ~10 phút</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="vn-body">
+      <div class="vn-why" style="border-left-color:var(--fire)">Đây là cảnh quan trọng nhất còn thiếu. Lấp đầy khoảng trống từ vùng vấn đề → bằng chứng. Thiếu cảnh này, editor phải cut thẳng từ bế tắc sang giảng dạy — tạo đứt đoạn cảm xúc.</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px">Dùng được cho câu</div>
+      <div class="usable-for">
+        <span class="usable-tag">Câu 5→6</span>
+        <span class="usable-tag">Câu 9→10</span>
+        <span class="usable-tag">Câu 13 CTA</span>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Action từng nhịp</div>
+      <div class="timing-steps">
+        <div class="timing-step"><div class="timing-time">0s–1s</div><div class="timing-desc">Ngồi nhìn xuống / nhìn sang. Vai co lại (kế thừa cảnh bế tắc)</div></div>
+        <div class="timing-step"><div class="timing-time">1s–1.5s</div><div class="timing-desc">Mắt thay đổi hướng đột ngột — nhìn thẳng về phía trước. Không từ từ</div></div>
+        <div class="timing-step"><div class="timing-time">1.5s–2s</div><div class="timing-desc">Vai thả xuống + dãn ra. Hít vào một hơi ngắn qua mũi</div></div>
+        <div class="timing-step"><div class="timing-time">2s–3s</div><div class="timing-desc">Tay thực hiện ONE decisive action — mở máy tính / cầm bút / bấm nút. DỨT KHOÁT</div></div>
+        <div class="timing-step"><div class="timing-time">3s–4.5s</div><div class="timing-desc">Mắt focus vào đối tượng hành động. Biểu cảm tập trung, không lo lắng</div></div>
+        <div class="timing-step"><div class="timing-time">4.5s–5s</div><div class="timing-desc">Hành động hoàn thành. Micro-smile — chỉ thoáng qua</div></div>
+      </div>
+
+      <div style="margin-top:12px;font-size:13px;color:var(--text-muted)"><span class="color-bolt">✂️ Cut point tốt nhất:</span> Khi tay thực hiện hành động (2–3s) — cut on action chuẩn điện ảnh</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Biến thể</div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể A — "Tắt chế độ tàng hình"</div>
+        <div class="variant-desc">Nhấc đầu nhìn thẳng camera + gật đầu → dùng đúng câu 13 CTA</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể B — "Mở máy tính"</div>
+        <div class="variant-desc">Tay mở nắp laptop → màn hình sáng → mặt được ánh sáng chiếu vào → kịch bản bắt đầu hành trình</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể C — "Đứng dậy"</div>
+        <div class="variant-desc">Đang ngồi → tay chống bàn → đứng dậy → WS thấy cả người → kịch bản quyết tâm</div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-check">🔗 Tham khảo</div>
+        <ul class="broll-list">
+          <li><a href="https://www.youtube.com/watch?v=zs0bIRMEgus" target="_blank">Đặc Tả Ánh Mắt Mở Ra - Đột Phá Nhận Thức ↗</a></li>
+          <li><a href="https://www.instagram.com/reel/DcA80Aez6Aw/" target="_blank">5 Visual Hooks - Kiểu Diễn Mở Màn Tự Nhiên ↗</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- VN #4 -->
+  <div class="vn-card" id="vn4">
+    <div class="vn-header" onclick="toggleVN(this)">
+      <div class="vn-num">4</div>
+      <div style="flex:1">
+        <div class="vn-title">Profile Tĩnh</div>
+        <div class="vn-subtitle">Cảnh Nhân Vật Có Chiều Sâu • ~15 phút</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="vn-body">
+      <div class="vn-why">Toàn bộ talking head đều trực diện. Profile 90° tạo chiều sâu nhân vật — nhân vật đang sống trong khoảnh khắc đó, không nói với khán giả.</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px">Dùng được cho câu</div>
+      <div class="usable-for">
+        <span class="usable-tag">Câu 4</span>
+        <span class="usable-tag">Câu 7</span>
+        <span class="usable-tag">Câu 8</span>
+        <span class="usable-tag">Câu 9</span>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Setup kỹ thuật</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.6">
+        <strong style="color:var(--text)">Cỡ cảnh:</strong> MCU profile từ ngực lên<br>
+        <strong style="color:var(--text)">Góc ngang:</strong> 90° chính xác — phải đúng 90°<br>
+        <strong style="color:var(--text)">Focal length:</strong> 85mm f/1.8 — hiệu ứng "điêu khắc"
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Action từng nhịp</div>
+      <div class="timing-steps">
+        <div class="timing-step"><div class="timing-time">0s–0.5s</div><div class="timing-desc">Đã trong tư thế profile, mắt nhìn về phía trước. Tĩnh</div></div>
+        <div class="timing-step"><div class="timing-time">0.5s–2s</div><div class="timing-desc">Giữ nguyên. Không làm gì. Mắt di chuyển nhẹ nhìn xa</div></div>
+        <div class="timing-step"><div class="timing-time">2s–3.5s</div><div class="timing-desc">Micro-action: nuốt nước bọt khẽ / cơ hàm co nhẹ / mí mắt nhíu 1/3</div></div>
+        <div class="timing-step"><div class="timing-time">3.5s–5s</div><div class="timing-desc">Gật đầu cực nhẹ (4–5mm). Thở ra qua mũi</div></div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-check">🔗 Tham khảo</div>
+        <ul class="broll-list">
+          <li><a href="https://ytuong.fedu.vn/reports/IG_@jeromememe_DQmKgPDEWgJ_Artisans_of_Venice.html" target="_blank">Artisans of Venice ↗</a></li>
+          <li><a href="https://www.instagram.com/reel/DcTbD0MR-V_/" target="_blank">Nhịp Dựng Điện Ảnh Về Kỷ Luật ↗</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- VN #5 -->
+  <div class="vn-card" id="vn5">
+    <div class="vn-header" onclick="toggleVN(this)">
+      <div class="vn-num">5</div>
+      <div style="flex:1">
+        <div class="vn-title">Hành Động Chốt — Tay Đặt Xuống / Đóng Lại</div>
+        <div class="vn-subtitle">Cảnh Dứt Điểm • ~10 phút</div>
+      </div>
+      <div class="card-chevron">⌄</div>
+    </div>
+    <div class="vn-body">
+      <div class="vn-why">Cần cho 3 điểm "đóng chương": sau câu 5, câu 9, câu 13. Khác với cảnh 3.4 (thua cuộc) — đây là hoàn thành xong có chủ đích.</div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px">Dùng được cho câu</div>
+      <div class="usable-for">
+        <span class="usable-tag">Câu 5→6</span>
+        <span class="usable-tag">Câu 11</span>
+        <span class="usable-tag">Câu 12</span>
+        <span class="usable-tag">Câu 13 CTA</span>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Setup kỹ thuật</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.6">
+        <strong style="color:var(--text)">Cỡ cảnh:</strong> ECU thuần túy — chỉ thấy tay và vật đặt xuống<br>
+        <strong style="color:var(--text)">Góc:</strong> 45° từ trên xuống<br>
+        <strong style="color:var(--text)">Focal length:</strong> 50mm macro hoặc 85mm
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Action từng nhịp</div>
+      <div class="timing-steps">
+        <div class="timing-step"><div class="timing-time">0s–0.5s</div><div class="timing-desc">Tay đang cầm vật — giữ trong không khí một chút</div></div>
+        <div class="timing-step"><div class="timing-time">0.5s–1s</div><div class="timing-desc">Hạ xuống từ từ và chắc. TỐC ĐỘ TRUNG BÌNH</div></div>
+        <div class="timing-step"><div class="timing-time">1s–1.5s</div><div class="timing-desc">Tiếp đất. Nghe tiếng "thộp" nhẹ — foley quan trọng</div></div>
+        <div class="timing-step"><div class="timing-time">1.5s–2.5s</div><div class="timing-desc">Tay không rút đi ngay. Giữ nguyên. Ngón tay thả lỏng từ từ</div></div>
+        <div class="timing-step"><div class="timing-time">2.5s–3.5s</div><div class="timing-desc">Tay rút đi chậm → để lại vật trên bàn</div></div>
+      </div>
+
+      <div style="margin-top:12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text-muted)">
+        ⚡ <strong style="color:var(--text)">Tốc độ quyết định ý nghĩa:</strong> Ném = tức giận | Thả rơi = thua cuộc | Đặt chậm và chắc = kết thúc có chủ ý
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:14px 0 6px">Biến thể</div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể A — "Ký tên"</div>
+        <div class="variant-desc">Bút ký dứt khoát → đặt bút → rút tay → cam kết, ký hợp đồng</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể B — "Gập laptop"</div>
+        <div class="variant-desc">Tay gập nắp laptop → tiếng "click" → hoàn thành mục tiêu</div>
+      </div>
+      <div class="variant-item">
+        <div class="variant-label">Biến thể C — "Đặt phone mặt ngửa"</div>
+        <div class="variant-desc">Đặt mặt ngửa (≠ cảnh 3.4 đặt úp) = sẵn sàng nhận tin → CTA open loop</div>
+      </div>
+
+      <div class="broll-section">
+        <div class="broll-section-title color-check">🔗 Tham khảo</div>
+        <ul class="broll-list">
+          <li><a href="https://www.instagram.com/reel/DdNq5CxszVl/" target="_blank">Nghệ Thuật Xăm Mini Tô Bún Bò Huế ↗</a></li>
+          <li><a href="https://www.instagram.com/reel/DaDFH_TSii8/" target="_blank">Kỹ Thuật Match Cut Đổi Trang Phục Barista ↗</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SWAP TABLE -->
+  <div class="section-title" style="margin-top:24px">🔁 Bảng Hoán Đổi Cảnh</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px">
+    <div class="swap-table-wrap">
+      <table class="swap-table">
+        <tr>
+          <th>Cảnh gốc</th>
+          <th>Hoán đổi với</th>
+          <th>Khi nào dùng</th>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">1.1 ECU gõ phím</span></td>
+          <td><span class="swap-new">VN #2 Viết tay</span></td>
+          <td class="swap-note">Khi đã dùng gõ phím câu 6 hoặc 11</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">1.5 CU mắt màn hình</span></td>
+          <td><span class="swap-new">VN #4 Profile tĩnh</span></td>
+          <td class="swap-note">Cần chiều sâu nhân vật, không cần ánh phản chiếu</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">3.4 TOP tay đặt úp</span></td>
+          <td><span class="swap-new">VN #5 Đặt dứt điểm</span></td>
+          <td class="swap-note">3.4 = thua cuộc; VN#5 = kết thúc chủ động</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">5.1 CU gõ thái dương</span></td>
+          <td><span class="swap-new">VN #3 Bật công tắc (A)</span></td>
+          <td class="swap-note">Kết thúc chuỗi bế tắc bằng chuyển trạng thái</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">5.4 WS bất động</span></td>
+          <td><span class="swap-new">VN #1 Nhìn cửa sổ</span></td>
+          <td class="swap-note">WS passive; Cửa sổ = internal shift</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">9.2 CU mắt tin tưởng</span></td>
+          <td><span class="swap-new">VN #4 Profile tĩnh</span></td>
+          <td class="swap-note">Profile tạo chiều sâu nhân vật hơn CU trực diện</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">9.3 OTS qua vai</span></td>
+          <td><span class="swap-new">VN #1 Nhìn cửa sổ</span></td>
+          <td class="swap-note">Cả hai "nhìn về phía trước" — cửa sổ có ánh sáng tự nhiên</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">13.3 ECU bấm nút</span></td>
+          <td><span class="swap-new">VN #5 Đặt xuống (C)</span></td>
+          <td class="swap-note">Bấm nút = bắt đầu; Phone ngửa = mời người xem hành động</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">Gõ Phím (câu 1,6,11)</span></td>
+          <td><span class="swap-new">VN #2 hoặc VN #3</span></td>
+          <td class="swap-note">Xen kẽ tránh dùng cùng clip gõ phím 3 lần</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">Negative Space (câu 2,4)</span></td>
+          <td><span class="swap-new">VN #1 Cửa sổ</span></td>
+          <td class="swap-note">Cửa sổ giữ tĩnh nhưng thêm chiều sâu nhân vật</td>
+        </tr>
+        <tr>
+          <td><span class="swap-orig">Ánh Mắt Thấu Cảm (câu 9,13)</span></td>
+          <td><span class="swap-new">VN #4 Profile tĩnh</span></td>
+          <td class="swap-note">Profile mạnh khi nhân vật "tự thể hiện"</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- END PANEL VAN NANG -->
+
+</div><!-- end .content -->
+
+<!-- SCROLL TOP BTN -->
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Đã copy!</div>
+
+<script>
+// ===== TAB SWITCH =====
+const tabTitles = {
+  'tat-tang-hinh': '🕵️ Tắt Tàng Hình',
+  'ky-nguyen': '🤖 Kỷ Nguyên NN',
+  'ban-cong': '🌿 Ban Công',
+  'van-nang': '⚡ Vạn Năng'
+};
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('current-tab-title').textContent = tabTitles[id] || '🎬 Shot-List Master';
+  window.scrollTo(0, 0);
+  // Re-apply search if active
+  const q = document.getElementById('search-input').value.trim();
+  if (q) doSearch(q);
+}
+
+// ===== ACCORDION =====
+function toggleCard(header) {
+  const card = header.closest('.card');
+  card.classList.toggle('open');
+}
+
+function toggleVN(header) {
+  const card = header.closest('.vn-card');
+  card.classList.toggle('open');
+  const chevron = header.querySelector('.card-chevron');
+  if (chevron) chevron.style.transform = card.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+// ===== COPY =====
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '✓';
+    showToast('✅ Đã copy câu thoại!');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = '📋';
+    }, 2000);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.classList.add('copied');
+    btn.textContent = '✓';
+    showToast('✅ Đã copy!');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = '📋';
+    }, 2000);
+  });
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+// ===== SEARCH =====
+let searchTimer = null;
+const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
+
+searchInput.addEventListener('input', function() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    const q = this.value.trim();
+    searchClear.style.display = q ? 'block' : 'none';
+    doSearch(q);
+  }, 200);
+});
+
+function clearSearch() {
+  searchInput.value = '';
+  searchClear.style.display = 'none';
+  doSearch('');
+}
+
+function doSearch(q) {
+  const activePanel = document.querySelector('.tab-panel.active');
+  if (!activePanel) return;
+
+  const cards = activePanel.querySelectorAll('.card, .vn-card');
+  
+  if (!q) {
+    cards.forEach(card => {
+      card.classList.remove('hidden');
+      // Remove highlights
+      card.querySelectorAll('mark').forEach(m => {
+        m.replaceWith(document.createTextNode(m.textContent));
+      });
+    });
+    return;
+  }
+
+  const ql = q.toLowerCase();
+  let anyVisible = false;
+
+  cards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    if (text.includes(ql)) {
+      card.classList.remove('hidden');
+      card.classList.add('open');
+      anyVisible = true;
+    } else {
+      card.classList.add('hidden');
+      card.classList.remove('open');
+    }
+  });
+
+  // Show section titles
+  activePanel.querySelectorAll('.section-title').forEach(st => {
+    st.style.display = '';
+  });
+}
+
+// ===== SCROLL TOP =====
+const scrollBtn = document.getElementById('scrollTopBtn');
+window.addEventListener('scroll', () => {
+  scrollBtn.classList.toggle('visible', window.scrollY > 400);
+}, { passive: true });
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== PERSIST OPEN STATE ON RELOAD =====
+// Auto-open first priority card on tab 1
+document.addEventListener('DOMContentLoaded', () => {
+  // Auto-open câu 13 (highest priority) on load
+  // const c13 = document.getElementById('cau13');
+  // if (c13) c13.classList.add('open');
+});
+</script>
+
+</body>
+</html>
