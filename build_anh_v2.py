@@ -17,7 +17,6 @@ all_paths = [f'assets/covers/{f}' for f in all_covers]
 
 cards_html = []
 with_prompt_count = 0
-processed_paths = set()
 
 def create_card(path, prompt):
     if not path.startswith("http") and not path.startswith("assets") and not path.startswith("/"):
@@ -44,19 +43,20 @@ def create_card(path, prompt):
   <div class="card-label">{clean_filename}</div>
 </div>'''
 
-for item in json_data:
-    path = item['path']
-    prompt = item['prompt']
-    cards_html.append(create_card(path, prompt))
-    processed_paths.add(path)
-    with_prompt_count += 1
-
-new_cards_html = []
 for path in all_paths:
-    if path not in processed_paths:
-        new_cards_html.append(create_card(path, None))
+    # Lấy tên file để map với json_dict
+    prompt = json_dict.get(path)
+    # Có thể trong json_dict lưu path không có 'assets/covers/'
+    if prompt is None:
+        filename = os.path.basename(path)
+        prompt = json_dict.get(filename)
+    if prompt is None:
+        prompt = json_dict.get(f"assets/covers/{os.path.basename(path)}")
         
-cards_html = new_cards_html + cards_html
+    if prompt:
+        with_prompt_count += 1
+    
+    cards_html.append(create_card(path, prompt))
 
 total_cards = len(cards_html)
 
