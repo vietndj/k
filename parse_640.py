@@ -8,7 +8,7 @@ with open("nghiem_thu_640_posters.html", "r") as f:
 # <img src="./assets/covers/poster_351_co_hau_gai.jpg" loading="lazy" alt="Star Trek Picard" onclick="toggleError(585)">
 # <div id="prompt-data-585" style="display:none;">...</div>
 
-img_pattern = re.compile(r'<img src="\.(/assets/covers/.*?)" loading="lazy" alt="(.*?)" onclick="toggleError\((\d+)\)">.*?<div id="prompt-data-\3" style="display:none;">(.*?)</div>', re.DOTALL)
+img_pattern = re.compile(r'<img src="(.*?)" loading="lazy" alt="(.*?)" onclick="toggleError\((\d+)\)">.*?<div id="prompt-data-\3" style="display:none;">(.*?)</div>', re.DOTALL)
 matches = img_pattern.findall(html)
 
 print(f"Found {len(matches)} posters in nghiem_thu_640_posters.html")

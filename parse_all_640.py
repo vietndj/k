@@ -57,8 +57,6 @@ for i in range(1, 641):
             path = src.lstrip("./") 
             if src.startswith("poster_"):
                 path = f"assets/covers/{src}" # fallback, earlier some were in root but actually should be somewhere? Wait, if they are in root, leave them.
-                if not src.startswith("assets/covers"):
-                    path = src
             prompt = old_prompt
             
         # Deduplicate
