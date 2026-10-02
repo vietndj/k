@@ -11,17 +11,17 @@ with open(json_path, 'r', encoding='utf-8') as f:
 
 json_dict = {item['path']: item['prompt'] for item in json_data}
 
-all_covers = [f for f in os.listdir(covers_dir) if f.endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+all_covers = sorted([f for f in os.listdir(covers_dir) if f.endswith(('.jpg', '.jpeg', '.png', '.webp'))], 
+                    key=lambda x: os.path.getmtime(os.path.join(covers_dir, x)), reverse=True)
 all_paths = [f'assets/covers/{f}' for f in all_covers]
 
 cards_html = []
 with_prompt_count = 0
-
-# Add items from JSON to maintain their order or just process all_paths
-# Let's process JSON items first, then the rest.
 processed_paths = set()
 
 def create_card(path, prompt):
+    if not path.startswith("http") and not path.startswith("assets") and not path.startswith("/"):
+        path = f"assets/covers/{path}"
     filename = os.path.basename(path)
     clean_filename = os.path.splitext(filename)[0]
     
@@ -51,9 +51,12 @@ for item in json_data:
     processed_paths.add(path)
     with_prompt_count += 1
 
+new_cards_html = []
 for path in all_paths:
     if path not in processed_paths:
-        cards_html.append(create_card(path, None))
+        new_cards_html.append(create_card(path, None))
+        
+cards_html = new_cards_html + cards_html
 
 total_cards = len(cards_html)
 
