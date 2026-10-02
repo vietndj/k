@@ -628,7 +628,29 @@ def generate():
                 cat = "other"
                 cat_label = "📌 Bài Viết"
                 
-        cover_img = cover_mapping.get(f, "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80")
+        if f in cover_mapping:
+            cover_img = cover_mapping[f]
+        else:
+            import hashlib
+            fallback_images = [
+                "./assets/covers/poster_alien.jpg",
+                "./assets/covers/poster_sekiro.jpg",
+                "./assets/covers/poster_bicycle_thieves.jpg",
+                "./assets/covers/poster_halo.jpg",
+                "./assets/covers/poster_ghost_in_the_shell.jpg",
+                "./assets/covers/poster_god_of_war.jpg",
+                "./assets/covers/poster_children_of_heaven.jpg",
+                "./assets/covers/poster_pulp_fiction.jpg",
+                "./assets/covers/poster_v_for_vendetta_v2.jpg",
+                "./assets/covers/poster_inglourious_basterds.jpg",
+                "./assets/covers/poster_the_sting.jpg",
+                "./assets/covers/poster_cowboy_bebop.jpg",
+                "./assets/covers/poster_mass_effect.jpg",
+                "./assets/covers/poster_doom.jpg",
+                "./assets/covers/poster_forrest_gump.jpg"
+            ]
+            idx = int(hashlib.md5(f.encode('utf-8')).hexdigest(), 16) % len(fallback_images)
+            cover_img = fallback_images[idx]
 
         posts.append({
             "filename": f,
