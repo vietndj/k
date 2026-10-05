@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Vật Lý Của Sự Tĩnh Lặng & Tensegrity</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='38' letter-spacing='-2px' fill='%2310B981'%3E22%3C/text%3E%3C/svg%3E">
+<style>
+    /* BẢNG MÀU SLATE GRAYSCALE SIÊU SẠCH (INKDOC) */
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text', Georgia, serif;
+      --font-display-long: 'Tiempos Text', Georgia, serif;
+      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    @font-face {
+      font-family: 'FD Aeonik Extended'; 
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+           local('FD Aeonik Extended Bold');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf') format('truetype'),
+           local('FD Aeonik Regular');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+           local('FD Aeonik SemiBold');
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      font-weight: 500;
+      font-style: italic;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'),
+           local('Tiempos Text Regular');
+      font-weight: 400;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.3; }
+    h1 {
+      font-family: var(--font-display-short);
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(28px, 4vw, 42px);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    h1.is-long { font-family: var(--font-display-long); font-size: clamp(24px, 3vw, 36px); }
+    h1.is-short { font-family: var(--font-display-short); }
+    
+    h2 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 22px;
+      margin: 48px 0 20px;
+    }
+    h3 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 18px;
+      margin: 32px 0 16px;
+    }
+
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 24px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 24px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    
+    blockquote {
+      border-left: 3px solid var(--ink-text);
+      padding-left: 24px;
+      margin: 32px 0;
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+
+    /* LAYOUT SKELETON */
+    .ink-sidebar {
+      width: 280px;
+      background: var(--ink-sidebar);
+      border-right: 1px solid var(--ink-border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 32px 24px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .ink-main-wrapper {
+      flex-grow: 1;
+      padding: 60px 48px 120px;
+      display: flex;
+      justify-content: center;
+    }
+    .ink-content {
+      width: 100%;
+      max-width: 740px; /* Tiêu chuẩn đọc sách */
+    }
+
+    /* SIDEBAR TOC */
+    .ink-brand {
+      font-family: var(--font-display-long);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-text);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+      letter-spacing: 0.5px;
+    }
+    .ink-toc-title {
+      font-family: var(--font-display-long);
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--ink-muted);
+      
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link {
+      font-family: var(--font-display-long);
+      font-size: 14px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      line-height: 1.4;
+      transition: background 0s, color 0s;
+    }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active {
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--ink-border);
+    }
+    .ink-toc-nested { padding-left: 16px; margin-top: 4px; font-size: 13px; }
+    
+    /* MODE 2: DIALOGUE SPECIFIC STYLES */
+    .ink-mode-dialogue .dialogue-turn {
+      margin-bottom: 48px;
+    }
+    .ink-mode-dialogue .dialogue-prompt {
+      background: var(--ink-sidebar);
+      padding: 24px;
+      border-radius: 12px;
+      font-family: var(--font-display-long);
+      font-size: 17px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--ink-text);
+      margin-bottom: 24px;
+      border: 1px solid var(--ink-border);
+      line-height: 1.6;
+    }
+    .ink-mode-dialogue .dialogue-response {
+      padding-left: 12px;
+      border-left: 2px solid var(--ink-border);
+    }
+
+    /* META INFO */
+    .ink-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display-long);
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .ink-badge {
+      font-weight: 600;
+      color: var(--ink-text);
+      background: var(--ink-hover);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--ink-border);
+    }
+
+    /* MOBILE NAVIGATION */
+    .ink-mobile-nav { display: none; }
+    .ink-overlay { display: none; }
+    .ink-close-btn { display: none; }
+
+    @media (max-width: 992px) {
+      body { flex-direction: column; }
+      
+      /* Mobile Topbar */
+      .ink-mobile-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 24px;
+        background: var(--ink-bg);
+        border-bottom: 1px solid var(--ink-border);
+        position: sticky; top: 0; z-index: 100;
+      }
+      .ink-mobile-nav .ink-brand { margin-bottom: 0; }
+      .ink-menu-btn {
+        background: var(--ink-hover); border: 1px solid var(--ink-border);
+        padding: 6px 12px; border-radius: 4px; font-family: var(--font-display-long);
+        font-size: 12px; font-weight: 600; cursor: pointer;
+      }
+
+      /* Sidebar turns into drawer */
+      .ink-sidebar {
+        position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
+        width: 300px; box-shadow: 24px 0 48px rgba(0,0,0,0.1);
+        transition: left 0s; /* No animation */
+      }
+      .ink-sidebar.is-open { left: 0; }
+      .ink-close-btn {
+        display: block; background: none; border: none; font-size: 20px;
+        color: var(--ink-muted); cursor: pointer;
+      }
+      
+      /* Overlay */
+      .ink-overlay.is-open {
+        display: block; position: fixed; inset: 0; background: rgba(15,23,42,0.4);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999;
+      }
+
+      .ink-main-wrapper { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+<!-- MOBILE NAV -->
+<div class="ink-mobile-nav">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-menu-btn" onclick="document.querySelector('.ink-sidebar').classList.add('is-open'); document.querySelector('.ink-overlay').classList.add('is-open');">MỤC LỤC</button>
+</div>
+<!-- MOBILE OVERLAY -->
+<div class="ink-overlay" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); this.classList.remove('is-open');"></div>
+<!-- SIDEBAR TOC -->
+<aside class="ink-sidebar">
+<div class="ink-sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-close-btn" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); document.querySelector('.ink-overlay').classList.remove('is-open');">✕</button>
+</div>
+<div class="ink-toc-title">MỤC LỤC</div>
+<ul class="ink-toc-list">
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">PHẦN 1: HỆ THỐNG HÓA</li>
+<li><a class="ink-toc-link" href="#p1_q1">1. Hiện tượng vật lý</a></li>
+<li><a class="ink-toc-link" href="#p1_q2">2. Sự tán xạ</a></li>
+<li><a class="ink-toc-link" href="#p1_q3">3. Định kiến năng lượng</a></li>
+<li><a class="ink-toc-link" href="#p1_q4">4. Sự nghiệm chứng</a></li>
+<li><a class="ink-toc-link" href="#p1_q5">5. Cơ chế tự động (Tensegrity)</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">PHẦN 2: HỎI ĐÁP SẮC BÉN</li>
+<li><a class="ink-toc-link" href="#p2_q1">Q1. Hiện tượng "Hỷ" & Tán xạ</a></li>
+<li><a class="ink-toc-link" href="#p2_q2">Q2. Năng lượng Đỉnh cao</a></li>
+<li><a class="ink-toc-link" href="#p2_q3">Q3. Cơ chế Tensegrity</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">PHẦN 3: NGHIỆM CHỨNG & ĐÍCH ĐẾN</li>
+<li><a class="ink-toc-link" href="#p3_q4">Q4. Hơi thở vi tế</a></li>
+<li><a class="ink-toc-link" href="#p3_q5">Q5. Trạng thái Siêu dẫn</a></li>
+<li><a class="ink-toc-link" href="#p3_q6">Q6. Bẫy cảm giác & Tuệ giác</a></li>
+</ul>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="ink-main-wrapper">
+<article class="ink-content ink-mode-dialogue">
+<div class="ink-meta">
+<span class="ink-badge">BÁCH KHOA TOÀN THƯ</span>
+<span>Nguyễn Việt</span>
+<span>•</span>
+<span>Thực chiến</span>
+</div>
+
+<!-- PHẦN 1 -->
+<h1 class="is-short" id="top">PHẦN 1: HỆ THỐNG HÓA TÓM TẮT BỘ CÂU HỎI CỦA BẠN</h1>
+<p>Dưới đây là bản tái cấu trúc toàn bộ nội dung chúng ta đã thảo luận, được tinh lọc lại thành định dạng hỏi đáp cực kỳ sắc bén.</p>
+<p>Trước khi bóc tách, đây là toàn cảnh 5 vấn đề cốt lõi mà bạn đã đặt ra để đi tìm sự thật vật lý đằng sau những trải nghiệm thiền định:</p>
+
+<ul>
+    <li id="p1_q1"><strong>Về hiện tượng vật lý:</strong> Cơ thể rung động, da đầu co thắt như nhụy hoa, chảy nước mắt khi thiền là gì, và tương lai sẽ đi về đâu nếu duy trì được?</li>
+    <li id="p1_q2"><strong>Về sự tán xạ:</strong> Tại sao chỉ một suy nghĩ xẹt qua lại đủ sức đánh sập và triệt tiêu toàn bộ trạng thái rung động mãnh liệt đó?</li>
+    <li id="p1_q3"><strong>Về định kiến năng lượng:</strong> Tại sao "năng lượng cao" lại dẫn đến sự nhẹ bẫng và tĩnh lặng? (Bởi trực giác con người luôn mặc định năng lượng cao phải là sự bùng nổ, dữ dội).</li>
+    <li id="p1_q4"><strong>Về sự nghiệm chứng:</strong> Làm sao để chứng minh sự tĩnh lặng là năng lượng cao thông qua các góc nhìn vật lý khác nhau một cách thuyết phục nhất?</li>
+    <li id="p1_q5"><strong>Về cơ chế tự động:</strong> "Tensegrity" là gì? Tại sao ở trạng thái tĩnh lặng tâm trí (năng lượng cao), cột sống lại tự động khóa thẳng tắp mà hoàn toàn không cần dùng đến sức lực cơ bắp?</li>
+</ul>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<!-- PHẦN 2 -->
+<h1 class="is-short">PHẦN 2: HỎI ĐÁP SẮC BÉN - ĐẬP TAN LẦM TƯỞNG</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="p2_q1" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 1: Bạn tưởng ngồi thiền thấy cơ thể rung lắc, da đầu co bóp như nhụy hoa, nước mắt tuôn rơi là đắc đạo hay chạm tới phép màu thần bí?</h2>
+<div class="dialogue-response">
+<p><strong>Trả lời:</strong><br>Đó chẳng phải phép màu, mà chỉ là hệ thần kinh của bạn đang bị "sốc điện". Khi sự tập trung được ép lên cao, các nơ-ron thần kinh chưa kịp thích nghi sẽ sinh ra nội ma sát, tạo thành những rung lắc thô thiển (gọi là Hỷ - Piti). Và chỉ cần một suy nghĩ xẹt qua, dòng điện não lập tức bị phân tán (tán xạ) để "nuôi" suy nghĩ ấy. Áp suất sụt giảm, dòng chảy đứt gãy, và mọi sự rung động sụp đổ tức khắc. Suy nghĩ, thực chất chính là cái lỗ thủng làm rò rỉ năng lượng tàn bạo nhất!</p>
+<blockquote>
+<p><em>Tâm yên khí tụ nở <strong>hoa</strong>,</em><br/>
+<em>Khởi sinh một niệm tán <strong>ra</strong> rã rời.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="p2_q2" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 2: Bạn đang ảo tưởng rằng "năng lượng cao" phải là bùng nổ, gầm rú và dữ dội như núi lửa tuôn trào?</h2>
+<div class="dialogue-response">
+<p><strong>Trả lời:</strong><br>Sai lầm chí mạng! Sự bùng nổ, gầm rú hay rung lắc thực chất là biểu hiện của mức năng lượng THẤP đang bị hao phí tột độ do lực cản. Năng lượng Đỉnh Cao là trạng thái "siêu dẫn" – trơn tru, không ma sát, không rò rỉ một giọt nào. Khi hệ thần kinh truyền tải mức năng lượng khổng lồ này, biểu hiện vật lý của nó không phải là tiếng ồn, mà là sự tĩnh lặng tuyệt đối, cơ thể nhẹ bẫng như vô trọng lực. Giống hệt như chiếc máy bay khi xuyên thủng bức tường âm thanh, buồng lái lập tức chìm vào im lặng phăng phắc!</p>
+<blockquote>
+<p><em>Tưởng rằng năng lượng gầm <strong>vang</strong>,</em><br/>
+<em>Ngờ đâu tĩnh lặng nhẹ <strong>nhàng</strong> như không.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="p2_q3" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 3: Tại sao gồng mình giữ lưng thẳng thì đau đớn gục ngã, nhưng buông bỏ hoàn toàn lại tự nhiên vững chãi như một pho tượng đồng?</h2>
+<div class="dialogue-response">
+<p><strong>Trả lời:</strong><br>Nếu dùng ý chí và cơ bắp bề mặt để chống lại trọng lực, bạn cầm chắc thất bại vì cơ bắp sẽ cạn kiệt oxy và đổ sụp. Bí mật gây sốc nằm ở cơ chế Tensegrity! Khi tâm trí đạt đến sự tĩnh lặng (năng lượng cao), hệ thần kinh tự động "ngắt điện" mọi bó cơ đang gồng, đồng thời kích hoạt mạng lưới mạc cơ sâu. Các đốt sống không còn xếp đè lên nhau nữa, mà bị treo lơ lửng, kéo căng đều mọi hướng và khóa chặt ở điểm cân bằng 0 (Zero-gravity). Trọng lực bị vô hiệu hóa, lưng thẳng tắp mà mức tiêu hao calo bằng không!</p>
+<blockquote>
+<p><em>Gồng cơ nhức mỏi tấm <strong>lưng</strong>,</em><br/>
+<em>Buông thư tự khóa, dửng <strong>dưng</strong> đất trời.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 4rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<h1 class="is-short">PHẦN 3: HỎI ĐÁP SẮC BÉN - NGHIỆM CHỨNG VÀ ĐÍCH ĐẾN</h1>
+<p>Dưới đây là phần tiếp nối, bóc tách nốt những lầm tưởng sâu sắc nhất về biểu hiện vật lý và đích đến cuối cùng của thiền, tiếp tục giữ nguyên nhịp độ sắc bén và đập tan định kiến.</p>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="p3_q4" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 4: Bạn tin rằng để cơ thể tràn trề sinh lực và đạt năng lượng cao, ta phải hít thở thật sâu, lồng ngực phập phồng liên tục đón không khí?</h2>
+<div class="dialogue-response">
+<p><strong>Trả lời:</strong><br>Một lầm tưởng sinh lý tai hại! Khi thiền đạt đỉnh năng lượng (trạng thái tĩnh lặng tối ưu), hơi thở của bạn sẽ vi tế đến mức dường như biến mất hoàn toàn, nhịp tim tụt giảm cực sâu nhưng bạn tuyệt đối không hề thấy ngạt thở. Tại sao? Vì lúc này tế bào đã đồng bộ và hoạt động với hiệu suất 100%, chúng tiêu thụ lượng oxy cực ít nhưng lại sản sinh ra phân tử năng lượng (ATP) khổng lồ. Cơ thể không còn cần đến hoạt động co bóp thô kệch của "chiếc bơm" màng phổi nữa. Phổi của bạn tạm thời "thất nghiệp" vì năng lượng đã tự lấp đầy!</p>
+<blockquote>
+<p><em>Tưởng rằng vươn ngực hít <strong>sâu</strong>,</em><br/>
+<em>Ngờ đâu khí tụ, tắt <strong>lâu</strong> vô hình.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="p3_q5" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 5: Bạn đinh ninh rằng khi năng lượng hội tụ cực đại, cơ thể phải nóng rực lên, toát mồ hôi ướt đẫm như đang "vận nội công" trong phim chưởng?</h2>
+<div class="dialogue-response">
+<p><strong>Trả lời:</strong><br>Phim ảnh đã lừa bạn! Sự nóng lên, bứt rứt hay toát mồ hôi chỉ xảy ra ở giai đoạn thấp, khi năng lượng sinh ra ma sát do đường truyền thần kinh chưa thông suốt. Khi hệ thần kinh đã được nâng cấp, cơ thể bước vào trạng thái "siêu dẫn". Ma sát biến mất hoàn toàn, nhường chỗ cho một luồng hơi mát lạnh, thanh khiết chạy dọc sống lưng và lan tỏa toàn thân. Đó không phải cái lạnh của thời tiết, mà là nhiệt độ hoàn hảo của một siêu máy tính đã được tản nhiệt tối đa, giúp trí não duy trì sự sắc bén tột độ.</p>
+<blockquote>
+<p><em>Tưởng rằng nóng rực tuôn <strong>rơi</strong>,</em><br/>
+<em>Ngờ đâu siêu dẫn, đất <strong>trời</strong> mát trong.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="p3_q6" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 6: Bạn vẫn nuôi mộng ngày mai ngồi thiền để "săn lùng" lại cảm giác rung động đê mê, da đầu nở hoa tuyệt trần ấy một lần nữa?</h2>
+<div class="dialogue-response">
+<p><strong>Trả lời:</strong><br>Nếu bạn làm vậy, bạn vừa tự chôn sống hành trình thiền của mình! Níu kéo sự rung động (Hỷ) hay tĩnh lặng (Lạc) chính là chiếc bẫy ngọt ngào nhất của tâm trí. Tương lai thực sự của trạng thái này không phải là việc bạn biến thành một bức tượng đá nghiện cảm giác lạ. Đích đến cuối cùng là Tuệ Giác: khi năng lượng hội tụ như một tia laser, bạn dùng nó để "zoom" cận cảnh vào thực tại và ngộ ra mọi thứ - kể cả cái thân xác này - chỉ là những hạt pixel năng lượng liên tục sinh ra rồi chết đi. Khi thấu suốt được bản chất vô ngã đó, đau khổ tự khắc rụng rơi!</p>
+<blockquote>
+<p><em>Tưởng thiền để kiếm cơn <strong>say</strong>,</em><br/>
+<em>Ngờ đâu tuệ giác, phơi <strong>bày</strong> chân tâm.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 1px solid var(--ink-border);"/>
+
+</article>
+</main>
+<script>
+  // Chống nhảy nhót (Zero-animation scroll)
+  document.querySelectorAll('.ink-toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if(target) {
+        window.scrollTo({
+          top: target.offsetTop - 40,
+          behavior: 'auto'
+        });
+        
+        document.querySelectorAll('.ink-toc-link').forEach(l => l.classList.remove('is-active'));
+        this.classList.add('is-active');
+        
+        // Đóng mobile menu
+        document.querySelector('.ink-sidebar').classList.remove('is-open');
+        document.querySelector('.ink-overlay').classList.remove('is-open');
+      }
+    });
+  });
+</script>
+</body>
+</html>

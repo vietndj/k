@@ -1,0 +1,417 @@
+import os
+
+content_html = """
+<div class="article-content">
+  <p class="lead">Hữu Việt — chủ chuỗi salon tóc, đồng thời là nhà phân phối mỹ phẩm sỉ và phát triển App AI quản lý salon. Vấn đề lớn nhất: <b>anh ta giỏi nghề nhưng chưa ai biết đến ngoài khách quen.</b> Kênh cá nhân cần xây từ đầu để chuyển từ "thợ tóc uy tín tại địa phương" sang "chuyên gia quản trị salon có tiếng trên mạng xã hội."</p>
+
+  <blockquote>
+    <b>Mục tiêu cuối cùng:</b> Hữu Việt không bán dịch vụ cắt tóc trên mạng. Anh ta bán <b>năng lực quản trị hệ thống salon</b> — gồm SOP vận hành, App AI tính lương/định lượng thuốc, và kênh phân phối mỹ phẩm sỉ. Đối tượng khán giả là <b>các chủ salon khác</b>, không phải khách hàng đi cắt tóc.
+  </blockquote>
+
+  <h2>01 / Tại sao Hữu Việt cần kênh</h2>
+  <p>Hữu Việt có 3 nguồn thu: chuỗi salon, phân phối mỹ phẩm sỉ, và App AI quản lý. Cả 3 đều bán cho <b>chủ salon</b> — một đối tượng B2B. Nhưng hiện tại anh ta chỉ tiếp cận được khách qua giới thiệu truyền miệng. Kênh mạng xã hội là đòn bẩy duy nhất để mở rộng quy mô mà không cần gặp từng người.</p>
+  <ul>
+    <li><b>Không có kênh = phụ thuộc giới thiệu:</b> Mỗi tháng chỉ thêm được 2-3 đối tác mới qua quen biết. Muốn mở rộng chuỗi cung ứng mỹ phẩm hay bán App cần hàng trăm chủ salon biết đến.</li>
+    <li><b>Có chuyên môn nhưng không chứng minh được:</b> Hữu Việt biết cách tối ưu chi phí thuốc nhuộm, xây SOP, tính lương tự động — nhưng chưa có nội dung nào trên mạng để người lạ xác nhận điều đó.</li>
+    <li><b>Đối thủ đang chiếm sóng bằng nội dung rác:</b> Các kênh salon khác đăng video "khoe tay nghề uốn nhuộm" — hướng B2C. Hữu Việt cần chiếm vị trí hoàn toàn khác: người dạy chủ salon cách vận hành.</li>
+  </ul>
+
+  <h2>02 / Định vị kênh: Nói về cái gì, nói cho ai</h2>
+  <p>Kênh của Hữu Việt không phải kênh làm tóc. Đây là <b>kênh quản trị kinh doanh salon</b> — nhắm vào chủ tiệm đang vật lộn với nhân sự, chi phí và vận hành.</p>
+  
+  <div class="columns">
+    <div class="col col-wrong">
+      <h3>❌ Không làm</h3>
+      <ul>
+        <li>Video khoe kỹ thuật uốn nhuộm đẹp</li>
+        <li>Before/After kiểu "mái tóc bồng bềnh"</li>
+        <li>Review mỹ phẩm cho người tiêu dùng</li>
+        <li>Clip selfie cảm xúc "tâm huyết nghề"</li>
+        <li>Nội dung hướng đến khách đi cắt tóc</li>
+      </ul>
+    </div>
+    <div class="col col-right">
+      <h3>✅ Chỉ làm</h3>
+      <ul>
+        <li>Bóc tách chi phí vận hành salon thật</li>
+        <li>Cách kiểm soát hao hụt thuốc nhuộm bằng App</li>
+        <li>SOP quy trình để salon tự chạy khi chủ vắng</li>
+        <li>Mẹo quản lý nhân sự thợ tóc thực tế</li>
+        <li>So sánh giá sỉ mỹ phẩm salon minh bạch</li>
+      </ul>
+    </div>
+  </div>
+
+  <blockquote>
+    <b>Nguyên tắc sống còn:</b> Mỗi video phải khiến một chủ salon khác xem xong nghĩ: <i>"Ông này hiểu bài toán kinh doanh của mình."</i> — Không phải nghĩ: <i>"Ông này cắt tóc đẹp thật."</i>
+  </blockquote>
+
+  <h2>03 / Phong cách nội dung: Quay như phóng viên điều tra</h2>
+  <p>Không quay kiểu beauty, không gimbal mượt mà. Hữu Việt quay bằng tay, mic cài áo, xộc thẳng vào hiện trường làm việc. Phong cách giống <b>phóng viên điều tra xộc vào bếp nhà hàng</b> — thô, thật, có bằng chứng cụ thể.</p>
+  <ul>
+    <li><b>70% B-Roll hiện trường:</b> Cảnh thực tế trong salon: kiểm tra kho thuốc, bắt quả tang thợ pha dư nguyên liệu, mở App AI trên điện thoại cho thấy số liệu thật. Quay cận tay — bát thuốc nhuộm còn dư, vỏ hộp mỹ phẩm trong thùng rác, màn hình bảng lương tự động.</li>
+    <li><b>30% Walk & Talk giải thích:</b> Vừa đi dọc salon vừa nói thẳng vào vấn đề. Không ngồi trước camera đọc kịch bản. Giọng điệu như đang nói chuyện riêng với một chủ salon bạn bè — mộc, đanh, có số liệu cụ thể kèm theo.</li>
+  </ul>
+  
+  <blockquote>
+    <b>Ví dụ hook mở đầu video:</b><br>
+    <i>"Hôm nay tôi ghé một salon đang kêu lỗ. Nhìn bát thuốc nhuộm thợ vừa pha — dư 30 gram. Một ngày 20 khách, bay nửa tuýp thuốc xịn chui xuống cống. SOP không có, định lượng không đo bằng app thì cắt tóc giỏi mấy cuối tháng cũng ăn cám."</i>
+  </blockquote>
+
+  <h2>04 / Lộ trình thực thi 4 bước</h2>
+  <p>Lộ trình từ con số 0 đến kênh có uy tín trong ngành salon. Mỗi giai đoạn có mục tiêu rõ, không nhảy bước.</p>
+  <ol>
+    <li><b>Tháng 1-2 (Tích lũy bằng chứng):</b> Đăng 3-4 clip ngắn/tuần. Chỉ có hình ảnh thực tế trong salon + text overlay ngắn. Cảnh nhập kho mỹ phẩm, màn hình App. Không cần lộ mặt, không cần nói.</li>
+    <li><b>Tháng 3-4 (Lộ mặt + Walk & Talk):</b> Bắt đầu nói trước camera. Video 60-90s. Mỗi video giải quyết đúng 1 vấn đề cụ thể mà chủ salon đang gặp.</li>
+    <li><b>Tháng 5-6 (Case study thực tế):</b> Quay video dài hơn (3-5 phút). Vào thẳng một salon đối tác, bóc tách vấn đề trước camera, đưa ra giải pháp cụ thể bằng App và SOP. Format "bắt quả tang".</li>
+    <li><b>Tháng 7+ (Chuyển đổi):</b> Khi đã có uy tín, bắt đầu đặt CTA rõ ràng: dùng thử App AI quản lý salon, đăng ký tư vấn setup SOP, mua mỹ phẩm sỉ.</li>
+  </ol>
+
+  <h2>05 / Xây niềm tin: Hành động tạo uy tín</h2>
+  <p>Nói hay không bằng làm mất lợi ích ngắn hạn để chứng minh uy tín. Đây là những hành động "chịu thiệt" tạo niềm tin mạnh.</p>
+  <ul>
+    <li><b>Từ chối bán App cho salon không đủ chuẩn:</b> Tuyên bố thẳng trên camera: <i>"Salon không chịu nhập liệu kỷ luật thì mua App về cũng vứt. Tôi không lấy tiền của anh để mang tiếng."</i></li>
+    <li><b>Cắt đứt đại lý phá giá thị trường:</b> Chấp nhận mất doanh thu ngắn hạn để bảo vệ giá thị trường cho toàn bộ đối tác trong chuỗi.</li>
+    <li><b>Công khai số liệu thật trên camera:</b> Mở App lên, cho xem bảng chi phí thật, lương thợ thật, tỷ lệ hao hụt thuốc thật. Không giấu, không làm đẹp số liệu.</li>
+  </ul>
+
+  <h2>06 / Bán gì qua kênh</h2>
+  <ul>
+    <li><b>App AI Quản Lý Salon:</b> Tự động tính lương thợ, định lượng thuốc nhuộm theo gram, kiểm soát chi phí vận hành.</li>
+    <li><b>Phân Phối Mỹ Phẩm Sỉ:</b> Cung cấp thuốc nhuộm, dưỡng, phục hồi cho salon với giá sỉ minh bạch.</li>
+    <li><b>Tư Vấn Setup SOP Salon:</b> Dịch vụ cao cấp nhất: Hữu Việt đến tận nơi, đánh giá salon, xây quy trình vận hành chuẩn để chủ tiệm không cần có mặt mà salon vẫn chạy.</li>
+  </ul>
+
+  <hr>
+  
+  <h2>Tóm tắt: Ghi nhớ 5 điểm</h2>
+  <ol>
+    <li><b>Đối tượng:</b> Chủ salon, không phải khách cắt tóc. Mọi nội dung phải viết cho người điều hành kinh doanh.</li>
+    <li><b>Định vị:</b> Chuyên gia quản trị salon — không phải thợ tóc giỏi. Bán hệ thống, không bán tay nghề.</li>
+    <li><b>Phong cách:</b> Phóng viên điều tra — quay tay, thô, thật, có bằng chứng. Không gimbal, không beauty filter.</li>
+    <li><b>Lộ trình:</b> B-Roll câm → Walk & Talk ngắn → Case study dài → Chuyển đổi bán hàng. Không nhảy bước.</li>
+    <li><b>Uy tín:</b> Xây bằng hành động chịu thiệt — từ chối khách không đủ chuẩn, cắt đứt đối tác phá giá, công khai số liệu thật.</li>
+  </ol>
+</div>
+"""
+
+# ----------------- PA1: Substack Style -----------------
+pa1_html = f"""<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGIC XÂY KÊNH HỮU VIỆT - Substack Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {{
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --accent: #ff6719; /* Substack Orange */
+      --gray: #666666;
+      --border: #e8e8e8;
+    }}
+    body {{
+      margin: 0; padding: 0;
+      background: var(--bg); color: var(--text);
+      font-family: 'Spectral', Georgia, serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }}
+    .navbar {{
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 24px; border-bottom: 1px solid var(--border);
+      font-family: 'Inter', sans-serif;
+    }}
+    .navbar .logo {{ font-weight: 700; font-size: 20px; letter-spacing: -0.5px; }}
+    .navbar .subscribe {{
+      background: var(--accent); color: white; padding: 8px 16px;
+      border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 14px;
+    }}
+    .container {{
+      max-width: 680px; margin: 0 auto; padding: 60px 20px;
+    }}
+    h1.title {{
+      font-family: 'Inter', sans-serif;
+      font-weight: 800; font-size: 42px; line-height: 1.1;
+      letter-spacing: -0.02em; margin-bottom: 24px;
+    }}
+    .meta {{
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 40px; font-family: 'Inter', sans-serif;
+      color: var(--gray); font-size: 14px;
+    }}
+    .avatar {{
+      width: 48px; height: 48px; border-radius: 50%;
+      background: #eee;
+    }}
+    .meta-info a {{ color: var(--text); font-weight: 600; text-decoration: none; }}
+    .meta-info a:hover {{ text-decoration: underline; }}
+    
+    .article-content {{ font-size: 20px; line-height: 1.65; }}
+    .article-content p {{ margin-bottom: 24px; }}
+    .article-content h2 {{
+      font-family: 'Inter', sans-serif;
+      font-weight: 700; font-size: 26px; margin: 48px 0 24px;
+      letter-spacing: -0.01em;
+    }}
+    .article-content h3 {{
+      font-family: 'Inter', sans-serif; font-size: 20px; margin: 32px 0 16px;
+    }}
+    .article-content ul, .article-content ol {{
+      margin-bottom: 24px; padding-left: 24px;
+    }}
+    .article-content li {{ margin-bottom: 12px; }}
+    .article-content blockquote {{
+      margin: 32px 0; padding-left: 20px;
+      border-left: 3px solid var(--accent);
+      font-style: italic; color: var(--gray);
+    }}
+    .columns {{ display: flex; gap: 24px; margin-bottom: 24px; }}
+    .col {{ flex: 1; padding: 20px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; }}
+    .col h3 {{ margin-top: 0; font-size: 18px; }}
+    .col ul {{ padding-left: 16px; margin-bottom: 0; }}
+    .col-wrong {{ background: #fafafa; }}
+    .col-right {{ background: #fff8f5; border-color: #ffdacc; }}
+    hr {{ border: 0; border-top: 1px solid var(--border); margin: 48px 0; }}
+    @media (max-width: 600px) {{
+      .columns {{ flex-direction: column; }}
+      h1.title {{ font-size: 32px; }}
+      .article-content {{ font-size: 18px; }}
+    }}
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">Hữu Việt Insider</div>
+    <a href="#" class="subscribe">Subscribe</a>
+  </div>
+  <div class="container">
+    <h1 class="title">Từ Thợ Tóc Giỏi Đến Chuyên Gia Quản Trị Salon</h1>
+    <div class="meta">
+      <div class="avatar"></div>
+      <div class="meta-info">
+        <div><a href="#">Nguyễn Đức Việt</a></div>
+        <div>Sep 18, 2026 • 5 min read</div>
+      </div>
+    </div>
+    {content_html}
+  </div>
+</body>
+</html>"""
+
+# ----------------- PA2: Medium Style -----------------
+pa2_html = f"""<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGIC XÂY KÊNH HỮU VIỆT - Medium Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Helvetica+Neue:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {{
+      --bg: #ffffff;
+      --text: #242424;
+      --gray: #6b6b6b;
+      --border: #f2f2f2;
+    }}
+    body {{
+      margin: 0; padding: 0;
+      background: var(--bg); color: var(--text);
+      font-family: 'Merriweather', Georgia, serif;
+      line-height: 2;
+      -webkit-font-smoothing: antialiased;
+    }}
+    .navbar {{
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 24px; border-bottom: 1px solid var(--border);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }}
+    .navbar .logo {{ font-weight: 700; font-size: 24px; font-family: serif; letter-spacing: -1px; }}
+    .navbar .actions {{ display: flex; gap: 16px; align-items: center; }}
+    .navbar .write {{ color: var(--gray); text-decoration: none; font-size: 14px; }}
+    .navbar .signup {{ background: #1a8917; color: white; padding: 6px 14px; border-radius: 99px; text-decoration: none; font-size: 13px; font-weight: 500; }}
+    
+    .container {{
+      max-width: 680px; margin: 0 auto; padding: 50px 20px;
+    }}
+    h1.title {{
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700; font-size: 46px; line-height: 1.2;
+      letter-spacing: -0.01em; margin-bottom: 20px; color: #242424;
+    }}
+    .subtitle {{
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 22px; color: var(--gray); font-weight: 400; margin-bottom: 32px; line-height: 1.3;
+    }}
+    .meta {{
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }}
+    .avatar {{ width: 44px; height: 44px; border-radius: 50%; background: #e6e6e6; }}
+    .meta-info .author {{ color: var(--text); font-size: 16px; font-weight: 500; margin-bottom: 2px; }}
+    .meta-info .details {{ color: var(--gray); font-size: 14px; }}
+    
+    .article-content {{ font-size: 20px; font-weight: 300; color: #242424; }}
+    .article-content p {{ margin-bottom: 32px; letter-spacing: -0.003em; }}
+    .article-content h2 {{
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700; font-size: 30px; margin: 56px 0 20px;
+      line-height: 1.22; letter-spacing: -0.015em;
+    }}
+    .article-content h3 {{
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 600; font-size: 22px; margin: 40px 0 16px;
+    }}
+    .article-content ul, .article-content ol {{ margin-bottom: 32px; padding-left: 24px; }}
+    .article-content li {{ margin-bottom: 12px; }}
+    .article-content blockquote {{
+      margin: 40px 0; padding-left: 24px;
+      border-left: 3px solid #242424;
+      font-style: italic; font-size: 22px; line-height: 1.48;
+    }}
+    .columns {{ display: flex; gap: 20px; margin-bottom: 32px; font-family: 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.5; }}
+    .col {{ flex: 1; padding: 20px; background: #fafafa; }}
+    .col h3 {{ margin-top: 0; font-size: 18px; }}
+    hr {{ border: 0; text-align: center; margin: 48px 0; }}
+    hr::before {{ content: '...'; font-family: serif; font-size: 28px; letter-spacing: 16px; color: var(--gray); }}
+    @media (max-width: 600px) {{
+      h1.title {{ font-size: 34px; }}
+      .article-content {{ font-size: 18px; }}
+      .columns {{ flex-direction: column; }}
+    }}
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">Medium</div>
+    <div class="actions">
+      <a href="#" class="write">Write</a>
+      <a href="#" class="signup">Sign up</a>
+    </div>
+  </div>
+  <div class="container">
+    <h1 class="title">Từ Thợ Tóc Giỏi Đến Chuyên Gia Quản Trị Salon</h1>
+    <div class="subtitle">Hành trình xây dựng thương hiệu cá nhân bằng dữ liệu thật và quy trình chuẩn.</div>
+    <div class="meta">
+      <div class="avatar"></div>
+      <div class="meta-info">
+        <div class="author">Nguyễn Đức Việt</div>
+        <div class="details">Published in Salon Insider · 5 min read · Sep 18, 2026</div>
+      </div>
+    </div>
+    {content_html}
+  </div>
+</body>
+</html>"""
+
+# ----------------- PA3: Ghost Casper Style -----------------
+pa3_html = f"""<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGIC XÂY KÊNH HỮU VIỆT - Ghost Casper Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {{
+      --bg: #ffffff;
+      --text: #15171a;
+      --gray: #738a94;
+      --brand: #e10b4f;
+      --border: #e3e9ed;
+    }}
+    body {{
+      margin: 0; padding: 0;
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }}
+    .site-header {{
+      background: #090a0b; color: #fff;
+      padding: 10vmin 4vw; text-align: center;
+      position: relative; overflow: hidden;
+    }}
+    .site-nav {{
+      position: absolute; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; padding: 24px 4vw;
+      font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    }}
+    .site-nav a {{ color: #fff; text-decoration: none; opacity: 0.8; }}
+    .site-nav a:hover {{ opacity: 1; }}
+    
+    .header-content {{ max-width: 800px; margin: 40px auto 0; }}
+    .post-tag {{
+      color: var(--brand); font-weight: 600; text-transform: uppercase;
+      font-size: 13px; letter-spacing: 0.5px; margin-bottom: 8px; display: block;
+    }}
+    .post-title {{
+      font-size: clamp(32px, 5vw, 50px); font-weight: 700;
+      margin: 0 0 16px; line-height: 1.15;
+    }}
+    .post-meta {{ font-size: 15px; opacity: 0.8; font-weight: 500; }}
+    
+    .container {{
+      max-width: 720px; margin: -40px auto 0; padding: 60px 4vw;
+      background: #fff; border-radius: 5px 5px 0 0; position: relative; z-index: 10;
+    }}
+    
+    .article-content {{ font-family: 'Libre Baskerville', serif; font-size: 20px; line-height: 1.7; color: #15171a; }}
+    .article-content p {{ margin-bottom: 1.5em; }}
+    .article-content .lead {{ font-size: 24px; line-height: 1.5; margin-bottom: 2em; }}
+    
+    .article-content h2 {{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 700; font-size: 32px; margin: 1.5em 0 0.5em; line-height: 1.25;
+    }}
+    .article-content h3 {{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 600; font-size: 24px; margin: 1.5em 0 0.5em;
+    }}
+    .article-content ul, .article-content ol {{ margin-bottom: 1.5em; padding-left: 1.5em; }}
+    .article-content li {{ margin-bottom: 0.5em; }}
+    .article-content blockquote {{
+      margin: 2em 0; padding: 0 0 0 1.5em;
+      border-left: 3px solid var(--brand);
+      font-style: italic; font-size: 22px; color: #3eb0ef; /* Caspers blueish quote */
+    }}
+    .columns {{ display: flex; gap: 24px; margin: 2em 0; font-family: -apple-system, sans-serif; font-size: 16px; }}
+    .col {{ flex: 1; padding: 24px; border-radius: 5px; border: 1px solid var(--border); }}
+    .col h3 {{ margin-top: 0; font-size: 18px; }}
+    hr {{ border: 0; border-top: 1px solid var(--border); margin: 3em 0; }}
+    
+    @media (max-width: 600px) {{
+      .columns {{ flex-direction: column; }}
+      .article-content {{ font-size: 18px; }}
+    }}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="site-nav">
+      <a href="#">Hữu Việt Hub</a>
+      <a href="#">Subscribe</a>
+    </nav>
+    <div class="header-content">
+      <span class="post-tag">Case Study</span>
+      <h1 class="post-title">Từ Thợ Tóc Giỏi Đến Chuyên Gia Quản Trị Salon</h1>
+      <div class="post-meta">Nguyễn Đức Việt • Sep 18, 2026 • 5 min read</div>
+    </div>
+  </header>
+  <div class="container">
+    {content_html}
+  </div>
+</body>
+</html>"""
+
+with open('/Users/vietmac/Documents/CODE/k/logickenh-huuviet-pa1.html', 'w') as f:
+    f.write(pa1_html)
+
+with open('/Users/vietmac/Documents/CODE/k/logickenh-huuviet-pa2.html', 'w') as f:
+    f.write(pa2_html)
+
+with open('/Users/vietmac/Documents/CODE/k/logickenh-huuviet-pa3.html', 'w') as f:
+    f.write(pa3_html)
+
+print("Files generated successfully.")

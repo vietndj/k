@@ -1,0 +1,501 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Rocket, Brain, AlertTriangle, Target, Zap, PlayCircle, CheckCircle2, 
+  ShieldAlert, Cpu, Orbit, Car, Search, Clock, Activity, Maximize2, Minimize2,
+  Youtube, Facebook, Music2, BookOpen, Layers, Map
+} from 'lucide-react';
+
+/* ==========================================================================
+   DATA & CONTENT EXTRACTED FROM PODCAST
+   ========================================================================== */
+
+const THEME = {
+  emojis: "🚀 🧠 🌌",
+  tagline: "Từ Tư duy Khang hiếm đến Kỷ nguyên Abundance",
+  colors: {
+    bg: "bg-slate-950",
+    text: "text-slate-300",
+    cardBg: "bg-slate-900/80",
+    border: "border-slate-800",
+    accent: "text-indigo-400",
+    warning: "text-amber-400"
+  }
+};
+
+const YOUTUBE_DATA = {
+  title: "Elon Enters the Chip Race, the S&P 500 Repricing, and Human Drivers Will Become Illegal | EP #242",
+  url: "https://youtu.be/wMLcIWLlcWg?si=x7bpzjeCvyOcnI9E"
+};
+
+const MINDMAP_CODE = `
+mindmap
+  root((Kỷ Nguyên Abundance))
+    Compute & Năng lượng
+      Terafab 1 Terawatt
+      Năng lượng Vũ trụ Dyson Swarm
+    Đại Chuyển Dịch Giao Thông
+      Xe Tự Lái Robotaxi
+      Sụp đổ Gara & Bãi đỗ xe
+      Xe bay EVTOL
+    Kỷ Nguyên Công Việc Mới
+      20% Người - 80% AI Token
+      Giám sát bằng Token Usage
+      Mô hình Chưng cất Distillation
+    Tái Cấu Trúc Doanh Nghiệp
+      Sụp đổ Terminal Value
+      Linh hoạt là Hào cản duy nhất
+      Private Equity & AI Agents
+    Mở Rộng Không Gian
+      Starship & Chi phí Siêu Rẻ
+      Panspermia & Sự sống
+`;
+
+const INSIGHTS = [
+  {
+    icon: <Cpu className="w-6 h-6 text-cyan-400" />,
+    title: "Vụ Nổ Năng Lượng Tính Toán (Terafab)",
+    core: "Elon Musk không chờ đợi TSMC hay Nvidia. Ông đang xây Terafab để sản xuất chip AI gấp 50 lần tổng sản lượng của cả hành tinh cộng lại.",
+    mech: "Năng lực tính toán (Compute) sẽ trở thành 'điện năng' của thế kỷ 21 - một nguồn tài nguyên nền tảng, dồi dào, siêu rẻ để vận hành mọi loại AI trên thế giới.",
+    example: "Việc này giống như thay vì xếp hàng mua từng xô nước đắt đỏ giữa sa mạc, bạn đi xây luôn một nhà máy lọc nước biển khổng lồ đủ dùng cho cả một châu lục."
+  },
+  {
+    icon: <Clock className="w-6 h-6 text-fuchsia-400" />,
+    title: "Sự Sụp Đổ Của 'Terminal Value'",
+    core: "Cách định giá công ty dựa trên dòng tiền ổn định 20 năm tới đã chính thức chết. Mọi 'hào cản' (moats) truyền thống đều chỉ là tạm thời.",
+    mech: "AI khiến chi phí phá bĩnh (disruption) trở nên cực rẻ. Bạn không thể dựa vào thương hiệu hay quy mô để sống sót nữa. Khả năng thích ứng siêu tốc mới là con hào duy nhất.",
+    example: "Thay vì xây một lâu đài đá kiên cố để cố thủ chờ quân thù (thương hiệu cũ), doanh nghiệp giờ phải trở thành một đội kỵ binh du mục, liên tục khai phá các vùng đất mới."
+  },
+  {
+    icon: <Car className="w-6 h-6 text-emerald-400" />,
+    title: "Lái Xe Sẽ Trở Thành 'Hành Vi Phạm Pháp'",
+    core: "Sẽ đến lúc con người tự cầm vô lăng bị coi là nguy hiểm và vô đạo đức so với hệ thống xe tự lái.",
+    mech: "Xe AI an toàn hơn con người 92%+, không say xỉn, không nhắn tin khi lái. Theo logic toán học và đạo đức xã hội, việc để con người lái xe trên đường phố sẽ sớm bị cấm.",
+    example: "Việc tự lái xe trong tương lai sẽ bị lên án gay gắt giống như việc 'hút thuốc lá trong phòng bệnh' hay 'uống rượu say rồi chở trẻ em' hiện nay."
+  },
+  {
+    icon: <Map className="w-6 h-6 text-amber-400" />,
+    title: "Cú Sốc Định Giá Bất Động Sản",
+    core: "Khi xe tự lái (và xe bay EVTOL) phổ biến, các trung tâm thành phố sẽ giải phóng hàng loạt không gian, và các vùng ngoại ô xa xôi sẽ lên ngôi.",
+    mech: "Xe hiện tại nằm đắp chiếu 94% thời gian. Xe tự lái chạy liên tục. 60% diện tích đất trung tâm LA (đang là bãi đỗ xe) sẽ biến thành công viên. Trong khi đó, việc di chuyển hàng chục km trở nên rẻ và nhàn rỗi.",
+    example: "Gara ô tô nhà bạn sẽ biến thành phòng tập gym. Còn những mảnh đất hẻo lánh, có view đẹp ở ngoại ô sẽ đắt ngang ngửa đất thành phố vì AI tài xế sẽ chở bạn đi làm trong lúc bạn ngủ."
+  },
+  {
+    icon: <Activity className="w-6 h-6 text-indigo-400" />,
+    title: "Chỉ Số Đánh Giá Mới: Token Maxing",
+    core: "Doanh nghiệp tương lai sẽ có cấu trúc: 80% chi phí cho AI (Token), 20% cho con người xuất chúng.",
+    mech: "Lương và hiệu suất không đo bằng số giờ làm việc, mà đo bằng năng lực sử dụng AI để đòn bẩy kết quả. Kỹ sư giỏi là người tiêu thụ hàng triệu Token để giải quyết vấn đề tự động.",
+    example: "CEO NVIDIA sẽ báo động nếu một kỹ sư nhận lương $500k/năm mà lại tiêu thụ ít hơn $250k tiền sử dụng AI Token. Bạn được trả tiền để điều khiển máy móc, không phải làm thay máy móc."
+  },
+  {
+    icon: <Layers className="w-6 h-6 text-rose-400" />,
+    title: "Máy Móc Tự Chế Tạo Máy Móc",
+    core: "AI đã có thể tự thiết kế hoàn chỉnh một con chip CPU phức tạp (từ ý tưởng đến tape-out) chỉ trong vòng 12 tiếng thay vì 90 ngày.",
+    mech: "Đây là vòng lặp tiến hóa đệ quy (recursive self-improvement). AI tự hiểu điểm yếu của mình, tự thiết kế cấu trúc phần cứng chuyên biệt để nó chạy nhanh hơn mà không cần kỹ sư con người can thiệp.",
+    example: "Giống như việc một người thợ mộc dùng cưa tay tự chế ra một dây chuyền làm mộc tự động, rồi dây chuyền đó xây luôn một nhà máy khổng lồ chỉ trong 1 đêm."
+  },
+  {
+    icon: <Brain className="w-6 h-6 text-blue-400" />,
+    title: "Kỷ Nguyên 'Chưng Cất' AI (Distilled Models)",
+    core: "Trí tuệ nhân tạo đang được nén lại. Sức mạnh khủng khiếp của AI không còn chỉ nằm ở các trung tâm dữ liệu khổng lồ, mà sẽ nằm trọn trong chiếc điện thoại của bạn.",
+    mech: "Sử dụng các mô hình AI khổng lồ để 'huấn luyện' và tạo dữ liệu tổng hợp cho các mô hình nhỏ gọn. Mô hình nhỏ học được tinh hoa, chạy mượt mà trên Edge Device (thiết bị cá nhân) không cần internet.",
+    example: "Giống như việc bạn đọc một bách khoa toàn thư 10.000 trang, sau đó tóm tắt lại thành một bí kíp 10 trang cốt lõi nhất đưa cho một đứa trẻ, đứa trẻ đó vẫn có thể thông thái như một học giả."
+  },
+  {
+    icon: <Orbit className="w-6 h-6 text-violet-400" />,
+    title: "Kinh Tế Không Gian & Dyson Swarm",
+    core: "Vũ trụ không còn là sân chơi của chính phủ, nó là hạ tầng công nghiệp tiếp theo của loài người.",
+    mech: "Với chi phí siêu rẻ từ tên lửa tái sử dụng Starship (mục tiêu phóng 10 triệu tấn/năm), con người sẽ đưa các trung tâm dữ liệu AI lên vũ trụ, dùng năng lượng mặt trời không giới hạn (Dyson Swarm).",
+    example: "SpaceX đang đóng vai trò như việc xây dựng 'tuyến đường sắt xuyên lục địa' ở thế kỷ 19. Đường ray có sẵn, việc tiếp theo là các công ty đổ xô lên đó khai thác mỏ vàng vĩ đại nhất."
+  },
+  {
+    icon: <ShieldAlert className="w-6 h-6 text-teal-400" />,
+    title: "Cơn Bão Của Đội Quân Private Equity",
+    core: "Các quỹ đầu tư sừng sỏ đang săn lùng những công ty truyền thống 'chậm chạp nhưng có dòng tiền tốt' để mua lại và AI-hóa toàn bộ.",
+    mech: "Họ sẽ dùng mạng lưới AI Agents để phân tích, sa thải bộ máy cũ rườm rà, áp dụng tự động hóa 100% trong nháy mắt, đẩy lợi nhuận biên lên mức kỷ lục.",
+    example: "Giống như một đàn kiến quân đội phát hiện ra một con voi to xác đang ốm yếu. Chúng sẽ dọn sạch hệ thống cũ và thiết lập một trật tự AI mới với tốc độ ánh sáng."
+  }
+];
+
+const PLAYBOOKS = [
+  {
+    condition: "Nếu bạn là Chủ doanh nghiệp hoặc Quản lý cấp cao...",
+    action: "Hãy dừng việc vội vã tuyển thêm nhân sự. Tách ra một 'đội đặc nhiệm' nhỏ, cấp quỹ API Token và giao nhiệm vụ dùng AI Agents để tự động hóa 1 quy trình lõi tốn kém nhất hiện tại."
+  },
+  {
+    condition: "Nếu bạn đang mua nhà để tiện đi làm (đánh đổi diện tích)...",
+    action: "Hãy suy nghĩ lại chu kỳ 5-10 năm. Phương tiện tự lái và mạng lưới giao thông tốc độ cao sẽ xóa nhòa khoảng cách. Một mảnh đất thiên nhiên ở xa có thể sẽ là khoản đầu tư vô giá."
+  },
+  {
+    condition: "Nếu bạn là nhân sự làm công ăn lương (W-2)...",
+    action: "Hãy thay đổi KPI nội bộ của bạn. Thay vì hỏi 'Hôm nay mình làm được bao nhiêu giờ?', hãy hỏi 'Hôm nay mình đã dùng bao nhiêu Token AI để đòn bẩy sản lượng x100?'."
+  }
+];
+
+const MICRO_ACTIONS = [
+  "Bắt đầu ngay hôm nay: Đăng ký một AI thế hệ mới (Claude 3.5, ChatGPT Plus) và giao cho nó 100% việc viết lại các email/báo cáo nhàm chán nhất của bạn.",
+  "Rà soát danh mục đầu tư: Loại bỏ những công ty đang tự mãn với 'hào cản' thương hiệu quá khứ. Tập trung vào các công ty dẫn đầu vòng lặp linh hoạt."
+];
+
+const REALITY_CHECK = {
+  redFlags: [
+    {
+      title: "Cố thủ với 'Hào cản cũ' (Terminal Value Illusion)",
+      desc: "Nghĩ rằng tuổi đời thương hiệu hay quy mô bộ máy sẽ bảo vệ bạn khỏi làn sóng AI.",
+      example: "Giống như Kodak bảo vệ cuộn phim nhựa. Các công ty dịch vụ hiện tại sẽ bị nghiền nát bởi các nhóm start-up 2 người dùng AI Agent có giá rẻ bằng 1/10."
+    },
+    {
+      title: "Đo lường năng suất bằng thời gian có mặt",
+      desc: "Vẫn khen thưởng nhân viên OT cày đêm, thay vì khen thưởng người xây dựng luồng tự động hóa chạy trong 5 phút.",
+      example: "Nếu công ty bạn cấm dùng AI vì sợ rò rỉ dữ liệu mà không chịu xây hạ tầng AI cục bộ (local models), công ty bạn đã chính thức nằm trong viện bảo tàng."
+    }
+  ],
+  guardrails: [
+    {
+      title: "Chốt chặn 'Khởi nghiệp Ngày Zero'",
+      desc: "Mỗi quý một lần, ép đội ngũ viết ra kịch bản 'Nếu bị đuổi việc và ra lập công ty đối thủ dùng 100% AI, chúng ta sẽ giết chết chính công ty hiện tại bằng cách nào?'"
+    },
+    {
+      title: "Ngân sách Token > Ngân sách Nhân sự",
+      desc: "Tạo rào cản vật lý: Khóa toàn bộ các đơn xin tuyển dụng nhân sự mới cho đến khi trưởng phòng chứng minh được rằng AI đã chạy hết công suất (Maxed out tokens) mà vẫn không xử lý nổi."
+    }
+  ]
+};
+
+const FLASHCARDS = [
+  { q: "Terafab là gì?", a: "Nhà máy của Elon Musk sản xuất chip AI với sản lượng 1 Terawatt/năm (gấp 50 lần hiện tại của toàn cầu)." },
+  { q: "Tại sao bãi đỗ xe thành phố sẽ biến mất?", a: "Xe tự lái (Robotaxi) hoạt động liên tục phục vụ nhu cầu, không cần bãi đỗ nằm đắp chiếu 94% thời gian như xe cá nhân." },
+  { q: "Terminal Value (Giá trị đầu cuối) của doanh nghiệp thay đổi ra sao?", a: "Sụp đổ. AI khiến chi phí phá bĩnh quá rẻ, làm mọi 'hào cản' thương hiệu hay quy mô trở nên vô nghĩa." },
+  { q: "Lợi thế cạnh tranh duy nhất sót lại là gì?", a: "Agility - Khả năng học hỏi, thích ứng và tiến hóa nhanh hơn đối thủ." },
+  { q: "Token Maxing trong nhân sự là gì?", a: "Đánh giá hiệu suất nhân viên dựa trên việc họ biết cách dùng (tiêu thụ) nhiều AI Token để tạo ra siêu năng suất, thay vì làm thủ công." },
+  { q: "Distilled Models mang lại lợi ích gì?", a: "Nén các mô hình siêu AI khổng lồ để chạy trực tiếp trên thiết bị nhỏ gọn (như iPhone) mà không cần mạng internet." },
+  { q: "Nguy cơ của các công ty Incumbents (lâu đời)?", a: "Quá cồng kềnh, không thể tự phá hủy mô hình sinh lời cũ để tái sinh bằng AI." },
+  { q: "Tại sao AI có thể là Đàm phán gia xuất sắc?", a: "Vì nó phân tích chuỗi dữ liệu khách quan, không bị chi phối bởi cái tôi hay định kiến cảm xúc như con người." },
+  { q: "Máy móc chế tạo máy móc ở mức độ nào rồi?", a: "AI tự thiết kế hoàn chỉnh một chip CPU mới từ số 0 chỉ trong 12 tiếng (thay vì 90 ngày của con người)." },
+  { q: "Tỷ lệ chi phí lý tưởng cho doanh nghiệp tương lai?", a: "80% chi phí cho việc mua AI Token, chỉ 20% chi phí cho con người xuất sắc điều hành chúng." },
+  { q: "Tại sao tự lái xe sẽ sớm bị cấm?", a: "Do con người mắc lỗi, cảm xúc, mệt mỏi. Lái xe AI an toàn hơn 92%+, con người lái sẽ bị coi là tội ác rủi ro cho cộng đồng." },
+  { q: "Vì sao Private Equity (PE) thích ứng AI nhanh nhất?", a: "Họ mua công ty cũ rẻ mạt, dùng AI Agents sa thải quy trình cồng kềnh, x3 biên lợi nhuận rồi đẩy đi." },
+  { q: "Bước tiến AI trong Y khoa là gì?", a: "Quét MRI toàn thân kết hợp AI phân tích sớm, chuyển từ 'chữa bệnh nặng' sang 'ngăn bệnh trước khi phát tác'." },
+  { q: "Nhiệm vụ lõi của Starship đối với kinh tế không gian?", a: "Đưa chi phí vận chuyển lên vũ trụ xuống cực thấp (10 triệu tấn/năm), dọn đường để xây trung tâm dữ liệu và mỏ năng lượng Dyson Swarm." },
+  { q: "Nguồn gốc sự sống & Asteroid (Panspermia)?", a: "Tìm thấy cả 5 khối xây dựng DNA/RNA trên tiểu hành tinh, củng cố giả thuyết sự sống được mang từ không gian đến Trái Đất." }
+];
+
+const FOOTER_LINKS = [
+  { icon: Youtube, url: "https://youtube.com/@vietndonline" },
+  { icon: Music2, url: "https://www.tiktok.com/@nguyenducviet.viral" },
+  { icon: Facebook, url: "https://web.facebook.com/profile.php?id=61580450902746" }
+];
+
+/* ==========================================================================
+   COMPONENTS
+   ========================================================================== */
+
+const CSSAbstractArt = ({ index }) => {
+  const colors = [
+    ['bg-cyan-500', 'bg-blue-600', 'text-cyan-200'],
+    ['bg-purple-500', 'bg-pink-600', 'text-fuchsia-200'],
+    ['bg-emerald-500', 'bg-teal-600', 'text-emerald-200'],
+    ['bg-orange-500', 'bg-red-600', 'text-amber-200'],
+    ['bg-indigo-500', 'bg-violet-600', 'text-indigo-200'],
+    ['bg-rose-500', 'bg-orange-600', 'text-rose-200'],
+    ['bg-sky-500', 'bg-indigo-600', 'text-sky-200'],
+    ['bg-lime-500', 'bg-emerald-600', 'text-lime-200'],
+    ['bg-amber-400', 'bg-orange-500', 'text-yellow-200']
+  ];
+  const [c1, c2, stroke] = colors[index % colors.length];
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-700">
+      <div className={`absolute -top-12 -right-12 w-40 h-40 rounded-full blur-[40px] mix-blend-screen ${c1}`}></div>
+      <div className={`absolute -bottom-12 -left-12 w-48 h-48 rounded-full blur-[40px] mix-blend-screen ${c2}`}></div>
+      
+      {/* Geometrics */}
+      <svg className="absolute inset-0 w-full h-full opacity-30 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
+        {index % 3 === 0 && <circle cx="80%" cy="20%" r="60" fill="none" stroke="currentColor" strokeWidth="2" className={stroke} />}
+        {index % 3 === 1 && <rect x="70%" y="60%" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="2" className={`transform rotate-45 ${stroke}`} />}
+        {index % 3 === 2 && <polygon points="150,20 180,80 120,80" fill="none" stroke="currentColor" strokeWidth="2" className={`transform translate-x-20 translate-y-10 ${stroke}`} />}
+      </svg>
+    </div>
+  );
+};
+
+export default function App() {
+  const [zoom, setZoom] = useState(1);
+  const mermaidRef = useRef(null);
+
+  useEffect(() => {
+    const loadMermaid = () => {
+      if (!window.mermaid) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+        script.async = true;
+        document.body.appendChild(script);
+        script.onload = () => {
+          window.mermaid.initialize({ 
+            startOnLoad: false, 
+            theme: 'dark',
+            fontFamily: 'Inter, sans-serif'
+          });
+          window.mermaid.run({ querySelector: '.mermaid-container' });
+        };
+      } else {
+        window.mermaid.run({ querySelector: '.mermaid-container' });
+      }
+    };
+    loadMermaid();
+  }, []);
+
+  return (
+    <div className={`min-h-screen ${THEME.colors.bg} ${THEME.colors.text} font-sans selection:bg-indigo-500/30 overflow-x-hidden`}>
+      
+      {/* Header */}
+      <header className="relative pt-24 pb-16 px-6 text-center overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl opacity-20 pointer-events-none">
+           <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600 blur-[120px] rounded-full"></div>
+           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-cyan-600 blur-[120px] rounded-full"></div>
+        </div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="text-4xl mb-4 tracking-widest opacity-80">{THEME.emojis}</div>
+          <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+            Kỷ Nguyên <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">Abundance</span>
+          </h1>
+          <p className="text-lg text-slate-400 font-medium mb-8 uppercase tracking-widest">{THEME.tagline}</p>
+          
+          <a href={YOUTUBE_DATA.url} target="_blank" rel="noreferrer" 
+             className="inline-flex items-center gap-3 px-6 py-3 bg-red-600/10 text-red-400 border border-red-500/30 rounded-full hover:bg-red-600 hover:text-white transition-all shadow-[0_0_20px_rgba(220,38,38,0.2)]">
+            <Youtube className="w-5 h-5" />
+            <span className="font-semibold text-sm truncate max-w-[280px] md:max-w-md">{YOUTUBE_DATA.title}</span>
+          </a>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 pb-24 space-y-32">
+        
+        {/* Section 1: The Big Idea */}
+        <section className="space-y-8">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-3">
+              <Target className="text-indigo-400 w-8 h-8" />
+              [The Big Idea] Bức Tranh Toàn Cảnh
+            </h2>
+            <p className="text-xl text-slate-300 leading-relaxed font-light">
+              <strong className="text-white font-semibold">"Kỷ nguyên của sự khan hiếm đã chết."</strong> Tương lai thuộc về những ai biết cưỡi lên làn sóng dư thừa của Năng lượng tính toán (Compute), AI và Không gian để liên tục tiến hóa. Mọi hào cản truyền thống đều vô nghĩa trước tốc độ.
+            </p>
+          </div>
+
+          {/* Mindmap Container */}
+          <div className="relative w-full rounded-2xl border border-slate-800 bg-slate-900/50 p-4 shadow-2xl backdrop-blur-sm overflow-hidden flex flex-col group">
+            <div className="flex justify-between items-center mb-4 px-4">
+              <div className="text-sm font-semibold text-slate-400 flex items-center gap-2">
+                <Brain className="w-4 h-4" /> Bản đồ Tư duy (Mindmap)
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setZoom(z => Math.min(2.5, z + 0.15))} className="p-2 bg-slate-800 rounded hover:bg-slate-700 transition"><Maximize2 className="w-4 h-4 text-slate-300"/></button>
+                <button onClick={() => setZoom(z => Math.max(0.5, z - 0.15))} className="p-2 bg-slate-800 rounded hover:bg-slate-700 transition"><Minimize2 className="w-4 h-4 text-slate-300"/></button>
+              </div>
+            </div>
+            
+            {/* Draggable/Zoomable area */}
+            <div className="w-full h-[500px] overflow-auto border border-slate-800/50 rounded-lg bg-slate-950/80 relative flex items-center justify-center hide-scrollbar cursor-move">
+              <div 
+                className="mermaid-container transition-transform duration-200 ease-out flex justify-center items-center min-w-max p-10"
+                style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}
+              >
+                {MINDMAP_CODE}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: Deep Insights */}
+        <section className="space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-3">
+              <Brain className="text-cyan-400 w-8 h-8" />
+              [Deep Insights] Các Trụ Cột Tri Thức
+            </h2>
+            <p className="text-slate-400">9 bài học sâu sắc mang tính thay đổi hệ quy chiếu (Paradigm Shift).</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {INSIGHTS.map((item, idx) => (
+              <div key={idx} className="group relative bg-slate-900/60 border border-slate-800 rounded-2xl p-8 hover:border-indigo-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.1)] flex flex-col h-full overflow-hidden">
+                <CSSAbstractArt index={idx} />
+                
+                <div className="relative z-10 flex-1">
+                  <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-6 shadow-lg border border-slate-700/50">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4 leading-snug">{item.title}</h3>
+                  
+                  <div className="space-y-4 text-sm">
+                    <div>
+                      <strong className="text-cyan-400 uppercase tracking-wider text-xs mb-1 block">Bản chất</strong>
+                      <p className="text-slate-300 leading-relaxed">{item.core}</p>
+                    </div>
+                    <div>
+                      <strong className="text-indigo-400 uppercase tracking-wider text-xs mb-1 block">Cơ chế vận hành</strong>
+                      <p className="text-slate-400 leading-relaxed">{item.mech}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="relative z-10 mt-6 pt-6 border-t border-slate-800">
+                  <strong className="text-emerald-400 uppercase tracking-wider text-xs mb-2 flex items-center gap-2">
+                    <CheckCircle2 className="w-3 h-3" /> Ví dụ thực tế
+                  </strong>
+                  <p className="text-slate-400 text-sm italic">"{item.example}"</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Section 3: Action Playbook */}
+        <section className="space-y-12">
+           <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-3">
+              <Rocket className="text-orange-400 w-8 h-8" />
+              [Action Playbook] Sổ Tay Thực Chiến
+            </h2>
+            <p className="text-slate-400">Chuyển hóa tri thức thành hành động cụ thể.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-8 shadow-xl">
+              <h3 className="text-xl font-bold text-white mb-6 border-b border-slate-800 pb-4 flex items-center gap-2">
+                <Target className="w-5 h-5 text-indigo-400" /> Kịch Bản "Nếu - Thì"
+              </h3>
+              <div className="space-y-6">
+                {PLAYBOOKS.map((pb, i) => (
+                  <div key={i} className="flex flex-col gap-2">
+                    <div className="font-semibold text-slate-300 bg-slate-800/50 py-1.5 px-3 rounded-md w-fit text-sm border border-slate-700">
+                      {pb.condition}
+                    </div>
+                    <div className="text-slate-400 text-sm pl-4 border-l-2 border-indigo-500 py-1">
+                      {pb.action}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-8 shadow-xl flex flex-col">
+              <h3 className="text-xl font-bold text-white mb-6 border-b border-slate-800 pb-4 flex items-center gap-2">
+                <Zap className="w-5 h-5 text-amber-400" /> Hành Động Micro (Làm ngay 24h tới)
+              </h3>
+              <ul className="space-y-4 flex-1">
+                {MICRO_ACTIONS.map((act, i) => (
+                  <li key={i} className="flex gap-4 items-start bg-slate-800/20 p-4 rounded-xl border border-slate-800/50 hover:bg-slate-800/40 transition">
+                    <div className="bg-amber-400/10 p-2 rounded-full mt-0.5">
+                      <PlayCircle className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <span className="text-slate-300 text-sm leading-relaxed">{act}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 4: Reality Check */}
+        <section className="space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-3">
+              <AlertTriangle className="text-red-500 w-8 h-8" />
+              [Reality Check] Cạm Bẫy & Kỷ Luật
+            </h2>
+            <p className="text-slate-400">Nhận diện ảo tưởng và thiết lập chốt chặn sinh tử.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <h3 className="text-lg font-bold text-red-400 flex items-center gap-2 uppercase tracking-wide">
+                <ShieldAlert className="w-5 h-5" /> 🚩 Bẫy Vô Hình (Red Flags)
+              </h3>
+              {REALITY_CHECK.redFlags.map((flag, i) => (
+                <div key={i} className="bg-red-950/20 border border-red-900/30 p-6 rounded-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-red-500/50"></div>
+                  <h4 className="font-bold text-slate-200 mb-2">{flag.title}</h4>
+                  <p className="text-sm text-slate-400 mb-3">{flag.desc}</p>
+                  <p className="text-xs text-red-300/80 bg-red-900/20 p-2 rounded italic">Vd: {flag.example}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-6">
+              <h3 className="text-lg font-bold text-emerald-400 flex items-center gap-2 uppercase tracking-wide">
+                <CheckCircle2 className="w-5 h-5" /> 🛡️ Chốt Chặn (Guardrails)
+              </h3>
+              {REALITY_CHECK.guardrails.map((guard, i) => (
+                <div key={i} className="bg-emerald-950/10 border border-emerald-900/30 p-6 rounded-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/50"></div>
+                  <h4 className="font-bold text-slate-200 mb-2">{guard.title}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{guard.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 5: Active Recall */}
+        <section className="space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-3">
+              <BookOpen className="text-sky-400 w-8 h-8" />
+              [Active Recall] Flashcards Ôn Tập
+            </h2>
+            <p className="text-slate-400">Hệ thống hóa kiến thức - 15 câu hỏi cốt lõi nhất (đọc và ghi nhớ tức thì).</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {FLASHCARDS.map((card, i) => (
+              <div key={i} className="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:bg-slate-800/80 transition-colors flex flex-col justify-between">
+                <div className="mb-4">
+                  <div className="text-xs text-sky-400 font-bold mb-2 uppercase tracking-widest flex items-center gap-2">
+                    <Search className="w-3 h-3" /> Question {i + 1}
+                  </div>
+                  <p className="font-semibold text-slate-200 text-sm leading-relaxed">{card.q}</p>
+                </div>
+                <div className="bg-slate-950/50 p-3 rounded-lg border-l-2 border-sky-500">
+                  <p className="text-xs text-slate-400 leading-relaxed">{card.a}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="h-32 bg-slate-950 border-t border-slate-900 flex flex-col items-center justify-center px-4 relative z-20">
+        <div className="flex items-center gap-6 mb-4">
+          {FOOTER_LINKS.map((link, idx) => {
+            const IconComponent = link.icon;
+            return (
+              <a 
+                key={idx} 
+                href={link.url} 
+                target="_blank" 
+                rel="noreferrer"
+                className="p-2 bg-slate-900 border border-slate-800 rounded-full hover:bg-indigo-600 hover:border-indigo-500 hover:text-white text-slate-400 transition-all shadow-lg"
+              >
+                <IconComponent className="w-5 h-5" />
+              </a>
+            );
+          })}
+        </div>
+        <p className="text-xs text-slate-500 text-center max-w-lg leading-relaxed">
+          Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+      </footer>
+      
+      {/* Global CSS config applied dynamically inside App via Tailwind */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}} />
+    </div>
+  );
+}
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>

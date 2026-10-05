@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Giải Phẫu Cơ Học: Nghịch Lý Lưng Thẳng</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='38' letter-spacing='-2px' fill='%2310B981'%3E21%3C/text%3E%3C/svg%3E">
+<style>
+    /* BẢNG MÀU SLATE GRAYSCALE SIÊU SẠCH (INKDOC) */
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text', Georgia, serif;
+      --font-display-long: 'Tiempos Text', Georgia, serif;
+      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    @font-face {
+      font-family: 'FD Aeonik Extended'; 
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+           local('FD Aeonik Extended Bold');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf') format('truetype'),
+           local('FD Aeonik Regular');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+           local('FD Aeonik SemiBold');
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      font-weight: 500;
+      font-style: italic;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'),
+           local('Tiempos Text Regular');
+      font-weight: 400;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.3; }
+    h1 {
+      font-family: var(--font-display-short);
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(28px, 4vw, 42px);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    h1.is-long { font-family: var(--font-display-long); font-size: clamp(24px, 3vw, 36px); }
+    h1.is-short { font-family: var(--font-display-short); }
+    
+    h2 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 22px;
+      margin: 48px 0 20px;
+    }
+    h3 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 18px;
+      margin: 32px 0 16px;
+    }
+
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 24px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 24px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    
+    blockquote {
+      border-left: 3px solid var(--ink-text);
+      padding-left: 24px;
+      margin: 32px 0;
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+
+    /* LAYOUT SKELETON */
+    .ink-sidebar {
+      width: 280px;
+      background: var(--ink-sidebar);
+      border-right: 1px solid var(--ink-border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 32px 24px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .ink-main-wrapper {
+      flex-grow: 1;
+      padding: 60px 48px 120px;
+      display: flex;
+      justify-content: center;
+    }
+    .ink-content {
+      width: 100%;
+      max-width: 740px; /* Tiêu chuẩn đọc sách */
+    }
+
+    /* SIDEBAR TOC */
+    .ink-brand {
+      font-family: var(--font-display-long);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-text);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+      letter-spacing: 0.5px;
+    }
+    .ink-toc-title {
+      font-family: var(--font-display-long);
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--ink-muted);
+      
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link {
+      font-family: var(--font-display-long);
+      font-size: 14px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      line-height: 1.4;
+      transition: background 0s, color 0s;
+    }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active {
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--ink-border);
+    }
+    .ink-toc-nested { padding-left: 16px; margin-top: 4px; font-size: 13px; }
+    
+    /* MODE 2: DIALOGUE SPECIFIC STYLES */
+    .ink-mode-dialogue .dialogue-turn {
+      margin-bottom: 48px;
+    }
+    .ink-mode-dialogue .dialogue-prompt {
+      background: var(--ink-sidebar);
+      padding: 24px;
+      border-radius: 12px;
+      font-family: var(--font-display-long);
+      font-size: 17px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--ink-text);
+      margin-bottom: 24px;
+      border: 1px solid var(--ink-border);
+      line-height: 1.6;
+    }
+    .ink-mode-dialogue .dialogue-response {
+      padding-left: 12px;
+      border-left: 2px solid var(--ink-border);
+    }
+
+    /* META INFO */
+    .ink-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display-long);
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .ink-badge {
+      font-weight: 600;
+      color: var(--ink-text);
+      background: var(--ink-hover);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--ink-border);
+    }
+
+    /* MOBILE NAVIGATION */
+    .ink-mobile-nav { display: none; }
+    .ink-overlay { display: none; }
+    .ink-close-btn { display: none; }
+
+    @media (max-width: 992px) {
+      body { flex-direction: column; }
+      
+      /* Mobile Topbar */
+      .ink-mobile-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 24px;
+        background: var(--ink-bg);
+        border-bottom: 1px solid var(--ink-border);
+        position: sticky; top: 0; z-index: 100;
+      }
+      .ink-mobile-nav .ink-brand { margin-bottom: 0; }
+      .ink-menu-btn {
+        background: var(--ink-hover); border: 1px solid var(--ink-border);
+        padding: 6px 12px; border-radius: 4px; font-family: var(--font-display-long);
+        font-size: 12px; font-weight: 600; cursor: pointer;
+      }
+
+      /* Sidebar turns into drawer */
+      .ink-sidebar {
+        position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
+        width: 300px; box-shadow: 24px 0 48px rgba(0,0,0,0.1);
+        transition: left 0s; /* No animation */
+      }
+      .ink-sidebar.is-open { left: 0; }
+      .ink-close-btn {
+        display: block; background: none; border: none; font-size: 20px;
+        color: var(--ink-muted); cursor: pointer;
+      }
+      
+      /* Overlay */
+      .ink-overlay.is-open {
+        display: block; position: fixed; inset: 0; background: rgba(15,23,42,0.4);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999;
+      }
+
+      .ink-main-wrapper { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+<!-- MOBILE NAV -->
+<div class="ink-mobile-nav">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-menu-btn" onclick="document.querySelector('.ink-sidebar').classList.add('is-open'); document.querySelector('.ink-overlay').classList.add('is-open');">MỤC LỤC</button>
+</div>
+<!-- MOBILE OVERLAY -->
+<div class="ink-overlay" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); this.classList.remove('is-open');"></div>
+<!-- SIDEBAR TOC -->
+<aside class="ink-sidebar">
+<div class="ink-sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-close-btn" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); document.querySelector('.ink-overlay').classList.remove('is-open');">✕</button>
+</div>
+<div class="ink-toc-title">MỤC LỤC</div>
+<ul class="ink-toc-list">
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">GIẢI MÃ NGHỊCH LÝ LƯNG THẲNG</li>
+<li><a class="ink-toc-link" href="#sec_what">1. WHAT - Tensegrity là gì?</a></li>
+<li><a class="ink-toc-link" href="#sec_logic">2. PHÂN LOẠI & LOGIC</a>
+  <div class="ink-toc-nested">
+    <a class="ink-toc-link" href="#type_1">LOẠI 1: Cơ bắp chủ động</a>
+    <a class="ink-toc-link" href="#type_2">LOẠI 2: Cơ chế Tensegrity</a>
+  </div>
+</li>
+<li><a class="ink-toc-link" href="#sec_why">3. WHY - Năng lượng cao & Tự khóa</a></li>
+<li><a class="ink-toc-link" href="#sec_how">4. HOW - Quá trình vật lý diễn ra</a>
+  <div class="ink-toc-nested">
+    <a class="ink-toc-link" href="#step_1">Bước 1: Sụp đổ cơ bắp</a>
+    <a class="ink-toc-link" href="#step_2">Bước 2: Trục thăng bằng</a>
+    <a class="ink-toc-link" href="#step_3">Bước 3: Khóa Tensegrity</a>
+  </div>
+</li>
+</ul>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="ink-main-wrapper">
+<article class="ink-content ink-mode-dialogue">
+<div class="ink-meta">
+<span class="ink-badge">BÁCH KHOA TOÀN THƯ</span>
+<span>Nguyễn Việt</span>
+<span>•</span>
+<span>Thực chiến</span>
+</div>
+
+<h1 class="is-short" id="top">Giải Phẫu Cơ Học: Nghịch Lý Thiền Định & Trạng Thái "Lưng Tự Thẳng"</h1>
+<p>Sự hoài nghi của bạn cực kỳ sắc sảo. Cảm giác "tự nhiên lưng thẳng tắp mà không cần dùng sức" nghe qua đúng là rất vô lý và sặc mùi "huyền bí". Nhưng thực chất, đây là một cơ chế cơ sinh học và thần kinh học hoàn toàn giải thích được bằng khoa học.</p>
+<p>Để giải quyết triệt để sự khó hiểu của bạn, tôi sẽ tháo dỡ vấn đề này từ gốc đến ngọn theo đúng yêu cầu: <strong>WHAT (Nó là gì), WHY (Tại sao), Phân loại & Logic, và HOW (Nó diễn ra thế nào).</strong></p>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="sec_what" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">1. WHAT - Khái niệm "Tensegrity" là gì?</h2>
+<div class="dialogue-response">
+<p><strong>Tensegrity</strong> (ghép từ <em>Tension</em> - Sức căng và <em>Integrity</em> - Tính toàn vẹn) ban đầu là một thuật ngữ trong kiến trúc, sau đó được áp dụng vào Giải phẫu học cơ thể người (Biotensegrity).</p>
+<ul>
+    <li><strong>Logic thông thường (Xếp gạch):</strong> Chúng ta hay nghĩ bộ xương giống như một chồng gạch, viên này đè lên viên kia để giữ người đứng thẳng. Nếu nghĩ theo cách này, lưng thẳng là do cơ bắp phải gồng lên để giữ cho chồng gạch không đổ.</li>
+    <li><strong>Logic Tensegrity (Chiếc lều cắm trại):</strong> Bạn hãy tưởng tượng một chiếc lều. Các thanh nhôm (đại diện cho xương) <strong>không hề chạm vào nhau hay đè lên nhau</strong>. Chiếc lều đứng vững chãi trước gió bão là nhờ hệ thống dây thừng và vải lều (đại diện cho gân, dây chằng, và hệ thống mạc cơ - Fascia) kéo căng đều về mọi hướng.</li>
+    <li><strong>Kết luận:</strong> Cơ thể bạn đứng/ngồi thẳng được không phải do các đốt sống đè lên nhau, mà do một mạng lưới "dây chằng và mạc cơ" giăng khắp cơ thể kéo các đốt sống lơ lửng và tự khóa lại ở đúng vị trí cân bằng.</li>
+</ul>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="sec_logic" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">2. PHÂN LOẠI & LOGIC - 2 Cách giữ thẳng lưng (Để hiểu sự khác biệt)</h2>
+<div class="dialogue-response">
+<p>Tại sao bình thường ngồi thẳng lại mỏi, mà thiền sâu ngồi thẳng lại không mỏi? Đó là do cơ thể đang dùng 2 cơ chế (2 loại) hoàn toàn khác nhau để chống lại trọng lực.</p>
+
+<h3 id="type_1" style="font-weight: 600; font-size: 1.1rem; margin-top: 1.5rem;">LOẠI 1: Ngồi thẳng bằng "Cơ bắp chủ động" (Trạng thái Thô / Năng lượng Thấp)</h3>
+<ul>
+    <li><strong>Logic:</strong> Khi bạn mới ngồi thiền, bạn dặn lòng: <em>"Mình phải ngồi thẳng"</em>. Vỏ não bộ (phần ý thức) sẽ ra lệnh cho các nhóm cơ bề mặt (như cơ xô, cơ dọc sống lưng) co thắt lại để kéo cột sống thẳng lên.</li>
+    <li><strong>Hậu quả:</strong> Cơ bắp hễ co thắt là sẽ đốt calo và sinh ra Axit Lactic. Chỉ sau 15-20 phút, cơ bắp sẽ cạn kiệt năng lượng, mỏi nhừ và đầu hàng. Trọng lực lập tức kéo sụp lưng bạn xuống thành tư thế gù.</li>
+    <li>👉 <em>Ví dụ:</em> Giống như bạn dùng tay (cơ bắp) để giữ chặt một cây cột cờ. Giữ một lúc là tay mỏi rã rời.</li>
+</ul>
+
+<h3 id="type_2" style="font-weight: 600; font-size: 1.1rem; margin-top: 1.5rem;">LOẠI 2: Ngồi thẳng bằng "Cơ chế Tensegrity" (Trạng thái Tối ưu / Năng lượng Cao)</h3>
+<ul>
+    <li><strong>Logic:</strong> Trong trạng thái thiền sâu (năng lượng cao), ý thức của bạn không còn can thiệp vào việc "cố gắng giữ thẳng lưng" nữa. Hệ thần kinh tự chủ (bản năng) tiếp quản. Nó không dùng "Cơ bắp bề mặt" nữa, mà nó kích hoạt "Mạng lưới mạc cơ sâu" và tìm ra <strong>trọng tâm cân bằng tuyệt đối</strong> của cơ thể.</li>
+    <li><strong>Hậu quả:</strong> Khi hệ thống tự tìm được điểm cân bằng 0 (Zero-gravity point), các đốt sống tự sắp xếp khớp vào nhau hoàn hảo. Dây chằng chỉ cần căng nhẹ một cách tự nhiên (như dây lều) để giữ khung xương. Mức tiêu hao calo của cơ bắp lúc này gần như bằng 0%.</li>
+    <li>👉 <em>Ví dụ:</em> Giống như bạn dựng chân máy ảnh (Tripod). Khi bạn đã mở chốt và đặt nó trên mặt đất cân bằng, nó cứ đứng đó mãi mãi mà không tốn một chút năng lượng nào.</li>
+</ul>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="sec_why" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">3. WHY - Tại sao "Năng lượng cao" lại dẫn đến trạng thái tự khóa thẳng lưng?</h2>
+<div class="dialogue-response">
+<p>Bạn thắc mắc: <em>"Tại sao năng lượng cao lại dẫn đến ngồi thẳng, nghe rất khó hiểu?"</em></p>
+<p>Logic ở đây nằm ở hệ thần kinh. <strong>"Năng lượng cao" trong thiền KHÔNG PHẢI là năng lượng cơ bắp, mà là Năng lượng Điện não (Sự tập trung tĩnh lặng).</strong></p>
+<p>Khi tâm trí bạn tán loạn (năng lượng thấp), điện não bị nhiễu. Hệ thần kinh trung ương liên tục gửi các tín hiệu sai lệch xuống tủy sống, khiến cơ bắp chỗ căng chỗ chùng, làm cơ thể xô lệch và gù xuống.</p>
+<p>Khi bạn đạt "Năng lượng cao" (Sự tập trung tuyệt đối vào hơi thở, tâm trí đứng im), bộ não bắt đầu gửi một luồng xung điện mạnh mẽ, đồng nhất và trơn tru dọc theo tủy sống. Lúc này, <strong>Hệ thần kinh Đối giao cảm</strong> (phụ trách sự thư giãn và tái tạo) được bật lên tối đa. Nó làm 2 việc:</p>
+<ol>
+    <li><strong>Tắt điện các vùng cơ bắp bề mặt:</strong> Nó bắt các cơ đang gồng (cổ, vai, lưng ngoài) thả lỏng hoàn toàn.</li>
+    <li><strong>Bơm áp suất tủy sống:</strong> Dòng năng lượng trơn tru làm tăng lưu thông Dịch não tủy (Cerebrospinal fluid) bên trong cột sống. Cột sống của bạn lúc này giống như một cái ruột xe đạp vừa được bơm căng hơi, nó sinh ra áp suất thủy lực tự đẩy vươn thẳng lên bầu trời.</li>
+</ol>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="sec_how" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">4. HOW - Quá trình "Lưng tự thẳng" này diễn ra như thế nào trên thực tế?</h2>
+<div class="dialogue-response">
+<p>Nếu duy trì sự rung động hiện tại đến khi hệ thần kinh thích nghi, bạn sẽ quan sát thấy quá trình này diễn ra trên cơ thể mình theo 3 bước vật lý rõ mồn một:</p>
+
+<ul style="list-style-type: none; padding-left: 0;">
+    <li id="step_1" style="margin-bottom: 1.5rem;">
+        <strong>Bước 1: Sự sụp đổ của cơ bắp chủ động (Thả lỏng).</strong><br>
+        Ban đầu ngồi, bạn sẽ thấy lưng hơi mỏi. Nhưng khi bạn không quan tâm đến cái mỏi nữa mà chỉ tập trung vào hơi thở (hội tụ năng lượng). Bạn sẽ thấy vai mình tự động sụp xuống, lồng ngực xẹp xuống một chút, cơ bắp hoàn toàn nhão ra. (Nhiều người sợ gù lưng nên giật mình gồng lại, điều này phá hỏng quá trình).
+    </li>
+    <li id="step_2" style="margin-bottom: 1.5rem;">
+        <strong>Bước 2: Sự kích hoạt trục thăng bằng thần kinh.</strong><br>
+        Khi cơ bắp bề mặt đã thả lỏng 100%, hệ thần kinh tiền đình và các cảm biến ở mạc cơ sâu bắt đầu tính toán lại trọng lực. Nó vi chỉnh vùng xương chậu của bạn (hơi xoay nhẹ). Đột nhiên, bạn sẽ cảm thấy 2 ụ ngồi ở mông cắm rễ chặt xuống đệm.
+    </li>
+    <li id="step_3" style="margin-bottom: 1.5rem;">
+        <strong>Bước 3: Cú khóa "Tensegrity" (Cột sống vươn lên).</strong><br>
+        Từ đáy xương chậu, bạn sẽ cảm nhận vật lý rõ ràng một luồng lực (như có người đẩy hoặc như cái cây hút nước) chạy dọc theo tủy sống lên đỉnh đầu. Từng đốt sống L5, L4 lên đến đốt sống cổ tự động xếp chồng lách cách vào đúng trục đường thẳng. <strong>Đầu bạn tự động hơi thu cằm lại, đỉnh đầu vươn lên.</strong> Khung xương được khóa chặt.
+    </li>
+</ul>
+
+<p>Khoảnh khắc này, bạn sẽ nhận ra một nghịch lý: <strong>Bạn hoàn toàn buông lỏng nhão xèo, nhưng cơ thể bạn lại thẳng tắp như một pho tượng phật, cứng cáp và vững chãi đến mức có người xô nhẹ cũng không đổ.</strong></p>
+
+<blockquote>
+<p><strong>TÓM LẠI:</strong><br>
+Năng lượng cao (Sự tĩnh lặng tuyệt đối của tâm trí) -&gt; dọn sạch nhiễu loạn thần kinh -&gt; giúp hệ thần kinh tự chủ tìm được điểm cân bằng cơ học hoàn hảo của khung xương (Tensegrity) -&gt; Cơ bắp được nghỉ ngơi 100% -&gt; Lưng tự thẳng tắp và không bao giờ mỏi.</p>
+</blockquote>
+
+<p>Đây là một món quà sinh học tuyệt đẹp của cơ thể, hãy kiên nhẫn quan sát, rồi bạn sẽ được trải nghiệm cái "Click" tự động khóa lưng này!</p>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 1px solid var(--ink-border);"/>
+
+</article>
+</main>
+<script>
+  // Chống nhảy nhót (Zero-animation scroll)
+  document.querySelectorAll('.ink-toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if(target) {
+        window.scrollTo({
+          top: target.offsetTop - 40,
+          behavior: 'auto'
+        });
+        
+        document.querySelectorAll('.ink-toc-link').forEach(l => l.classList.remove('is-active'));
+        this.classList.add('is-active');
+        
+        // Đóng mobile menu
+        document.querySelector('.ink-sidebar').classList.remove('is-open');
+        document.querySelector('.ink-overlay').classList.remove('is-open');
+      }
+    });
+  });
+</script>
+</body>
+</html>

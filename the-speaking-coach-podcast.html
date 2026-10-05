@@ -1,0 +1,422 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Target, Brain, Rocket, AlertTriangle, CheckSquare, Youtube, LayoutGrid, Shield, Zap, RefreshCw, X, Maximize2, Play } from 'lucide-react';
+
+// --- COMPONENTS ---
+
+// 1. Mermaid Flowchart Component (Mindmap)
+const MermaidGraph = () => {
+  const [isZoomed, setIsZoomed] = useState(false);
+  
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js';
+    script.async = true;
+    script.onload = () => {
+      window.mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+        fontFamily: 'Inter, sans-serif',
+        securityLevel: 'loose',
+      });
+      window.mermaid.contentLoaded();
+    };
+    document.body.appendChild(script);
+  }, []);
+
+  const mindmapCode = `
+    graph LR
+      classDef root fill:#0f172a,stroke:#38bdf8,stroke-width:4px,color:#fff,font-size:24px,font-weight:bold,padding:20px;
+      classDef branch fill:#1e293b,stroke:#818cf8,stroke-width:2px,color:#e2e8f0,font-size:18px,font-weight:bold;
+      classDef leaf fill:#334155,stroke:#475569,stroke-width:1px,color:#cbd5e1,font-size:16px;
+
+      ROOT((🗣️ BẬC THẦY<br/>GIAO TIẾP)):::root
+      
+      ROOT --> B{Tự làm chủ<br/>Bản thân}:::branch
+      B --> B1[Nhịp thở 5 giây<br/>Dừng Fight-or-Flight]:::leaf
+      B --> B2[Nói chậm lại<br/>Thể hiện kiểm soát 100%]:::leaf
+      B --> B3[Xóa bỏ chữ 'Just'<br/>Ngừng xin lỗi vô cớ]:::leaf
+
+      ROOT --> C{Làm chủ<br/>Xung đột}:::branch
+      C --> C1[Hỏi: 'Tôi đang bỏ lỡ điều gì?']:::leaf
+      C --> C2[Thắng mâu thuẫn =<br/>Thua mối quan hệ]:::leaf
+      C --> C3[Quy tắc Ly Nước Đầy:<br/>Để họ trút cạn trước]:::leaf
+
+      ROOT --> D{Thiết lập<br/>Ranh giới}:::branch
+      D --> D1[Vũ khí Im lặng 7s<br/>Trả lại áp lực]:::leaf
+      D --> D2[Bẻ gãy bắt nạt:<br/>'Bạn nói để làm tôi buồn à?']:::leaf
+      D --> D3[Từ chối trực diện<br/>Không cần lý do biện minh]:::leaf
+  `;
+
+  return (
+    <div className="relative my-12 w-full flex flex-col items-center">
+      <div 
+        className={`transition-all duration-500 ease-in-out ${isZoomed ? 'fixed inset-0 z-50 bg-slate-900/95 flex items-center justify-center p-8 backdrop-blur-md' : 'w-full relative border border-slate-700 rounded-2xl bg-slate-800/50 p-6 overflow-hidden'}`}
+      >
+        {isZoomed && (
+          <button 
+            onClick={() => setIsZoomed(false)}
+            className="absolute top-6 right-6 p-2 bg-slate-800 hover:bg-slate-700 rounded-full text-white transition-colors"
+          >
+            <X size={24} />
+          </button>
+        )}
+        
+        {!isZoomed && (
+          <button 
+            onClick={() => setIsZoomed(true)}
+            className="absolute top-4 right-4 p-2 bg-slate-700/50 hover:bg-slate-600 rounded-lg text-slate-300 transition-colors flex items-center gap-2 text-sm backdrop-blur-md z-10"
+          >
+            <Maximize2 size={16} /> Phóng to
+          </button>
+        )}
+
+        <div className={`mermaid flex justify-center w-full ${isZoomed ? 'scale-125' : 'overflow-x-auto'}`}>
+          {mindmapCode}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 2. CSS Abstract Art Component
+const CSSAbstractArt = ({ id }) => {
+  const palettes = [
+    { bg: "bg-emerald-900/40", c1: "bg-emerald-400", c2: "bg-teal-500" },
+    { bg: "bg-amber-900/40", c1: "bg-amber-400", c2: "bg-orange-500" },
+    { bg: "bg-indigo-900/40", c1: "bg-indigo-400", c2: "bg-purple-500" },
+    { bg: "bg-rose-900/40", c1: "bg-rose-400", c2: "bg-pink-500" },
+    { bg: "bg-cyan-900/40", c1: "bg-cyan-400", c2: "bg-blue-500" }
+  ];
+  const p = palettes[id % palettes.length];
+
+  return (
+    <div className={`relative w-full h-24 rounded-t-2xl overflow-hidden ${p.bg} border-b border-slate-700/50`}>
+      <div className={`absolute -top-6 -left-4 w-32 h-32 rounded-full ${p.c1} opacity-30 blur-2xl transform skew-x-12`}></div>
+      <div className={`absolute bottom-0 right-4 w-24 h-24 rounded-full ${p.c2} opacity-40 blur-xl transform -skew-y-12`}></div>
+      <div className="absolute inset-0 backdrop-blur-[2px] bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+    </div>
+  );
+};
+
+// 3. Insight Card Component
+const InsightCard = ({ index, title, coreLogic, mechanism, example }) => (
+  <div className="flex flex-col bg-slate-800/60 rounded-2xl border border-slate-700 hover:border-slate-500 transition-all duration-300 transform hover:-translate-y-1 group">
+    <CSSAbstractArt id={index} />
+    <div className="p-6 flex-1 flex flex-col">
+      <h3 className="text-xl font-bold text-slate-100 mb-4 group-hover:text-amber-400 transition-colors">{title}</h3>
+      <div className="space-y-4 flex-1">
+        <div>
+          <h4 className="text-sm font-semibold text-teal-400 uppercase tracking-wider mb-1">Bản chất</h4>
+          <p className="text-slate-300 text-sm leading-relaxed">{coreLogic}</p>
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold text-indigo-400 uppercase tracking-wider mb-1">Cơ chế vận hành</h4>
+          <p className="text-slate-300 text-sm leading-relaxed">{mechanism}</p>
+        </div>
+      </div>
+      <div className="mt-5 pt-4 border-t border-slate-700/50">
+        <h4 className="text-xs font-semibold text-amber-500/80 uppercase tracking-wider mb-2 flex items-center gap-1">
+          <Zap size={14}/> Ví dụ thực tế
+        </h4>
+        <p className="text-slate-400 text-sm italic border-l-2 border-slate-600 pl-3">{example}</p>
+      </div>
+    </div>
+  </div>
+);
+
+// 4. Flashcard Component
+const Flashcard = ({ question, answer }) => (
+  <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 hover:bg-slate-750 transition-colors h-full flex flex-col justify-between">
+    <h4 className="text-slate-200 font-semibold mb-4 leading-snug flex items-start gap-2">
+      <span className="text-amber-400 mt-1">Q:</span> {question}
+    </h4>
+    <div className="pt-3 border-t border-slate-600/50">
+      <p className="text-slate-400 text-sm leading-relaxed flex items-start gap-2">
+        <span className="text-teal-400">A:</span> {answer}
+      </p>
+    </div>
+  </div>
+);
+
+// --- MAIN APP ---
+export default function App() {
+  const insights = [
+    {
+      title: "1. Nhịp thở tĩnh tại (The Conversational Breath)",
+      coreLogic: "Hãy dùng nhịp thở làm 'từ đầu tiên' bạn nói ra khi gặp một ý kiến trái chiều.",
+      mechanism: "Bộ não chúng ta tự động kích hoạt chế độ 'Fight or Flight' (Chiến đấu hay Bỏ chạy) khi bị phản đối. Thở sâu qua mũi một nhịp giúp ngắt cầu dao cảm xúc, giữ lại phần tư duy logic (Prefrontal Cortex) thay vì phản ứng bản năng.",
+      example: "Khi bị sếp hỏi gắt: 'Tại sao dự án lại trễ?'. Thay vì lập tức cãi 'Do team kia...', hãy hít nhẹ qua mũi 1 giây rồi mới đáp. Bạn sẽ trông như một người làm chủ tình thế chứ không phải kẻ đang hoảng loạn."
+    },
+    {
+      title: "2. Quyền lực của việc Nói chậm",
+      coreLogic: "Nói chậm lại và ngắt nhịp là biểu hiện của người nắm giữ 100% quyền kiểm soát.",
+      mechanism: "Những người có lòng tự trọng thấp hoặc nói dối thường nói rất nhanh, chèn nhiều từ thừa (kiểu như, ừm, à) để lấp liếm sự bất an và mong được tin tưởng. Người tự tin không cần chứng minh điều họ biết là sự thật.",
+      example: "Thử nói 'Tôi đã bảo là tôi không làm' với tốc độ nhanh và bực tức. Sau đó thử nói chậm từng-từ-một, không cảm xúc. Câu thứ hai tạo ra uy lực đáng sợ hơn gấp 10 lần."
+    },
+    {
+      title: "3. Thắng Cuộc cãi vã = Thua Mối quan hệ",
+      coreLogic: "Cãi vã không phải là trận chiến để giành cúp, nó là mớ bòng bong cần được gỡ rối.",
+      mechanism: "Khi bạn dồn ép ai đó đến mức họ đuối lý và im lặng, thứ bạn giành được không phải là sự nể phục, mà là một cục nghẹn uất ức. Họ im lặng rời đi, và bạn lại là người phải cầm điện thoại lên xin lỗi để hàn gắn.",
+      example: "Dùng câu thần chú: 'Tôi đang bỏ lỡ điều gì?' (What am I missing?). Nó lập tức hạ vũ khí của đối phương vì bạn đang mời họ giải thích, thay vì tấn công họ."
+    },
+    {
+      title: "4. Quy tắc Ly Nước Đầy",
+      coreLogic: "Bạn không thể rót thêm tư tưởng của mình vào một tâm trí đang chứa đầy định kiến.",
+      mechanism: "Mỗi người đều mang một 'ly nước' đầy trải nghiệm, tổn thương và góc nhìn cũ. Nếu bạn rót ngay lập tức lập luận của mình vào, nó sẽ tràn ra ngoài. Bạn phải dùng câu hỏi để họ tự 'đổ bớt' nước của họ ra trước.",
+      example: "Thay vì nói 'Anh sai rồi', hãy hỏi: 'Anh đã hình thành suy nghĩ đó từ khi nào và qua trải nghiệm nào?'. Khi họ nói xong, họ mới có không gian để nghe bạn."
+    },
+    {
+      title: "5. Vũ khí Im lặng (5-7 Giây)",
+      coreLogic: "Sự im lặng không phải là yếu đuối, nó là một tấm gương ép đối phương phải nhìn lại lời nói vô duyên của mình.",
+      mechanism: "Kẻ thích chế giễu hoặc bắt nạt luôn khao khát một thứ: Dopamine từ sự phản ứng tức giận của bạn. Im lặng rút cạn nguồn nhiên liệu đó, bắt lời nói ác ý của họ treo lơ lửng giữa không trung khiến chính họ tự thấy ngượng.",
+      example: "Khi bị mỉa mai 'Ồ, cuối cùng cậu cũng chịu giảm cân rồi à', đừng cảm ơn cũng đừng chửi rủa. Trừng mắt im lặng 5 giây. Đảm bảo đối phương sẽ tự lấp liếm lúng túng."
+    },
+    {
+      title: "6. Tước vũ khí kẻ sỉ nhục",
+      coreLogic: "Hỏi thẳng vào động cơ của họ, bắt họ phải thừa nhận sự xấu xí của mình.",
+      mechanism: "Kẻ độc hại ném đá giấu tay. Bằng việc hỏi trực diện về ý định của câu nói, bạn kéo họ ra ánh sáng, bắt bộ não logic của họ phải đối diện với tính bần tiện vừa phát ra.",
+      example: "Hãy hỏi nhẹ nhàng: 'Anh nói câu đó là có ý muốn làm tôi buồn à?'. Chắc chắn họ sẽ chối: 'Đâu, tôi đùa thôi'. Ngay khoảnh khắc đó, bạn đã nắm quyền kiểm soát."
+    },
+    {
+      title: "7. Căn nguyên của 'Cục tức' 30 năm",
+      coreLogic: "Người bạn đang thấy tức giận trước mặt, thực ra không phải tức giận vì bạn.",
+      mechanism: "Khi ai đó phản ứng thái quá ở cấp độ 10 cho một vấn đề chỉ ở cấp độ 1, họ đang cãi nhau với vết thương cũ trong đầu họ, không phải với bạn. Bạn chỉ vô tình chạm vào cái 'nút bấm' (trigger) đó.",
+      example: "Anh bạn tức điên khi bạn chỉnh anh ta về số liệu Covid. Thực chất, vết thương của anh ta là việc bị cô giáo khinh bỉ là 'đồ ngốc' trên sân trường 30 năm trước. Chấp nhận và đừng phản ứng ngược lại."
+    },
+    {
+      title: "8. Nghệ thuật Nói KHÔNG",
+      coreLogic: "Bỏ lý do, bỏ chữ 'Nhưng' (But). Cứ từ chối thẳng và kết thúc bằng sự biết ơn.",
+      mechanism: "Khi bạn bịa ra 1001 lý do để từ chối (bận việc, đau bụng...), bạn tạo ra sự nghi ngờ và hạ thấp giá trị bản thân. Chữ 'Nhưng' sẽ tự động xóa sạch lời khen trước đó. Từ chối thẳng giúp đầu óc bạn không bị nợ nần cảm xúc.",
+      example: "Thay vì 'Em thích lắm nhưng hứa với vợ...'. Hãy nói: 'Em không tham gia được dịp này. Cảm ơn sếp vì đã nghĩ đến em và chúc mọi người đi chơi vui vẻ!'."
+    },
+    {
+      title: "9. Framework 3 Bước: Nói chuyện khó nhằn",
+      coreLogic: "Setup quy tắc cuộc chơi trước khi bắt đầu để loại bỏ hoàn toàn sự sợ hãi.",
+      mechanism: "Người ta sợ nói chuyện nghiêm túc vì sợ sự mông lung. Bằng việc định hình (1) Ta nói chuyện gì, (2) Em muốn kết quả lúc xong việc là thế nào, (3) Anh đồng ý chứ?, bạn tạo ra một bản hợp đồng tàng hình.",
+      example: "Bước 1: Em muốn nói về chuyện đi trễ. Bước 2: Em muốn lúc đứng lên, ta sẽ thống nhất không lặp lại lỗi này. Bước 3: Anh đồng ý trò chuyện theo hướng này chứ?"
+    },
+    {
+      title: "10. Ngừng xin lỗi, Hãy Cảm ơn",
+      coreLogic: "Chỉ xin lỗi khi bạn thực sự làm hỏng việc. Với những sự cố nhỏ, hãy dùng sự biết ơn.",
+      mechanism: "Việc lạm dụng từ 'Xin lỗi' (đặc biệt ở phái yếu hoặc người hướng nội) giống như những giọt nước nhỏ giọt làm mòn đá tự tôn. Chuyển sang lời cảm ơn giúp định vị lại vị thế của bạn thành người đàng hoàng.",
+      example: "Thay vì 'Xin lỗi vì đã rep email trễ', hãy nói 'Cảm ơn vì sự kiên nhẫn đợi email của tôi'. Tự động, não đối phương sẽ nghĩ 'Ồ, đúng, mình là một người kiên nhẫn'."
+    },
+    {
+      title: "11. 'Mình có thể làm tốt hơn' (I could have done better)",
+      coreLogic: "Sự dễ bị tổn thương chân thành (vulnerability) là thứ có tính thuyết phục cao nhất.",
+      mechanism: "Khi bạn khăng khăng mình hoàn hảo 100%, bộ não của đối phương sẽ tự động kích hoạt radar tìm kiếm lỗi sai của bạn. Nhưng khi bạn chủ động giơ tay nhận khuyết điểm nhỏ trước, người ta sẽ tin bạn ở những cái lớn.",
+      example: "Một luật sư đứng trước tòa nói: 'Thân chủ tôi không hoàn hảo, họ cũng đã có những sai lầm nhỏ. Nhưng mức án kia là phi lý'. Bồi thẩm đoàn sẽ tin ngay lập tức vì anh ta dám nói thật."
+    },
+    {
+      title: "12. Bỏ ngay chữ 'JUST' (Chỉ là)",
+      coreLogic: "Từ 'Just' bào mòn uy lực câu nói, biến bạn thành kẻ đang đi xin xỏ rón rén.",
+      mechanism: "Người thiếu tự tin chêm chữ 'Just' vào vì họ không muốn chiếm không gian của người khác. Hãy bỏ nó đi, và tiến thẳng vào trọng tâm với tư thế ngẩng cao đầu.",
+      example: "Đừng gõ: 'Em *chỉ là* muốn nhắn tin để hỏi xem...'. Hãy gõ: 'Em nhắn tin để hỏi xem...'."
+    }
+  ];
+
+  const flashcards = [
+    { q: "Sai lầm lớn nhất khi tranh cãi là gì?", a: "Cố gắng giành phần thắng. Vì thắng cuộc cãi vã thường đồng nghĩa với việc thua mối quan hệ." },
+    { q: "Làm gì ngay trước khi đáp trả một ý kiến trái chiều?", a: "Hít một hơi thật chậm qua mũi. Nó ngắt mạch 'Chiến đấu hay Bỏ chạy' (Fight or Flight) trong não." },
+    { q: "Câu thần chú để hạ nhiệt căng thẳng là gì?", a: "'Tôi đang bỏ lỡ điều gì?' (What am I missing?) - Biến đối kháng thành hợp tác." },
+    { q: "Khi bị sỉ nhục tàn nhẫn, vũ khí mạnh nhất là gì?", a: "Im lặng 5-7 giây. Không cảm xúc. Nó ép đối phương phải tự nghe lại sự vô duyên của chính họ." },
+    { q: "Làm sao để đối đáp một kẻ chuyên nói móc mỉa?", a: "Hỏi thẳng: 'Bạn nói câu đó cốt là để làm tôi tổn thương à?' (Bắt họ thừa nhận động cơ bần tiện)." },
+    { q: "Tại sao không nên dùng từ 'Nhưng' khi từ chối?", a: "Vì từ 'Nhưng' xóa sạch mọi sự tử tế ở vế trước. Hãy chia làm 2 câu độc lập." },
+    { q: "Từ nào khiến bạn nghe như kẻ thiếu tự tin?", a: "Từ 'Chỉ là' (Just). 'Em chỉ là muốn hỏi...' nghe rất hèn nhát so với 'Em muốn hỏi...'." },
+    { q: "Làm gì với kẻ liên tục bị 'Trigger' (nổi điên vô cớ)?", a: "Tuyệt đối không giải quyết lúc đó. Tạo khoảng cách thời gian và bàn lại ở một cuộc hội thoại khác." },
+    { q: "Động cơ thực sự của kẻ hay bắt nạt bằng lời nói?", a: "Họ thèm khát lượng 'Dopamine' sinh ra từ sự đau khổ và phản ứng giận dữ của bạn." },
+    { q: "Tại sao không nên xin lỗi khi bạn rep tin nhắn trễ?", a: "Nó bào mòn lòng tự tôn. Hãy nói 'Cảm ơn sự kiên nhẫn của bạn' thay vì 'Xin lỗi tôi lề mề'." },
+    { q: "Quy tắc Ly Nước Đầy khuyên ta điều gì?", a: "Đừng khuyên bảo ai khi họ đang bức xúc. Phải đặt câu hỏi để họ trút cạn uất ức trong ly của họ trước." },
+    { q: "Framework 3 bước cho Cuộc trò chuyện khó?", a: "1. Tuyên bố chủ đề. 2. Tuyên bố kết quả mong muốn khi kết thúc. 3. Hỏi sự đồng ý của họ." },
+    { q: "Dấu hiệu số 1 của một người đang nói dối?", a: "Dùng các từ cực đoan (Luôn luôn, Không bao giờ) và trả lời quá nhanh không cần suy nghĩ." },
+    { q: "Sức mạnh của việc nhận lỗi trước?", a: "Nó giải giáp vũ khí của người nghe. Khi bạn thừa nhận điểm yếu, họ sẽ tin tưởng lập luận chính của bạn." },
+    { q: "Câu trả lời đúng mực nhất cho việc bạn không thích làm?", a: "'Tôi không tham gia được. Cảm ơn bạn vì đã nghĩ tới tôi.' (KHÔNG CẦN GIẢI THÍCH LÝ DO)." }
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#0B1121] text-slate-200 font-sans selection:bg-teal-500/30">
+      
+      {/* HEADER */}
+      <header className="pt-20 pb-12 px-6 max-w-5xl mx-auto text-center border-b border-slate-800">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800 border border-slate-700 text-teal-400 text-sm font-semibold tracking-wider mb-6">
+          <Brain size={16} /> LEARNING EXPERIENCE LANDING PAGE
+        </div>
+        <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 mb-6 leading-tight tracking-tight">
+          LÀM CHỦ GIAO TIẾP <br className="hidden md:block"/> <span className="text-3xl md:text-5xl text-slate-100">THE SPEAKING COACH</span>
+        </h1>
+        <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+          Chào bạn, tôi là Mentor của bạn hôm nay. Dưới đây không phải là những dòng lý thuyết sáo rỗng. Đây là bản <span className="text-teal-400 font-medium">giải phẫu tâm lý học tội phạm</span> và nghệ thuật tranh tụng tòa án, được tinh biến thành vũ khí giao tiếp hằng ngày. 
+        </p>
+      </header>
+
+      {/* SECTION 1: THE BIG IDEA */}
+      <section className="py-16 px-6 max-w-7xl mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <Target className="text-amber-500" size={28} />
+          <h2 className="text-3xl font-bold text-slate-100">1. The Big Idea: Bức Tranh Toàn Cảnh</h2>
+        </div>
+        
+        <div className="bg-slate-800/40 border-l-4 border-amber-500 p-8 rounded-r-2xl mb-12 relative overflow-hidden">
+          <div className="absolute -right-10 -top-10 w-40 h-40 bg-amber-500/10 blur-3xl rounded-full"></div>
+          <p className="text-xl md:text-2xl text-slate-200 font-medium leading-relaxed z-10 relative italic">
+            "Cuộc đời bạn đang kẹt ở đâu, tất cả đều nằm ở kỹ năng giao tiếp của bạn. Đừng bao giờ tranh cãi để giành phần thắng, bởi phần thưởng duy nhất của kẻ thắng là... <span className="text-amber-400 font-bold">sự cô đơn và phải cúi đầu đi xin lỗi.</span> Hãy cãi nhau để gỡ rối!"
+          </p>
+        </div>
+
+        {/* MINDMAP */}
+        <MermaidGraph />
+
+        <div className="flex justify-center mt-8">
+          <a href="https://www.youtube.com/watch?v=zsuOSDb7gzQ" target="_blank" rel="noopener noreferrer" 
+             className="group flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white px-6 py-4 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg shadow-red-900/50">
+            <Youtube size={24} className="group-hover:animate-pulse" />
+            <span>Huấn Luyện Viên Giao Tiếp: Một Từ Kẻ Nói Dối Thường Dùng! Ngừng Nói Từ Này, Nó Đang Làm Bạn Trở Nên Yếu Đuối!</span>
+          </a>
+        </div>
+      </section>
+
+      {/* SECTION 2: DEEP INSIGHTS */}
+      <section className="py-16 px-6 max-w-7xl mx-auto bg-slate-900/50 border-y border-slate-800">
+        <div className="flex items-center gap-3 mb-4">
+          <Brain className="text-teal-400" size={28} />
+          <h2 className="text-3xl font-bold text-slate-100">2. Deep Insights: Các Trụ Cột Tri Thức</h2>
+        </div>
+        <p className="text-slate-400 mb-12">Những bài học sâu sắc nhất được bóc tách từ cơ chế tâm lý và hành vi con người.</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {insights.map((item, i) => (
+            <InsightCard key={i} index={i} {...item} />
+          ))}
+        </div>
+      </section>
+
+      {/* SECTION 3: ACTION PLAYBOOK */}
+      <section className="py-16 px-6 max-w-5xl mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <Rocket className="text-purple-400" size={28} />
+          <h2 className="text-3xl font-bold text-slate-100">3. Action Playbook: Sổ Tay Thực Chiến</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-2xl border border-slate-700">
+            <h3 className="text-xl font-bold text-purple-400 mb-6 flex items-center gap-2"><LayoutGrid size={20}/> Kịch bản "Nếu - Thì"</h3>
+            <ul className="space-y-6">
+              <li className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-rose-400 font-semibold"><AlertTriangle size={16}/> NẾU đồng nghiệp nổi nóng vô cớ...</div>
+                <div className="text-slate-300 pl-6 border-l border-slate-600">
+                  <span className="text-teal-400 font-medium">THÌ:</span> Không đáp trả ngay. Ngậm miệng, hít một hơi vào bằng mũi 2 giây. Sau đó hỏi lại thật chậm rãi: <i className="text-slate-400">"Tôi đang bỏ lỡ điều gì trong câu chuyện này?"</i>
+                </div>
+              </li>
+              <li className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-rose-400 font-semibold"><AlertTriangle size={16}/> NẾU bị ép uổng nhận lời đi nhậu...</div>
+                <div className="text-slate-300 pl-6 border-l border-slate-600">
+                  <span className="text-teal-400 font-medium">THÌ:</span> Bỏ qua 1001 lý do bận rộn. Nói rành mạch: <i className="text-slate-400">"Đợt này mình không tham gia được. Cảm ơn anh em đã rủ nhé, chúc mọi người vui!"</i>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-2xl border border-slate-700">
+            <h3 className="text-xl font-bold text-teal-400 mb-6 flex items-center gap-2"><Zap size={20}/> Micro-actions (Làm ngay 24h tới)</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700/50">
+                <CheckSquare className="text-teal-400 shrink-0 mt-1" size={18}/>
+                <span className="text-slate-300">Viết chữ <strong className="text-amber-400">"THỞ & CHẬM"</strong> lên một tờ note và dán ngay rìa màn hình máy tính của bạn.</span>
+              </li>
+              <li className="flex items-start gap-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700/50">
+                <CheckSquare className="text-teal-400 shrink-0 mt-1" size={18}/>
+                <span className="text-slate-300">Quét toàn bộ tin nhắn chat trong ngày hôm nay. Thu hồi và sửa mọi câu bắt đầu bằng chữ <strong className="text-rose-400">"Chỉ là / Just"</strong>.</span>
+              </li>
+              <li className="flex items-start gap-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700/50">
+                <CheckSquare className="text-teal-400 shrink-0 mt-1" size={18}/>
+                <span className="text-slate-300">Thử im lặng đúng 5 giây trước khi trả lời câu hỏi hóc búa nhất của ngày hôm nay. Cảm nhận uy lực của nó.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: REALITY CHECK */}
+      <section className="py-16 px-6 max-w-5xl mx-auto bg-slate-900/80 border-y border-slate-800">
+        <div className="flex items-center gap-3 mb-8">
+          <Shield className="text-rose-500" size={28} />
+          <h2 className="text-3xl font-bold text-slate-100">4. Reality Check: Nhận Diện Cạm Bẫy</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Red Flags */}
+          <div>
+            <h3 className="text-xl font-semibold text-rose-400 mb-4 flex items-center gap-2"><AlertTriangle size={20}/> Bẫy Vô Hình (Red Flags)</h3>
+            <div className="bg-rose-950/20 border border-rose-900/50 p-6 rounded-2xl space-y-4">
+              <p className="text-slate-300">
+                <strong className="text-rose-400">Ảo tưởng:</strong> "Im lặng khi bị chửi là hèn nhát, mình phải chửi lại ngay bằng một câu 'zinger' thật ngầu để vùi dập nó".
+              </p>
+              <p className="text-slate-400 text-sm border-l-2 border-rose-800 pl-3">
+                <span className="italic">Ví dụ thất bại:</span> Một nhân viên bị sếp mắng mỏ vô cớ, liền cãi nhem nhẻm bật lại ngay tắp lự. Kết quả? Sự việc leo thang từ mức 1 lên mức 10, người nhân viên trông thô lỗ y hệt sếp, và bị đuổi việc không vì lỗi công việc mà vì lỗi thái độ. Nếu im lặng nhìn chằm chằm 7 giây, sếp tự động thấy ngượng.
+              </p>
+            </div>
+          </div>
+
+          {/* Guardrails */}
+          <div>
+            <h3 className="text-xl font-semibold text-emerald-400 mb-4 flex items-center gap-2"><Shield size={20}/> Chốt Chặn Kỷ Luật (Guardrails)</h3>
+            <div className="bg-emerald-950/20 border border-emerald-900/50 p-6 rounded-2xl space-y-4">
+              <p className="text-slate-300">
+                Hãy thiết lập môi trường vật lý để ngăn bạn làm hỏng chuyện khi cảm xúc dâng cao.
+              </p>
+              <ul className="space-y-3 mt-4 text-sm text-slate-400">
+                <li className="flex items-start gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2"></div>
+                  <span><strong>Quy tắc Tắt Nguồn Cảm Xúc:</strong> Không bao giờ tranh luận những vấn đề cốt lõi của mối quan hệ qua Text/Chat. Lên luật "Chỉ cãi nhau bằng mồm, không cãi qua bàn phím".</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2"></div>
+                  <span><strong>Quy định Khung giờ giới nghiêm:</strong> Tuyệt đối từ chối có các "cuộc trò chuyện nghiêm túc" sau 10h đêm. Khi pin năng lượng chỉ còn 10%, bạn không thể tải nổi cuộc nói chuyện 100%.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: ACTIVE RECALL */}
+      <section className="py-16 px-6 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <RefreshCw className="text-amber-400" size={28} />
+            <h2 className="text-3xl font-bold text-slate-100">5. Active Recall: Trạm Ôn Tập</h2>
+          </div>
+          <span className="hidden md:inline-block bg-slate-800 text-slate-400 text-sm px-4 py-2 rounded-full">
+            Flashcards tự lật - Xem nhanh
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {flashcards.map((fc, i) => (
+            <Flashcard key={i} question={fc.q} answer={fc.a} />
+          ))}
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="h-[128px] border-t border-slate-800 bg-slate-900 flex flex-col items-center justify-center px-6 text-center">
+        <p className="text-slate-400 text-xs md:text-sm max-w-2xl mb-4 leading-relaxed">
+          Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </p>
+        <div className="flex items-center gap-6">
+          <a href="https://youtube.com/@vietndonline" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-red-500 transition-colors flex items-center gap-2 text-sm font-medium">
+            <Youtube size={18} /> Youtube
+          </a>
+          <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-slate-100 transition-colors flex items-center gap-2 text-sm font-medium">
+            <Play size={18} /> Tiktok
+          </a>
+          <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-blue-500 transition-colors flex items-center gap-2 text-sm font-medium">
+            <Target size={18} /> Facebook
+          </a>
+        </div>
+      </footer>
+
+    </div>
+  );
+}
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
