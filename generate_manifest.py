@@ -615,7 +615,10 @@ def generate():
             
         filepath = os.path.join(os.getcwd(), f)
         stat = os.stat(filepath)
-        mod_time = datetime.fromtimestamp(stat.st_mtime).isoformat()
+        try:
+            mod_time = datetime.fromtimestamp(stat.st_birthtime).isoformat()
+        except AttributeError:
+            mod_time = datetime.fromtimestamp(stat.st_mtime).isoformat()
         
         with open(filepath, 'r', encoding='utf-8') as file:
             content = file.read()
