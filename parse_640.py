@@ -5,7 +5,7 @@ with open("nghiem_thu_640_posters.html", "r") as f:
     html = f.read()
 
 # Find all blocks like:
-# <img src="./https://media.fedu.vn/k_covers/poster_351_co_hau_gai.webp" loading="lazy" alt="Star Trek Picard" onclick="toggleError(585)">
+# <img src="https://media.fedu.vn/k_covers/poster_351_co_hau_gai.webp" loading="lazy" alt="Star Trek Picard" onclick="toggleError(585)">
 # <div id="prompt-data-585" style="display:none;">...</div>
 
 img_pattern = re.compile(r'<img src="(.*?)" loading="lazy" alt="(.*?)" onclick="toggleError\((\d+)\)">.*?<div id="prompt-data-\3" style="display:none;">(.*?)</div>', re.DOTALL)

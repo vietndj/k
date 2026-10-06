@@ -44,7 +44,7 @@ with open(manifest_path, "r", encoding="utf-8") as f:
 # Replace the lines in cover_mapping
 for html_file, new_url in updates.items():
     # regex to find the exact line in cover_mapping
-    # e.g. "ai-changed...html": "./https://media.fedu.vn/k_covers/poster_61.webp",
+    # e.g. "ai-changed...html": "https://media.fedu.vn/k_covers/poster_61.webp",
     pattern = r'("' + re.escape(html_file) + r'"\s*:\s*)"([^"]+)"'
     content = re.sub(pattern, r'\g<1>"' + new_url + '"', content)
 

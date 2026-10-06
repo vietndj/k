@@ -32,7 +32,7 @@ for item in batch:
     dest_path = os.path.join(covers_dir, f"{image_name}.jpg")
     shutil.copy2(latest_img, dest_path)
     
-    mapping[html_file] = f"./https://media.fedu.vn/k_covers/{image_name}.webp"
+    mapping[html_file] = f"https://media.fedu.vn/k_covers/{image_name}.webp"
 
 with open('/Users/vietmac/Documents/CODE/k/temp_mapping.json', 'w') as f:
     json.dump(mapping, f, indent=4)
