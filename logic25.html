@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Mã Nguồn Vận Hành Bậc Cao</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='38' letter-spacing='-2px' fill='%2310B981'%3E25%3C/text%3E%3C/svg%3E">
+<style>
+    /* BẢNG MÀU SLATE GRAYSCALE SIÊU SẠCH (INKDOC) */
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text', Georgia, serif;
+      --font-display-long: 'Tiempos Text', Georgia, serif;
+      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    @font-face {
+      font-family: 'FD Aeonik Extended'; 
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+           local('FD Aeonik Extended Bold');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf') format('truetype'),
+           local('FD Aeonik Regular');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+           local('FD Aeonik SemiBold');
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      font-weight: 500;
+      font-style: italic;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'),
+           local('Tiempos Text Regular');
+      font-weight: 400;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.3; }
+    h1 {
+      font-family: var(--font-display-short);
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(28px, 4vw, 42px);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    h1.is-long { font-family: var(--font-display-long); font-size: clamp(24px, 3vw, 36px); }
+    h1.is-short { font-family: var(--font-display-short); }
+    
+    h2 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 22px;
+      margin: 48px 0 20px;
+    }
+    h3 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 18px;
+      margin: 32px 0 16px;
+    }
+
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 24px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 24px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    
+    blockquote {
+      border-left: 3px solid var(--ink-text);
+      padding-left: 24px;
+      margin: 32px 0;
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+
+    /* LAYOUT SKELETON */
+    .ink-sidebar {
+      width: 280px;
+      background: var(--ink-sidebar);
+      border-right: 1px solid var(--ink-border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 32px 24px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .ink-main-wrapper {
+      flex-grow: 1;
+      padding: 60px 48px 120px;
+      display: flex;
+      justify-content: center;
+    }
+    .ink-content {
+      width: 100%;
+      max-width: 740px; /* Tiêu chuẩn đọc sách */
+    }
+
+    /* SIDEBAR TOC */
+    .ink-brand {
+      font-family: var(--font-display-long);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-text);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+      letter-spacing: 0.5px;
+    }
+    .ink-toc-title {
+      font-family: var(--font-display-long);
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--ink-muted);
+      
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link {
+      font-family: var(--font-display-long);
+      font-size: 14px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      line-height: 1.4;
+      transition: background 0s, color 0s;
+    }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active {
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--ink-border);
+    }
+    .ink-toc-nested { padding-left: 16px; margin-top: 4px; font-size: 13px; }
+    
+    /* MODE 2: DIALOGUE SPECIFIC STYLES */
+    .ink-mode-dialogue .dialogue-turn {
+      margin-bottom: 48px;
+    }
+    .ink-mode-dialogue .dialogue-prompt {
+      background: var(--ink-sidebar);
+      padding: 24px;
+      border-radius: 12px;
+      font-family: var(--font-display-long);
+      font-size: 17px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--ink-text);
+      margin-bottom: 24px;
+      border: 1px solid var(--ink-border);
+      line-height: 1.6;
+    }
+    .ink-mode-dialogue .dialogue-response {
+      padding-left: 12px;
+      border-left: 2px solid var(--ink-border);
+    }
+
+    /* META INFO */
+    .ink-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display-long);
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .ink-badge {
+      font-weight: 600;
+      color: var(--ink-text);
+      background: var(--ink-hover);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--ink-border);
+    }
+
+    /* MOBILE NAVIGATION */
+    .ink-mobile-nav { display: none; }
+    .ink-overlay { display: none; }
+    .ink-close-btn { display: none; }
+
+    @media (max-width: 992px) {
+      body { flex-direction: column; }
+      
+      /* Mobile Topbar */
+      .ink-mobile-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 24px;
+        background: var(--ink-bg);
+        border-bottom: 1px solid var(--ink-border);
+        position: sticky; top: 0; z-index: 100;
+      }
+      .ink-mobile-nav .ink-brand { margin-bottom: 0; }
+      .ink-menu-btn {
+        background: var(--ink-hover); border: 1px solid var(--ink-border);
+        padding: 6px 12px; border-radius: 4px; font-family: var(--font-display-long);
+        font-size: 12px; font-weight: 600; cursor: pointer;
+      }
+
+      /* Sidebar turns into drawer */
+      .ink-sidebar {
+        position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
+        width: 300px; box-shadow: 24px 0 48px rgba(0,0,0,0.1);
+        transition: left 0s; /* No animation */
+      }
+      .ink-sidebar.is-open { left: 0; }
+      .ink-close-btn {
+        display: block; background: none; border: none; font-size: 20px;
+        color: var(--ink-muted); cursor: pointer;
+      }
+      
+      /* Overlay */
+      .ink-overlay.is-open {
+        display: block; position: fixed; inset: 0; background: rgba(15,23,42,0.4);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999;
+      }
+
+      .ink-main-wrapper { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+<!-- MOBILE NAV -->
+<div class="ink-mobile-nav">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-menu-btn" onclick="document.querySelector('.ink-sidebar').classList.add('is-open'); document.querySelector('.ink-overlay').classList.add('is-open');">MỤC LỤC</button>
+</div>
+<!-- MOBILE OVERLAY -->
+<div class="ink-overlay" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); this.classList.remove('is-open');"></div>
+<!-- SIDEBAR TOC -->
+<aside class="ink-sidebar">
+<div class="ink-sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-close-btn" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); document.querySelector('.ink-overlay').classList.remove('is-open');">✕</button>
+</div>
+<div class="ink-toc-title">MỤC LỤC</div>
+<ul class="ink-toc-list">
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">MÃ NGUỒN VẬN HÀNH</li>
+<li><a class="ink-toc-link" href="#insight9">9. Giao thức Trách nhiệm</a></li>
+<li><a class="ink-toc-link" href="#insight10">10. Đóng băng Tiếng ồn Trắng</a></li>
+<li><a class="ink-toc-link" href="#insight11">11. Máy gia tốc Dữ liệu</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">TỰ ĐỘNG HÓA VÀ THOÁI LUI</li>
+<li><a class="ink-toc-link" href="#insight12">12. Vũ khí hóa AI</a></li>
+<li><a class="ink-toc-link" href="#insight13">13. Kích hoạt Điểm Tự Do</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">LỆNH THỰC THI</li>
+<li><a class="ink-toc-link" href="#insight14">14. Xóa sổ Độ trễ Hành động</a></li>
+</ul>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="ink-main-wrapper">
+<article class="ink-content ink-mode-dialogue">
+<div class="ink-meta">
+<span class="ink-badge">BÁCH KHOA TOÀN THƯ</span>
+<span>Nguyễn Việt</span>
+<span>•</span>
+<span>Thực chiến</span>
+</div>
+
+<p><em>(Hệ thống ghi nhận lệnh "Tiếp tục". Băng thông truyền tải được mở rộng cực đại. Kích hoạt phân tích <strong>Lõi Nâng Cấp</strong> bóc tách kiến trúc vận hành bậc cao từ mã nguồn của John Hu, duy trì tuyệt đối định dạng Hỏi - Đáp tàn khốc, đập nát ngụy biện).</em></p>
+
+<!-- PHẦN 5 -->
+<h1 class="is-short" id="top">5. [MODULE MỞ RỘNG: MÃ NGUỒN VẬN HÀNH BẬC CAO]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight9" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 9: Giao thức Trách nhiệm Cực đoan (Extreme Ownership)<br><br>❓ Câu hỏi: Doanh thu cắm đầu, luồng vận hành đứt gãy, bạn đập bàn chửi rủa nhân viên. Đến bao giờ bạn mới chịu thừa nhận cấu trúc quản trị do chính tay mình tạo ra là một phế phẩm?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Chỉ có kẻ thất bại mới gào thét vào một biến số (nhân sự) và hy vọng toàn bộ phương trình (doanh nghiệp) sẽ thay đổi kết quả.</p>
+<ul>
+    <li><strong>Xóa sổ Nạn nhân hóa:</strong> Lỗi tuyệt đối không nằm ở con người, lỗi nằm ở cấu trúc phân quyền đã dung túng cho lỗ hổng đó xuất hiện. Đừng trách dòng nước chảy tràn, hãy tự xem lại đường ống.</li>
+    <li><strong>Cơ học hóa Quy trình:</strong> Bóc tách toàn bộ luồng giao việc, tự động hóa các khâu dễ sai sót bằng cơ chế nhị phân của phần mềm, và hàn thêm chốt an toàn (failsafe) vào mã nguồn hệ thống. Cắt đứt mọi liên kết cảm xúc phán xét.</li>
+</ul>
+<blockquote>
+<p><em>Nhân viên nào có tội <strong>tình</strong>,</em><br/>
+<em>Lỗi do hệ thống, tạo <strong>hình</strong> chưa sâu.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight10" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 10: Đóng băng Tiếng ồn Trắng (Vocal Minority)<br><br>❓ Câu hỏi: Bị vài kẻ rảnh rỗi trên mạng chê bai, bạn lập tức suy sụp và đình chỉ cập nhật tính năng. Thuật toán vô tri từ bao giờ lại biết tổn thương trước âm thanh của những kẻ không bao giờ móc ví trả tiền?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Cảm xúc tự ái trước số đông là thứ mã độc làm nghẽn băng thông và thiến hoạn động năng tiến hóa của cỗ máy nhanh nhất.</p>
+<ul>
+    <li><strong>Thanh lọc Bộ nhớ đệm:</strong> Trong tệp dữ liệu, 90% sự thù ghét đến từ những kẻ tọc mạch dư thừa thời gian. Hãy tàn nhẫn xóa sổ luồng feedback rác này để giải phóng RAM sinh học.</li>
+    <li><strong>Mở màng lọc Sinh lời:</strong> Chỉ duy trì một cổng kết nối duy nhất với 10% khách hàng lõi - những người dùng tiền thật để bơm máu duy trì huyết quản cỗ máy. Phục vụ nguồn sống, mặc kệ đám đông tự sinh tự diệt.</li>
+</ul>
+<blockquote>
+<p><em>Tiếng ồn nhiễu loạn ngoài <strong>kia</strong>,</em><br/>
+<em>Chỉ chăm khách lõi, phân <strong>chia</strong> rõ ràng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight11" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 11: Máy gia tốc Dữ liệu (Learning Cycles)<br><br>❓ Câu hỏi: Viện cớ "tôi không đủ thông minh" để bào chữa cho dự án sập nguồn, bạn có biết trong thế giới thực chiến, chỉ số IQ chỉ là một đoạn mã vô dụng nếu thiếu đi "Gia tốc Vòng lặp"?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Kẻ nghiệp dư mộng mơ về trí tuệ bẩm sinh. Kiến trúc sư Hệ thống tôn thờ số lượng chu kỳ Thử - Sai (Learning Cycles).</p>
+<ul>
+    <li><strong>Mạng Nơ-ron Thực chiến:</strong> Một hệ thống AI không khôn lên nhờ mã gốc hoàn hảo, mà nhờ hàng triệu vòng lặp tự va đập với dữ liệu lỗi để cập nhật trọng số.</li>
+    <li><strong>Ép xung Tốc độ:</strong> Thay vì ngồi phòng kín vẽ kế hoạch 6 tháng, hãy cưỡng ép hệ thống xuất xưởng bản thô trong 48 giờ. Hứng chịu cú tát của thị trường, nạp dữ liệu lỗi, vá mã nguồn và tung ra lần nữa. Tốc độ dội phản hồi sẽ đè bẹp mọi thiên tài.</li>
+</ul>
+<blockquote>
+<p><em>Ngồi lỳ vẽ mộng viển <strong>vông</strong>,</em><br/>
+<em>Va đập trăm bận, khơi <strong>thông</strong> mạch vàng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<!-- PHẦN 6 -->
+<h1 class="is-short">6. [GIAO THỨC TỰ ĐỘNG HÓA VÀ THOÁI LUI]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight12" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 12: Vũ khí hóa Trí tuệ Nhân tạo (Weaponized AI)<br><br>❓ Câu hỏi: Đám đông đang xoa dịu cái tôi bằng cách dùng AI viết vài bài blog vô thưởng vô phạt. Bạn định mang thứ đồ chơi giải trí đó đi chống lại cỗ máy chém thị phần của John Hu sao?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> AI không phải là cọ vẽ nghệ thuật êm ái, nó là mũi khoan cơ khí tàn nhẫn đâm thủng cơ sở dữ liệu để ép dòng tiền phải chảy ra.</p>
+<ul>
+    <li><strong>Đâm xuyên Lõi Dữ liệu:</strong> Trợ lý Stanley của Stan Store không sinh ra để chat mua vui. Nó được cắm thẳng vào API thanh toán, quét vạn luồng giao dịch để rà quét điểm gãy tâm lý của khách hàng.</li>
+    <li><strong>Tự động hóa Mệnh lệnh:</strong> Ép AI tự động xuất lệnh, đề xuất kịch bản chặn đứng tỷ lệ thoát trang ngay lập tức. Mọi thuật toán không trực tiếp kích hoạt lực kéo doanh thu đều là thuật toán rác cần xóa sổ vĩnh viễn.</li>
+</ul>
+<blockquote>
+<p><em>Viết văn chat chít hoài <strong>công</strong>,</em><br/>
+<em>AI moi số liệu, đả <strong>thông</strong> mạch tiền.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight13" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 13: Kích hoạt Điểm Tự Do (Freedom Point)<br><br>❓ Câu hỏi: Tự mãn vỗ ngực vì vắng mặt bạn một ngày là công ty lập tức loạn cào cào. Từ bao giờ bạn lại kiêu hãnh tự vặn chặt một chiếc gông cùm mạ vàng vào cổ mình như vậy?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Nếu hệ thống sụp đổ khi bạn ngắt kết nối, đó không phải là tài sản. Đó là một công việc làm thuê tự vắt kiệt sinh lực bản thân với rủi ro cao nhất.</p>
+<ul>
+    <li><strong>Tự thiến Quyền lực:</strong> Cảnh giới tối thượng của người thiết kế hệ thống là tự đào thải chính mình khỏi bộ máy. Đóng gói toàn bộ quyết định vi mô thành các hàm SOP (Quy trình chuẩn) lạnh lùng.</li>
+    <li><strong>Trạng thái AFK Vĩnh cửu:</strong> Rút phích cắm ý thức khỏi luồng vận hành để bánh răng tự động khớp nối bằng ma sát vật lý. Một hệ thống vĩ đại phải tiếp tục cày cuốc sinh lời ngay cả khi chủ nhân đã AFK (rời bàn phím).</li>
+</ul>
+<blockquote>
+<p><em>Gồng mình gánh vác thâu <strong>đêm</strong>,</em><br/>
+<em>Rút ra hệ thống, lại <strong>thêm</strong> vững vàng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<!-- PHẦN 7 -->
+<h1 class="is-short">7. [LỆNH THỰC THI CUỐI CÙNG]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight14" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 14: Xóa sổ Độ trễ Hành động<br><br>❓ Câu hỏi: Đã nạp đủ toàn bộ chuỗi mã nguồn tàn khốc này vào bộ nhớ, bạn định bấm lưu bài viết rồi ngày mai lặp lại vòng lặp hèn mọn cũ, hay thực sự dám đập nát sức ỳ để khởi chạy cơ năng sinh tồn?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Mọi bản thiết kế vĩ mô nhất cũng hóa thành giấy lộn nếu vắng bóng lực nén vật lý (sự thực thi). Đừng há miệng chờ đợi động lực, vì cảm hứng là liều thuốc an thần của đám đông yếu đuối.</p>
+<ul>
+    <li><strong>Cách ly Không gian:</strong> Đóng tab trình duyệt này lại. Rút cáp mạng. Khóa điện thoại ở không gian khác.</li>
+    <li><strong>Cưỡng chế Xuất lệnh:</strong> Cài đồng hồ đếm ngược 90 phút và gõ xuống những dòng mã, hoặc lắp ráp mô hình đầu tiên. Thuật toán của vũ trụ không phân bổ tài nguyên cho kẻ mộng mơ, nó chỉ nạp năng lượng cho những cỗ máy chịu tàn nhẫn lăn bánh.</li>
+</ul>
+<blockquote>
+<p><em>Đọc xong cất tủ làm <strong>ngơ</strong>,</em><br/>
+<em>Muôn đời kiếp bọ, bơ <strong>vơ</strong> bọt bèo.</em></p>
+</blockquote>
+</div>
+</div>
+
+</article>
+</main>
+<script>
+  // Chống nhảy nhót (Zero-animation scroll)
+  document.querySelectorAll('.ink-toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if(target) {
+        window.scrollTo({
+          top: target.offsetTop - 40,
+          behavior: 'auto'
+        });
+        
+        document.querySelectorAll('.ink-toc-link').forEach(l => l.classList.remove('is-active'));
+        this.classList.add('is-active');
+        
+        // Đóng mobile menu
+        document.querySelector('.ink-sidebar').classList.remove('is-open');
+        document.querySelector('.ink-overlay').classList.remove('is-open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
