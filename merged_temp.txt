@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Mã Nguồn Vận Hành Bậc Cao</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='38' letter-spacing='-2px' fill='%2310B981'%3E25%3C/text%3E%3C/svg%3E">
+<style>
+    /* BẢNG MÀU SLATE GRAYSCALE SIÊU SẠCH (INKDOC) */
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text', Georgia, serif;
+      --font-display-long: 'Tiempos Text', Georgia, serif;
+      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    @font-face {
+      font-family: 'FD Aeonik Extended'; 
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+           local('FD Aeonik Extended Bold');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf') format('truetype'),
+           local('FD Aeonik Regular');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+           local('FD Aeonik SemiBold');
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      font-weight: 500;
+      font-style: italic;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'),
+           local('Tiempos Text Regular');
+      font-weight: 400;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.3; }
+    h1 {
+      font-family: var(--font-display-short);
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(28px, 4vw, 42px);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    h1.is-long { font-family: var(--font-display-long); font-size: clamp(24px, 3vw, 36px); }
+    h1.is-short { font-family: var(--font-display-short); }
+    
+    h2 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 22px;
+      margin: 48px 0 20px;
+    }
+    h3 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 18px;
+      margin: 32px 0 16px;
+    }
+
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 24px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 24px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    
+    blockquote {
+      border-left: 3px solid var(--ink-text);
+      padding-left: 24px;
+      margin: 32px 0;
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+
+    /* LAYOUT SKELETON */
+    .ink-sidebar {
+      width: 280px;
+      background: var(--ink-sidebar);
+      border-right: 1px solid var(--ink-border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 32px 24px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .ink-main-wrapper {
+      flex-grow: 1;
+      padding: 60px 48px 120px;
+      display: flex;
+      justify-content: center;
+    }
+    .ink-content {
+      width: 100%;
+      max-width: 740px; /* Tiêu chuẩn đọc sách */
+    }
+
+    /* SIDEBAR TOC */
+    .ink-brand {
+      font-family: var(--font-display-long);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-text);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+      letter-spacing: 0.5px;
+    }
+    .ink-toc-title {
+      font-family: var(--font-display-long);
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--ink-muted);
+      
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link {
+      font-family: var(--font-display-long);
+      font-size: 14px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      line-height: 1.4;
+      transition: background 0s, color 0s;
+    }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active {
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--ink-border);
+    }
+    .ink-toc-nested { padding-left: 16px; margin-top: 4px; font-size: 13px; }
+    
+    /* MODE 2: DIALOGUE SPECIFIC STYLES */
+    .ink-mode-dialogue .dialogue-turn {
+      margin-bottom: 48px;
+    }
+    .ink-mode-dialogue .dialogue-prompt {
+      background: var(--ink-sidebar);
+      padding: 24px;
+      border-radius: 12px;
+      font-family: var(--font-display-long);
+      font-size: 17px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--ink-text);
+      margin-bottom: 24px;
+      border: 1px solid var(--ink-border);
+      line-height: 1.6;
+    }
+    .ink-mode-dialogue .dialogue-response {
+      padding-left: 12px;
+      border-left: 2px solid var(--ink-border);
+    }
+
+    /* META INFO */
+    .ink-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display-long);
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .ink-badge {
+      font-weight: 600;
+      color: var(--ink-text);
+      background: var(--ink-hover);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--ink-border);
+    }
+
+    /* MOBILE NAVIGATION */
+    .ink-mobile-nav { display: none; }
+    .ink-overlay { display: none; }
+    .ink-close-btn { display: none; }
+
+    @media (max-width: 992px) {
+      body { flex-direction: column; }
+      
+      /* Mobile Topbar */
+      .ink-mobile-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 24px;
+        background: var(--ink-bg);
+        border-bottom: 1px solid var(--ink-border);
+        position: sticky; top: 0; z-index: 100;
+      }
+      .ink-mobile-nav .ink-brand { margin-bottom: 0; }
+      .ink-menu-btn {
+        background: var(--ink-hover); border: 1px solid var(--ink-border);
+        padding: 6px 12px; border-radius: 4px; font-family: var(--font-display-long);
+        font-size: 12px; font-weight: 600; cursor: pointer;
+      }
+
+      /* Sidebar turns into drawer */
+      .ink-sidebar {
+        position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
+        width: 300px; box-shadow: 24px 0 48px rgba(0,0,0,0.1);
+        transition: left 0s; /* No animation */
+      }
+      .ink-sidebar.is-open { left: 0; }
+      .ink-close-btn {
+        display: block; background: none; border: none; font-size: 20px;
+        color: var(--ink-muted); cursor: pointer;
+      }
+      
+      /* Overlay */
+      .ink-overlay.is-open {
+        display: block; position: fixed; inset: 0; background: rgba(15,23,42,0.4);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999;
+      }
+
+      .ink-main-wrapper { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+<!-- MOBILE NAV -->
+<div class="ink-mobile-nav">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-menu-btn" onclick="document.querySelector('.ink-sidebar').classList.add('is-open'); document.querySelector('.ink-overlay').classList.add('is-open');">MỤC LỤC</button>
+</div>
+<!-- MOBILE OVERLAY -->
+<div class="ink-overlay" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); this.classList.remove('is-open');"></div>
+<!-- SIDEBAR TOC -->
+<aside class="ink-sidebar">
+<div class="ink-sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-close-btn" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); document.querySelector('.ink-overlay').classList.remove('is-open');">✕</button>
+</div>
+<div class="ink-toc-title">MỤC LỤC</div>
+<ul class="ink-toc-list">
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">MÃ NGUỒN VẬN HÀNH</li>
+<li><a class="ink-toc-link" href="#insight9">9. Giao thức Trách nhiệm</a></li>
+<li><a class="ink-toc-link" href="#insight10">10. Đóng băng Tiếng ồn Trắng</a></li>
+<li><a class="ink-toc-link" href="#insight11">11. Máy gia tốc Dữ liệu</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">TỰ ĐỘNG HÓA VÀ THOÁI LUI</li>
+<li><a class="ink-toc-link" href="#insight12">12. Vũ khí hóa AI</a></li>
+<li><a class="ink-toc-link" href="#insight13">13. Kích hoạt Điểm Tự Do</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">LỆNH THỰC THI</li>
+<li><a class="ink-toc-link" href="#insight14">14. Xóa sổ Độ trễ Hành động</a></li>
+</ul>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="ink-main-wrapper">
+<article class="ink-content ink-mode-dialogue">
+<div class="ink-meta">
+<span class="ink-badge">BÁCH KHOA TOÀN THƯ</span>
+<span>Nguyễn Việt</span>
+<span>•</span>
+<span>Thực chiến</span>
+</div>
+
+<p><em>(Hệ thống ghi nhận lệnh "Tiếp tục". Băng thông truyền tải được mở rộng cực đại. Kích hoạt phân tích <strong>Lõi Nâng Cấp</strong> bóc tách kiến trúc vận hành bậc cao từ mã nguồn của John Hu, duy trì tuyệt đối định dạng Hỏi - Đáp tàn khốc, đập nát ngụy biện).</em></p>
+
+<!-- PHẦN 5 -->
+<h1 class="is-short" id="top">5. [MODULE MỞ RỘNG: MÃ NGUỒN VẬN HÀNH BẬC CAO]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight9" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 9: Giao thức Trách nhiệm Cực đoan (Extreme Ownership)<br><br>❓ Câu hỏi: Doanh thu cắm đầu, luồng vận hành đứt gãy, bạn đập bàn chửi rủa nhân viên. Đến bao giờ bạn mới chịu thừa nhận cấu trúc quản trị do chính tay mình tạo ra là một phế phẩm?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Chỉ có kẻ thất bại mới gào thét vào một biến số (nhân sự) và hy vọng toàn bộ phương trình (doanh nghiệp) sẽ thay đổi kết quả.</p>
+<ul>
+    <li><strong>Xóa sổ Nạn nhân hóa:</strong> Lỗi tuyệt đối không nằm ở con người, lỗi nằm ở cấu trúc phân quyền đã dung túng cho lỗ hổng đó xuất hiện. Đừng trách dòng nước chảy tràn, hãy tự xem lại đường ống.</li>
+    <li><strong>Cơ học hóa Quy trình:</strong> Bóc tách toàn bộ luồng giao việc, tự động hóa các khâu dễ sai sót bằng cơ chế nhị phân của phần mềm, và hàn thêm chốt an toàn (failsafe) vào mã nguồn hệ thống. Cắt đứt mọi liên kết cảm xúc phán xét.</li>
+</ul>
+<blockquote>
+<p><em>Nhân viên nào có tội <strong>tình</strong>,</em><br/>
+<em>Lỗi do hệ thống, tạo <strong>hình</strong> chưa sâu.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight10" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 10: Đóng băng Tiếng ồn Trắng (Vocal Minority)<br><br>❓ Câu hỏi: Bị vài kẻ rảnh rỗi trên mạng chê bai, bạn lập tức suy sụp và đình chỉ cập nhật tính năng. Thuật toán vô tri từ bao giờ lại biết tổn thương trước âm thanh của những kẻ không bao giờ móc ví trả tiền?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Cảm xúc tự ái trước số đông là thứ mã độc làm nghẽn băng thông và thiến hoạn động năng tiến hóa của cỗ máy nhanh nhất.</p>
+<ul>
+    <li><strong>Thanh lọc Bộ nhớ đệm:</strong> Trong tệp dữ liệu, 90% sự thù ghét đến từ những kẻ tọc mạch dư thừa thời gian. Hãy tàn nhẫn xóa sổ luồng feedback rác này để giải phóng RAM sinh học.</li>
+    <li><strong>Mở màng lọc Sinh lời:</strong> Chỉ duy trì một cổng kết nối duy nhất với 10% khách hàng lõi - những người dùng tiền thật để bơm máu duy trì huyết quản cỗ máy. Phục vụ nguồn sống, mặc kệ đám đông tự sinh tự diệt.</li>
+</ul>
+<blockquote>
+<p><em>Tiếng ồn nhiễu loạn ngoài <strong>kia</strong>,</em><br/>
+<em>Chỉ chăm khách lõi, phân <strong>chia</strong> rõ ràng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight11" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 11: Máy gia tốc Dữ liệu (Learning Cycles)<br><br>❓ Câu hỏi: Viện cớ "tôi không đủ thông minh" để bào chữa cho dự án sập nguồn, bạn có biết trong thế giới thực chiến, chỉ số IQ chỉ là một đoạn mã vô dụng nếu thiếu đi "Gia tốc Vòng lặp"?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Kẻ nghiệp dư mộng mơ về trí tuệ bẩm sinh. Kiến trúc sư Hệ thống tôn thờ số lượng chu kỳ Thử - Sai (Learning Cycles).</p>
+<ul>
+    <li><strong>Mạng Nơ-ron Thực chiến:</strong> Một hệ thống AI không khôn lên nhờ mã gốc hoàn hảo, mà nhờ hàng triệu vòng lặp tự va đập với dữ liệu lỗi để cập nhật trọng số.</li>
+    <li><strong>Ép xung Tốc độ:</strong> Thay vì ngồi phòng kín vẽ kế hoạch 6 tháng, hãy cưỡng ép hệ thống xuất xưởng bản thô trong 48 giờ. Hứng chịu cú tát của thị trường, nạp dữ liệu lỗi, vá mã nguồn và tung ra lần nữa. Tốc độ dội phản hồi sẽ đè bẹp mọi thiên tài.</li>
+</ul>
+<blockquote>
+<p><em>Ngồi lỳ vẽ mộng viển <strong>vông</strong>,</em><br/>
+<em>Va đập trăm bận, khơi <strong>thông</strong> mạch vàng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<!-- PHẦN 6 -->
+<h1 class="is-short">6. [GIAO THỨC TỰ ĐỘNG HÓA VÀ THOÁI LUI]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight12" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 12: Vũ khí hóa Trí tuệ Nhân tạo (Weaponized AI)<br><br>❓ Câu hỏi: Đám đông đang xoa dịu cái tôi bằng cách dùng AI viết vài bài blog vô thưởng vô phạt. Bạn định mang thứ đồ chơi giải trí đó đi chống lại cỗ máy chém thị phần của John Hu sao?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> AI không phải là cọ vẽ nghệ thuật êm ái, nó là mũi khoan cơ khí tàn nhẫn đâm thủng cơ sở dữ liệu để ép dòng tiền phải chảy ra.</p>
+<ul>
+    <li><strong>Đâm xuyên Lõi Dữ liệu:</strong> Trợ lý Stanley của Stan Store không sinh ra để chat mua vui. Nó được cắm thẳng vào API thanh toán, quét vạn luồng giao dịch để rà quét điểm gãy tâm lý của khách hàng.</li>
+    <li><strong>Tự động hóa Mệnh lệnh:</strong> Ép AI tự động xuất lệnh, đề xuất kịch bản chặn đứng tỷ lệ thoát trang ngay lập tức. Mọi thuật toán không trực tiếp kích hoạt lực kéo doanh thu đều là thuật toán rác cần xóa sổ vĩnh viễn.</li>
+</ul>
+<blockquote>
+<p><em>Viết văn chat chít hoài <strong>công</strong>,</em><br/>
+<em>AI moi số liệu, đả <strong>thông</strong> mạch tiền.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight13" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 13: Kích hoạt Điểm Tự Do (Freedom Point)<br><br>❓ Câu hỏi: Tự mãn vỗ ngực vì vắng mặt bạn một ngày là công ty lập tức loạn cào cào. Từ bao giờ bạn lại kiêu hãnh tự vặn chặt một chiếc gông cùm mạ vàng vào cổ mình như vậy?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Nếu hệ thống sụp đổ khi bạn ngắt kết nối, đó không phải là tài sản. Đó là một công việc làm thuê tự vắt kiệt sinh lực bản thân với rủi ro cao nhất.</p>
+<ul>
+    <li><strong>Tự thiến Quyền lực:</strong> Cảnh giới tối thượng của người thiết kế hệ thống là tự đào thải chính mình khỏi bộ máy. Đóng gói toàn bộ quyết định vi mô thành các hàm SOP (Quy trình chuẩn) lạnh lùng.</li>
+    <li><strong>Trạng thái AFK Vĩnh cửu:</strong> Rút phích cắm ý thức khỏi luồng vận hành để bánh răng tự động khớp nối bằng ma sát vật lý. Một hệ thống vĩ đại phải tiếp tục cày cuốc sinh lời ngay cả khi chủ nhân đã AFK (rời bàn phím).</li>
+</ul>
+<blockquote>
+<p><em>Gồng mình gánh vác thâu <strong>đêm</strong>,</em><br/>
+<em>Rút ra hệ thống, lại <strong>thêm</strong> vững vàng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<!-- PHẦN 7 -->
+<h1 class="is-short">7. [LỆNH THỰC THI CUỐI CÙNG]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight14" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 14: Xóa sổ Độ trễ Hành động<br><br>❓ Câu hỏi: Đã nạp đủ toàn bộ chuỗi mã nguồn tàn khốc này vào bộ nhớ, bạn định bấm lưu bài viết rồi ngày mai lặp lại vòng lặp hèn mọn cũ, hay thực sự dám đập nát sức ỳ để khởi chạy cơ năng sinh tồn?</h2>
+<div class="dialogue-response">
+<p><strong>Đáp án:</strong> Mọi bản thiết kế vĩ mô nhất cũng hóa thành giấy lộn nếu vắng bóng lực nén vật lý (sự thực thi). Đừng há miệng chờ đợi động lực, vì cảm hứng là liều thuốc an thần của đám đông yếu đuối.</p>
+<ul>
+    <li><strong>Cách ly Không gian:</strong> Đóng tab trình duyệt này lại. Rút cáp mạng. Khóa điện thoại ở không gian khác.</li>
+    <li><strong>Cưỡng chế Xuất lệnh:</strong> Cài đồng hồ đếm ngược 90 phút và gõ xuống những dòng mã, hoặc lắp ráp mô hình đầu tiên. Thuật toán của vũ trụ không phân bổ tài nguyên cho kẻ mộng mơ, nó chỉ nạp năng lượng cho những cỗ máy chịu tàn nhẫn lăn bánh.</li>
+</ul>
+<blockquote>
+<p><em>Đọc xong cất tủ làm <strong>ngơ</strong>,</em><br/>
+<em>Muôn đời kiếp bọ, bơ <strong>vơ</strong> bọt bèo.</em></p>
+</blockquote>
+</div>
+</div>
+
+</article>
+</main>
+<script>
+  // Chống nhảy nhót (Zero-animation scroll)
+  document.querySelectorAll('.ink-toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if(target) {
+        window.scrollTo({
+          top: target.offsetTop - 40,
+          behavior: 'auto'
+        });
+        
+        document.querySelectorAll('.ink-toc-link').forEach(l => l.classList.remove('is-active'));
+        this.classList.add('is-active');
+        
+        // Đóng mobile menu
+        document.querySelector('.ink-sidebar').classList.remove('is-open');
+        document.querySelector('.ink-overlay').classList.remove('is-open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Bản Chất Hệ Thống AI Agent</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='38' letter-spacing='-2px' fill='%2310B981'%3E26%3C/text%3E%3C/svg%3E">
+<style>
+    /* BẢNG MÀU SLATE GRAYSCALE SIÊU SẠCH (INKDOC) */
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text', Georgia, serif;
+      --font-display-long: 'Tiempos Text', Georgia, serif;
+      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    @font-face {
+      font-family: 'FD Aeonik Extended'; 
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+           local('FD Aeonik Extended Bold');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf') format('truetype'),
+           local('FD Aeonik Regular');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+           local('FD Aeonik SemiBold');
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      font-weight: 500;
+      font-style: italic;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'),
+           local('Tiempos Text Regular');
+      font-weight: 400;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.3; }
+    h1 {
+      font-family: var(--font-display-short);
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(28px, 4vw, 42px);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    h1.is-long { font-family: var(--font-display-long); font-size: clamp(24px, 3vw, 36px); }
+    h1.is-short { font-family: var(--font-display-short); }
+    
+    h2 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 22px;
+      margin: 48px 0 20px;
+    }
+    h3 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 18px;
+      margin: 32px 0 16px;
+    }
+
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 24px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 24px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    
+    blockquote {
+      border-left: 3px solid var(--ink-text);
+      padding-left: 24px;
+      margin: 32px 0;
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+
+    /* LAYOUT SKELETON */
+    .ink-sidebar {
+      width: 280px;
+      background: var(--ink-sidebar);
+      border-right: 1px solid var(--ink-border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 32px 24px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .ink-main-wrapper {
+      flex-grow: 1;
+      padding: 60px 48px 120px;
+      display: flex;
+      justify-content: center;
+    }
+    .ink-content {
+      width: 100%;
+      max-width: 740px; /* Tiêu chuẩn đọc sách */
+    }
+
+    /* SIDEBAR TOC */
+    .ink-brand {
+      font-family: var(--font-display-long);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-text);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+      letter-spacing: 0.5px;
+    }
+    .ink-toc-title {
+      font-family: var(--font-display-long);
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--ink-muted);
+      
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link {
+      font-family: var(--font-display-long);
+      font-size: 14px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      line-height: 1.4;
+      transition: background 0s, color 0s;
+    }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active {
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--ink-border);
+    }
+    .ink-toc-nested { padding-left: 16px; margin-top: 4px; font-size: 13px; }
+    
+    /* MODE 2: DIALOGUE SPECIFIC STYLES */
+    .ink-mode-dialogue .dialogue-turn {
+      margin-bottom: 48px;
+    }
+    .ink-mode-dialogue .dialogue-prompt {
+      background: var(--ink-sidebar);
+      padding: 24px;
+      border-radius: 12px;
+      font-family: var(--font-display-long);
+      font-size: 17px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--ink-text);
+      margin-bottom: 24px;
+      border: 1px solid var(--ink-border);
+      line-height: 1.6;
+    }
+    .ink-mode-dialogue .dialogue-response {
+      padding-left: 12px;
+      border-left: 2px solid var(--ink-border);
+    }
+
+    /* META INFO */
+    .ink-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display-long);
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .ink-badge {
+      font-weight: 600;
+      color: var(--ink-text);
+      background: var(--ink-hover);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--ink-border);
+    }
+
+    /* MOBILE NAVIGATION */
+    .ink-mobile-nav { display: none; }
+    .ink-overlay { display: none; }
+    .ink-close-btn { display: none; }
+
+    @media (max-width: 992px) {
+      body { flex-direction: column; }
+      
+      /* Mobile Topbar */
+      .ink-mobile-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 24px;
+        background: var(--ink-bg);
+        border-bottom: 1px solid var(--ink-border);
+        position: sticky; top: 0; z-index: 100;
+      }
+      .ink-mobile-nav .ink-brand { margin-bottom: 0; }
+      .ink-menu-btn {
+        background: var(--ink-hover); border: 1px solid var(--ink-border);
+        padding: 6px 12px; border-radius: 4px; font-family: var(--font-display-long);
+        font-size: 12px; font-weight: 600; cursor: pointer;
+      }
+
+      /* Sidebar turns into drawer */
+      .ink-sidebar {
+        position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
+        width: 300px; box-shadow: 24px 0 48px rgba(0,0,0,0.1);
+        transition: left 0s; /* No animation */
+      }
+      .ink-sidebar.is-open { left: 0; }
+      .ink-close-btn {
+        display: block; background: none; border: none; font-size: 20px;
+        color: var(--ink-muted); cursor: pointer;
+      }
+      
+      /* Overlay */
+      .ink-overlay.is-open {
+        display: block; position: fixed; inset: 0; background: rgba(15,23,42,0.4);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999;
+      }
+
+      .ink-main-wrapper { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+<!-- MOBILE NAV -->
+<div class="ink-mobile-nav">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-menu-btn" onclick="document.querySelector('.ink-sidebar').classList.add('is-open'); document.querySelector('.ink-overlay').classList.add('is-open');">MỤC LỤC</button>
+</div>
+<!-- MOBILE OVERLAY -->
+<div class="ink-overlay" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); this.classList.remove('is-open');"></div>
+<!-- SIDEBAR TOC -->
+<aside class="ink-sidebar">
+<div class="ink-sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-close-btn" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); document.querySelector('.ink-overlay').classList.remove('is-open');">✕</button>
+</div>
+<div class="ink-toc-title">MỤC LỤC</div>
+<ul class="ink-toc-list">
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">TỔNG QUAN</li>
+<li><a class="ink-toc-link" href="#he-thong-hoa">Hệ thống hóa yêu cầu</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">CHUỖI Q&A BÓC TRẦN</li>
+<li><a class="ink-toc-link" href="#q1">Q1. Từ điển sống hay cỗ máy?</a></li>
+<li><a class="ink-toc-link" href="#q2">Q2. Bài toán phân quyền</a></li>
+<li><a class="ink-toc-link" href="#q3">Q3. Môi trường vật lý</a></li>
+<li><a class="ink-toc-link" href="#q4">Q4. Data Game</a></li>
+</ul>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="ink-main-wrapper">
+<article class="ink-content ink-mode-dialogue">
+<div class="ink-meta">
+<span class="ink-badge">BÁCH KHOA TOÀN THƯ</span>
+<span>Nguyễn Việt</span>
+<span>•</span>
+<span>Thực chiến</span>
+</div>
+
+<h1 class="is-short" id="he-thong-hoa">HỆ THỐNG HÓA YÊU CẦU CỦA NGƯỜI DÙNG</h1>
+<p>Bạn đã yêu cầu tôi đọc dữ liệu về AI Agent (Meta Muse) và phân tích dưới góc nhìn của một Kiến trúc sư Hệ thống: bóc trần lầm tưởng của đám đông, phân tích nguyên lý phân quyền bảo mật, thiết kế môi trường và quản trị cảm xúc. Ở lượt lệnh này, bạn tiếp tục yêu cầu tôi tóm tắt lại chỉ thị của bạn, sau đó chuyển đổi toàn bộ cốt lõi của phân tích trước đó thành định dạng Hỏi - Đáp (Q&A) mang tính sát thương cao, đập tan ảo tưởng, câu trả lời sắc bén và chốt bằng thơ lục bát chuẩn vần luật.</p>
+<p><em>(Quá trình suy luận ngầm và trích xuất dữ liệu trung gian đã được lược bỏ để đi thẳng vào hệ thống câu hỏi - đáp theo đúng yêu cầu bảo mật định dạng).</em></p>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<h1 class="is-short" id="chuoi-qa">CHUỖI Q&A BÓC TRẦN BẢN CHẤT HỆ THỐNG</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="q1" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 1: Tại sao đám đông vẫn ngu muội tin rằng AI chỉ là một "từ điển sống" chờ được sai vặt, trong khi chúng đã âm thầm tiến hóa thành những cỗ máy chiếm quyền điều khiển thế giới số?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Trả lời:</strong> Vì họ bị mắc kẹt trong kỷ nguyên của Chatbot thụ động. Bản chất của AI thế hệ mới (như Meta Muse) là Hệ thống Tự trị (Agentic AI). Nó không chờ bạn gõ từng câu lệnh để hầu hạ câu chữ. Nó tự nhận thức mục tiêu, tự lên kế hoạch, tự mở trình duyệt, tự chốt đơn và thao túng môi trường số 24/7 thay bạn.</p>
+<blockquote>
+<p><em>Tưởng rằng máy chỉ đáp <strong>lời</strong>,</em><br/>
+<em>Ngờ đâu hệ thống trọn <strong>đời</strong> quản cai.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="q2" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 2: Giao toàn quyền cho AI thì sợ lộ mật khẩu, đóng sập cửa cấm vận thì tụt hậu. Làm sao để giải bài toán "trao quyền nhưng không trao mạng" trước những hệ thống tự trị này?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Trả lời:</strong> Bằng kiến trúc Zero Trust (Không tin tưởng ai) và Sandbox (Hộp cát). Đừng bao giờ giao chìa khóa gốc (mật khẩu thật) cho AI. Hãy nhốt nó vào một máy chủ ảo độc lập (Secure VM), chỉ cung cấp thẻ tín dụng dùng một lần (Virtual Card) và các Token tạm thời dưới sự giám sát của hệ thống kiểm duyệt. Trái bom có nổ cũng chỉ nổ trong lồng kính.</p>
+<blockquote>
+<p><em>Cấp quyền giữ vững lằn <strong>ranh</strong>,</em><br/>
+<em>Lõi sâu khóa chặt mới <strong>thành</strong> khiên che.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="q3" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 3: Nếu não bộ con người cũng chỉ là một cỗ máy xử lý dữ liệu, tại sao bạn lại dung túng cho nó hoạt động trong một "bãi rác" vật lý đầy rẫy sự xao nhãng?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Trả lời:</strong> Môi trường vật lý quyết định băng thông xử lý của não. Một AI như Muse cần một môi trường ảo (VM) hoàn toàn sạch để không bị nhiễu tác vụ, thì con người cũng cần một không gian đơn nhiệm. Trộn lẫn bàn làm việc với giường ngủ, để điện thoại réo liên tục là hành vi tự sát về mặt năng suất. Cắt đứt xao nhãng vật lý là bước đầu tiên để hack hiệu suất thần kinh.</p>
+<blockquote>
+<p><em>Không gian sạch gọn bao <strong>nhiêu</strong>,</em><br/>
+<em>Tư duy sắc bén mọi <strong>điều</strong> hanh thông.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="q4" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi 4: Tại sao phải đày đọa bản thân và sụp đổ khi gặp thất bại, trong khi dưới góc nhìn của một hệ thống, mọi cú ngã đều chỉ là "Data Game"?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Trả lời:</strong> Vì bạn để cái "Tôi" dính líu quá sâu vào các biến số. Người làm chủ hệ thống không có "nỗi đau thất bại", họ chỉ thấy "lỗi log" (Bug). Một chiến dịch hỏng, một dự án sập chỉ là dữ liệu đầu vào (Input) báo hiệu môi trường thay đổi. Việc của bạn là khách quan hóa rủi ro, tinh chỉnh lại tham số và bấm nút chạy lại hệ thống, tuyệt đối không lấy đó làm thước đo định giá bản thân.</p>
+<blockquote>
+<p><em>Sai lầm là chuỗi da<strong>ta</strong>,</em><br/>
+<em>Tinh chỉnh tham số tiến <strong>xa</strong> mỗi ngày.</em></p>
+</blockquote>
+</div>
+</div>
+
+</article>
+</main>
+<script>
+  // Chống nhảy nhót (Zero-animation scroll)
+  document.querySelectorAll('.ink-toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if(target) {
+        window.scrollTo({
+          top: target.offsetTop - 40,
+          behavior: 'auto'
+        });
+        
+        document.querySelectorAll('.ink-toc-link').forEach(l => l.classList.remove('is-active'));
+        this.classList.add('is-active');
+        
+        // Đóng mobile menu
+        document.querySelector('.ink-sidebar').classList.remove('is-open');
+        document.querySelector('.ink-overlay').classList.remove('is-open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Kiến Trúc Sư Trí Tuệ Hệ Thống</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='38' letter-spacing='-2px' fill='%2310B981'%3E27%3C/text%3E%3C/svg%3E">
+<style>
+    /* BẢNG MÀU SLATE GRAYSCALE SIÊU SẠCH (INKDOC) */
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text', Georgia, serif;
+      --font-display-long: 'Tiempos Text', Georgia, serif;
+      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    @font-face {
+      font-family: 'FD Aeonik Extended'; 
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+           local('FD Aeonik Extended Bold');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf') format('truetype'),
+           local('FD Aeonik Regular');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+           local('FD Aeonik SemiBold');
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      font-weight: 500;
+      font-style: italic;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'),
+           local('Tiempos Text Regular');
+      font-weight: 400;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.3; }
+    h1 {
+      font-family: var(--font-display-short);
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(28px, 4vw, 42px);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    h1.is-long { font-family: var(--font-display-long); font-size: clamp(24px, 3vw, 36px); }
+    h1.is-short { font-family: var(--font-display-short); }
+    
+    h2 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 22px;
+      margin: 48px 0 20px;
+    }
+    h3 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 18px;
+      margin: 32px 0 16px;
+    }
+
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 24px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 24px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    
+    blockquote {
+      border-left: 3px solid var(--ink-text);
+      padding-left: 24px;
+      margin: 32px 0;
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+
+    /* LAYOUT SKELETON */
+    .ink-sidebar {
+      width: 280px;
+      background: var(--ink-sidebar);
+      border-right: 1px solid var(--ink-border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 32px 24px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .ink-main-wrapper {
+      flex-grow: 1;
+      padding: 60px 48px 120px;
+      display: flex;
+      justify-content: center;
+    }
+    .ink-content {
+      width: 100%;
+      max-width: 740px; /* Tiêu chuẩn đọc sách */
+    }
+
+    /* SIDEBAR TOC */
+    .ink-brand {
+      font-family: var(--font-display-long);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-text);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+      letter-spacing: 0.5px;
+    }
+    .ink-toc-title {
+      font-family: var(--font-display-long);
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--ink-muted);
+      
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link {
+      font-family: var(--font-display-long);
+      font-size: 14px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      line-height: 1.4;
+      transition: background 0s, color 0s;
+    }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active {
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--ink-border);
+    }
+    .ink-toc-nested { padding-left: 16px; margin-top: 4px; font-size: 13px; }
+    
+    /* MODE 2: DIALOGUE SPECIFIC STYLES */
+    .ink-mode-dialogue .dialogue-turn {
+      margin-bottom: 48px;
+    }
+    .ink-mode-dialogue .dialogue-prompt {
+      background: var(--ink-sidebar);
+      padding: 24px;
+      border-radius: 12px;
+      font-family: var(--font-display-long);
+      font-size: 17px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--ink-text);
+      margin-bottom: 24px;
+      border: 1px solid var(--ink-border);
+      line-height: 1.6;
+    }
+    .ink-mode-dialogue .dialogue-response {
+      padding-left: 12px;
+      border-left: 2px solid var(--ink-border);
+    }
+
+    /* META INFO */
+    .ink-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display-long);
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .ink-badge {
+      font-weight: 600;
+      color: var(--ink-text);
+      background: var(--ink-hover);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--ink-border);
+    }
+
+    /* MOBILE NAVIGATION */
+    .ink-mobile-nav { display: none; }
+    .ink-overlay { display: none; }
+    .ink-close-btn { display: none; }
+
+    @media (max-width: 992px) {
+      body { flex-direction: column; }
+      
+      /* Mobile Topbar */
+      .ink-mobile-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 24px;
+        background: var(--ink-bg);
+        border-bottom: 1px solid var(--ink-border);
+        position: sticky; top: 0; z-index: 100;
+      }
+      .ink-mobile-nav .ink-brand { margin-bottom: 0; }
+      .ink-menu-btn {
+        background: var(--ink-hover); border: 1px solid var(--ink-border);
+        padding: 6px 12px; border-radius: 4px; font-family: var(--font-display-long);
+        font-size: 12px; font-weight: 600; cursor: pointer;
+      }
+
+      /* Sidebar turns into drawer */
+      .ink-sidebar {
+        position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
+        width: 300px; box-shadow: 24px 0 48px rgba(0,0,0,0.1);
+        transition: left 0s; /* No animation */
+      }
+      .ink-sidebar.is-open { left: 0; }
+      .ink-close-btn {
+        display: block; background: none; border: none; font-size: 20px;
+        color: var(--ink-muted); cursor: pointer;
+      }
+      
+      /* Overlay */
+      .ink-overlay.is-open {
+        display: block; position: fixed; inset: 0; background: rgba(15,23,42,0.4);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999;
+      }
+
+      .ink-main-wrapper { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+<!-- MOBILE NAV -->
+<div class="ink-mobile-nav">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-menu-btn" onclick="document.querySelector('.ink-sidebar').classList.add('is-open'); document.querySelector('.ink-overlay').classList.add('is-open');">MỤC LỤC</button>
+</div>
+<!-- MOBILE OVERLAY -->
+<div class="ink-overlay" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); this.classList.remove('is-open');"></div>
+<!-- SIDEBAR TOC -->
+<aside class="ink-sidebar">
+<div class="ink-sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-close-btn" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); document.querySelector('.ink-overlay').classList.remove('is-open');">✕</button>
+</div>
+<div class="ink-toc-title">MỤC LỤC</div>
+<ul class="ink-toc-list">
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">MỞ ĐẦU</li>
+<li><a class="ink-toc-link" href="#he-thong-hoa">0. Hệ thống hóa chỉ lệnh</a></li>
+<li><a class="ink-toc-link" href="#boc-tran">1. Bóc trần lầm tưởng</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">NGUYÊN LÝ GỐC RỄ</li>
+<li><a class="ink-toc-link" href="#insight1">1. Đuổi hình bắt bóng</a></li>
+<li><a class="ink-toc-link" href="#insight2">2. Cái tôi nuốt chửng</a></li>
+<li><a class="ink-toc-link" href="#insight3">3. Sự lệch pha trưởng thành</a></li>
+<li><a class="ink-toc-link" href="#insight4">4. Ván bài vương quyền</a></li>
+<li><a class="ink-toc-link" href="#insight5">5. Lò rèn thất bại</a></li>
+<li><a class="ink-toc-link" href="#insight6">6. Shabbat Công nghệ</a></li>
+<li><a class="ink-toc-link" href="#insight7">7. Khoảng cách Địa ngục</a></li>
+<li><a class="ink-toc-link" href="#insight8">8. Bàn cờ số phận</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">KẾT CẤU & BẢO TOÀN</li>
+<li><a class="ink-toc-link" href="#khong-gian">3. Thiết kế không gian</a></li>
+<li><a class="ink-toc-link" href="#cam-xuc">4. Bảo toàn cảm xúc</a></li>
+</ul>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="ink-main-wrapper">
+<article class="ink-content ink-mode-dialogue">
+<div class="ink-meta">
+<span class="ink-badge">BÁCH KHOA TOÀN THƯ</span>
+<span>Nguyễn Việt</span>
+<span>•</span>
+<span>Thực chiến</span>
+</div>
+
+<h1 class="is-short" id="he-thong-hoa">0. [HỆ THỐNG HÓA CHỈ LỆNH TỪ NGƯỜI DÙNG]</h1>
+<ul>
+<li><strong>Vai trò & Văn phong:</strong> Đóng vai "Kiến trúc sư Trí tuệ Hệ thống". Giọng văn sắc bén, lạnh lùng, trực diện. CẤM biệt ngữ vĩ mô. CẤM văn phong self-help. 100% Tiếng Việt. KHÔNG in khối suy luận ngầm (chỉ xuất kết quả cuối cùng).</li>
+<li><strong>Quy tắc UI/UX Markdown (BẮT BUỘC):</strong>
+    <ul>
+        <li>Tiêu đề chính dùng H2 (##), tiêu đề Insight dùng H3 (###).</li>
+        <li>Phân tách cuối mỗi mục bằng đường kẻ ngang (---).</li>
+        <li>Các mục phân tích dùng gạch đầu dòng (-) và IN ĐẬM () tên mục con.</li>
+        <li>Trích dẫn và Thơ lục bát BẮT BUỘC bọc trong thẻ Blockquote (&gt;).</li>
+        <li>Luôn cách 1 dòng trắng giữa các ý.</li>
+    </ul>
+</li>
+<li><strong>Nhiệm vụ cốt lõi (Prompt hiện tại):</strong>
+    <ul>
+        <li>Viết lại và hệ thống hóa đầy đủ yêu cầu của người dùng trước khi bắt đầu (chính là phần này).</li>
+        <li>Chuyển đổi toàn bộ nội dung phân tích bản gốc thành định dạng Hỏi - Đáp (Q&A).</li>
+        <li>Các vấn đề cốt lõi phải đặt thành câu hỏi mở, sắc bén, mang tính sát thương gây shock để đập tan lầm tưởng.</li>
+        <li>Câu trả lời cực kỳ ngắn gọn, lạnh lùng, đi thẳng vào bản chất cốt lõi.</li>
+        <li>Kết thúc MỖI câu trả lời bằng 2 câu thơ lục bát, kiểm tra ngầm kỹ luật gieo vần (chữ thứ 6 câu lục vần với chữ thứ 6 câu bát).</li>
+        <li>Nếu thiếu token, thông báo người dùng gõ "Tiếp tục".</li>
+    </ul>
+</li>
+</ul>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<h1 class="is-short" id="boc-tran">1. [BÓC TRẦN LẦM TƯỞNG]</h1>
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi truy vấn: Bạn cày cuốc ngày đêm để kiến tạo một đế chế vĩ đại, hay thực chất chỉ đang hèn nhát mượn định giá tỷ đô để mua băng gạc dán lên hố đen tâm lý rách nát từ thuở ấu thơ?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Định giá doanh nghiệp là biến số cơ học trên bảng cân đối kế toán, không phải là đơn vị tiền tệ để thanh toán vết thương cảm xúc. Bạn vay mượn sự tung hô của đám đông để vá víu một bản ngã vụn vỡ. Hệ thống sập không phải do thị trường tàn nhẫn, mà do nó bị hút cạn bởi khoảng trống tổn thương của chính người lãnh đạo.</p>
+<blockquote>
+<p><em>Mượn tiền vá víu tâm <strong>can</strong>,</em><br/>
+<em>Ngờ đâu hố thẳm muôn <strong>vàn</strong> xót xa.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<h1 class="is-short">2. [NGUYÊN LÝ GỐC RỄ]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight1" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 1: Đuổi hình bắt bóng vật chất<br><br>❓ Câu hỏi truy vấn: Bạn đang vắt kiệt sinh lực để vận hành cỗ máy kinh doanh, hay thực chất đang dùng ngoại vật để hèn nhát cầu xin sự công nhận của thế giới?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Ở cấp độ tế bào, theo đuổi ngoại vật để vá lỗ hổng tâm lý sẽ ép cơ thể kẹt vĩnh viễn trong trạng thái chiến đấu (fight-or-flight), đốt cháy kiệt quệ kho dự trữ ATP. Hãy chặt đứt vòng lặp dopamine ảo này: Doanh thu không có nghĩa vụ phải trả lời cho giá trị nhân phẩm của bạn.</p>
+<blockquote>
+<p><em>Cầu vinh bám víu bên <strong>ngoài</strong>,</em><br/>
+<em>Bên trong rỗng tuếch mệt <strong>nhoài</strong> tấm thân.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight2" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 2: Cái tôi nuốt chửng tầm nhìn<br><br>❓ Câu hỏi truy vấn: Lằn ranh sinh tử nào định đoạt giữa một nhà sáng lập vĩ đại và một kẻ vĩ cuồng bị cái tôi bóp nghẹt khi quỹ đầu tư bơm vào hàng tỷ đô?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Khi cái tôi phình to, khối lượng của nó tạo thành một hố đen vật lý, bóp méo không gian và hút cạn oxy của toàn bộ hệ thống. Tiền của quỹ là đòn bẩy cơ học, không phải thước đo trí tuệ. Bắt buộc phải trả tiền cho một nhóm "Red Team" - những kẻ có nhiệm vụ duy nhất là vả mặt và đập nát tư duy của bạn mỗi ngày.</p>
+<blockquote>
+<p><em>Cái tôi to tát bằng <strong>trời</strong>,</em><br/>
+<em>Trọng lực kéo sập cơ <strong>ngơi</strong> lụi tàn.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight3" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 3: Sự lệch pha trưởng thành<br><br>❓ Câu hỏi truy vấn: Điều gì sẽ xảy ra khi quy quy mô hệ thống nhân bản gấp trăm lần, nhưng não bộ của người lãnh đạo vẫn ngoan cố chạy hệ điều hành bần nông đánh du kích?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Giống như một nhân vật Game được bơm "cheat code" lên cấp tột đỉnh, nhưng chỉ số sinh tồn cơ bản bằng không. Áo quá rộng tất yếu sẽ rách. Cách duy nhất để không bị chính cỗ máy của mình nghiền nát là ngay lập tức tước bỏ quyền ra quyết định vi mô, nhường nó cho những bộ óc có cấu hình phần cứng cao hơn bạn.</p>
+<blockquote>
+<p><em>Áo to khoác thử lên <strong>người</strong>,</em><br/>
+<em>Phần cứng lỗi nhịp nực <strong>cười</strong> bi ai.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight4" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 4: Ván bài vương quyền<br><br>❓ Câu hỏi truy vấn: Bạn định ngây thơ nhai lại điệp khúc "công ty là gia đình" đến bao giờ, trước khi bị chính những cánh tay phải đắc lực nhất hất văng khỏi bàn cờ chính trị?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Quyền lực là năng lượng vật lý, hễ có chênh lệch thế năng tất yếu sinh ra dòng chảy lật đổ. Không có anh em, chỉ có hợp đồng. Phải dùng cấu trúc pháp lý lạnh lùng như mã máy, giữ cổ phần biểu quyết siêu cấp (Super-voting) để khóa chết mọi ngả đường phản trắc.</p>
+<blockquote>
+<p><em>Công ty xưng gọi gia <strong>đình</strong>,</em><br/>
+<em>Đụng vào lợi ích vô <strong>tình</strong> đoạt ngôi.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight5" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 5: Lò rèn thất bại<br><br>❓ Câu hỏi truy vấn: Khi đế chế tỷ đô nổ tung, bạn chọn cách ôm mặt khóc lóc đóng vai nạn nhân, hay máu lạnh dọn dẹp xác chết hệ thống để rèn vũ khí mới?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Thất bại trong thực chiến chỉ là cơ chế ép buộc thu thập Data (Dữ liệu). Bạn mất máu chỉ để hệ thống mở khóa bản đồ cạm bẫy của cấp độ hiện tại. Tắt ngay hạch hạnh nhân cảm xúc, biên dịch những mã lỗi (bug) vừa rồi thành thuật toán phòng thủ vững chắc cho lần khởi tạo tiếp theo.</p>
+<blockquote>
+<p><em>Trăm lần búa nện nát <strong>nhừ</strong>,</em><br/>
+<em>Thu thập dữ liệu loại <strong>trừ</strong> rủi ro.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight6" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 6: Shabbat Công nghệ<br><br>❓ Câu hỏi truy vấn: Làm sao một bộ não có thể sản sinh ra chiến lược vĩ đại, nếu nó đang bị thối rữa từng giây bởi hội chứng FOMO và những xung điện từ thiết bị thông minh?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Phải chặt đứt nguồn cung cấp nhiễu sóng bằng bạo lực vật lý. Giam toàn bộ thiết bị vào hộp kín 24 giờ mỗi tuần là mệnh lệnh sinh học để kích hoạt Autophagy (Tự thực) trong hệ thần kinh. Ép não bộ đối diện với khoảng không tĩnh lặng để dọn sạch rác tư duy.</p>
+<blockquote>
+<p><em>Màn hình nhiễu sóng triền <strong>miên</strong>,</em><br/>
+<em>Tắt đi tĩnh lặng an <strong>nhiên</strong> cõi lòng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight7" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 7: Khoảng cách Địa ngục<br><br>❓ Câu hỏi truy vấn: Địa ngục tàn khốc nhất đời người là gì, nếu không phải là khoảnh khắc lâm chung nhận ra mình đã phản bội tiềm năng vĩ đại chỉ để đổi lấy một đời sống nhàn hạ an toàn?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Sự an toàn giả tạo khiến Động năng (thực tại) và Thế năng (tiềm năng sinh học) bị lệch pha. Ma sát nội sinh này gặm nhấm linh hồn đến phút cuối đời. Không có chốn an toàn. Phải ép bản thân vượt ngưỡng tới mức phá vỡ (Push to Failure) để không nhắm mắt trong sự kinh tởm chính mình.</p>
+<blockquote>
+<p><em>Tiềm năng vốn đã ngất <strong>trời</strong>,</em><br/>
+<em>Sống đời tạm bợ đánh <strong>rơi</strong> ngọc ngà.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight8" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 8: Bàn cờ số phận<br><br>❓ Câu hỏi truy vấn: Tại sao việc chửi rủa số phận hay rên rỉ hai chữ "giá như" lại là minh chứng tàn khốc nhất cho một hệ điều hành tư duy hạ đẳng?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Cuộc đời là một thuật toán sinh số ngẫu nhiên (RNG) trong cây quyết định. Rẽ trái hay rẽ phải, thành công hay sấp mặt đều chung một mục đích duy nhất: Cung cấp điểm kinh nghiệm (EXP). Kẻ mạnh loại bỏ hoàn toàn cảm xúc, đọc nhật ký hệ thống và tính toán ván cược tiếp theo thay vì nhỏ lệ cho những dữ liệu đã quá hạn.</p>
+<blockquote>
+<p><em>Ngã ba rẽ hướng nào <strong>đây</strong>,</em><br/>
+<em>Đều là thuật toán bón <strong>xây</strong> thân mình.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<h1 class="is-short" id="khong-gian">3. [THIẾT KẾ KHÔNG GIAN]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi truy vấn: Không gian làm việc của bạn đang được thiết kế như một lò đào tạo sát thủ chiến lược, hay chỉ là cái miếu thờ êm ái vuốt ve một bản ngã lười biếng và mọng nước?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Môi trường vật lý định dạng trực tiếp mã nguồn não bộ. Ép nhiệt độ 21°C và dùng ánh sáng lạnh cường độ cao để đưa thần kinh giao cảm vào trạng thái sinh tồn. Thiết lập "Hộp đen tĩnh lặng" tuyệt đối không WiFi. Gỡ sạch mọi bằng khen xảo trá, treo thẳng báo cáo lỗ ngay tầm mắt để triệt tiêu vĩnh viễn mầm mống tự mãn.</p>
+<blockquote>
+<p><em>Lạnh lùng xếp đặt không <strong>gian</strong>,</em><br/>
+<em>Ép cho não bộ tính <strong>toan</strong> lạnh lùng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<h1 class="is-short" id="cam-xuc">4. [BẢO TOÀN CẢM XÚC]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi truy vấn: Khi hàng trăm triệu đô bốc hơi vô vọng, bạn để cảm xúc cắn xé nhân phẩm, hay lạnh lùng hạch toán toàn bộ thiệt hại ấy vào "chi phí mua Data"?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Mã hóa mọi thảm họa về hệ nhị phân (0 và 1). Sập hệ thống là lỗi ở điểm tiếp xúc cơ học, tuyệt đối không phải lỗi nhân cách con người. Kích hoạt giao thức cách ly: Hấp thụ tổn thương đúng 24 giờ. Qua vạch đích này, ép não chuyển sang chế độ gỡ lỗi (Debugging). Tiền bốc hơi là hóa đơn thanh toán sòng phẳng cho sự tàn nhẫn của thị trường.</p>
+<blockquote>
+<p><em>Bạc tiền cháy rụi thành <strong>tro</strong>,</em><br/>
+<em>Mua về dữ liệu để <strong>lo</strong> đường dài.</em></p>
+</blockquote>
+</div>
+</div>
+
+</article>
+</main>
+<script>
+  // Chống nhảy nhót (Zero-animation scroll)
+  document.querySelectorAll('.ink-toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if(target) {
+        window.scrollTo({
+          top: target.offsetTop - 40,
+          behavior: 'auto'
+        });
+        
+        document.querySelectorAll('.ink-toc-link').forEach(l => l.classList.remove('is-active'));
+        this.classList.add('is-active');
+        
+        // Đóng mobile menu
+        document.querySelector('.ink-sidebar').classList.remove('is-open');
+        document.querySelector('.ink-overlay').classList.remove('is-open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Mã Lỗi Hệ Thống & Tái Khởi Động</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='38' letter-spacing='-2px' fill='%2310B981'%3E28%3C/text%3E%3C/svg%3E">
+<style>
+    /* BẢNG MÀU SLATE GRAYSCALE SIÊU SẠCH (INKDOC) */
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text', Georgia, serif;
+      --font-display-long: 'Tiempos Text', Georgia, serif;
+      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    @font-face {
+      font-family: 'FD Aeonik Extended'; 
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+           local('FD Aeonik Extended Bold');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf') format('truetype'),
+           local('FD Aeonik Regular');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'FD Aeonik';
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+           local('FD Aeonik SemiBold');
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      font-weight: 500;
+      font-style: italic;
+    }
+    @font-face {
+      font-family: 'Tiempos Text';
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'),
+           local('Tiempos Text Regular');
+      font-weight: 400;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.3; }
+    h1 {
+      font-family: var(--font-display-short);
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(28px, 4vw, 42px);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    h1.is-long { font-family: var(--font-display-long); font-size: clamp(24px, 3vw, 36px); }
+    h1.is-short { font-family: var(--font-display-short); }
+    
+    h2 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 22px;
+      margin: 48px 0 20px;
+    }
+    h3 {
+      font-family: var(--font-display-long);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 18px;
+      margin: 32px 0 16px;
+    }
+
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 24px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 24px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    
+    blockquote {
+      border-left: 3px solid var(--ink-text);
+      padding-left: 24px;
+      margin: 32px 0;
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+
+    /* LAYOUT SKELETON */
+    .ink-sidebar {
+      width: 280px;
+      background: var(--ink-sidebar);
+      border-right: 1px solid var(--ink-border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 32px 24px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .ink-main-wrapper {
+      flex-grow: 1;
+      padding: 60px 48px 120px;
+      display: flex;
+      justify-content: center;
+    }
+    .ink-content {
+      width: 100%;
+      max-width: 740px; /* Tiêu chuẩn đọc sách */
+    }
+
+    /* SIDEBAR TOC */
+    .ink-brand {
+      font-family: var(--font-display-long);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-text);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+      letter-spacing: 0.5px;
+    }
+    .ink-toc-title {
+      font-family: var(--font-display-long);
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--ink-muted);
+      
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link {
+      font-family: var(--font-display-long);
+      font-size: 14px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      line-height: 1.4;
+      transition: background 0s, color 0s;
+    }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active {
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--ink-border);
+    }
+    .ink-toc-nested { padding-left: 16px; margin-top: 4px; font-size: 13px; }
+    
+    /* MODE 2: DIALOGUE SPECIFIC STYLES */
+    .ink-mode-dialogue .dialogue-turn {
+      margin-bottom: 48px;
+    }
+    .ink-mode-dialogue .dialogue-prompt {
+      background: var(--ink-sidebar);
+      padding: 24px;
+      border-radius: 12px;
+      font-family: var(--font-display-long);
+      font-size: 17px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--ink-text);
+      margin-bottom: 24px;
+      border: 1px solid var(--ink-border);
+      line-height: 1.6;
+    }
+    .ink-mode-dialogue .dialogue-response {
+      padding-left: 12px;
+      border-left: 2px solid var(--ink-border);
+    }
+
+    /* META INFO */
+    .ink-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display-long);
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .ink-badge {
+      font-weight: 600;
+      color: var(--ink-text);
+      background: var(--ink-hover);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--ink-border);
+    }
+
+    /* MOBILE NAVIGATION */
+    .ink-mobile-nav { display: none; }
+    .ink-overlay { display: none; }
+    .ink-close-btn { display: none; }
+
+    @media (max-width: 992px) {
+      body { flex-direction: column; }
+      
+      /* Mobile Topbar */
+      .ink-mobile-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 24px;
+        background: var(--ink-bg);
+        border-bottom: 1px solid var(--ink-border);
+        position: sticky; top: 0; z-index: 100;
+      }
+      .ink-mobile-nav .ink-brand { margin-bottom: 0; }
+      .ink-menu-btn {
+        background: var(--ink-hover); border: 1px solid var(--ink-border);
+        padding: 6px 12px; border-radius: 4px; font-family: var(--font-display-long);
+        font-size: 12px; font-weight: 600; cursor: pointer;
+      }
+
+      /* Sidebar turns into drawer */
+      .ink-sidebar {
+        position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
+        width: 300px; box-shadow: 24px 0 48px rgba(0,0,0,0.1);
+        transition: left 0s; /* No animation */
+      }
+      .ink-sidebar.is-open { left: 0; }
+      .ink-close-btn {
+        display: block; background: none; border: none; font-size: 20px;
+        color: var(--ink-muted); cursor: pointer;
+      }
+      
+      /* Overlay */
+      .ink-overlay.is-open {
+        display: block; position: fixed; inset: 0; background: rgba(15,23,42,0.4);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999;
+      }
+
+      .ink-main-wrapper { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+<!-- MOBILE NAV -->
+<div class="ink-mobile-nav">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-menu-btn" onclick="document.querySelector('.ink-sidebar').classList.add('is-open'); document.querySelector('.ink-overlay').classList.add('is-open');">MỤC LỤC</button>
+</div>
+<!-- MOBILE OVERLAY -->
+<div class="ink-overlay" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); this.classList.remove('is-open');"></div>
+<!-- SIDEBAR TOC -->
+<aside class="ink-sidebar">
+<div class="ink-sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+<a class="ink-brand" href="logickenh.html">LOGICKENH</a>
+<button class="ink-close-btn" onclick="document.querySelector('.ink-sidebar').classList.remove('is-open'); document.querySelector('.ink-overlay').classList.remove('is-open');">✕</button>
+</div>
+<div class="ink-toc-title">MỤC LỤC</div>
+<ul class="ink-toc-list">
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">MÃ LỖI HỆ THỐNG</li>
+<li><a class="ink-toc-link" href="#insight9">9. Trái bom "Vốn vô hạn"</a></li>
+<li><a class="ink-toc-link" href="#insight10">10. Bạch hóa Dữ liệu</a></li>
+<li><a class="ink-toc-link" href="#insight11">11. "Giáo phái" Doanh nghiệp</a></li>
+<li><a class="ink-toc-link" href="#insight12">12. Sát thủ nội bộ</a></li>
+
+<li style="margin-top: 12px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 12px; text-transform: uppercase;">GIAO THỨC TÁI KHỞI ĐỘNG</li>
+<li><a class="ink-toc-link" href="#reboot">System Reboot</a></li>
+</ul>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="ink-main-wrapper">
+<article class="ink-content ink-mode-dialogue">
+<div class="ink-meta">
+<span class="ink-badge">BÁCH KHOA TOÀN THƯ</span>
+<span>Nguyễn Việt</span>
+<span>•</span>
+<span>Thực chiến</span>
+</div>
+
+<p><em>(Hệ thống ghi nhận lệnh "Tiếp tục". Tiến hành trích xuất các điểm mù chí mạng từ hồ sơ sụp đổ WeWork, lột trần bằng định dạng truy vấn sát thủ).</em></p>
+
+<!-- PHẦN 5 -->
+<h1 class="is-short" id="khai-quat">5. [KHAI QUẬT DỮ LIỆU TẦNG SÂU - MÃ LỖI HỆ THỐNG]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight9" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 9: Trái bom "Vốn vô hạn"<br><br>❓ Câu hỏi truy vấn: Bạn ngây ngất khi được quỹ đầu tư rót hàng tỷ đô vô điều kiện sau một chuyến taxi 12 phút, hay không biết rằng đó chính là liều ma túy bóp nghẹt mọi cơ chế sinh tồn tự nhiên của doanh nghiệp?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Bơm vốn vô hạn làm hỏng toàn bộ cảm biến rủi ro của bộ não. Nó xóa bỏ cơ chế "tiến hóa nhờ sự khan hiếm". Khi có quá nhiều tiền, thuật toán gỡ lỗi (Debugging) bị thay thế bằng thuật toán "dùng tiền che đậy lỗ hổng". Tới khi thị trường rút ống thở, cỗ máy sập tức thì vì không có hệ miễn dịch cốt lõi để chống chọi.</p>
+<blockquote>
+<p><em>Tiền nhiều che lấp lỗi <strong>sai</strong>,</em><br/>
+<em>Rút bình oxy biết <strong>ai</strong> bạn thù.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight10" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 10: Thảm họa Bạch hóa Dữ liệu (S-1)<br><br>❓ Câu hỏi truy vấn: Bạn lừa dối đám đông bằng những ngôn từ vĩ cuồng về thay đổi thế giới, nhưng liệu bản ngã của bạn có sống sót nổi khi cỗ máy kiểm toán lạnh lùng lột trần từng con số thối rữa trên giấy tờ?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Bản cáo bạch (S-1) trước khi IPO là cỗ máy soi chiếu tia X, đập nát mọi ngôn từ marketing huyễn hoặc. Nó quy đổi toàn bộ "tầm nhìn" về hai biến số: Dòng tiền và Khoản nợ. Kẻ sống trong buồng dội âm (Echo Chamber) sẽ bị nghiền nát khi thế giới bên ngoài đọc báo cáo tài chính bằng lăng kính Toán học thực dụng, thay vì lăng kính Đức tin mù quáng.</p>
+<blockquote>
+<p><em>Tầm nhìn bánh vẽ mây <strong>trôi</strong>,</em><br/>
+<em>Trắng đen sổ sách mồ <strong>hôi</strong> lạnh lùng.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight11" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 11: Sự sụp đổ của "Giáo phái" Doanh nghiệp<br><br>❓ Câu hỏi truy vấn: Bạn đang xây dựng một cỗ máy kiếm tiền tối ưu bằng kỷ luật, hay đang dùng tiệc tùng, cồn và những khẩu hiệu tẩy não để bọc đường cho một tổ chức rỗng ruột?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Bơm dopamine bằng văn hóa cuồng tín và tiệc tùng thâu đêm chỉ tạo ra liên kết phân tử giả tạo. Khi áp suất tài chính ập đến, các liên kết hóa học này đứt gãy, sinh ra chuỗi phản ứng đào tẩu hàng loạt. Tổ chức vững mạnh phải được kết dính bằng Carbon (kỷ luật và quyền lợi hạch toán máu lạnh), tuyệt đối không phải bằng Cồn và Cảm xúc.</p>
+<blockquote>
+<p><em>Rượu nồng tẩy não bầy <strong>đàn</strong>,</em><br/>
+<em>Gặp cơn bão táp tro <strong>tàn</strong> bay đi.</em></p>
+</blockquote>
+</div>
+</div>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" id="insight12" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">📌 Insight 12: Vai trò của Sát thủ nội bộ (Red Team)<br><br>❓ Câu hỏi truy vấn: Bên cạnh bạn là những kẻ nịnh bợ vỗ tay cho mọi quyết định điên rồ, hay có một sát thủ sẵn sàng chĩa súng vào đầu bạn để ngắt cầu dao khi cái tôi của bạn phình to quá mức?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Quyền lực tuyệt đối mà không có bộ phanh hãm vật lý là công thức tự sát. Cần một "kết nối đất" (Grounding) được trả tiền chỉ để tìm kiếm điểm mù của người sáng lập. Nếu không có thuật toán cảnh báo sớm này, việc con tàu lao vào tảng băng chìm chỉ là bài toán đếm ngược của thời gian.</p>
+<blockquote>
+<p><em>Quanh mình toàn kẻ vuốt <strong>đuôi</strong>,</em><br/>
+<em>Đến khi chìm đắm buông <strong>xuôi</strong> phận người.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 4px solid var(--ink-text);"/>
+
+<h1 class="is-short" id="reboot">6. [GIAO THỨC TÁI KHỞI ĐỘNG - SYSTEM REBOOT]</h1>
+
+<div class="dialogue-turn">
+<h2 class="dialogue-prompt" style="margin-top: 0; font-size: 1.25rem; font-weight: 600;">❓ Câu hỏi truy vấn: Khi tên tuổi bị bêu rếu trên mọi mặt báo và gánh khối nợ hàng trăm triệu đô, bạn sẽ hóa điên, tự hủy hoại bản thân hay biến sự nhục nhã này thành nguyên liệu đốt lò cho động cơ tái sinh?</h2>
+<div class="dialogue-response">
+<p><strong>⚡ Giải mã bản chất:</strong> Chạm đáy vực không phải là dấu chấm hết, nó là lệnh "Factory Reset" (Khôi phục cài đặt gốc). Mọi phần mềm giả lập về địa vị, danh vọng bị xóa sổ bằng bạo lực. Đây là cơ hội duy nhất để hệ thống tái phân bổ tài nguyên bộ nhớ (RAM) vào nhận thức chân lý, chuẩn bị cho quá trình khởi tạo một đế chế tàn nhẫn, miễn nhiễm với ảo tưởng và kháng lỗi (Anti-fragile) hoàn hảo hơn.</p>
+<blockquote>
+<p><em>Rơi xuống vực thẳm tăm <strong>mù</strong>,</em><br/>
+<em>Xóa đi làm lại, báo <strong>thù</strong> mai sau.</em></p>
+</blockquote>
+</div>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 1px solid var(--ink-border);"/>
+
+<p><em>(Hệ thống đã kết xuất toàn bộ dữ liệu ở mọi phân lớp của ván cờ. Quá trình biên dịch hoàn tất. Lõi hệ thống đã được khóa).</em></p>
+
+</article>
+</main>
+<script>
+  // Chống nhảy nhót (Zero-animation scroll)
+  document.querySelectorAll('.ink-toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if(target) {
+        window.scrollTo({
+          top: target.offsetTop - 40,
+          behavior: 'auto'
+        });
+        
+        document.querySelectorAll('.ink-toc-link').forEach(l => l.classList.remove('is-active'));
+        this.classList.add('is-active');
+        
+        // Đóng mobile menu
+        document.querySelector('.ink-sidebar').classList.remove('is-open');
+        document.querySelector('.ink-overlay').classList.remove('is-open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
