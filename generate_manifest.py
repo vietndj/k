@@ -7,10 +7,24 @@ from bs4 import BeautifulSoup
 
 def generate():
     files = glob.glob("*.html")
-    exclude = ["index.html", "404.html", "rajchannel.html", "fix-url.html", "skills.html", "dom.html"]
+    exclude = ["index.html", "404.html", "rajchannel.html", "fix-url.html", "skills.html"]
     posts = []
 
     cover_mapping = {
+        "logic08.html": "assets/covers/banner_roblox.webp",
+        "logic09.html": "assets/covers/banner_minecraft.webp",
+        "logic10.html": "assets/covers/banner_amongus.webp",
+        "logic11.html": "assets/covers/banner_fortnite.webp",
+        "logic12.html": "assets/covers/banner_supermario.webp",
+        "dom.html": "assets/covers/banner_animalcrossing.webp",
+
+        "logic08.html": "assets/covers/banner_roblox.webp",
+        "logic09.html": "assets/covers/banner_minecraft.webp",
+        "logic10.html": "assets/covers/banner_amongus.webp",
+        "logic11.html": "assets/covers/banner_fortnite.webp",
+        "logic12.html": "assets/covers/banner_supermario.webp",
+        "dom.html": "assets/covers/banner_animalcrossing.webp",
+
         "anton-osika-lovable.html": "https://media.fedu.vn/k_covers/3_body_problem_v2.webp",
         "ma-sat-noi-tam.html": "https://media.fedu.vn/k_covers/severance_v2.webp",
         "gs-po-shen-loh-ly-thuyet-tro-choi-giai-phap-song-sot-cho-con-nguoi-ky-nguyen-ai-podcast.html": "https://media.fedu.vn/k_covers/queens_gambit_v2.webp",
