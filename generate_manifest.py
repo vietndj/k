@@ -11,6 +11,10 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "logic04.html": "assets/covers/banner_lego.webp",
+        "logic05.html": "assets/covers/banner_pokemon.webp",
+        "logic06.html": "assets/covers/banner_terraria.webp",
+        "logic07.html": "assets/covers/banner_scratch.webp",
         "logic08.html": "assets/covers/banner_roblox.webp",
         "logic09.html": "assets/covers/banner_minecraft.webp",
         "logic10.html": "assets/covers/banner_amongus.webp",
