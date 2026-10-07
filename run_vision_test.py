@@ -15,7 +15,7 @@ async def run():
         await page_desktop.evaluate('() => document.fonts.ready')
         await page_desktop.wait_for_timeout(3000)
         
-        await page_desktop.screenshot(path="vision_report_desktop.png", full_page=True)
+        await page_desktop.screenshot(path="vision_report_desktop.png", full_page=False)
         print("Desktop screenshot saved.")
         
         # Mobile
@@ -27,7 +27,7 @@ async def run():
         await page_mobile.evaluate('() => document.fonts.ready')
         await page_mobile.wait_for_timeout(3000)
         
-        await page_mobile.screenshot(path="vision_report_mobile.png", full_page=True)
+        await page_mobile.screenshot(path="vision_report_mobile.png", full_page=False)
         print("Mobile screenshot saved.")
         
         await browser.close()
