@@ -42,6 +42,7 @@ new_body = """
         </select>
         <select id="styleFilter">
             <option value="all">Tất cả phong cách</option>
+            <option value="Google Flow">Google Flow</option>
             <option value="Chưa phân loại">Chưa phân loại</option>
             <option value="Cinematic">Cinematic</option>
             <option value="Anime Style">Anime Style</option>
