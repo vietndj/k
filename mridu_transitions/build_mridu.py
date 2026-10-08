@@ -136,12 +136,12 @@ def build():
     
     # Generate cards
     for idx, t in enumerate(transitions):
-        igid = t["id"].split("_")[0]
+        igid = t["id"].rsplit("_", 1)[0]
         yt_id = "" # find yt_id
         for f in json_files:
             if igid in f:
                 with open(os.path.join(data_dir, f)) as jf:
-                    yt_id = json.load(jf).get("yt_id", "")
+                    yt_id = json.load(jf).get("yt_id") or ""
                     break
 
         html += f"""
@@ -213,18 +213,23 @@ def build():
         loopStart = start;
         loopEnd = end;
         
-        if (!ytId) {
+        if (!document.getElementById('ytPlayer')) {
+            ytPlayer = null;
+        }
+
+        if (!ytId || ytId === 'None') {
             console.log("No YT id, fallback to video");
+            ytPlayer = null;
             // Setup fallback <video>
             var container = document.getElementById('playerContainer');
             container.innerHTML = `<video id="htmlPlayer" src="mridu_transitions/lite/${igid}.mp4" autoplay playsinline muted></video>`;
             var vid = document.getElementById('htmlPlayer');
-            vid.currentTime = start;
+            vid.currentTime = start; vid.play();
             if(checkInterval) clearInterval(checkInterval);
             checkInterval = setInterval(() => {
                 if(!isLooping) return;
                 if(vid.currentTime >= end) {
-                    vid.currentTime = start;
+                    vid.currentTime = start; vid.play();
                 }
             }, 100);
             return;
