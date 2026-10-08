@@ -124,7 +124,7 @@ def build():
     idx = 0
     for t in trans_k1:
         html += f"""
-            <div class="shot-card" id="card-{idx}" onclick="playTransition('{t['yt_id']}', {t['start']}, {t['end']}, 'SHOT {idx+1}', '{t['igid']}')">
+            <div class="shot-card" id="card-{idx}" onclick="playTransition('{t['yt_id']}', {t['start']}, {t['end']}, 'card-{idx}', '{t['igid']}')">
                 <div class="shot-thumb">
                     <img src="mridu_transitions/{t['frames']['cut']}" alt="Cut frame" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23ccc\\'/></svg>'">
                 </div>
@@ -152,7 +152,7 @@ def build():
     # Generate cards for Kieu 2
     for t in trans_k2:
         html += f"""
-            <div class="shot-card" id="card-{idx}" onclick="playTransition('{t['yt_id']}', {t['start']}, {t['end']}, 'SHOT {idx+1}', '{t['igid']}')">
+            <div class="shot-card" id="card-{idx}" onclick="playTransition('{t['yt_id']}', {t['start']}, {t['end']}, 'card-{idx}', '{t['igid']}')">
                 <div class="shot-thumb">
                     <img src="mridu_transitions/{t['frames']['cut']}" alt="Cut frame" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23ccc\\'/></svg>'">
                 </div>
@@ -208,12 +208,12 @@ def build():
         }
     }
 
-    function playTransition(ytId, start, end, label, igid) {
+    function playTransition(ytId, start, end, cardId, igid) {
         document.querySelectorAll('.shot-card').forEach(c => c.classList.remove('active-playing'));
-        var card = Array.from(document.querySelectorAll('.shot-card')).find(c => c.innerHTML.includes(label));
+        var card = document.getElementById(cardId);
         if(card) card.classList.add('active-playing');
         
-        document.getElementById('shotStatusTag').innerText = label + ' • ' + igid + ' • ' + start.toFixed(2) + 's–' + end.toFixed(2) + 's';
+        document.getElementById('shotStatusTag').innerText = cardId + ' • ' + igid + ' • ' + start.toFixed(2) + 's–' + end.toFixed(2) + 's';
         
         loopStart = start;
         loopEnd = end;
