@@ -1,38 +1,66 @@
-import re
+import json
 
-with open('/Users/vietmac/Documents/CODE/k/anh.html', 'r', encoding='utf-8') as f:
-    content = f.read()
+with open('brand_style.css', 'r', encoding='utf-8') as f:
+    brand_css = f.read()
 
-head_match = re.search(r'(<!DOCTYPE html>.*?</style>\s*</head>\s*<body[^>]*>)', content, re.DOTALL)
-if not head_match:
-    print("Could not find <head>")
-    exit(1)
-head_content = head_match.group(1)
-
-additional_styles = """
-    .toolbar { background: #1e293b; padding: 16px; display: flex; gap: 16px; align-items: center; border-bottom: 1px solid #334155; flex-wrap: wrap; }
-    .toolbar input, .toolbar select { padding: 8px 16px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; outline: none; font-size: 0.95rem; }
-    .toolbar input:focus, .toolbar select:focus { border-color: #3b82f6; }
-    .toolbar input { flex-grow: 1; min-width: 200px; }
-    .stats { padding: 16px 16px 0 16px; color: #94a3b8; font-size: 0.9rem; display: flex; gap: 16px; flex-wrap: wrap; }
-    .stat-badge { background: #334155; padding: 4px 12px; border-radius: 12px; font-weight: 500; color: #e2e8f0; }
-"""
-head_content = head_content.replace('</style>', additional_styles + '\n</style>')
-
-new_body = """
-    <header>
+html = f"""<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Posters Gallery • NGUYỄN VIỆT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    {brand_css}
+    
+    <style>
+        body {{ background-color: var(--cl-bg); color: var(--cl-text-base); font-family: var(--cl-font-sub); margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }}
+        .gallery-header {{ position: sticky; top: 0; z-index: 100; background: rgba(7, 9, 14, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--cl-line); padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; }}
+        .header-left h1 {{ font-family: var(--cl-font-head); font-size: 28px; font-weight: 700; letter-spacing: 1px; margin: 0 0 4px 0; color: var(--cl-text-base); }}
+        .header-left p {{ font-family: var(--cl-font-mono); font-size: 13px; color: var(--cl-accent); margin: 0; }}
+        .toolbar {{ padding: 24px 40px 0 40px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }}
+        .toolbar input, .toolbar select {{ background: var(--cl-card); border: 1px solid var(--cl-line-strong); color: var(--cl-text-base); padding: 12px 20px; border-radius: var(--cl-radius-sm); font-family: var(--cl-font-sub); font-size: 14px; outline: none; transition: all 0.2s ease; }}
+        .toolbar input:focus, .toolbar select:focus {{ border-color: var(--cl-accent); box-shadow: 0 0 0 3px var(--cl-accent-tint); }}
+        .toolbar input {{ flex-grow: 1; min-width: 300px; }}
+        .stats {{ padding: 20px 40px 0 40px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }}
+        .stat-badge {{ background: var(--cl-card-muted); border: 1px solid var(--cl-line); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-family: var(--cl-font-mono); color: var(--cl-text-muted); }}
+        .style-a .grid-container {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; padding: 32px 40px 60px 40px; }}
+        .style-b .grid-container {{ columns: 4 300px; column-gap: 24px; padding: 32px 40px 60px 40px; }}
+        .poster-card {{ background: var(--cl-card); border: 1px solid var(--cl-line); border-radius: var(--cl-radius-md); overflow: hidden; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; position: relative; margin-bottom: 24px; break-inside: avoid; }}
+        .poster-card:hover {{ transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.4); border-color: var(--cl-line-strong); }}
+        .poster-img-wrap {{ position: relative; width: 100%; overflow: hidden; }}
+        .poster-img-wrap img {{ width: 100%; height: auto; display: block; cursor: zoom-in; transition: transform 0.5s ease; }}
+        .poster-card:hover .poster-img-wrap img {{ transform: scale(1.03); }}
+        .copy-btn {{ position: absolute; bottom: 12px; right: 12px; background: rgba(7, 9, 14, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 12px; border-radius: 8px; font-family: var(--cl-font-sub); font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; opacity: 0; transform: translateY(10px); transition: all 0.2s ease; }}
+        .poster-card:hover .copy-btn {{ opacity: 1; transform: translateY(0); }}
+        .copy-btn:hover {{ background: var(--cl-accent); color: #07090e; }}
+        .poster-info {{ padding: 20px; display: flex; flex-direction: column; gap: 12px; }}
+        .poster-id {{ font-family: var(--cl-font-mono); font-size: 11px; color: var(--cl-accent); background: var(--cl-accent-tint); padding: 4px 8px; border-radius: 4px; display: inline-block; align-self: flex-start; }}
+        .poster-title {{ font-family: var(--cl-font-head); font-size: 16px; font-weight: 700; line-height: 1.4; color: var(--cl-text-base); text-transform: uppercase; }}
+        .poster-poem {{ font-family: var(--cl-font-serif); font-size: 14px; line-height: 1.6; color: var(--cl-text-muted); font-style: italic; }}
+        .poster-meta {{ font-family: var(--cl-font-mono); font-size: 11px; color: var(--cl-text-faint); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 8px; }}
+        .lightbox {{ display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); z-index: 9999; align-items: center; justify-content: center; }}
+        .lightbox img {{ max-width: 90vw; max-height: 90vh; border-radius: 12px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); }}
+        .btn-toggle {{ background: var(--cl-card); border: 1px solid var(--cl-line); color: var(--cl-text-base); padding: 8px 16px; border-radius: var(--cl-radius-sm); font-family: var(--cl-font-sub); font-size: 13px; cursor: pointer; transition: 0.2s; }}
+        .btn-toggle.active {{ background: var(--cl-accent); color: var(--cl-bg); border-color: var(--cl-accent); font-weight: 600; }}
+        .just-image-label {{ position: absolute; top: 12px; left: 12px; font-family: var(--cl-font-mono); font-size: 11px; color: #fff; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 4px; }}
+    </style>
+</head>
+<body class="style-b">
+    <header class="gallery-header">
         <div class="header-left">
-            <h1>Posters</h1>
-            <p id="total-count">Đang tải dữ liệu...</p>
+            <h1>THƯ VIỆN POSTER</h1>
+            <p id="total-count">LOADING DATA...</p>
         </div>
-        <div class="header-right">
-            <button class="style-btn" data-style="style-a" onclick="setStyle('style-a')">Style A (Grid)</button>
-            <button class="style-btn" data-style="style-b" onclick="setStyle('style-b')">Style B (Kanban)</button>
+        <div class="header-right" style="display:flex; gap:12px;">
+            <button class="btn-toggle" data-style="style-a" onclick="setStyle('style-a')">GRID VIEW</button>
+            <button class="btn-toggle active" data-style="style-b" onclick="setStyle('style-b')">MASONRY VIEW</button>
         </div>
     </header>
-
     <div class="toolbar">
-        <input type="text" id="searchInput" placeholder="Tìm kiếm theo mã, tiêu đề, nội dung thơ hoặc prompt...">
+        <input type="text" id="searchInput" placeholder="Tìm kiếm theo mã, tiêu đề, thơ, thẻ loại, phong cách...">
         <select id="categoryFilter">
             <option value="all">Tất cả thể loại</option>
             <option value="Chưa phân loại">Chưa phân loại</option>
@@ -42,175 +70,170 @@ new_body = """
         </select>
         <select id="styleFilter">
             <option value="all">Tất cả phong cách</option>
+            <option value="Google Flow">Google Flow</option>
             <option value="Chưa phân loại">Chưa phân loại</option>
             <option value="Cinematic">Cinematic</option>
             <option value="Anime Style">Anime Style</option>
             <option value="3D Render">3D Render</option>
         </select>
     </div>
-
-    <div class="stats" id="statsContainer"></div>
-
-    <div class="grid" id="grid">
-        <!-- Cards will be rendered here by JS -->
-    </div>
-
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
-        <button class="close-btn" style="position: absolute; top: 20px; right: 20px; font-size: 2rem; background: none; border: none; color: white; cursor: pointer;">&times;</button>
-        <img id="lightbox-img" src="" alt="Zoomed Poster" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+    <div id="statsContainer" class="stats"></div>
+    <div id="grid" class="grid-container"></div>
+    <div id="lightbox" onclick="closeLightbox(event)">
+        <img id="lightbox-img" src="" alt="Zoomed Poster">
     </div>
 
     <script>
         let allPosters = [];
 
-        async function init() {
-            try {
+        async function init() {{
+            try {{
                 const res = await fetch('database.json');
                 const data = await res.json();
                 allPosters = data.posters;
-                document.getElementById('total-count').textContent = `${data.metadata.total_images} images`;
+                document.getElementById('total-count').textContent = `[ ${{data.metadata.total_images}} MASTERPIECES ]`;
                 renderCards(allPosters);
                 renderStats(allPosters);
-            } catch (err) {
+            }} catch (err) {{
                 console.error('Error loading data:', err);
-                document.getElementById('grid').innerHTML = '<p style="padding:16px">Lỗi tải dữ liệu. Cần chạy trên Live Server do lỗi CORS với file JSON cục bộ.</p>';
-            }
-        }
+                document.getElementById('grid').innerHTML = '<p style="padding:16px; color:#ef4444;">Lỗi tải dữ liệu. Cần chạy trên Live Server (localhost) do CORS.</p>';
+            }}
+        }}
 
-        function copyPrompt(btn) {
+        function copyPrompt(btn) {{
             const text = btn.dataset.prompt;
-            navigator.clipboard.writeText(text).then(() => {
+            navigator.clipboard.writeText(text).then(() => {{
                 const span = btn.querySelector('span');
-                span.textContent = '✓ Copied!';
-                btn.classList.add('copied');
-                setTimeout(() => { span.textContent = 'Copy Prompt'; btn.classList.remove('copied'); }, 2000);
-            });
-        }
+                span.textContent = 'COPIED!';
+                btn.style.background = 'var(--cl-accent)';
+                btn.style.color = 'var(--cl-bg)';
+                setTimeout(() => {{ 
+                    span.textContent = 'COPY PROMPT'; 
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }}, 2000);
+            }});
+        }}
 
-        function renderCards(posters) {
+        function renderCards(posters) {{
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
-            
-            posters.forEach(p => {
+            posters.forEach(p => {{
                 const card = document.createElement('div');
-                card.className = p.has_prompt ? 'card has-prompt poem-card' : 'card no-prompt';
-                if(p.has_prompt) {
-                    card.style.cssText = "display: flex; flex-direction: column; background: #1e293b; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4); transition: transform 0.2s;";
-                }
+                card.className = 'poster-card';
+                let html = `<div class="poster-img-wrap"><img src="${{p.image}}" loading="lazy" alt="Poster" onclick="openLightbox('${{p.image}}')">`;
                 
-                let html = `
-                  <div class="img-wrap">
-                    <img src="${p.image}" loading="lazy" alt="Poster" onclick="openLightbox('${p.image}')" style="cursor:pointer">
-                `;
-                
-                if (p.has_prompt) {
-                    // Escape prompt properly for attribute
-                    const safePrompt = p.prompt.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                    html += `
-                        <button class="copy-btn" data-prompt="${safePrompt}" onclick="copyPrompt(this)">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> <span>Copy Prompt</span>
-                        </button>
-                    `;
-                }
+                if (p.has_prompt) {{
+                    const safePrompt = (p.prompt || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    html += `<button class="copy-btn" data-prompt="${{safePrompt}}" onclick="copyPrompt(this)">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> 
+                          <span>COPY PROMPT</span>
+                        </button>`;
+                }} else {{
+                    html += `<div class="just-image-label">${{p.id}}</div>`;
+                }}
                 
                 html += `</div>`;
                 
-                if (p.has_prompt) {
-                    html += `
-                      <div class="poem-content" style="padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1;">
-                        <div><span style="background: rgba(255,255,255,0.1); color: #94a3b8; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">${p.id}</span></div>
-                        <div style="color: #60a5fa; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; line-height: 1.3;">${p.title}</div>
-                        <div style="color: #e2e8f0; font-style: italic; font-size: 0.9rem; line-height: 1.5; margin-top: 4px;">${p.poem.replace(/\\n/g, '<br>')}</div>
-                        <div style="margin-top: 12px; font-size: 0.8rem; color: #64748b;">Phim: ${p.movie_reference} | ${p.category} | ${p.style}</div>
-                      </div>
-                    `;
-                } else {
-                    html += `<div class="card-label">${p.id}</div>`;
-                }
-                
+                if (p.has_prompt) {{
+                    html += `<div class="poster-info">
+                        <div class="poster-id">${{p.id}}</div>
+                        <div class="poster-title">${{p.title}}</div>
+                        <div class="poster-poem">${{(p.poem || '').replace(/\\n/g, '<br>')}}</div>
+                        <div class="poster-meta">
+                            <span>${{p.movie_reference || 'N/A'}}</span> • 
+                            <span>${{p.category || 'N/A'}}</span> • 
+                            <span>${{p.style || 'N/A'}}</span>
+                        </div>
+                      </div>`;
+                }}
                 card.innerHTML = html;
                 grid.appendChild(card);
-            });
-        }
+            }});
+        }}
 
-        function renderStats(posters) {
+        function renderStats(posters) {{
             const stats = document.getElementById('statsContainer');
-            const movieCounts = {};
-            posters.forEach(p => {
-                movieCounts[p.movie_reference] = (movieCounts[p.movie_reference] || 0) + 1;
-            });
+            const counts = {{}};
+            posters.forEach(p => {{
+                const k = p.movie_reference || 'Khác';
+                counts[k] = (counts[k] || 0) + 1;
+            }});
             
-            let html = '<strong>Thống kê phim:</strong> ';
-            for (const [movie, count] of Object.entries(movieCounts)) {
-                html += `<span class="stat-badge">${movie}: ${count}</span>`;
-            }
+            let html = '<strong style="color: var(--cl-text-base); font-family: var(--cl-font-head); font-size: 13px;">THỐNG KÊ:</strong> ';
+            for (const [k, v] of Object.entries(counts)) {{
+                html += `<span class="stat-badge">${{k}}: ${{v}}</span>`;
+            }}
             stats.innerHTML = html;
-        }
+        }}
 
-        function filterData() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
+        function removeAccents(str) {{
+            if (!str) return '';
+            return str.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();
+        }}
+
+        function filterData() {{
+            const rawSearch = document.getElementById('searchInput').value;
+            const search = removeAccents(rawSearch).trim();
             const category = document.getElementById('categoryFilter').value;
             const style = document.getElementById('styleFilter').value;
+            
+            let synonyms = [search];
+            if (search.includes('tuong') || search.includes('lien minh') || search.includes('lol')) {{
+                synonyms.push('league of legends');
+                synonyms.push('champion');
+            }}
+            if (search.includes('flow')) {{
+                synonyms.push('google flow');
+            }}
 
-            const filtered = allPosters.filter(p => {
-                const matchSearch = (p.title && p.title.toLowerCase().includes(search)) || 
-                                    (p.poem && p.poem.toLowerCase().includes(search)) || 
-                                    (p.id && p.id.toLowerCase().includes(search)) ||
-                                    (p.prompt && p.prompt.toLowerCase().includes(search));
+            const filtered = allPosters.filter(p => {{
+                const fullText = removeAccents([
+                    p.title, p.poem, p.id, p.prompt, p.category, p.style, p.movie_reference
+                ].filter(Boolean).join(' '));
+                
+                const matchSearch = search === '' || synonyms.some(syn => fullText.includes(syn));
                 const matchCategory = category === 'all' || p.category === category;
                 const matchStyle = style === 'all' || p.style === style;
+                
                 return matchSearch && matchCategory && matchStyle;
-            });
+            }});
 
             renderCards(filtered);
-        }
+        }}
 
         document.getElementById('searchInput').addEventListener('input', filterData);
         document.getElementById('categoryFilter').addEventListener('change', filterData);
         document.getElementById('styleFilter').addEventListener('change', filterData);
 
-        function openLightbox(src) {
+        function openLightbox(src) {{
             const lb = document.getElementById('lightbox');
-            const lbImg = document.getElementById('lightbox-img');
-            lbImg.src = src;
+            document.getElementById('lightbox-img').src = src;
             lb.style.display = 'flex';
-        }
+        }}
         
-        function closeLightbox(e) {
-            if (e.target.id === 'lightbox' || e.target.classList.contains('close-btn')) {
+        function closeLightbox(e) {{
+            if (e.target.id === 'lightbox') {{
                 document.getElementById('lightbox').style.display = 'none';
-            }
-        }
+            }}
+        }}
         
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
+        document.addEventListener('keydown', function(e) {{
+            if (e.key === 'Escape') {{
                 document.getElementById('lightbox').style.display = 'none';
-            }
-        });
+            }}
+        }});
 
-        function setStyle(s) { 
+        function setStyle(s) {{ 
             document.body.className = s; 
             localStorage.setItem('poster_style', s); 
-            document.querySelectorAll('.style-btn').forEach(b => b.classList.toggle('active', b.dataset.style === s)); 
-        }
+            document.querySelectorAll('.btn-toggle').forEach(b => b.classList.toggle('active', b.dataset.style === s)); 
+        }}
         
-        document.addEventListener('DOMContentLoaded', () => { 
+        document.addEventListener('DOMContentLoaded', () => {{ 
             const s = localStorage.getItem('poster_style') || 'style-b'; 
             setStyle(s); 
-            
-            // Lightbox initial style
-            document.getElementById('lightbox').style.display = 'none';
-            document.getElementById('lightbox').style.position = 'fixed';
-            document.getElementById('lightbox').style.zIndex = '9999';
-            document.getElementById('lightbox').style.top = '0';
-            document.getElementById('lightbox').style.left = '0';
-            document.getElementById('lightbox').style.width = '100%';
-            document.getElementById('lightbox').style.height = '100%';
-            document.getElementById('lightbox').style.backgroundColor = 'rgba(0,0,0,0.9)';
-            document.getElementById('lightbox').style.alignItems = 'center';
-            document.getElementById('lightbox').style.justifyContent = 'center';
-        });
+        }});
 
         init();
     </script>
@@ -218,9 +241,11 @@ new_body = """
 </html>
 """
 
-final_html = head_content + new_body
+with open('anh.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+    
+# Keep rewrite_k_html.py matched
+with open('rewrite_k_html.py', 'w', encoding='utf-8') as f:
+    f.write(open('rebuild_anh_ui.py', 'r').read())
 
-with open('/Users/vietmac/Documents/CODE/k/anh.html', 'w', encoding='utf-8') as f:
-    f.write(final_html)
-
-print("Updated anh.html successfully.")
+print("anh.html rewritten and clean!")
