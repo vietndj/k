@@ -692,6 +692,15 @@
             <option value="Anime Style">Anime Style</option>
             <option value="3D Render">3D Render</option>
         </select>
+        <select id="movieTypeFilter">
+            <option value="all">Tất cả Movie Type</option>
+            <option value="Hành Động">Hành Động</option>
+            <option value="Viễn Tưởng">Viễn Tưởng</option>
+            <option value="Lãng Mạn">Lãng Mạn</option>
+            <option value="Kỳ Ảo">Kỳ Ảo</option>
+            <option value="Hoạt Hình">Hoạt Hình</option>
+            <option value="Khác">Khác</option>
+        </select>
     </div>
     <div id="statsContainer" class="stats"></div>
     <div id="grid" class="grid-container"></div>
@@ -752,13 +761,20 @@
                 html += `</div>`;
                 
                 if (p.has_prompt) {
+                    let tagsHtml = '';
+                    if (p.tags && p.tags.length > 0) {
+                        tagsHtml = `<div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                            ${p.tags.map(t => `<span style="background:var(--cl-accent-tint); color:var(--cl-accent); padding:2px 8px; border-radius:4px; font-size:10px; font-family:var(--cl-font-mono);">${t}</span>`).join('')}
+                        </div>`;
+                    }
                     html += `<div class="poster-info">
                         <div class="poster-id">${p.id}</div>
                         <div class="poster-title">${p.title}</div>
+                        ${tagsHtml}
                         <div class="poster-poem">${(p.poem || '').replace(/\n/g, '<br>')}</div>
                         <div class="poster-meta">
                             <span>${p.movie_reference || 'N/A'}</span> • 
-                            <span>${p.category || 'N/A'}</span> • 
+                            <span>${p.movie_type || 'Khác'}</span> • 
                             <span>${p.style || 'N/A'}</span>
                         </div>
                       </div>`;
@@ -793,6 +809,7 @@
             const search = removeAccents(rawSearch).trim();
             const category = document.getElementById('categoryFilter').value;
             const style = document.getElementById('styleFilter').value;
+            const movieType = document.getElementById('movieTypeFilter') ? document.getElementById('movieTypeFilter').value : 'all';
             
             let synonyms = [search];
             if (search.includes('tuong') || search.includes('lien minh') || search.includes('lol')) {
@@ -804,15 +821,17 @@
             }
 
             const filtered = allPosters.filter(p => {
+                const tagsStr = (p.tags || []).join(' ');
                 const fullText = removeAccents([
-                    p.title, p.poem, p.id, p.prompt, p.category, p.style, p.movie_reference
+                    p.title, p.poem, p.id, p.prompt, p.category, p.style, p.movie_reference, tagsStr
                 ].filter(Boolean).join(' '));
                 
                 const matchSearch = search === '' || synonyms.some(syn => fullText.includes(syn));
                 const matchCategory = category === 'all' || p.category === category;
                 const matchStyle = style === 'all' || p.style === style;
+                const matchMovieType = movieType === 'all' || p.movie_type === movieType;
                 
-                return matchSearch && matchCategory && matchStyle;
+                return matchSearch && matchCategory && matchStyle && matchMovieType;
             });
 
             renderCards(filtered);
@@ -821,6 +840,8 @@
         document.getElementById('searchInput').addEventListener('input', filterData);
         document.getElementById('categoryFilter').addEventListener('change', filterData);
         document.getElementById('styleFilter').addEventListener('change', filterData);
+        const mtf = document.getElementById('movieTypeFilter');
+        if(mtf) mtf.addEventListener('change', filterData);
 
         function openLightbox(src) {
             const lb = document.getElementById('lightbox');
