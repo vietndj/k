@@ -147,7 +147,7 @@ def build():
         html += f"""
             <div class="shot-card" id="card-{idx}" onclick="playTransition('{yt_id}', {t['start']}, {t['end']}, 'SHOT {idx+1}', '{igid}')">
                 <div class="shot-thumb">
-                    <img src="{t['frames']['cut']}" alt="Cut frame">
+                    <img src="mridu_transitions/{t['frames']['cut']}" alt="Cut frame">
                 </div>
                 <div class="shot-body">
                     <div class="shot-head">
@@ -257,16 +257,12 @@ def build():
                 }
             });
         } else {
-            if(ytPlayer.getVideoData) {
-                var vd = ytPlayer.getVideoData();
-                if(vd && vd.video_id !== ytId) {
-                    ytPlayer.loadVideoById({videoId: ytId, startSeconds: start});
-                } else {
-                    ytPlayer.seekTo(start, true);
-                    ytPlayer.playVideo();
-                }
-            } else {
+            if (currentYtId !== ytId) {
+                currentYtId = ytId;
                 ytPlayer.loadVideoById({videoId: ytId, startSeconds: start});
+            } else {
+                ytPlayer.seekTo(start, true);
+                ytPlayer.playVideo();
             }
         }
     }
