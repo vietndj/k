@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Giáo án Động — Trung tâm Logic Xây Kênh</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="11-giao-an">
+  <main class="main" style="display:none">
+    <div class="content">
+      <div class="hero"><h1 style="margin-top:0">Giáo án Động</h1></div>
+      
+      <div class="guide callout">
+        <h3>Cách thêm mục mới</h3>
+        <p>Thêm object sau vào mảng window.GIAO_AN trong data/giao-an.js:</p>
+        <pre><code id="mau-code">{
+  "id": "new-item",
+  "so": 99,
+  "tieude": "Tiêu đề",
+  "chang": "tuduy",
+  "dinhdang": "all",
+  "nganh": "Chung",
+  "vande": "Vấn đề",
+  "traloi": "<p>Trả lời</p>",
+  "vidu": [{"tieude": "Ví dụ 1", "noidung": "ND 1"}],
+  "baitap": [{"tieude": "Bài tập 1", "mota": "Mô tả", "link": "https://k3.fedu.vn"}],
+  "links": []
+}</code></pre>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('mau-code').innerText)" class="btn">Sao chép mẫu</button>
+      </div>
+
+      <div class="filters">
+        <input type="text" id="search-input" placeholder="Tìm kiếm giáo án...">
+        <div id="chips" style="margin-top: 10px;">
+            <span class="chip" onclick="filter('chang', 'all')">Tất cả chặng</span>
+            <span class="chip" onclick="filter('chang', 'tuduy')">Tư duy</span>
+            <span class="chip" onclick="filter('chang', 'batdau')">Bắt đầu</span>
+        </div>
+      </div>
+      
+      <div id="giao-an-list"></div>
+    </div>
+  </main>
+  
+  <script src="assets/manifest.js"></script>
+  <script src="data/giao-an.js"></script>
+  <script src="assets/hub.js"></script>
+  <script>
+    const listEl = document.getElementById('giao-an-list');
+    let currentChang = 'all';
+    
+    function render(data) {
+        listEl.innerHTML = data.map(item => `
+            <details class="ex">
+                <summary>${item.so}. ${item.tieude} <span class="chip">${item.chang}</span></summary>
+                <div class="p">
+                    <p><strong>Vấn đề:</strong> ${item.vande}</p>
+                    <div>${item.traloi}</div>
+                    ${item.vidu.map(v => `<h4>${v.tieude}</h4><p>${v.noidung}</p>`).join('')}
+                    ${item.baitap.map(b => `<h4>${b.tieude}</h4><p>${b.mota}</p><a href="${b.link}">Link</a>`).join('')}
+                </div>
+            </details>
+        `).join('');
+    }
+    
+    function filter(key, val) {
+        currentChang = val;
+        applyFilter();
+    }
+    
+    function applyFilter() {
+        const q = document.getElementById('search-input').value.toLowerCase();
+        const filtered = window.GIAO_AN.filter(item => {
+            const matchQ = item.tieude.toLowerCase().includes(q) || item.vande.toLowerCase().includes(q);
+            const matchChang = currentChang === 'all' || item.chang === currentChang;
+            return matchQ && matchChang;
+        });
+        render(filtered);
+    }
+    
+    document.getElementById('search-input').addEventListener('input', applyFilter);
+    if(window.GIAO_AN) {
+        render(window.GIAO_AN);
+    }
+  </script>
+</body>
+</html>
