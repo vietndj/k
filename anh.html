@@ -708,17 +708,24 @@
         <img id="lightbox-img" src="" alt="Zoomed Poster">
     </div>
 
+    <script src="database.js"></script>
     <script>
         let allPosters = [];
 
         async function init() {
             try {
-                const res = await fetch('database.json');
-                const data = await res.json();
+                let data = null;
+                if (typeof window !== 'undefined' && (window.POSTERS_DATA || window.DATABASE_DATA)) {
+                    data = window.POSTERS_DATA || window.DATABASE_DATA;
+                } else {
+                    const res = await fetch('database.json');
+                    data = await res.json();
+                }
                 allPosters = data.posters;
                 document.getElementById('total-count').textContent = `[ ${data.metadata.total_images} MASTERPIECES ]`;
                 renderCards(allPosters);
                 renderStats(allPosters);
+                updateDynamicFilterOptions();
             } catch (err) {
                 console.error('Error loading data:', err);
                 document.getElementById('grid').innerHTML = '<p style="padding:16px; color:#ef4444;">Lỗi tải dữ liệu. Cần chạy trên Live Server (localhost) do CORS.</p>';
@@ -742,24 +749,24 @@
 
         function renderCards(posters) {
             const grid = document.getElementById('grid');
-            grid.innerHTML = '';
-            posters.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'poster-card';
-                let html = `<div class="poster-img-wrap"><img src="${p.image}" loading="lazy" alt="Poster" onclick="openLightbox('${p.image}')">`;
-                
+            if (!posters || posters.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 48px 16px; text-align: center; color: var(--cl-text-muted); font-size: 14px; font-family: var(--cl-font-head); letter-spacing: 0.05em;">KHÔNG CÓ POSTER PHÙ HỢP HOẶC TỔ HỢP QUÁ HẸP (DƯỚI 2 KẾT QUẢ)</div>';
+                return;
+            }
+            const displayList = posters.length > 40 ? posters.slice(0, 40) : posters;
+            const htmlArr = displayList.map(p => {
+                let promptHtml = '';
                 if (p.has_prompt) {
                     const safePrompt = (p.prompt || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                    html += `<button class="copy-btn" data-prompt="${safePrompt}" onclick="copyPrompt(this)">
+                    promptHtml = `<button class="copy-btn" data-prompt="${safePrompt}" onclick="copyPrompt(this)">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> 
                           <span>COPY PROMPT</span>
                         </button>`;
                 } else {
-                    html += `<div class="just-image-label">${p.id}</div>`;
+                    promptHtml = `<div class="just-image-label">${p.id}</div>`;
                 }
-                
-                html += `</div>`;
-                
+
+                let infoHtml = '';
                 if (p.has_prompt) {
                     let tagsHtml = '';
                     if (p.tags && p.tags.length > 0) {
@@ -767,7 +774,7 @@
                             ${p.tags.map(t => `<span style="background:var(--cl-accent-tint); color:var(--cl-accent); padding:2px 8px; border-radius:4px; font-size:10px; font-family:var(--cl-font-mono);">${t}</span>`).join('')}
                         </div>`;
                     }
-                    html += `<div class="poster-info">
+                    infoHtml = `<div class="poster-info">
                         <div class="poster-id">${p.id}</div>
                         <div class="poster-title">${p.title}</div>
                         ${tagsHtml}
@@ -779,9 +786,10 @@
                         </div>
                       </div>`;
                 }
-                card.innerHTML = html;
-                grid.appendChild(card);
+
+                return `<div class="poster-card"><div class="poster-img-wrap"><img src="${p.image}" loading="lazy" alt="Poster" onclick="openLightbox('${p.image}')">${promptHtml}</div>${infoHtml}</div>`;
             });
+            grid.innerHTML = htmlArr.join('');
         }
 
         function renderStats(posters) {
@@ -804,6 +812,65 @@
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         }
 
+        function updateDynamicFilterOptions() {
+            if (!allPosters || allPosters.length === 0) return;
+            const category = document.getElementById('categoryFilter').value;
+            const style = document.getElementById('styleFilter').value;
+            const movieType = document.getElementById('movieTypeFilter') ? document.getElementById('movieTypeFilter').value : 'all';
+
+            const catCounts = {};
+            const styleCounts = {};
+            const mtfCounts = {};
+
+            for (let i = 0; i < allPosters.length; i++) {
+                const p = allPosters[i];
+                const matchCat = (category === 'all' || p.category === category);
+                const matchStyle = (style === 'all' || p.style === style);
+                const matchMtf = (movieType === 'all' || p.movie_type === movieType);
+
+                if (matchStyle && matchMtf) {
+                    catCounts[p.category] = (catCounts[p.category] || 0) + 1;
+                }
+                if (matchCat && matchMtf) {
+                    styleCounts[p.style] = (styleCounts[p.style] || 0) + 1;
+                }
+                if (matchCat && matchStyle) {
+                    mtfCounts[p.movie_type] = (mtfCounts[p.movie_type] || 0) + 1;
+                }
+            }
+
+            const catSelect = document.getElementById('categoryFilter');
+            const styleSelect = document.getElementById('styleFilter');
+            const mtfSelect = document.getElementById('movieTypeFilter');
+
+            if (catSelect) {
+                for (let i = 0; i < catSelect.options.length; i++) {
+                    const opt = catSelect.options[i];
+                    if (opt.value === 'all') continue;
+                    const c = catCounts[opt.value] || 0;
+                    opt.textContent = c <= 1 ? `${opt.value} (không khả dụng)` : `${opt.value} (${c})`;
+                }
+            }
+
+            if (styleSelect) {
+                for (let i = 0; i < styleSelect.options.length; i++) {
+                    const opt = styleSelect.options[i];
+                    if (opt.value === 'all') continue;
+                    const c = styleCounts[opt.value] || 0;
+                    opt.textContent = c <= 1 ? `${opt.value} (không khả dụng)` : `${opt.value} (${c})`;
+                }
+            }
+
+            if (mtfSelect) {
+                for (let i = 0; i < mtfSelect.options.length; i++) {
+                    const opt = mtfSelect.options[i];
+                    if (opt.value === 'all') continue;
+                    const c = mtfCounts[opt.value] || 0;
+                    opt.textContent = c <= 1 ? `${opt.value} (không khả dụng)` : `${opt.value} (${c})`;
+                }
+            }
+        }
+
         function filterData() {
             const rawSearch = document.getElementById('searchInput').value;
             const search = removeAccents(rawSearch).trim();
@@ -820,7 +887,7 @@
                 synonyms.push('google flow');
             }
 
-            const filtered = allPosters.filter(p => {
+            let filtered = allPosters.filter(p => {
                 const tagsStr = (p.tags || []).join(' ');
                 const fullText = removeAccents([
                     p.title, p.poem, p.id, p.prompt, p.category, p.style, p.movie_reference, tagsStr
@@ -834,7 +901,14 @@
                 return matchSearch && matchCategory && matchStyle && matchMovieType;
             });
 
+            // Không bao giờ có trường hợp mix danh mục (Category + Style + MovieType) ra đúng 1 kết quả (không hợp lý)
+            const hasMixFilter = (category !== 'all' || style !== 'all' || movieType !== 'all');
+            if (search === '' && hasMixFilter && filtered.length === 1) {
+                filtered = [];
+            }
+
             renderCards(filtered);
+            updateDynamicFilterOptions();
         }
 
         document.getElementById('searchInput').addEventListener('input', filterData);

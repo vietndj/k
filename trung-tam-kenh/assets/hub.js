@@ -76,8 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         </div>
     `;
-});
-
     // --- Bổ sung Logic tìm kiếm CMD+K và Menu Toggle ---
     const searchBtn = document.querySelector('.searchbtn');
     const menuBtn = document.querySelector('.menubtn');
@@ -87,12 +85,17 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.toggle('navopen');
         });
     }
+    // Tự đóng menu mobile khi click link
+    document.querySelectorAll('.side a').forEach(a => {
+        a.addEventListener('click', () => document.body.classList.remove('navopen'));
+    });
+
 
     // Modal Template
     const modalHtml = `
         <div class="sm" id="search-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:flex-start; justify-content:center; padding-top:10vh;">
-            <div style="background:#fff; width:90%; max-width:600px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.2); overflow:hidden; display:flex; flex-direction:column;">
-                <input type="text" id="sm-input" placeholder="Tìm kiếm trang, bài học, giáo án..." style="width:100%; border:none; padding:15px; font-size:16px; outline:none; border-bottom:1px solid #eee;">
+            <div style="background:var(--bg); width:90%; max-width:600px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.2); overflow:hidden; display:flex; flex-direction:column;">
+                <input type="text" id="sm-input" placeholder="Tìm kiếm trang, bài học, giáo án..." style="width:100%; border:none; padding:15px; font-size:16px; outline:none; border-bottom:1px solid var(--line);">
                 <div id="sm-results" style="max-height:60vh; overflow-y:auto; padding:10px;"></div>
             </div>
         </div>
@@ -149,12 +152,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateActive(items) {
         items.forEach((it, idx) => {
             if(idx === activeIndex) {
-                it.style.background = '#f1f5f9';
+                it.style.background = 'var(--bg3)';
             } else {
                 it.style.background = 'transparent';
             }
         });
     }
+    // Tự đóng menu mobile khi click link
+    document.querySelectorAll('.side a').forEach(a => {
+        a.addEventListener('click', () => document.body.classList.remove('navopen'));
+    });
+
     
     smInput.addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase().trim();
@@ -189,14 +197,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderResults() {
         activeIndex = -1;
         if(resultsData.length === 0) {
-            smResults.innerHTML = '<div style="padding:15px; color:#64748b;">Không tìm thấy kết quả.</div>';
+            smResults.innerHTML = '<div style="padding:15px; color:var(--mute);">Không tìm thấy kết quả.</div>';
             return;
         }
         
         smResults.innerHTML = resultsData.map((r, i) => `
-            <a href="${r.url}" class="sm-item" style="display:block; padding:10px 15px; text-decoration:none; color:#0f172a; border-radius:6px; margin-bottom:5px;">
+            <a href="${r.url}" class="sm-item" style="display:block; padding:10px 15px; text-decoration:none; color:var(--ink); border-radius:6px; margin-bottom:5px;">
                 <div style="font-weight:600;">${r.title}</div>
-                <div style="font-size:12px; color:#64748b;">${r.context}</div>
+                <div style="font-size:12px; color:var(--mute);">${r.context}</div>
             </a>
         `).join('');
     }
+
+});
