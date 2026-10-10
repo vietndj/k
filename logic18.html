@@ -54,7 +54,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-    html { scroll-behavior: auto; font-size: 100%; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
     body {
       font-family: var(--font-body);
       background: var(--ink-bg);
@@ -477,5 +477,35 @@ Cãi vã hay im lặng chỉ là bề mặt vật lý ai cũng tả được. Đ
 
 </article>
 </main>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+
+  document.querySelectorAll('.ink-toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const targetId = this.getAttribute('href');
+      if (targetId && targetId.startsWith('#')) {
+        const target = document.querySelector(targetId);
+        if (target) {
+          e.preventDefault();
+          window.scrollTo({
+            top: target.getBoundingClientRect().top + window.pageYOffset - 30,
+            behavior: 'instant'
+          });
+          document.querySelectorAll('.ink-toc-link').forEach(l => l.classList.remove('is-active'));
+          this.classList.add('is-active');
+          if (history.pushState) {
+            history.pushState(null, null, targetId);
+          }
+          const sidebar = document.querySelector('.ink-sidebar');
+          const overlay = document.querySelector('.ink-overlay');
+          if (sidebar) sidebar.classList.remove('is-open');
+          if (overlay) overlay.classList.remove('is-open');
+        }
+      }
+    });
+  });
+
+});
+</script>
 </body>
 </html>
