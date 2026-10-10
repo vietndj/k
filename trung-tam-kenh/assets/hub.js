@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Build sidebar menu
     let menuHtml = '';
     for(const g of window.HUB.groups) {
-        menuHtml += `<div class="g">${g.title}</div>`;
+        menuHtml += `<h6>${g.title}</h6>`;
         const gPages = window.HUB.pages.filter(p => p.group === g.id);
         menuHtml += gPages.map(p => `
             <a href="${rel}${p.file}" class="pg ${p.id === pageId ? 'on' : ''}">
@@ -31,49 +31,82 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     }
 
-    const mainContent = document.querySelector('.main').innerHTML;
-    
-    // Build pager
+    // Lấy nội dung gốc (bỏ vỏ <main> tạm), tách h1 gốc nếu có để không bị lặp tiêu đề
+    const srcEl = document.querySelector('.main .content') || document.querySelector('.main');
+    const tmp = document.createElement('div');
+    tmp.innerHTML = srcEl.innerHTML;
+    tmp.querySelectorAll('p:empty').forEach(n => n.remove());
+    let h1 = tmp.querySelector('h1');
+    let titleText = h1 ? h1.textContent.trim() : page.title;
+    titleText = titleText.charAt(0).toLocaleUpperCase('vi') + titleText.slice(1);
+    if (h1) {
+        const hero = h1.closest('.hero');
+        const heroOnlyTitle = hero && hero.children.length === 1;
+        (heroOnlyTitle ? hero : h1).remove();
+    }
+    // Viết hoa chữ đầu tiêu đề / đoạn mở đầu (nguồn đang viết thường)
+    const cap = el => { const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())){ if(n.nodeValue.trim()){ n.nodeValue=n.nodeValue.replace(/^(\s*)(\S)/,(m,a,b)=>a+b.toLocaleUpperCase('vi')); break; } } };
+    tmp.querySelectorAll('h2,h3,h4,h5,.hero p,.hero h2').forEach(cap);
+    tmp.querySelectorAll('table').forEach(t=>{ if(!t.closest('.tw')){ const w=document.createElement('div'); w.className='tw'; t.replaceWith(w); w.appendChild(t); } });
+    // Viết hoa đầu câu trong đoạn văn (nguồn viết thường toàn bộ)
+    const U=c=>c.toLocaleUpperCase('vi');
+    tmp.querySelectorAll('p,li,td,.callout,blockquote,summary').forEach(blk=>{
+        const w=document.createTreeWalker(blk,NodeFilter.SHOW_TEXT); let n,first=true;
+        while((n=w.nextNode())){
+            if(n.parentElement.closest('code,pre,a,kbd')) { if(n.nodeValue.trim()) first=false; continue; }
+            let v=n.nodeValue;
+            if(first && v.trim()){ v=v.replace(/^(\s*)(\S)/,(m,a,b)=>a+U(b)); first=false; }
+            v=v.replace(/([.!?…]\s+)([a-zà-ỹ])/g,(m,a,b)=>a+U(b));
+            n.nodeValue=v;
+        }
+    });
+    // Mục lục "Trên trang này" cho cột phải: gán id cho h2/h3
+    const heads = [...tmp.querySelectorAll('h2')];
+    heads.forEach((h, i) => { if (!h.id) h.id = 'sec-' + (i + 1); });
+    const tocHtml = heads.length > 1
+        ? `<h6>Trên trang này</h6><nav class="otp">${heads.map(h => `<a href="#${h.id}">${h.textContent.trim()}</a>`).join('')}</nav>`
+        : '';
+
+    // Pager
     const curIdx = window.HUB.pages.findIndex(p => p.id === pageId);
-    let pagerHtml = '<div class="pager">';
-    if(curIdx > 0) {
+    let pagerHtml = '<nav class="pager" aria-label="Chuyển trang">';
+    if (curIdx > 0) {
         const prev = window.HUB.pages[curIdx - 1];
-        pagerHtml += `<a href="${rel}${prev.file}" class="pv"><small>Trang trước</small><b>← ${prev.title}</b></a>`;
-    } else {
-        pagerHtml += `<div></div>`;
-    }
-    if(curIdx < window.HUB.pages.length - 1) {
+        pagerHtml += `<a href="${rel}${prev.file}" class="pv"><small>← Trang trước</small><b>${prev.title}</b></a>`;
+    } else { pagerHtml += `<span></span>`; }
+    if (curIdx < window.HUB.pages.length - 1) {
         const nx = window.HUB.pages[curIdx + 1];
-        pagerHtml += `<a href="${rel}${nx.file}" class="nx"><small>Trang tiếp</small><b>${nx.title} →</b></a>`;
-    } else {
-        pagerHtml += `<div></div>`;
-    }
-    pagerHtml += '</div>';
+        pagerHtml += `<a href="${rel}${nx.file}" class="nx"><small>Trang tiếp →</small><b>${nx.title}</b></a>`;
+    } else { pagerHtml += `<span></span>`; }
+    pagerHtml += '</nav>';
 
     document.body.innerHTML = `
         <div class="topbar">
             <a href="${rel}index.html" class="brand">
                 <div class="logo">K</div>
-                <div class="t">Hub<small>Kênh & Nhận diện</small></div>
+                <div class="t">Hub<small>Kênh &amp; Nhận diện</small></div>
             </a>
             <div class="stepper">${stepperHtml}</div>
             <div class="searchbtn">TÌM KIẾM <kbd>⌘K</kbd></div>
             <div class="menubtn">☰</div>
         </div>
         <div class="shell">
-            <div class="side">
+            <aside class="side">
                 <div class="mh">
-                    <h1>${window.HUB.name}</h1>
+                    <b>${window.HUB.name}</b>
                     <p>${window.HUB.sub}</p>
                 </div>
                 ${menuHtml}
-            </div>
-            <div class="main">
-                <div class="h-stage" style="--stage:var(--c-${page.stage})">${page.q}</div>
-                <h1>${page.title}</h1>
-                ${mainContent}
-                ${pagerHtml}
-            </div>
+            </aside>
+            <main class="main${tocHtml ? '' : ' wide'}" style="--stage:var(--c-${page.stage})">
+                <article class="content">
+                    <div class="kicker">${page.q}</div>
+                    <h1 class="title">${titleText}</h1>
+                    ${tmp.innerHTML}
+                    ${pagerHtml}
+                </article>
+                ${tocHtml ? `<aside class="rail">${tocHtml}</aside>` : ''}
+            </main>
         </div>
     `;
     // --- Bổ sung Logic tìm kiếm CMD+K và Menu Toggle ---
