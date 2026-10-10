@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
         menuHtml += `<div class="g">${g.title}</div>`;
         const gPages = window.HUB.pages.filter(p => p.group === g.id);
         menuHtml += gPages.map(p => `
-            <a href="${rel}${p.file}" class="m ${p.id === pageId ? 'on' : ''}">
-                <span class="i">${p.icon}</span>
+            <a href="${rel}${p.file}" class="pg ${p.id === pageId ? 'on' : ''}">
+                <span class="n">${p.icon}</span>
                 <span class="t">${p.title}</span>
             </a>
         `).join('');
