@@ -11,6 +11,12 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "logic14.html": "https://media.fedu.vn/k_covers/poster_batch_logic14.webp",
+        "anhtuongloi.html": "https://media.fedu.vn/k_covers/poster_batch_anhtuongloi.webp",
+        "saurabh-mukherjea-chien-luoc-bulletproof-portfolio-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_saurabh-mukherjea-chien-luoc-bulletproof-portfolio-podcast.webp",
+        "mantra.html": "https://media.fedu.vn/k_covers/poster_batch_mantra.webp",
+        "nghiem_thu_640_posters.html": "https://media.fedu.vn/k_covers/poster_batch_nghiem_thu_640_posters.webp",
+
         "check_anh.html": "https://media.fedu.vn/k_covers/poster_batch_check_anh.webp",
         "chien-luoc-video-gfi.html": "https://media.fedu.vn/k_covers/poster_batch_chien-luoc-video-gfi.webp",
         "prompt.html": "https://media.fedu.vn/k_covers/poster_batch_prompt.webp",
