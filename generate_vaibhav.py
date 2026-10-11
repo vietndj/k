@@ -18,10 +18,10 @@ html_content = """<!DOCTYPE html>
     @font-face { font-family: 'FD Aeonik'; src: url('./fonts/FDAeonikMedium.ttf') format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
     @font-face { font-family: 'FD Aeonik'; src: url('./fonts/FDAeonikSemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
     @font-face { font-family: 'FD Aeonik'; src: url('./fonts/FDAeonikBold.ttf') format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
-    @font-face { font-family: 'Tiempos Text'; src: url('./fonts/FDTiemposText-Regular.woff2?v=2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-    @font-face { font-family: 'Tiempos Text'; src: url('./fonts/FDTiemposText-Bold.woff2?v=2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
-    @font-face { font-family: 'Tiempos Text'; src: url('./fonts/FDTiemposText-Semibold.woff2?v=2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
-    @font-face { font-family: 'Tiempos Text'; src: url('./fonts/FDTiemposText-RegularItalic.woff2?v=2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+    @font-face { font-family: 'Tiempos Text Web'; src: url('./fonts/FDTiemposText-Regular.woff2?v=2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Tiempos Text Web'; src: url('./fonts/FDTiemposText-Bold.woff2?v=2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Tiempos Text Web'; src: url('./fonts/FDTiemposText-Semibold.woff2?v=2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Tiempos Text Web'; src: url('./fonts/FDTiemposText-RegularItalic.woff2?v=2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
 
     :root {
       --cl-bg: #ffffff;
@@ -40,8 +40,8 @@ html_content = """<!DOCTYPE html>
       --font-display-short: 'FD Aeonik Extended', 'FD Aeonik', -apple-system, sans-serif;
       --font-display-long: 'FD Aeonik', -apple-system, sans-serif;
       --font-body: 'FD Aeonik', 'Inter', -apple-system, sans-serif;
-      --font-reading: 'Tiempos Text', Georgia, serif;
-      --font-acta: 'Tiempos Text', Georgia, serif;
+      --font-reading: 'Tiempos Text Web', Georgia, serif;
+      --font-acta: 'Tiempos Text Web', Georgia, serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }

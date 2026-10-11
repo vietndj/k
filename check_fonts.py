@@ -27,7 +27,7 @@ for file in html_files:
         if uses_integral and not declares_integral:
             missing.append('FD Integral')
         if uses_tiempos and not declares_tiempos:
-            missing.append('Tiempos Text')
+            missing.append('Tiempos Text Web')
             
         if missing:
             missing_files.append((file, missing))

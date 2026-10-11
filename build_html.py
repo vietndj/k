@@ -312,7 +312,7 @@ def main():
 @font-face {{ font-family: 'FD Aeonik'; src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf'); font-weight: 400; }}
 @font-face {{ font-family: 'FD Aeonik'; src: url('https://fedu.vn/k/fonts/FDAeonikMedium.ttf'); font-weight: 600; }}
 @font-face {{ font-family: 'FD Aeonik Extended'; src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2?v=2'); font-weight: 700; }}
-@font-face {{ font-family: 'Tiempos Text'; src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2?v=2'); font-weight: 400; }}
+@font-face {{ font-family: 'Tiempos Text Web'; src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2?v=2'); font-weight: 400; }}
 
 html {{ scroll-behavior: auto; font-size: 16px; }}
 body {{ background: #fff; color: #1a1a1a; margin: 0; display: flex; min-height: 100vh; }}
@@ -336,9 +336,9 @@ body {{ background: #fff; color: #1a1a1a; margin: 0; display: flex; min-height: 
 h1 {{ font-family: 'FD Aeonik Extended', sans-serif; font-size: 32px; font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; color: #0f172a; margin: 0 0 8px 0; }}
 h2 {{ font-family: 'FD Aeonik', sans-serif; font-size: 24px; font-weight: 700; color: #0f172a; margin: 64px 0 24px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb; scroll-margin-top: 32px; }}
 h3 {{ font-family: 'FD Aeonik', sans-serif; font-size: 20px; font-weight: 600; color: #0f172a; margin: 48px 0 20px; scroll-margin-top: 32px; }}
-p {{ font-family: 'Tiempos Text', Georgia, serif; font-size: 18px; line-height: 1.78; color: #374151; margin: 0 0 22px; }}
-blockquote {{ margin: 28px 0; padding: 16px 20px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; font-family: 'Tiempos Text', Georgia, serif; font-style: italic; color: #78350f; font-size: 17px; line-height: 1.7; }}
-ul, ol {{ font-family: 'Tiempos Text', Georgia, serif; font-size: 17px; line-height: 1.7; color: #374151; padding-left: 24px; margin: 0 0 20px; }}
+p {{ font-family: 'Tiempos Text Web', Georgia, serif; font-size: 18px; line-height: 1.78; color: #374151; margin: 0 0 22px; }}
+blockquote {{ margin: 28px 0; padding: 16px 20px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; font-family: 'Tiempos Text Web', Georgia, serif; font-style: italic; color: #78350f; font-size: 17px; line-height: 1.7; }}
+ul, ol {{ font-family: 'Tiempos Text Web', Georgia, serif; font-size: 17px; line-height: 1.7; color: #374151; padding-left: 24px; margin: 0 0 20px; }}
 li {{ margin-bottom: 8px; }}
 li strong {{ font-family: 'FD Aeonik', sans-serif; color: #1e293b; }}
 hr {{ border: none; border-top: 1px solid #e5e7eb; margin: 48px 0; }}

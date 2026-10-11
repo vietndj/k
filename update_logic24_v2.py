@@ -14,9 +14,9 @@ html_content = """<!DOCTYPE html>
       --ink-muted: #64748b;
       --ink-border: #e2e8f0;
       --ink-hover: #f1f5f9;
-      --font-display-short: 'Tiempos Text', Georgia, serif;
-      --font-display-long: 'Tiempos Text', Georgia, serif;
-      --font-body: 'Tiempos Text', Georgia, serif;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
     
@@ -39,13 +39,13 @@ html_content = """<!DOCTYPE html>
       font-weight: 600;
     }
     @font-face {
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2?v=2') format('woff2');
       font-weight: 500;
       font-style: italic;
     }
     @font-face {
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2?v=2') format('woff2'),
            local('Tiempos Text Regular');
       font-weight: 400;

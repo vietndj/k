@@ -163,35 +163,35 @@ def render_podcast_html(p):
       font-display: swap;
     }}
     @font-face {{
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-Regular.woff2?v=2') format('woff2');
       font-weight: 400;
       font-style: normal;
       font-display: swap;
     }}
     @font-face {{
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-RegularItalic.woff2?v=2') format('woff2');
       font-weight: 400;
       font-style: italic;
       font-display: swap;
     }}
     @font-face {{
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-Medium.woff2?v=2') format('woff2');
       font-weight: 500;
       font-style: normal;
       font-display: swap;
     }}
     @font-face {{
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-MediumItalic.woff2?v=2') format('woff2');
       font-weight: 500;
       font-style: italic;
       font-display: swap;
     }}
     @font-face {{
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-Semibold.woff2?v=2') format('woff2');
       font-weight: 600;
       font-style: normal;
@@ -219,7 +219,7 @@ def render_podcast_html(p):
       
       --font-display:    'FD Aeonik Extended', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-heading:    'FD Aeonik', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-body:       'Tiempos Text', Georgia, 'Times New Roman', serif;
+      --font-body:       'Tiempos Text Web', Georgia, 'Times New Roman', serif;
       --font-ui:         'FD Aeonik', -apple-system, BlinkMacSystemFont, sans-serif;
       
       --sp-xs: 4px;

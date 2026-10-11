@@ -52,24 +52,24 @@ blocks = {
       font-weight: 700; font-style: normal; font-display: swap;
     }""",
     
-    'Tiempos Text': """
+    'Tiempos Text Web': """
     @font-face {
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-Regular.woff2?v=2') format('woff2');
       font-weight: 400; font-style: normal; font-display: swap;
     }
     @font-face {
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-Bold.woff2?v=2') format('woff2');
       font-weight: 700; font-style: normal; font-display: swap;
     }
     @font-face {
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-Semibold.woff2?v=2') format('woff2');
       font-weight: 600; font-style: normal; font-display: swap;
     }
     @font-face {
-      font-family: 'Tiempos Text';
+      font-family: 'Tiempos Text Web';
       src: url('./fonts/FDTiemposText-RegularItalic.woff2?v=2') format('woff2');
       font-weight: 400; font-style: italic; font-display: swap;
     }"""
@@ -80,7 +80,7 @@ usage_patterns = {
     'FD Aeonik': r"font-family:[^;]*'FD Aeonik'|font-family:[^;]*\"FD Aeonik\"",
     'FD Aeonik Extended': r"font-family:[^;]*'FD Aeonik Extended'|font-family:[^;]*\"FD Aeonik Extended\"",
     'FD Integral': r"font-family:[^;]*'FD Integral'|font-family:[^;]*\"FD Integral\"",
-    'Tiempos Text': r"font-family:[^;]*'Tiempos Text'|font-family:[^;]*\"Tiempos Text\""
+    'Tiempos Text Web': r"font-family:[^;]*'Tiempos Text Web'|font-family:[^;]*\"Tiempos Text\""
 }
 
 # Regex to check if @font-face is declared for the family
@@ -88,7 +88,7 @@ decl_patterns = {
     'FD Aeonik': r"@font-face\s*\{[^}]*font-family:\s*['\"]FD Aeonik['\"]",
     'FD Aeonik Extended': r"@font-face\s*\{[^}]*font-family:\s*['\"]FD Aeonik Extended['\"]",
     'FD Integral': r"@font-face\s*\{[^}]*font-family:\s*['\"]FD Integral['\"]",
-    'Tiempos Text': r"@font-face\s*\{[^}]*font-family:\s*['\"]Tiempos Text['\"]"
+    'Tiempos Text Web': r"@font-face\s*\{[^}]*font-family:\s*['\"]Tiempos Text['\"]"
 }
 
 fixed_count = 0
@@ -124,8 +124,8 @@ for file in html_files:
             
     # 4. Tiempos Text
     if re.search(r"['\"]Tiempos Text['\"]", content, re.IGNORECASE):
-        if not re.search(decl_patterns['Tiempos Text'], content, re.IGNORECASE):
-            missing_blocks.append(blocks['Tiempos Text'])
+        if not re.search(decl_patterns['Tiempos Text Web'], content, re.IGNORECASE):
+            missing_blocks.append(blocks['Tiempos Text Web'])
             
     if missing_blocks:
         # We need to insert the missing blocks into the <style> tag.
