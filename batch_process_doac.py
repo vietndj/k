@@ -2,7 +2,7 @@
 """
 batch_process_podcasts.py
 Hệ thống tự động hóa xử lý batch 35 video podcast The Diary Of A CEO:
-1. Đọc danh sách video từ doac_10_queue.json (hỗ trợ checkpoint/resume).
+1. Đọc danh sách video từ doac_20_queue.json (hỗ trợ checkpoint/resume).
 2. Tải metadata & subtitle tiếng Anh qua yt-dlp.
 3. Làm sạch subtitle.
 4. Gọi Gemini API (google-genai SDK) với fallback pool để phân tích 8 insight Đơn sắc Thụy Sĩ.
@@ -22,8 +22,8 @@ from google import genai
 
 # Đường dẫn thư mục
 BASE_DIR = pathlib.Path("/Users/vietmac/Documents/CODE/k")
-QUEUE_FILE = BASE_DIR / "doac_10_queue.json"
-PROGRESS_FILE = BASE_DIR / "doac_10_progress.json"
+QUEUE_FILE = BASE_DIR / "doac_20_queue.json"
+PROGRESS_FILE = BASE_DIR / "doac_20_progress.json"
 HUB_FILE = BASE_DIR / "diaryofaceo.html"
 LOG_FILE = BASE_DIR / "batch_process.log"
 
@@ -550,7 +550,7 @@ def run_build_and_deploy():
     
     log("[*] Đang Git Add, Commit & Push...")
     subprocess.run(["git", "add", "."], cwd=str(BASE_DIR), check=True)
-    subprocess.run(["git", "commit", "-m", "Batch add 10 The Diary Of A CEO podcasts (Swiss Monochrome)"], cwd=str(BASE_DIR), check=True)
+    subprocess.run(["git", "commit", "-m", "Batch add 20 The Diary Of A CEO podcasts (Swiss Monochrome)"], cwd=str(BASE_DIR), check=True)
     subprocess.run(["git", "push", "origin", "main"], cwd=str(BASE_DIR), check=True)
     log("[🎉] HOÀN TẤT TOÀN BỘ QUY TRÌNH DEPLOY LÊN GITHUB!")
 
