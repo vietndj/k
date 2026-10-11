@@ -11,6 +11,14 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "evie-pompures-system-security-interrogation-podcast": "https://media.fedu.vn/k_covers/poster_batch_evie-pompures-system-security-interrogation-podcast.webp",
+        "smriti-mandhana-tam-the-quan-tri-cam-xuc-podcast": "https://media.fedu.vn/k_covers/poster_batch_smriti-mandhana-tam-the-quan-tri-cam-xuc-podcast.webp",
+        "giai-ma-sinh-hoc-toi-uu-hoa-bo-nao-sieu-nhan-podcast": "https://media.fedu.vn/k_covers/poster_batch_giai-ma-sinh-hoc-toi-uu-hoa-bo-nao-sieu-nhan-podcast.webp",
+        "abhishek-bachchan-su-that-truyen-thong-dien-anh-podcast": "https://media.fedu.vn/k_covers/poster_batch_abhishek-bachchan-su-that-truyen-thong-dien-anh-podcast.webp",
+        "abhijit-banerjee-nghich-ly-kinh-te-podcast": "https://media.fedu.vn/k_covers/poster_batch_abhijit-banerjee-nghich-ly-kinh-te-podcast.webp",
+        "imran-beg-giai-ma-chu-viet-podcast": "https://media.fedu.vn/k_covers/poster_batch_imran-beg-giai-ma-chu-viet-podcast.webp",
+        "david-sinclair-giai-ma-lao-hoa-podcast": "https://media.fedu.vn/k_covers/poster_batch_david-sinclair-giai-ma-lao-hoa-podcast.webp",
+
         "robert-greene-nghe-thuat-thu hut-quyen-luc-podcast": "https://media.fedu.vn/k_covers/poster_batch_robert-greene-nghe-thuat-thu hut-quyen-luc-podcast.webp",
         "mukund-jha-ai-business-growth-podcast": "https://media.fedu.vn/k_covers/poster_batch_mukund-jha-ai-business-growth-podcast.webp",
         "ashish-chanchlani-truong-thanh-qua-nghich-canh-podcast": "https://media.fedu.vn/k_covers/poster_batch_ashish-chanchlani-truong-thanh-qua-nghich-canh-podcast.webp",
