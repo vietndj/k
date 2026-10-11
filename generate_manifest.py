@@ -11,6 +11,14 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "rick-rubin-nghe-thuat-sang-tao-podcast": "https://media.fedu.vn/k_covers/poster_batch_rick-rubin-nghe-thuat-sang-tao-podcast.webp",
+        "adam-neumann-empire-collapse-podcast": "https://media.fedu.vn/k_covers/poster_batch_adam-neumann-empire-collapse-podcast.webp",
+        "ai-diet-vong-ao-tuong-podcast": "https://media.fedu.vn/k_covers/poster_batch_ai-diet-vong-ao-tuong-podcast.webp",
+        "dana-white-tu-duy-kinh-doanh-sat-thu-podcast": "https://media.fedu.vn/k_covers/poster_batch_dana-white-tu-duy-kinh-doanh-sat-thu-podcast.webp",
+        "shawn-ryan-truth-behind-the-veil-podcast": "https://media.fedu.vn/k_covers/poster_batch_shawn-ryan-truth-behind-the-veil-podcast.webp",
+        "professor-chang-su-sup-do-cua-nen-van-minh-podcast": "https://media.fedu.vn/k_covers/poster_batch_professor-chang-su-sup-do-cua-nen-van-minh-podcast.webp",
+        "druski-giai-ma-co-che-thanh-cong-tu-noi-dau-he-thong-podcast": "https://media.fedu.vn/k_covers/poster_batch_druski-giai-ma-co-che-thanh-cong-tu-noi-dau-he-thong-podcast.webp",
+
         "ed-zitron-ai-con-podcast": "https://media.fedu.vn/k_covers/poster_batch_ed-zitron-ai-con-podcast.webp",
         "leanne-tenbrink-giai-ma-tam-ly-den-podcast": "https://media.fedu.vn/k_covers/poster_batch_leanne-tenbrink-giai-ma-tam-ly-den-podcast.webp",
         "david-friedberg-chinh-phu-va-van-menh-de-che-my-podcast": "https://media.fedu.vn/k_covers/poster_batch_david-friedberg-chinh-phu-va-van-menh-de-che-my-podcast.webp",
