@@ -11,6 +11,7 @@ def generate():
     posts = []
 
     cover_mapping = {
+
         "stephanie-estima-nu-gioi-hinh-the-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_stephanie-estima-nu-gioi-hinh-the-podcast.webp",
         "martin-picard-ty-the-lao-hoa-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_martin-picard-ty-the-lao-hoa-podcast.webp",
         "thomas-seyfried-ung-thu-ti-theo-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_thomas-seyfried-ung-thu-ti-theo-podcast.webp",
