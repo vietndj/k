@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nghiệm Thu Hybrid Delete</title>
+    <style>
+        :root {
+            --ink: #111;
+            --paper: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4;
+            --gray-500: #737373;
+            --gray-800: #262626;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--paper);
+            color: var(--ink);
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--ink);
+            padding-bottom: 8px;
+        }
+
+        .question-card {
+            background-color: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .question-card.deleted-optimistic {
+            opacity: 0.4;
+            filter: grayscale(100%);
+            pointer-events: none;
+            display: none; /* Ẩn ngay khi ấn xoá theo yêu cầu */
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--gray-800);
+        }
+
+        .delete-btn {
+            background-color: transparent;
+            color: var(--gray-500);
+            border: 1px solid var(--gray-300);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background-color: var(--gray-100);
+            color: var(--ink);
+            border-color: var(--gray-500);
+        }
+
+        .question-content {
+            color: var(--gray-800);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Logic Nghiệm Thu Hybrid Delete</h1>
+
+    <!-- Q1 -->
+    <div class="question-card" id="q1" data-file="logic_nghiemthu.html" data-id="q1">
+        <div class="question-header">
+            <h2 class="question-title">Câu hỏi 1 (Q1)</h2>
+            <button class="delete-btn" onclick="handleDelete('q1')">Xóa</button>
+        </div>
+        <div class="question-content">
+            <p>Đây là nội dung của câu hỏi 1. Nút xóa bên trên sẽ mô phỏng việc xóa câu hỏi này bằng Hybrid Delete.</p>
+        </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-card" id="q2" data-file="logic_nghiemthu.html" data-id="q2">
+        <div class="question-header">
+            <h2 class="question-title">Câu hỏi 2 (Q2)</h2>
+            <button class="delete-btn" onclick="handleDelete('q2')">Xóa</button>
+        </div>
+        <div class="question-content">
+            <p>Đây là nội dung của câu hỏi 2. Nội dung này dùng để test giữ lại sau khi Q1 hoặc file bị xóa.</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Phục hồi trạng thái optimistic delete từ localStorage lúc page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const deletedItems = JSON.parse(localStorage.getItem('hybrid_deleted_items') || '[]');
+            deletedItems.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.add('deleted-optimistic');
+                }
+            });
+        });
+
+        // 2. Hàm xử lý xoá
+        async function handleDelete(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            // BƯỚC 1: Optimistic UI Update (Ẩn ngay lập tức)
+            el.classList.add('deleted-optimistic');
+            
+            // Lưu vào localStorage phòng hờ load lại trang trước khi deploy xong
+            const deletedItems = JSON.parse(localStorage.getItem('hybrid_deleted_items') || '[]');
+            if (!deletedItems.includes(id)) {
+                deletedItems.push(id);
+                localStorage.setItem('hybrid_deleted_items', JSON.stringify(deletedItems));
+            }
+
+            // BƯỚC 2: Gọi fetch port 9999 (local_cleaner.py ngầm cắt file)
+            const filePath = el.getAttribute('data-file');
+            
+            try {
+                const response = await fetch('http://localhost:9999/delete_item', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        file: filePath,
+                        id: id
+                    })
+                });
+                
+                if (!response.ok) {
+                    console.warn(`[Hybrid Delete] Local cleaner returned status: ${response.status}`);
+                } else {
+                    console.log(`[Hybrid Delete] Successfully sent delete command to local_cleaner.py for ${id}`);
+                }
+            } catch (error) {
+                // Rất bình thường nếu port 9999 không mở trên production
+                console.warn('[Hybrid Delete] Failed to connect to local cleaner (port 9999). This is expected on production or if local_cleaner is not running.', error);
+            }
+        }
+    </script>
+</body>
+</html>
