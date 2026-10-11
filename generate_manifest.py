@@ -11,6 +11,14 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "ed-zitron-ai-con-podcast": "https://media.fedu.vn/k_covers/poster_batch_ed-zitron-ai-con-podcast.webp",
+        "leanne-tenbrink-giai-ma-tam-ly-den-podcast": "https://media.fedu.vn/k_covers/poster_batch_leanne-tenbrink-giai-ma-tam-ly-den-podcast.webp",
+        "david-friedberg-chinh-phu-va-van-menh-de-che-my-podcast": "https://media.fedu.vn/k_covers/poster_batch_david-friedberg-chinh-phu-va-van-menh-de-che-my-podcast.webp",
+        "andrew-huberman-co-che-sinh-hoc-hieu-suat-podcast": "https://media.fedu.vn/k_covers/poster_batch_andrew-huberman-co-che-sinh-hoc-hieu-suat-podcast.webp",
+        "vanessa-van-edwards-nghe-thuat-hoi-thoai-podcast": "https://media.fedu.vn/k_covers/poster_batch_vanessa-van-edwards-nghe-thuat-hoi-thoai-podcast.webp",
+        "konstantin-kisin-trut-tu-phuong-tay-podcast": "https://media.fedu.vn/k_covers/poster_batch_konstantin-kisin-trut-tu-phuong-tay-podcast.webp",
+        "darby-saxby-sinh-hoc-cha-me-podcast": "https://media.fedu.vn/k_covers/poster_batch_darby-saxby-sinh-hoc-cha-me-podcast.webp",
+
         "pete-buttigieg-suy-tan-he-thong-my-podcast": "https://media.fedu.vn/k_covers/poster_batch_pete-buttigieg-suy-tan-he-thong-my-podcast.webp",
         "stasha-gominak-giai-ma-giac-ngu-vitamin-d-podcast": "https://media.fedu.vn/k_covers/poster_batch_stasha-gominak-giai-ma-giac-ngu-vitamin-d-podcast.webp",
         "michael-saylor-bitcoin-ai-podcast": "https://media.fedu.vn/k_covers/poster_batch_michael-saylor-bitcoin-ai-podcast.webp",

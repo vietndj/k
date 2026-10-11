@@ -39,7 +39,7 @@ with open(manifest_file, "w", encoding="utf-8") as f:
 with open(queue_file, "r", encoding="utf-8") as f:
     queue = json.load(f)
 
-new_queue = [q for q in queue if q["filename"] not in processed_files]
+new_queue = [q for q in queue if q["filename"] not in [pf + ".html" for pf in processed_files]]
 
 with open(queue_file, "w", encoding="utf-8") as f:
     json.dump(new_queue, f, ensure_ascii=False, indent=2)
