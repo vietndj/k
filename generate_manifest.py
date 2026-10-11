@@ -11,6 +11,14 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "pete-buttigieg-suy-tan-he-thong-my-podcast": "https://media.fedu.vn/k_covers/poster_batch_pete-buttigieg-suy-tan-he-thong-my-podcast.webp",
+        "stasha-gominak-giai-ma-giac-ngu-vitamin-d-podcast": "https://media.fedu.vn/k_covers/poster_batch_stasha-gominak-giai-ma-giac-ngu-vitamin-d-podcast.webp",
+        "michael-saylor-bitcoin-ai-podcast": "https://media.fedu.vn/k_covers/poster_batch_michael-saylor-bitcoin-ai-podcast.webp",
+        "seth-godin-giai-ma-su-be-tac-podcast": "https://media.fedu.vn/k_covers/poster_batch_seth-godin-giai-ma-su-be-tac-podcast.webp",
+        "ray-dalio-giai-ma-chu-ky-kinh-te-podcast": "https://media.fedu.vn/k_covers/poster_batch_ray-dalio-giai-ma-chu-ky-kinh-te-podcast.webp",
+        "andy-galpin-toi-uu-giac-ngu-nang-luong-podcast": "https://media.fedu.vn/k_covers/poster_batch_andy-galpin-toi-uu-giac-ngu-nang-luong-podcast.webp",
+        "brian-greene-ban-chat-thuc-tai-podcast": "https://media.fedu.vn/k_covers/poster_batch_brian-greene-ban-chat-thuc-tai-podcast.webp",
+
 
         "stephanie-estima-nu-gioi-hinh-the-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_stephanie-estima-nu-gioi-hinh-the-podcast.webp",
         "martin-picard-ty-the-lao-hoa-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_martin-picard-ty-the-lao-hoa-podcast.webp",
