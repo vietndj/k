@@ -11,6 +11,9 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "dustin-poirier-khoang-trong-sau-dinh-cao-podcast.html": "https://media.fedu.vn/k_covers/poster_dustin_fall.webp",
+        "neil-degrasse-tyson-giai-ma-vu-tru-podcast.html": "https://media.fedu.vn/k_covers/poster_neil_cosmos.webp",
+
         "logic04.html": "assets/covers/banner_lego.webp",
         "logic05.html": "assets/covers/banner_pokemon.webp",
         "logic06.html": "assets/covers/banner_terraria.webp",
