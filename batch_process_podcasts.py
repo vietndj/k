@@ -79,11 +79,23 @@ def get_video_metadata_and_sub(yt_id):
     # 1. Metadata
     cmd_meta = [
         "yt-dlp",
+        "--cookies-from-browser", "chrome",
         "--print", "%(upload_date>%d/%m/%Y)s|%(duration_string)s|%(title)s|%(upload_date)s",
         "--skip-download",
         url
     ]
-    res_meta = subprocess.run(cmd_meta, capture_output=True, text=True, check=True)
+    try:
+        res_meta = subprocess.run(cmd_meta, capture_output=True, text=True, check=True)
+    except Exception:
+        # Fallback không cookies
+        cmd_meta_fallback = [
+            "yt-dlp",
+            "--print", "%(upload_date>%d/%m/%Y)s|%(duration_string)s|%(title)s|%(upload_date)s",
+            "--skip-download",
+            url
+        ]
+        res_meta = subprocess.run(cmd_meta_fallback, capture_output=True, text=True, check=True)
+
     parts = res_meta.stdout.strip().split("|")
     publish_date = parts[0].strip() if len(parts) > 0 else "01/01/2026"
     duration = parts[1].strip() if len(parts) > 1 else "1:30:00"
@@ -96,6 +108,7 @@ def get_video_metadata_and_sub(yt_id):
     temp_prefix = BASE_DIR / f"temp_{yt_id}"
     cmd_sub = [
         "yt-dlp",
+        "--cookies-from-browser", "chrome",
         "--write-auto-subs",
         "--sub-lang", "en",
         "--skip-download",
@@ -103,7 +116,20 @@ def get_video_metadata_and_sub(yt_id):
         "-o", str(temp_prefix),
         url
     ]
-    subprocess.run(cmd_sub, capture_output=True, text=True, check=True)
+    try:
+        subprocess.run(cmd_sub, capture_output=True, text=True, check=True)
+    except Exception:
+        # Fallback không cookies
+        cmd_sub_fallback = [
+            "yt-dlp",
+            "--write-auto-subs",
+            "--sub-lang", "en",
+            "--skip-download",
+            "--sub-format", "vtt",
+            "-o", str(temp_prefix),
+            url
+        ]
+        subprocess.run(cmd_sub_fallback, capture_output=True, text=True, check=True)
     
     vtt_file = BASE_DIR / f"temp_{yt_id}.en.vtt"
     transcript = ""
