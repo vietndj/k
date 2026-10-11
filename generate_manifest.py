@@ -11,6 +11,14 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "vaibhav-sisinti-ai-superintelligence-podcast": "https://media.fedu.vn/k_covers/poster_batch_vaibhav-sisinti-ai-superintelligence-podcast.webp",
+        "janhvi-kapoor-identity-privilege-podcast": "https://media.fedu.vn/k_covers/poster_batch_janhvi-kapoor-identity-privilege-podcast.webp",
+        "arpit-agarwal-degrees-vs-skills-podcast": "https://media.fedu.vn/k_covers/poster_batch_arpit-agarwal-degrees-vs-skills-podcast.webp",
+        "dr-rajat-kandhari-skin-booster-podcast": "https://media.fedu.vn/k_covers/poster_batch_dr-rajat-kandhari-skin-booster-podcast.webp",
+        "harsh-parikh-bat-dong-san-podcast": "https://media.fedu.vn/k_covers/poster_batch_harsh-parikh-bat-dong-san-podcast.webp",
+        "shreya-ghoshal-nghe-thuat-ban-nang-podcast": "https://media.fedu.vn/k_covers/poster_batch_shreya-ghoshal-nghe-thuat-ban-nang-podcast.webp",
+        "snigdha-poonam-he-che-lua-dao-podcast": "https://media.fedu.vn/k_covers/poster_batch_snigdha-poonam-he-che-lua-dao-podcast.webp",
+
         "varun-limaye-tu-duy-startup-hien-dai-podcast": "https://media.fedu.vn/k_covers/poster_batch_varun-limaye-tu-duy-startup-hien-dai-podcast.webp",
         "jeffrey-ladish-ai-agent-risk-podcast": "https://media.fedu.vn/k_covers/poster_batch_jeffrey-ladish-ai-agent-risk-podcast.webp",
         "sanjay-puri-space-design-architecture-podcast": "https://media.fedu.vn/k_covers/poster_batch_sanjay-puri-space-design-architecture-podcast.webp",
