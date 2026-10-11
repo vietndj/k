@@ -11,6 +11,14 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "varun-limaye-tu-duy-startup-hien-dai-podcast": "https://media.fedu.vn/k_covers/poster_batch_varun-limaye-tu-duy-startup-hien-dai-podcast.webp",
+        "jeffrey-ladish-ai-agent-risk-podcast": "https://media.fedu.vn/k_covers/poster_batch_jeffrey-ladish-ai-agent-risk-podcast.webp",
+        "sanjay-puri-space-design-architecture-podcast": "https://media.fedu.vn/k_covers/poster_batch_sanjay-puri-space-design-architecture-podcast.webp",
+        "shekhar-natarajan-he-thong-cong-nghe-podcast": "https://media.fedu.vn/k_covers/poster_batch_shekhar-natarajan-he-thong-cong-nghe-podcast.webp",
+        "tahir-majithia-dubai-real-estate-market-podcast": "https://media.fedu.vn/k_covers/poster_batch_tahir-majithia-dubai-real-estate-market-podcast.webp",
+        "karan-saran-khung-hoang-chuyen-hoa-insulin-podcast": "https://media.fedu.vn/k_covers/poster_batch_karan-saran-khung-hoang-chuyen-hoa-insulin-podcast.webp",
+        "mitesh-indu-khatri-quan-he-podcast": "https://media.fedu.vn/k_covers/poster_batch_mitesh-indu-khatri-quan-he-podcast.webp",
+
         "rick-rubin-nghe-thuat-sang-tao-podcast": "https://media.fedu.vn/k_covers/poster_batch_rick-rubin-nghe-thuat-sang-tao-podcast.webp",
         "adam-neumann-empire-collapse-podcast": "https://media.fedu.vn/k_covers/poster_batch_adam-neumann-empire-collapse-podcast.webp",
         "ai-diet-vong-ao-tuong-podcast": "https://media.fedu.vn/k_covers/poster_batch_ai-diet-vong-ao-tuong-podcast.webp",
