@@ -11,6 +11,14 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "stephanie-estima-nu-gioi-hinh-the-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_stephanie-estima-nu-gioi-hinh-the-podcast.webp",
+        "martin-picard-ty-the-lao-hoa-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_martin-picard-ty-the-lao-hoa-podcast.webp",
+        "thomas-seyfried-ung-thu-ti-theo-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_thomas-seyfried-ung-thu-ti-theo-podcast.webp",
+        "diaryofaceo.html": "https://media.fedu.vn/k_covers/poster_batch_diaryofaceo.webp",
+        "daniel-cotello-ai-risk-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_daniel-cotello-ai-risk-podcast.webp",
+        "robert-pape-bay-leo-thang-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_robert-pape-bay-leo-thang-podcast.webp",
+        "alex-hormozi-xay-dung-moat-ben-vung-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_alex-hormozi-xay-dung-moat-ben-vung-podcast.webp",
+
         "dustin-poirier-khoang-trong-sau-dinh-cao-podcast.html": "https://media.fedu.vn/k_covers/poster_dustin_fall.webp",
         "neil-degrasse-tyson-giai-ma-vu-tru-podcast.html": "https://media.fedu.vn/k_covers/poster_neil_cosmos.webp",
 
