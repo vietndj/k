@@ -24,7 +24,7 @@ html_content = """<!DOCTYPE html>
     
     @font-face {
       font-family: 'FD Aeonik Extended'; 
-      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2?v=2') format('woff2'),
            local('FD Aeonik Extended Bold');
       font-weight: 700;
     }
@@ -36,19 +36,19 @@ html_content = """<!DOCTYPE html>
     }
     @font-face {
       font-family: 'FD Aeonik';
-      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+      src: url('https://fedu.vn/k/fonts/FDAeonikExtended-SemiBold.woff2?v=2') format('woff2'),
            local('FD Aeonik SemiBold');
       font-weight: 600;
     }
     @font-face {
       font-family: 'Tiempos Text';
-      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2') format('woff2');
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-MediumItalic.woff2?v=2') format('woff2');
       font-weight: 500;
       font-style: italic;
     }
     @font-face {
       font-family: 'Tiempos Text';
-      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2') format('woff2'),
+      src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2?v=2') format('woff2'),
            local('Tiempos Text Regular');
       font-weight: 400;
     }

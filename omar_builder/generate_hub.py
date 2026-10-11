@@ -78,7 +78,7 @@ hub_html = f"""<!DOCTYPE html>
     /* ═══ 1. FONT DECLARATIONS (Local Repo & Fallbacks) ═══ */
     @font-face {{
       font-family: 'FD Aeonik Extended'; text-transform: uppercase;
-      src: url('./fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+      src: url('./fonts/FDAeonikExtended-Bold.woff2?v=2') format('woff2'),
            url('./fonts/FDAeonikExtended-Bold.ttf') format('truetype');
       font-weight: 700;
       font-style: normal;
@@ -86,7 +86,7 @@ hub_html = f"""<!DOCTYPE html>
     }}
     @font-face {{
       font-family: 'FD Aeonik Extended'; text-transform: uppercase;
-      src: url('./fonts/FDAeonikExtended-SemiBold.woff2') format('woff2'),
+      src: url('./fonts/FDAeonikExtended-SemiBold.woff2?v=2') format('woff2'),
            url('./fonts/FDAeonikExtended-SemiBold.ttf') format('truetype');
       font-weight: 600;
       font-style: normal;

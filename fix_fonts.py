@@ -9,19 +9,19 @@ blocks = {
     'FD Aeonik': """
     @font-face {
       font-family: 'FD Aeonik';
-      src: url('./fonts/FDAeonik-Regular.woff2') format('woff2'),
+      src: url('./fonts/FDAeonik-Regular.woff2?v=2') format('woff2'),
            url('./fonts/FDAeonik-Regular.ttf') format('truetype');
       font-weight: 400; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'FD Aeonik';
-      src: url('./fonts/FDAeonik-Medium.woff2') format('woff2'),
+      src: url('./fonts/FDAeonik-Medium.woff2?v=2') format('woff2'),
            url('./fonts/FDAeonik-Medium.ttf') format('truetype');
       font-weight: 500; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'FD Aeonik';
-      src: url('./fonts/FDAeonik-Bold.woff2') format('woff2'),
+      src: url('./fonts/FDAeonik-Bold.woff2?v=2') format('woff2'),
            url('./fonts/FDAeonik-Bold.ttf') format('truetype');
       font-weight: 600 700; font-style: normal; font-display: swap;
     }""",
@@ -29,13 +29,13 @@ blocks = {
     'FD Aeonik Extended': """
     @font-face {
       font-family: 'FD Aeonik Extended';
-      src: url('./fonts/FDAeonikExtended-Regular.woff2') format('woff2'),
+      src: url('./fonts/FDAeonikExtended-Regular.woff2?v=2') format('woff2'),
            url('./fonts/FDAeonikExtended-Regular.ttf') format('truetype');
       font-weight: 400; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'FD Aeonik Extended';
-      src: url('./fonts/FDAeonikExtended-Bold.woff2') format('woff2'),
+      src: url('./fonts/FDAeonikExtended-Bold.woff2?v=2') format('woff2'),
            url('./fonts/FDAeonikExtended-Bold.ttf') format('truetype');
       font-weight: 700; font-style: normal; font-display: swap;
     }""",
@@ -55,22 +55,22 @@ blocks = {
     'Tiempos Text': """
     @font-face {
       font-family: 'Tiempos Text';
-      src: url('./fonts/FDTiemposText-Regular.woff2') format('woff2');
+      src: url('./fonts/FDTiemposText-Regular.woff2?v=2') format('woff2');
       font-weight: 400; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'Tiempos Text';
-      src: url('./fonts/FDTiemposText-Bold.woff2') format('woff2');
+      src: url('./fonts/FDTiemposText-Bold.woff2?v=2') format('woff2');
       font-weight: 700; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'Tiempos Text';
-      src: url('./fonts/FDTiemposText-Semibold.woff2') format('woff2');
+      src: url('./fonts/FDTiemposText-Semibold.woff2?v=2') format('woff2');
       font-weight: 600; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'Tiempos Text';
-      src: url('./fonts/FDTiemposText-RegularItalic.woff2') format('woff2');
+      src: url('./fonts/FDTiemposText-RegularItalic.woff2?v=2') format('woff2');
       font-weight: 400; font-style: italic; font-display: swap;
     }"""
 }

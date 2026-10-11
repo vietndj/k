@@ -311,8 +311,8 @@ def main():
 /* === FONTS === */
 @font-face {{ font-family: 'FD Aeonik'; src: url('https://fedu.vn/k/fonts/FDAeonikRegular.ttf'); font-weight: 400; }}
 @font-face {{ font-family: 'FD Aeonik'; src: url('https://fedu.vn/k/fonts/FDAeonikMedium.ttf'); font-weight: 600; }}
-@font-face {{ font-family: 'FD Aeonik Extended'; src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2'); font-weight: 700; }}
-@font-face {{ font-family: 'Tiempos Text'; src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2'); font-weight: 400; }}
+@font-face {{ font-family: 'FD Aeonik Extended'; src: url('https://fedu.vn/k/fonts/FDAeonikExtended-Bold.woff2?v=2'); font-weight: 700; }}
+@font-face {{ font-family: 'Tiempos Text'; src: url('https://fedu.vn/k/fonts/FDTiemposText-Regular.woff2?v=2'); font-weight: 400; }}
 
 html {{ scroll-behavior: auto; font-size: 16px; }}
 body {{ background: #fff; color: #1a1a1a; margin: 0; display: flex; min-height: 100vh; }}
