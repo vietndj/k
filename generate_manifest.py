@@ -161,7 +161,6 @@ def generate():
         "logickenh-huuviet": "https://media.fedu.vn/k_covers/poster_batch_logickenh-huuviet.webp",
         "saurabh-mukherjea-chien-luoc-bulletproof-portfolio-podcast": "https://media.fedu.vn/k_covers/poster_batch_saurabh-mukherjea-chien-luoc-bulletproof-portfolio-podcast.webp",
         "check_anh": "https://media.fedu.vn/k_covers/poster_batch_check_anh.webp",
-
         "evie-pompures-system-security-interrogation-podcast": "https://media.fedu.vn/k_covers/poster_batch_evie-pompures-system-security-interrogation-podcast.webp",
         "smriti-mandhana-tam-the-quan-tri-cam-xuc-podcast": "https://media.fedu.vn/k_covers/poster_batch_smriti-mandhana-tam-the-quan-tri-cam-xuc-podcast.webp",
         "giai-ma-sinh-hoc-toi-uu-hoa-bo-nao-sieu-nhan-podcast": "https://media.fedu.vn/k_covers/poster_batch_giai-ma-sinh-hoc-toi-uu-hoa-bo-nao-sieu-nhan-podcast.webp",
@@ -169,7 +168,6 @@ def generate():
         "abhijit-banerjee-nghich-ly-kinh-te-podcast": "https://media.fedu.vn/k_covers/poster_batch_abhijit-banerjee-nghich-ly-kinh-te-podcast.webp",
         "imran-beg-giai-ma-chu-viet-podcast": "https://media.fedu.vn/k_covers/poster_batch_imran-beg-giai-ma-chu-viet-podcast.webp",
         "david-sinclair-giai-ma-lao-hoa-podcast": "https://media.fedu.vn/k_covers/poster_batch_david-sinclair-giai-ma-lao-hoa-podcast.webp",
-
         "robert-greene-nghe-thuat-thu hut-quyen-luc-podcast": "https://media.fedu.vn/k_covers/poster_batch_robert-greene-nghe-thuat-thu hut-quyen-luc-podcast.webp",
         "mukund-jha-ai-business-growth-podcast": "https://media.fedu.vn/k_covers/poster_batch_mukund-jha-ai-business-growth-podcast.webp",
         "ashish-chanchlani-truong-thanh-qua-nghich-canh-podcast": "https://media.fedu.vn/k_covers/poster_batch_ashish-chanchlani-truong-thanh-qua-nghich-canh-podcast.webp",
@@ -177,7 +175,6 @@ def generate():
         "shiv-shivakumar-chien-luoc-tang-truong-podcast": "https://media.fedu.vn/k_covers/poster_batch_shiv-shivakumar-chien-luoc-tang-truong-podcast.webp",
         "suniel-shetty-di-san-thuc-chien-podcast": "https://media.fedu.vn/k_covers/poster_batch_suniel-shetty-di-san-thuc-chien-podcast.webp",
         "yungblud-doc-ban-trong-con-bao-dinh-kien-podcast": "https://media.fedu.vn/k_covers/poster_batch_yungblud-doc-ban-trong-con-bao-dinh-kien-podcast.webp",
-
         "robert-greene-nghe-thuat-thu hut-quyen-luc-podcast": "https://media.fedu.vn/k_covers/poster_batch_robert-greene-nghe-thuat-thu hut-quyen-luc-podcast.webp",
         "jayant-mundhra-khung-hoang-kinh-te-an-do-podcast": "https://media.fedu.vn/k_covers/poster_batch_jayant-mundhra-khung-hoang-kinh-te-an-do-podcast.webp",
         "vishwamohan-giai-ma-vong-xoay-bang-cap-podcast": "https://media.fedu.vn/k_covers/poster_batch_vishwamohan-giai-ma-vong-xoay-bang-cap-podcast.webp",
@@ -185,7 +182,6 @@ def generate():
         "abhinav-tripathi-private-jet-business-podcast": "https://media.fedu.vn/k_covers/poster_batch_abhinav-tripathi-private-jet-business-podcast.webp",
         "michael-phelps-champion-mindset-podcast": "https://media.fedu.vn/k_covers/poster_batch_michael-phelps-champion-mindset-podcast.webp",
         "scott-galloway-he-thong-thang-tien-podcast": "https://media.fedu.vn/k_covers/poster_batch_scott-galloway-he-thong-thang-tien-podcast.webp",
-
         "vaibhav-sisinti-ai-superintelligence-podcast": "https://media.fedu.vn/k_covers/poster_batch_vaibhav-sisinti-ai-superintelligence-podcast.webp",
         "janhvi-kapoor-identity-privilege-podcast": "https://media.fedu.vn/k_covers/poster_batch_janhvi-kapoor-identity-privilege-podcast.webp",
         "arpit-agarwal-degrees-vs-skills-podcast": "https://media.fedu.vn/k_covers/poster_batch_arpit-agarwal-degrees-vs-skills-podcast.webp",
@@ -193,7 +189,6 @@ def generate():
         "harsh-parikh-bat-dong-san-podcast": "https://media.fedu.vn/k_covers/poster_batch_harsh-parikh-bat-dong-san-podcast.webp",
         "shreya-ghoshal-nghe-thuat-ban-nang-podcast": "https://media.fedu.vn/k_covers/poster_batch_shreya-ghoshal-nghe-thuat-ban-nang-podcast.webp",
         "snigdha-poonam-he-che-lua-dao-podcast": "https://media.fedu.vn/k_covers/poster_batch_snigdha-poonam-he-che-lua-dao-podcast.webp",
-
         "varun-limaye-tu-duy-startup-hien-dai-podcast": "https://media.fedu.vn/k_covers/poster_batch_varun-limaye-tu-duy-startup-hien-dai-podcast.webp",
         "jeffrey-ladish-ai-agent-risk-podcast": "https://media.fedu.vn/k_covers/poster_batch_jeffrey-ladish-ai-agent-risk-podcast.webp",
         "sanjay-puri-space-design-architecture-podcast": "https://media.fedu.vn/k_covers/poster_batch_sanjay-puri-space-design-architecture-podcast.webp",
@@ -201,7 +196,6 @@ def generate():
         "tahir-majithia-dubai-real-estate-market-podcast": "https://media.fedu.vn/k_covers/poster_batch_tahir-majithia-dubai-real-estate-market-podcast.webp",
         "karan-saran-khung-hoang-chuyen-hoa-insulin-podcast": "https://media.fedu.vn/k_covers/poster_batch_karan-saran-khung-hoang-chuyen-hoa-insulin-podcast.webp",
         "mitesh-indu-khatri-quan-he-podcast": "https://media.fedu.vn/k_covers/poster_batch_mitesh-indu-khatri-quan-he-podcast.webp",
-
         "rick-rubin-nghe-thuat-sang-tao-podcast": "https://media.fedu.vn/k_covers/poster_batch_rick-rubin-nghe-thuat-sang-tao-podcast.webp",
         "adam-neumann-empire-collapse-podcast": "https://media.fedu.vn/k_covers/poster_batch_adam-neumann-empire-collapse-podcast.webp",
         "ai-diet-vong-ao-tuong-podcast": "https://media.fedu.vn/k_covers/poster_batch_ai-diet-vong-ao-tuong-podcast.webp",
@@ -209,7 +203,6 @@ def generate():
         "shawn-ryan-truth-behind-the-veil-podcast": "https://media.fedu.vn/k_covers/poster_batch_shawn-ryan-truth-behind-the-veil-podcast.webp",
         "professor-chang-su-sup-do-cua-nen-van-minh-podcast": "https://media.fedu.vn/k_covers/poster_batch_professor-chang-su-sup-do-cua-nen-van-minh-podcast.webp",
         "druski-giai-ma-co-che-thanh-cong-tu-noi-dau-he-thong-podcast": "https://media.fedu.vn/k_covers/poster_batch_druski-giai-ma-co-che-thanh-cong-tu-noi-dau-he-thong-podcast.webp",
-
         "ed-zitron-ai-con-podcast": "https://media.fedu.vn/k_covers/poster_batch_ed-zitron-ai-con-podcast.webp",
         "leanne-tenbrink-giai-ma-tam-ly-den-podcast": "https://media.fedu.vn/k_covers/poster_batch_leanne-tenbrink-giai-ma-tam-ly-den-podcast.webp",
         "david-friedberg-chinh-phu-va-van-menh-de-che-my-podcast": "https://media.fedu.vn/k_covers/poster_batch_david-friedberg-chinh-phu-va-van-menh-de-che-my-podcast.webp",
@@ -217,7 +210,6 @@ def generate():
         "vanessa-van-edwards-nghe-thuat-hoi-thoai-podcast": "https://media.fedu.vn/k_covers/poster_batch_vanessa-van-edwards-nghe-thuat-hoi-thoai-podcast.webp",
         "konstantin-kisin-trut-tu-phuong-tay-podcast": "https://media.fedu.vn/k_covers/poster_batch_konstantin-kisin-trut-tu-phuong-tay-podcast.webp",
         "darby-saxby-sinh-hoc-cha-me-podcast": "https://media.fedu.vn/k_covers/poster_batch_darby-saxby-sinh-hoc-cha-me-podcast.webp",
-
         "pete-buttigieg-suy-tan-he-thong-my-podcast": "https://media.fedu.vn/k_covers/poster_batch_pete-buttigieg-suy-tan-he-thong-my-podcast.webp",
         "stasha-gominak-giai-ma-giac-ngu-vitamin-d-podcast": "https://media.fedu.vn/k_covers/poster_batch_stasha-gominak-giai-ma-giac-ngu-vitamin-d-podcast.webp",
         "michael-saylor-bitcoin-ai-podcast": "https://media.fedu.vn/k_covers/poster_batch_michael-saylor-bitcoin-ai-podcast.webp",
@@ -225,8 +217,6 @@ def generate():
         "ray-dalio-giai-ma-chu-ky-kinh-te-podcast": "https://media.fedu.vn/k_covers/poster_batch_ray-dalio-giai-ma-chu-ky-kinh-te-podcast.webp",
         "andy-galpin-toi-uu-giac-ngu-nang-luong-podcast": "https://media.fedu.vn/k_covers/poster_batch_andy-galpin-toi-uu-giac-ngu-nang-luong-podcast.webp",
         "brian-greene-ban-chat-thuc-tai-podcast": "https://media.fedu.vn/k_covers/poster_batch_brian-greene-ban-chat-thuc-tai-podcast.webp",
-
-
         "stephanie-estima-nu-gioi-hinh-the-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_stephanie-estima-nu-gioi-hinh-the-podcast.webp",
         "martin-picard-ty-the-lao-hoa-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_martin-picard-ty-the-lao-hoa-podcast.webp",
         "thomas-seyfried-ung-thu-ti-theo-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_thomas-seyfried-ung-thu-ti-theo-podcast.webp",
@@ -234,10 +224,8 @@ def generate():
         "daniel-cotello-ai-risk-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_daniel-cotello-ai-risk-podcast.webp",
         "robert-pape-bay-leo-thang-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_robert-pape-bay-leo-thang-podcast.webp",
         "alex-hormozi-xay-dung-moat-ben-vung-podcast.html": "https://media.fedu.vn/k_covers/poster_batch_alex-hormozi-xay-dung-moat-ben-vung-podcast.webp",
-
         "dustin-poirier-khoang-trong-sau-dinh-cao-podcast.html": "https://media.fedu.vn/k_covers/poster_dustin_fall.webp",
         "neil-degrasse-tyson-giai-ma-vu-tru-podcast.html": "https://media.fedu.vn/k_covers/poster_neil_cosmos.webp",
-
         "logic04.html": "assets/covers/banner_lego.webp",
         "logic05.html": "assets/covers/banner_pokemon.webp",
         "logic06.html": "assets/covers/banner_terraria.webp",
@@ -248,14 +236,12 @@ def generate():
         "logic11.html": "assets/covers/banner_fortnite.webp",
         "logic12.html": "assets/covers/banner_supermario.webp",
         "dom.html": "assets/covers/banner_animalcrossing.webp",
-
         "logic08.html": "assets/covers/banner_roblox.webp",
         "logic09.html": "assets/covers/banner_minecraft.webp",
         "logic10.html": "assets/covers/banner_amongus.webp",
         "logic11.html": "assets/covers/banner_fortnite.webp",
         "logic12.html": "assets/covers/banner_supermario.webp",
         "dom.html": "assets/covers/banner_animalcrossing.webp",
-
         "anton-osika-lovable.html": "https://media.fedu.vn/k_covers/3_body_problem_v2.webp",
         "ma-sat-noi-tam.html": "https://media.fedu.vn/k_covers/severance_v2.webp",
         "gs-po-shen-loh-ly-thuyet-tro-choi-giai-phap-song-sot-cho-con-nguoi-ky-nguyen-ai-podcast.html": "https://media.fedu.vn/k_covers/queens_gambit_v2.webp",
@@ -834,7 +820,7 @@ def generate():
         "khoi-nghiep-ky-nguyen-moi-science.html": "https://media.fedu.vn/k_covers/poster_fix_trang_quynh.webp",
         "hay-ngung-dua-vao-y-chi-hay-cam-tinh-de-ra-quyet-dinh-song-bang-cach-thiet-lap-thuat-toan-ky-luat-blueprint-va-de-du-lieu-len-tieng-ban-co.html": "https://media.fedu.vn/k_covers/poster_fix_money_heist.webp",
         "system-7-the-3-ways-pressure-breaks-you.html": "https://media.fedu.vn/k_covers/poster_fix_psychopass.webp",
-    }
+}
 
     for f in files:
         if f in exclude:
