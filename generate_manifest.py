@@ -12,6 +12,14 @@ def generate():
 
     cover_mapping = {
         "robert-greene-nghe-thuat-thu hut-quyen-luc-podcast": "https://media.fedu.vn/k_covers/poster_batch_robert-greene-nghe-thuat-thu hut-quyen-luc-podcast.webp",
+        "mukund-jha-ai-business-growth-podcast": "https://media.fedu.vn/k_covers/poster_batch_mukund-jha-ai-business-growth-podcast.webp",
+        "ashish-chanchlani-truong-thanh-qua-nghich-canh-podcast": "https://media.fedu.vn/k_covers/poster_batch_ashish-chanchlani-truong-thanh-qua-nghich-canh-podcast.webp",
+        "sunita-williams-tam-the-phi-hanh-gia-podcast": "https://media.fedu.vn/k_covers/poster_batch_sunita-williams-tam-the-phi-hanh-gia-podcast.webp",
+        "shiv-shivakumar-chien-luoc-tang-truong-podcast": "https://media.fedu.vn/k_covers/poster_batch_shiv-shivakumar-chien-luoc-tang-truong-podcast.webp",
+        "suniel-shetty-di-san-thuc-chien-podcast": "https://media.fedu.vn/k_covers/poster_batch_suniel-shetty-di-san-thuc-chien-podcast.webp",
+        "yungblud-doc-ban-trong-con-bao-dinh-kien-podcast": "https://media.fedu.vn/k_covers/poster_batch_yungblud-doc-ban-trong-con-bao-dinh-kien-podcast.webp",
+
+        "robert-greene-nghe-thuat-thu hut-quyen-luc-podcast": "https://media.fedu.vn/k_covers/poster_batch_robert-greene-nghe-thuat-thu hut-quyen-luc-podcast.webp",
         "jayant-mundhra-khung-hoang-kinh-te-an-do-podcast": "https://media.fedu.vn/k_covers/poster_batch_jayant-mundhra-khung-hoang-kinh-te-an-do-podcast.webp",
         "vishwamohan-giai-ma-vong-xoay-bang-cap-podcast": "https://media.fedu.vn/k_covers/poster_batch_vishwamohan-giai-ma-vong-xoay-bang-cap-podcast.webp",
         "kiara-advani-quan-tri-can-bang-podcast": "https://media.fedu.vn/k_covers/poster_batch_kiara-advani-quan-tri-can-bang-podcast.webp",
