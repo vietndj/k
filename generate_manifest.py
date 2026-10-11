@@ -11,6 +11,14 @@ def generate():
     posts = []
 
     cover_mapping = {
+        "robert-greene-nghe-thuat-thu hut-quyen-luc-podcast": "https://media.fedu.vn/k_covers/poster_batch_robert-greene-nghe-thuat-thu hut-quyen-luc-podcast.webp",
+        "jayant-mundhra-khung-hoang-kinh-te-an-do-podcast": "https://media.fedu.vn/k_covers/poster_batch_jayant-mundhra-khung-hoang-kinh-te-an-do-podcast.webp",
+        "vishwamohan-giai-ma-vong-xoay-bang-cap-podcast": "https://media.fedu.vn/k_covers/poster_batch_vishwamohan-giai-ma-vong-xoay-bang-cap-podcast.webp",
+        "kiara-advani-quan-tri-can-bang-podcast": "https://media.fedu.vn/k_covers/poster_batch_kiara-advani-quan-tri-can-bang-podcast.webp",
+        "abhinav-tripathi-private-jet-business-podcast": "https://media.fedu.vn/k_covers/poster_batch_abhinav-tripathi-private-jet-business-podcast.webp",
+        "michael-phelps-champion-mindset-podcast": "https://media.fedu.vn/k_covers/poster_batch_michael-phelps-champion-mindset-podcast.webp",
+        "scott-galloway-he-thong-thang-tien-podcast": "https://media.fedu.vn/k_covers/poster_batch_scott-galloway-he-thong-thang-tien-podcast.webp",
+
         "vaibhav-sisinti-ai-superintelligence-podcast": "https://media.fedu.vn/k_covers/poster_batch_vaibhav-sisinti-ai-superintelligence-podcast.webp",
         "janhvi-kapoor-identity-privilege-podcast": "https://media.fedu.vn/k_covers/poster_batch_janhvi-kapoor-identity-privilege-podcast.webp",
         "arpit-agarwal-degrees-vs-skills-podcast": "https://media.fedu.vn/k_covers/poster_batch_arpit-agarwal-degrees-vs-skills-podcast.webp",
