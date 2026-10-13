@@ -39,10 +39,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Lấy nội dung gốc (bỏ vỏ <main> tạm), tách h1 gốc nếu có để không bị lặp tiêu đề
-    const srcEl = document.querySelector('.main .content') || document.querySelector('.main');
+    const mainEl = document.querySelector('.main');
     const tmp = document.createElement('div');
-    if (srcEl) {
-        tmp.innerHTML = srcEl.innerHTML;
+    if (mainEl) {
+        const contentEl = mainEl.querySelector('.content');
+        if (contentEl) {
+            let combinedHtml = contentEl.innerHTML;
+            let sibling = contentEl.nextElementSibling;
+            while (sibling) {
+                combinedHtml += sibling.outerHTML;
+                sibling = sibling.nextElementSibling;
+            }
+            tmp.innerHTML = combinedHtml;
+        } else {
+            tmp.innerHTML = mainEl.innerHTML;
+        }
     }
     tmp.querySelectorAll('p:empty').forEach(n => n.remove());
     let h1 = tmp.querySelector('h1');
@@ -97,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="t">Hub<small>Kênh &amp; Nhận diện</small></div>
             </a>
             <div class="stepper">${stepperHtml}</div>
-            <div class="ecosystem-wrap">
-                <button type="button" class="ecosystem-btn" id="eco-btn" aria-haspopup="true" aria-expanded="false" title="Khám phá 14 nền tảng FEDU">
+            <div class="ecosystem-wrap" style="flex-shrink:0!important;">
+                <button type="button" class="ecosystem-btn" id="eco-btn" style="white-space:nowrap!important;flex-shrink:0!important;" aria-haspopup="true" aria-expanded="false" title="Khám phá 14 nền tảng FEDU">
                     <span class="eco-btn-text-full">Hệ sinh thái FEDU</span><span class="eco-btn-text-short">🌐 FEDU</span>
                     <span class="eco-caret">▾</span>
                 </button>
