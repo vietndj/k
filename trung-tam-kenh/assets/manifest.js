@@ -34,6 +34,7 @@ window.HUB = {
     { id: "tai-nguyen",  file: "08-tai-nguyen.html", group: "ref", n: "08", title: "Tài nguyên hệ thống & link mở ngay", short: "Tài nguyên", stage: "tainguyen", icon: "🔗", q: "Công cụ nào hỗ trợ bước nào? Bấm vào là ra." },
     { id: "case",        file: "09-case.html",       group: "ref", n: "09", title: "Case study theo ngành", short: "Case", stage: "case", icon: "📚", q: "Ngành của tôi đã có ai làm chưa, làm thế nào?" },
     { id: "hoc-vien",    file: "10-hoc-vien.html",   group: "ref", n: "10", title: "Dữ liệu thật về học viên", short: "Học viên", stage: "dulieu", icon: "📊", q: "Người học thật sự đau ở đâu, sợ gì, cần gì?" },
+    { id: "cu", file: "cu/index.html", group: "ref", n: "📜", title: "Bản chuyên khảo cũ (1.0)", short: "Bản cũ 1.0", stage: "ink", icon: "📜", q: "Xem lại toàn văn bản chuyên khảo 1.0 ban đầu" },
     { id: "giao-an",     file: "11-giao-an.html",    group: "ref", n: "11", title: "Giáo án động (bổ sung dữ liệu)", short: "Giáo án", stage: "ink", icon: "🗂️", q: "28 vấn đề, ví dụ, bài tập — và cách tôi thêm vào." }
   ]
 };
