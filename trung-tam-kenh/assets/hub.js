@@ -1,40 +1,49 @@
-
-// hub.js - Tự động render shell (menu, topbar) cho trang
+// hub.js - Tự động render shell (menu, topbar, hệ sinh thái) cho trang
 document.addEventListener('DOMContentLoaded', () => {
     const pageId = document.body.getAttribute('data-page');
+    if (!window.HUB || !window.HUB.pages) return;
     const page = window.HUB.pages.find(p => p.id === pageId);
-    if(!page) return;
+    if (!page) return;
     
     // Determine relative path depth
     const depth = page.file.split('/').length - 1;
     const rel = '../'.repeat(depth);
+    const homeUrl = (window.location.protocol === 'file:') ? `${rel}index.html` : '/';
     
-    // Build topbar stepper
-    const flowPages = window.HUB.pages.filter(p => p.group === 'flow');
-    const stepperHtml = flowPages.map(p => `
-        <a href="${rel}${p.file}" class="${p.id === pageId ? 'on' : ''}">
-            <span class="n">${p.n}</span>
-            <span class="t">${p.short}</span>
-        </a>
-    `).join('');
+    // Build topbar stepper (chỉ lấy các chặng chính !p.parent để giữ stepper tinh gọn)
+    const flowPages = window.HUB.pages.filter(p => p.group === 'flow' && !p.parent);
+    const stepperHtml = flowPages.map(p => {
+        const isActive = (p.id === pageId) || (page.parent === p.id);
+        return `
+            <a href="${rel}${p.file}" class="${isActive ? 'on' : ''}" title="${p.title}">
+                <span class="n">${p.n}</span>
+                <span class="t">${p.short}</span>
+            </a>
+        `;
+    }).join('');
 
-    // Build sidebar menu
+    // Build sidebar menu (hỗ trợ menu con pg-sub lồng thụt lề nhẹ)
     let menuHtml = '';
-    for(const g of window.HUB.groups) {
+    for (const g of window.HUB.groups) {
         menuHtml += `<h6>${g.title}</h6>`;
         const gPages = window.HUB.pages.filter(p => p.group === g.id);
-        menuHtml += gPages.map(p => `
-            <a href="${rel}${p.file}" class="pg ${p.id === pageId ? 'on' : ''}">
-                <span class="n">${p.icon}</span>
-                <span class="t">${p.title}</span>
-            </a>
-        `).join('');
+        menuHtml += gPages.map(p => {
+            const isSub = !!p.parent || !!p.sub;
+            return `
+                <a href="${rel}${p.file}" class="pg ${isSub ? 'pg-sub' : ''} ${p.id === pageId ? 'on' : ''}">
+                    <span class="n">${p.icon || p.n}</span>
+                    <span class="t">${p.title}</span>
+                </a>
+            `;
+        }).join('');
     }
 
     // Lấy nội dung gốc (bỏ vỏ <main> tạm), tách h1 gốc nếu có để không bị lặp tiêu đề
     const srcEl = document.querySelector('.main .content') || document.querySelector('.main');
     const tmp = document.createElement('div');
-    tmp.innerHTML = srcEl.innerHTML;
+    if (srcEl) {
+        tmp.innerHTML = srcEl.innerHTML;
+    }
     tmp.querySelectorAll('p:empty').forEach(n => n.remove());
     let h1 = tmp.querySelector('h1');
     let titleText = h1 ? h1.textContent.trim() : page.title;
@@ -80,13 +89,105 @@ document.addEventListener('DOMContentLoaded', () => {
     } else { pagerHtml += `<span></span>`; }
     pagerHtml += '</nav>';
 
+    // Topbar & Shell injection
     document.body.innerHTML = `
         <div class="topbar">
-            <a href="${rel}index.html" class="brand">
+            <a href="${homeUrl}" class="brand" title="Trang chủ Kênh &amp; Nhận diện (kenh.fedu.vn)">
                 <div class="logo">K</div>
                 <div class="t">Hub<small>Kênh &amp; Nhận diện</small></div>
             </a>
             <div class="stepper">${stepperHtml}</div>
+            <div class="ecosystem-wrap">
+                <button type="button" class="ecosystem-btn" id="eco-btn" aria-haspopup="true" aria-expanded="false" title="Khám phá 14 nền tảng FEDU">
+                    <span>Hệ sinh thái FEDU</span>
+                    <span class="eco-caret">▾</span>
+                </button>
+                <div class="ecosystem-menu" id="eco-menu" style="display:none;">
+                    <div class="eco-header">
+                        <div>
+                            <div class="eco-title">Hệ Sinh Thái FEDU</div>
+                            <div class="eco-sub">14 Nền tảng Đào tạo · Sáng tạo · Vận hành · Kênh</div>
+                        </div>
+                        <span class="eco-tag">FD ECOSYSTEM</span>
+                    </div>
+                    <div class="eco-grid">
+                        <div class="eco-group">
+                            <div class="eco-gh">🎓 ĐÀO TẠO</div>
+                            <a href="https://offline.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Offline Thực Chiến</span>
+                                <span class="eco-desc">offline.fedu.vn · Huấn luyện trực tiếp</span>
+                            </a>
+                            <a href="https://k3.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Giáo Trình K3</span>
+                                <span class="eco-desc">k3.fedu.vn · Giáo trình video thực chiến</span>
+                            </a>
+                            <a href="https://video.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Online CapCut</span>
+                                <span class="eco-desc">video.fedu.vn · Làm chủ dựng video</span>
+                            </a>
+                            <a href="https://30ngayviral.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">30 Ngày Viral</span>
+                                <span class="eco-desc">30ngayviral.fedu.vn · Kỷ luật xây kênh</span>
+                            </a>
+                            <a href="https://ai.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">AI Sáng Tạo</span>
+                                <span class="eco-desc">ai.fedu.vn · Đòn bẩy AI &amp; Tự động hoá</span>
+                            </a>
+                        </div>
+
+                        <div class="eco-group">
+                            <div class="eco-gh">⚡ SÁNG TẠO</div>
+                            <a href="https://brollbank.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Kho B-Roll</span>
+                                <span class="eco-desc">brollbank.fedu.vn · Footage bản quyền</span>
+                            </a>
+                            <a href="https://nhac.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Kho Nhạc &amp; SFX</span>
+                                <span class="eco-desc">nhac.fedu.vn · Âm thanh &amp; Nhịp dựng</span>
+                            </a>
+                            <a href="https://ytuong.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Kho Ý Tưởng</span>
+                                <span class="eco-desc">ytuong.fedu.vn · Hook &amp; Kịch bản</span>
+                            </a>
+                            <a href="https://offline.fedu.vn/research" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Research</span>
+                                <span class="eco-desc">offline.fedu.vn/research · Thị trường</span>
+                            </a>
+                        </div>
+
+                        <div class="eco-group">
+                            <div class="eco-gh">⚙️ VẬN HÀNH</div>
+                            <a href="https://led.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Lead Center</span>
+                                <span class="eco-desc">led.fedu.vn · Quản trị chuyển đổi lead</span>
+                            </a>
+                            <a href="https://stu.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <div class="eco-name-row">
+                                    <span class="eco-name">Student Hub</span>
+                                    <span class="eco-badge">PIN 0070</span>
+                                </div>
+                                <span class="eco-desc">stu.fedu.vn · Dữ liệu học viên</span>
+                            </a>
+                        </div>
+
+                        <div class="eco-group">
+                            <div class="eco-gh">🌐 KÊNH &amp; AGENCY</div>
+                            <a href="https://fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">FEDU Agency</span>
+                                <span class="eco-desc">fedu.vn · Giải pháp video &amp; Kênh</span>
+                            </a>
+                            <a href="https://vietndj.github.io" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Profile Thầy Việt</span>
+                                <span class="eco-desc">vietndj.github.io · Triết lý &amp; Kết nối</span>
+                            </a>
+                            <a href="https://kenh.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
+                                <span class="eco-name">Trung Tâm Kênh</span>
+                                <span class="eco-desc">kenh.fedu.vn · Hub Logic xây kênh</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="searchbtn">TÌM KIẾM <kbd>⌘K</kbd></div>
             <div class="menubtn">☰</div>
         </div>
@@ -109,17 +210,53 @@ document.addEventListener('DOMContentLoaded', () => {
             </main>
         </div>
     `;
-    // --- Bổ sung Logic tìm kiếm CMD+K và Menu Toggle ---
-    const searchBtn = document.querySelector('.searchbtn');
+
+    // --- Xử lý nút Menu Drawer trên Mobile ---
     const menuBtn = document.querySelector('.menubtn');
-    
-    if(menuBtn) {
+    if (menuBtn) {
         menuBtn.addEventListener('click', () => {
             document.body.classList.toggle('navopen');
         });
     }
 
-    // Modal Template
+    // --- Xử lý Dropdown Hệ sinh thái FEDU ---
+    const ecoBtn = document.getElementById('eco-btn');
+    const ecoMenu = document.getElementById('eco-menu');
+    if (ecoBtn && ecoMenu) {
+        ecoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = ecoMenu.style.display !== 'none';
+            if (isOpen) {
+                ecoMenu.style.display = 'none';
+                ecoBtn.classList.remove('active');
+                ecoBtn.setAttribute('aria-expanded', 'false');
+            } else {
+                if (modal && modal.style.display !== 'none') toggleModal();
+                ecoMenu.style.display = 'block';
+                ecoBtn.classList.add('active');
+                ecoBtn.setAttribute('aria-expanded', 'true');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (ecoMenu.style.display !== 'none' && !ecoMenu.contains(e.target) && !ecoBtn.contains(e.target)) {
+                ecoMenu.style.display = 'none';
+                ecoBtn.classList.remove('active');
+                ecoBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && ecoMenu.style.display !== 'none') {
+                ecoMenu.style.display = 'none';
+                ecoBtn.classList.remove('active');
+                ecoBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
+    // --- Bổ sung Logic tìm kiếm CMD+K và Modal ---
+    const searchBtn = document.querySelector('.searchbtn');
     const modalHtml = `
         <div class="sm" id="search-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:flex-start; justify-content:center; padding-top:10vh;">
             <div style="background:#fff; width:90%; max-width:600px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.2); overflow:hidden; display:flex; flex-direction:column;">
@@ -138,7 +275,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let resultsData = [];
     
     function toggleModal() {
-        if(modal.style.display === 'none') {
+        if (modal.style.display === 'none') {
+            if (ecoMenu && ecoMenu.style.display !== 'none') {
+                ecoMenu.style.display = 'none';
+                if (ecoBtn) {
+                    ecoBtn.classList.remove('active');
+                    ecoBtn.setAttribute('aria-expanded', 'false');
+                }
+            }
             modal.style.display = 'flex';
             smInput.value = '';
             smResults.innerHTML = '';
@@ -150,28 +294,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    if(searchBtn) searchBtn.addEventListener('click', toggleModal);
+    if (searchBtn) searchBtn.addEventListener('click', toggleModal);
     
     document.addEventListener('keydown', (e) => {
-        if((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
             e.preventDefault();
             toggleModal();
         }
-        if(e.key === 'Escape' && modal.style.display !== 'none') {
+        if (e.key === 'Escape' && modal.style.display !== 'none') {
             toggleModal();
         }
         
-        if(modal.style.display !== 'none') {
+        if (modal.style.display !== 'none') {
             const items = smResults.querySelectorAll('.sm-item');
-            if(e.key === 'ArrowDown') {
+            if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 activeIndex = (activeIndex + 1) % items.length;
                 updateActive(items);
-            } else if(e.key === 'ArrowUp') {
+            } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 activeIndex = (activeIndex - 1 + items.length) % items.length;
                 updateActive(items);
-            } else if(e.key === 'Enter' && activeIndex >= 0 && items[activeIndex]) {
+            } else if (e.key === 'Enter' && activeIndex >= 0 && items[activeIndex]) {
                 items[activeIndex].click();
             }
         }
@@ -179,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function updateActive(items) {
         items.forEach((it, idx) => {
-            if(idx === activeIndex) {
+            if (idx === activeIndex) {
                 it.style.background = '#f1f5f9';
             } else {
                 it.style.background = 'transparent';
@@ -189,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     smInput.addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase().trim();
-        if(!q) {
+        if (!q) {
             smResults.innerHTML = '';
             return;
         }
@@ -197,18 +341,18 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsData = [];
         
         // Search in HUB pages
-        if(window.HUB && window.HUB.pages) {
+        if (window.HUB && window.HUB.pages) {
             window.HUB.pages.forEach(p => {
-                if(p.title.toLowerCase().includes(q) || (p.q && p.q.toLowerCase().includes(q))) {
+                if (p.title.toLowerCase().includes(q) || (p.q && p.q.toLowerCase().includes(q))) {
                     resultsData.push({ type: 'page', title: p.title, url: rel + p.file, context: 'Trang tài liệu' });
                 }
             });
         }
         
         // Search in GIAO_AN if available
-        if(window.GIAO_AN) {
+        if (window.GIAO_AN) {
             window.GIAO_AN.forEach(g => {
-                if(g.tieude.toLowerCase().includes(q) || g.vande.toLowerCase().includes(q)) {
+                if (g.tieude.toLowerCase().includes(q) || g.vande.toLowerCase().includes(q)) {
                     resultsData.push({ type: 'giao-an', title: g.tieude, url: rel + '11-giao-an.html', context: 'Giáo án' });
                 }
             });
@@ -219,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function renderResults() {
         activeIndex = -1;
-        if(resultsData.length === 0) {
+        if (resultsData.length === 0) {
             smResults.innerHTML = '<div style="padding:15px; color:#64748b;">Không tìm thấy kết quả.</div>';
             return;
         }
