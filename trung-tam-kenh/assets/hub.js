@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="stepper">${stepperHtml}</div>
             <div class="ecosystem-wrap">
                 <button type="button" class="ecosystem-btn" id="eco-btn" aria-haspopup="true" aria-expanded="false" title="Khám phá 14 nền tảng FEDU">
-                    <span>Hệ sinh thái FEDU</span>
+                    <span class="eco-btn-text-full">Hệ sinh thái FEDU</span><span class="eco-btn-text-short">🌐 FEDU</span>
                     <span class="eco-caret">▾</span>
                 </button>
                 <div class="ecosystem-menu" id="eco-menu" style="display:none;">
@@ -222,35 +222,52 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Xử lý Dropdown Hệ sinh thái FEDU ---
     const ecoBtn = document.getElementById('eco-btn');
     const ecoMenu = document.getElementById('eco-menu');
+    let ecoBackdrop = null;
+
+    function closeEcoMenu() {
+        if (!ecoMenu) return;
+        ecoMenu.style.display = 'none';
+        if (ecoBtn) {
+            ecoBtn.classList.remove('active');
+            ecoBtn.setAttribute('aria-expanded', 'false');
+        }
+        if (ecoBackdrop) {
+            ecoBackdrop.remove();
+            ecoBackdrop = null;
+        }
+    }
+
+    function openEcoMenu() {
+        if (!ecoMenu) return;
+        if (typeof modal !== 'undefined' && modal && modal.style.display !== 'none') {
+            modal.style.display = 'none';
+        }
+        ecoMenu.style.display = 'block';
+        if (ecoBtn) {
+            ecoBtn.classList.add('active');
+            ecoBtn.setAttribute('aria-expanded', 'true');
+        }
+        if (!ecoBackdrop) {
+            ecoBackdrop = document.createElement('div');
+            ecoBackdrop.className = 'eco-backdrop';
+            ecoBackdrop.addEventListener('click', closeEcoMenu);
+            document.body.appendChild(ecoBackdrop);
+        }
+    }
+
     if (ecoBtn && ecoMenu) {
         ecoBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const isOpen = ecoMenu.style.display !== 'none';
-            if (isOpen) {
-                ecoMenu.style.display = 'none';
-                ecoBtn.classList.remove('active');
-                ecoBtn.setAttribute('aria-expanded', 'false');
+            if (ecoMenu.style.display !== 'none') {
+                closeEcoMenu();
             } else {
-                if (modal && modal.style.display !== 'none') toggleModal();
-                ecoMenu.style.display = 'block';
-                ecoBtn.classList.add('active');
-                ecoBtn.setAttribute('aria-expanded', 'true');
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (ecoMenu.style.display !== 'none' && !ecoMenu.contains(e.target) && !ecoBtn.contains(e.target)) {
-                ecoMenu.style.display = 'none';
-                ecoBtn.classList.remove('active');
-                ecoBtn.setAttribute('aria-expanded', 'false');
+                openEcoMenu();
             }
         });
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && ecoMenu.style.display !== 'none') {
-                ecoMenu.style.display = 'none';
-                ecoBtn.classList.remove('active');
-                ecoBtn.setAttribute('aria-expanded', 'false');
+                closeEcoMenu();
             }
         });
     }
@@ -276,13 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function toggleModal() {
         if (modal.style.display === 'none') {
-            if (ecoMenu && ecoMenu.style.display !== 'none') {
-                ecoMenu.style.display = 'none';
-                if (ecoBtn) {
-                    ecoBtn.classList.remove('active');
-                    ecoBtn.setAttribute('aria-expanded', 'false');
-                }
-            }
+            closeEcoMenu();
             modal.style.display = 'flex';
             smInput.value = '';
             smResults.innerHTML = '';
