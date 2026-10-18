@@ -207,8 +207,7 @@ scripts = """
     <script>
         // ================= AUTHENTICATION & GATEKEEPER =================
         const AUTH_STORAGE_KEY = 'fedu_vault_auth_v1';
-        const PASSCODE_PLAIN = '0070';
-        const PASSCODE_HASH = '71ffe84afd528a0365d6ec95c89a64cd6979b4a15730649feddf2dc390db9e3c';
+                const PASSCODE_HASH = '71ffe84afd528a0365d6ec95c89a64cd6979b4a15730649feddf2dc390db9e3c';
 
         async function sha256Hex(str) {
             try {
@@ -254,11 +253,8 @@ scripts = """
                 return;
             }
 
-            let isCorrect = (pin === PASSCODE_PLAIN);
-            if (!isCorrect) {
-                const hash = await sha256Hex(pin);
-                if (hash === PASSCODE_HASH) isCorrect = true;
-            }
+            const hash = await sha256Hex(pin);
+            const isCorrect = (hash === PASSCODE_HASH);
 
             if (isCorrect) {
                 if (pinFeedback) {

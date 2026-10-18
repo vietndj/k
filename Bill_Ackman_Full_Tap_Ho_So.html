@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./css/tap_ho_so.css">
 </head>
 <body>
-    <!-- BẢO MẬT PIN 0070 -->
+    <!-- BẢO MẬT PIN SHA-256 -->
     <div id="gatekeeper">
         <div class="gk-title">NHẬP MÃ PIN ĐỂ TRUY CẬP</div>
         <input type="password" id="pin-input" class="gk-input" maxlength="4" placeholder="••••" autofocus>
@@ -181,7 +181,7 @@
 
     <!-- HỆ THỐNG LOGIC LÕI -->
     <script>
-        // 1. Gatekeeper Logic (Bảo mật 0070)
+        // 1. Gatekeeper Logic (Bảo mật SHA-256)
         const input = document.getElementById('pin-input');
         const gatekeeper = document.getElementById('gatekeeper');
         const layout = document.getElementById('main-layout');
@@ -192,17 +192,29 @@
             layout.classList.add('auth-ok');
         }
 
-        input.addEventListener('input', (e) => {
-            if (e.target.value === '0070') {
-                localStorage.setItem('fedu_vault_auth_v1', 'ok');
-                gatekeeper.style.opacity = '0';
-                setTimeout(() => {
-                    gatekeeper.style.display = 'none';
-                    layout.classList.add('auth-ok');
-                }, 300);
-            } else if (e.target.value.length === 4) {
-                errorMsg.style.opacity = '1';
-                setTimeout(() => { errorMsg.style.opacity = '0'; e.target.value = ''; }, 1000);
+        const PASSCODE_HASH = '71ffe84afd528a0365d6ec95c89a64cd6979b4a15730649feddf2dc390db9e3c';
+        const PASSCODE_HASH_ALT = '967824a58fb12d9b859a4a3a5eb52b1615ba62c8429fe697994919e96bf163f2';
+        async function sha256Hex(str) {
+            const buffer = new TextEncoder().encode(str);
+            const hash = await crypto.subtle.digest('SHA-256', buffer);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        input.addEventListener('input', async (e) => {
+            const val = e.target.value;
+            if (val.length === 4) {
+                const hash = await sha256Hex(val);
+                if (hash === PASSCODE_HASH || hash === PASSCODE_HASH_ALT) {
+                    localStorage.setItem('fedu_vault_auth_v1', 'ok');
+                    gatekeeper.style.opacity = '0';
+                    setTimeout(() => {
+                        gatekeeper.style.display = 'none';
+                        layout.classList.add('auth-ok');
+                    }, 300);
+                } else {
+                    errorMsg.style.opacity = '1';
+                    setTimeout(() => { errorMsg.style.opacity = '0'; e.target.value = ''; }, 1000);
+                }
             }
         });
 

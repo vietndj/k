@@ -534,8 +534,8 @@
     <script>
         // ================= AUTHENTICATION & GATEKEEPER =================
         const AUTH_STORAGE_KEY = 'fedu_vault_auth_v1';
-        const PASSCODE_PLAIN = '0070';
         const PASSCODE_HASH = '71ffe84afd528a0365d6ec95c89a64cd6979b4a15730649feddf2dc390db9e3c';
+        const PASSCODE_HASH_ALT = '967824a58fb12d9b859a4a3a5eb52b1615ba62c8429fe697994919e96bf163f2';
 
         async function sha256Hex(str) {
             try {
@@ -581,11 +581,8 @@
                 return;
             }
 
-            let isCorrect = (pin === PASSCODE_PLAIN);
-            if (!isCorrect) {
-                const hash = await sha256Hex(pin);
-                if (hash === PASSCODE_HASH) isCorrect = true;
-            }
+            const hash = await sha256Hex(pin);
+            const isCorrect = (hash === PASSCODE_HASH || hash === PASSCODE_HASH_ALT);
 
             if (isCorrect) {
                 if (pinFeedback) {
@@ -651,7 +648,7 @@
             'kinh-doanh': { keywords: ['kinh-doanh', 'tai-chinh', 'bill-ackman', 'ray-dalio', 'high-ticket', 'd2c'], label: '💰 Kinh doanh & Tài chính' },
             'suc-khoe': { keywords: ['suc-khoe', 'tieu-duong', 'carnivore', 'giac-ngu', 'biohacking'], label: '🏋️ Sức khỏe & Y sinh' },
             'marketing': { keywords: ['marketing', 'xay-kenh', 'retention', 'niche', 'vo-boc-video'], label: '🎬 Marketing & Xây Kênh' },
-            'offline': { keywords: ['kich-ban-offline', 'case-study', 'video-offline'], label: '📝 Kịch bản Offline' },
+            'offline': { keywords: ['kich-ban-offline', 'kichbanoffline', 'case-study', 'video-offline'], label: '📝 Kịch bản Offline' },
             'hub': { keywords: ['hub', 'dashboard', 'quan-tri', 'hub-kenh'], label: '🏠 Hub & Dashboard' }
         };
 
@@ -672,7 +669,15 @@
 
         function removeAccents(str) {
             if (!str) return '';
-            return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+            return str.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase();
+        }
+
+        function matchSmartKeyword(searchStr, kw) {
+            const cleanKw = removeAccents(kw).trim();
+            if (!cleanKw) return false;
+            const pattern = cleanKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/-/g, '[\\s\\-_]*');
+            const regex = new RegExp(`\\b${pattern}\\b`, 'i');
+            return regex.test(searchStr);
         }
 
         function togglePin(filename) {
@@ -719,7 +724,7 @@
                 const searchStr = removeAccents((post.title + ' ' + post.filename + ' ' + (post.excerpt||'')).toLowerCase());
                 
                 for (const [tagKey, tagData] of Object.entries(SMART_TAGS)) {
-                    if (tagData.keywords.some(kw => searchStr.includes(removeAccents(kw)))) {
+                    if (tagData.keywords.some(kw => matchSmartKeyword(searchStr, kw))) {
                         post.tags.push(tagKey);
                     }
                 }

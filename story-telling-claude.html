@@ -6,9 +6,16 @@
 <title>Story telling claude • Tập Hồ Sơ Antigravity</title>
 <script>
 window.AUTH_KEY = "khoai_vault_pin_auth";
-window.CORRECT_PIN = "0070";
+window.CORRECT_PIN_HASH = "71ffe84afd528a0365d6ec95c89a64cd6979b4a15730649feddf2dc390db9e3c";
+window.CORRECT_PIN_HASH_ALT = "967824a58fb12d9b859a4a3a5eb52b1615ba62c8429fe697994919e96bf163f2";
+async function sha256Hex(str) {
+    const buffer = new TextEncoder().encode(str);
+    const hash = await crypto.subtle.digest("SHA-256", buffer);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
 try {
-    if (localStorage.getItem(window.AUTH_KEY) === window.CORRECT_PIN) {
+    const saved = localStorage.getItem(window.AUTH_KEY);
+    if (saved === window.CORRECT_PIN_HASH || saved === window.CORRECT_PIN_HASH_ALT) {
         document.documentElement.classList.add("vault-authenticated");
     }
 } catch(e) {}
@@ -49,17 +56,18 @@ function deletePinDigit() {
     }
 }
 
-function checkPin() {
+async function checkPin() {
     const dots = document.querySelectorAll(".pin-dot");
     const card = document.getElementById("lockCard");
-    if (currentPin === window.CORRECT_PIN) {
+    const pinHash = await sha256Hex(currentPin);
+    if (pinHash === window.CORRECT_PIN_HASH || pinHash === window.CORRECT_PIN_HASH_ALT) {
         dots.forEach(d => {
             d.classList.remove("error");
             d.style.background = "#10b981";
             d.style.borderColor = "#10b981";
         });
         try {
-            localStorage.setItem(window.AUTH_KEY, window.CORRECT_PIN);
+            localStorage.setItem(window.AUTH_KEY, window.CORRECT_PIN_HASH);
         } catch(e) {}
         setTimeout(() => {
             document.documentElement.classList.add("vault-authenticated");
@@ -1400,7 +1408,7 @@ pre code {
     .footer-center-btn { width: 100%; justify-content: center; }
 }
 
-/* ═══ 8. MÀN HÌNH KHÓA PIN 0070 ═══ */
+/* ═══ 8. MÀN HÌNH KHÓA PIN SHA-256 ═══ */
 html:not(.vault-authenticated) body {
     overflow: hidden !important;
     height: 100vh !important;
@@ -1566,7 +1574,7 @@ html:not(.vault-authenticated) .vault-lock-screen {
 <!-- ═══ THANH TIẾN TRÌNH CUỘN TRANG (READING PROGRESS BAR) ═══ -->
 <div id="readingProgressBar" class="reading-progress-bar"></div>
 
-<!-- ═══ MÀN HÌNH KHÓA BẢO MẬT (PIN: 0070) ═══ -->
+<!-- ═══ MÀN HÌNH KHÓA BẢO MẬT (SHA-256) ═══ -->
 <div class="vault-lock-screen" id="vaultLockScreen" onclick="focusPinInput()">
     <div class="lock-card" id="lockCard" onclick="event.stopPropagation()">
         <div class="lock-icon-badge">🔒</div>

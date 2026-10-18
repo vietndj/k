@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <a href="https://stu.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
                                 <div class="eco-name-row">
                                     <span class="eco-name">Student Hub</span>
-                                    <span class="eco-badge">PIN 0070</span>
+                                    <span class="eco-badge">PIN LOCK</span>
                                 </div>
                                 <span class="eco-desc">stu.fedu.vn · Dữ liệu học viên</span>
                             </a>
