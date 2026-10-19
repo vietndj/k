@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!page) return;
     
     // Determine relative path depth
-    const depth = page.file.split('/').length - 1;
+    const hubScript = document.querySelector('script[src*="hub.js"]');
+    const depth = hubScript ? (hubScript.getAttribute('src').match(/\.\.\//g) || []).length : (page.file.split('/').length - 1);
     const rel = '../'.repeat(depth);
     const homeUrl = (window.location.protocol === 'file:') ? `${rel}index.html` : '/';
     
