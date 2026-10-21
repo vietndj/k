@@ -27,6 +27,7 @@ window.HUB = {
     { id: "storytelling", file: "dinh-dang/storytelling.html", group: "flow", parent: "dinh-dang", sub: true, n: "5.4", title: "Storytelling 2.5", short: "Storytelling", stage: "dinhdang", icon: "📖", q: "Chạm đúng chỗ đau giấu kín?" },
     { id: "chuyen-canh",  file: "dinh-dang/chuyen-canh.html",  group: "flow", parent: "dinh-dang", sub: true, n: "5.5", title: "Chuyển cảnh (chất keo)", short: "Chuyển cảnh", stage: "dinhdang", icon: "⚡", q: "Video giật, mất người xem?" },
     { id: "vo-boc-31",    file: "dinh-dang/vo-boc-31.html",    group: "flow", parent: "dinh-dang", sub: true, n: "5.6", title: "31 vỏ bọc video tạo lead", short: "31 vỏ bọc", stage: "dinhdang", icon: "🎭", q: "Nghĩ gì để quay hôm nay?" },
+    { id: "aiedit-affilate", file: "aiedit-affilate.html",     group: "flow", parent: "dinh-dang", sub: true, n: "5.7", title: "Affiliate AIDA & AI Edit V3.3", short: "Affiliate AIDA", stage: "dinhdang", icon: "🛒", q: "Quay & dựng sản phẩm Affiliate ra đơn thế nào?" },
 
     { id: "ky-nang",     file: "06-ky-nang.html",    group: "flow", n: "06", title: "Bản đồ kỹ năng", short: "Kỹ năng", stage: "kynang", icon: "🛠️", q: "Cần giỏi những kỹ năng gì, học ở đâu?" },
     { id: "thuc-hanh",   file: "07-thuc-hanh.html",  group: "flow", n: "07", title: "Lộ trình thực hành", short: "Thực hành", stage: "thuchanh", icon: "🏋️", q: "Tuần 1, tuần 2... làm chính xác việc gì?" },
