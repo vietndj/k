@@ -26,11 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let menuHtml = '';
     for (const g of window.HUB.groups) {
         menuHtml += `<h6>${g.title}</h6>`;
-        const gPages = window.HUB.pages.filter(p => p.group === g.id);
+        const gPages = window.HUB.pages.filter(p => p.group === g.id && !p.hiddenFromMenu);
         menuHtml += gPages.map(p => {
             const isSub = !!p.parent || !!p.sub;
+            const isOn = (p.id === pageId) || (page.activeMenuId === p.id);
             return `
-                <a href="${rel}${p.file}" class="pg ${isSub ? 'pg-sub' : ''} ${p.id === pageId ? 'on' : ''}">
+                <a href="${rel}${p.file}" class="pg ${isSub ? 'pg-sub' : ''} ${isOn ? 'on' : ''}">
                     <span class="n">${p.icon || p.n}</span>
                     <span class="t">${p.title}</span>
                 </a>
@@ -64,22 +65,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const heroOnlyTitle = hero && hero.children.length === 1;
         (heroOnlyTitle ? hero : h1).remove();
     }
-    // Viết hoa chữ đầu tiêu đề / đoạn mở đầu (nguồn đang viết thường)
-    const cap = el => { const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())){ if(n.nodeValue.trim()){ n.nodeValue=n.nodeValue.replace(/^(\s*)(\S)/,(m,a,b)=>a+b.toLocaleUpperCase('vi')); break; } } };
-    tmp.querySelectorAll('h2,h3,h4,h5,.hero p,.hero h2').forEach(cap);
-    tmp.querySelectorAll('table').forEach(t=>{ if(!t.closest('.tw')){ const w=document.createElement('div'); w.className='tw'; t.replaceWith(w); w.appendChild(t); } });
-    // Viết hoa đầu câu trong đoạn văn (nguồn viết thường toàn bộ)
-    const U=c=>c.toLocaleUpperCase('vi');
-    tmp.querySelectorAll('p,li,td,.callout,blockquote,summary').forEach(blk=>{
-        const w=document.createTreeWalker(blk,NodeFilter.SHOW_TEXT); let n,first=true;
-        while((n=w.nextNode())){
-            if(n.parentElement.closest('code,pre,a,kbd')) { if(n.nodeValue.trim()) first=false; continue; }
-            let v=n.nodeValue;
-            if(first && v.trim()){ v=v.replace(/^(\s*)(\S)/,(m,a,b)=>a+U(b)); first=false; }
-            v=v.replace(/([.!?…]\s+)([a-zà-ỹ])/g,(m,a,b)=>a+U(b));
-            n.nodeValue=v;
-        }
-    });
+    if (!page.v2) {
+        // Viết hoa chữ đầu tiêu đề / đoạn mở đầu (nguồn đang viết thường)
+        const cap = el => { const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())){ if(n.nodeValue.trim()){ n.nodeValue=n.nodeValue.replace(/^(\s*)(\S)/,(m,a,b)=>a+b.toLocaleUpperCase('vi')); break; } } };
+        tmp.querySelectorAll('h2,h3,h4,h5,.hero p,.hero h2').forEach(cap);
+        tmp.querySelectorAll('table').forEach(t=>{ if(!t.closest('.tw')){ const w=document.createElement('div'); w.className='tw'; t.replaceWith(w); w.appendChild(t); } });
+        // Viết hoa đầu câu trong đoạn văn (nguồn viết thường toàn bộ)
+        const U=c=>c.toLocaleUpperCase('vi');
+        tmp.querySelectorAll('p,li,td,.callout,blockquote,summary').forEach(blk=>{
+            const w=document.createTreeWalker(blk,NodeFilter.SHOW_TEXT); let n,first=true;
+            while((n=w.nextNode())){
+                if(n.parentElement.closest('code,pre,a,kbd')) { if(n.nodeValue.trim()) first=false; continue; }
+                let v=n.nodeValue;
+                if(first && v.trim()){ v=v.replace(/^(\s*)(\S)/,(m,a,b)=>a+U(b)); first=false; }
+                v=v.replace(/([.!?…]\s+)([a-zà-ỹ])/g,(m,a,b)=>a+U(b));
+                n.nodeValue=v;
+            }
+        });
+    } else {
+        tmp.querySelectorAll('table').forEach(t=>{ if(!t.closest('.tw') && !t.closest('.matrix-wrap') && !t.closest('.rubric-interactive')){ const w=document.createElement('div'); w.className='tw'; t.replaceWith(w); w.appendChild(t); } });
+    }
     // Mục lục "Trên trang này" cho cột phải: gán id cho h2/h3
     const heads = [...tmp.querySelectorAll('h2')];
     heads.forEach((h, i) => { if (!h.id) h.id = 'sec-' + (i + 1); });
@@ -88,14 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
         : '';
 
     // Pager
-    const curIdx = window.HUB.pages.findIndex(p => p.id === pageId);
+    const navPages = window.HUB.pages.filter(p => !p.hiddenFromMenu);
+    const curNavId = page.hiddenFromMenu ? (page.activeMenuId || page.parent || pageId) : pageId;
+    const curIdx = navPages.findIndex(p => p.id === curNavId);
     let pagerHtml = '<nav class="pager" aria-label="Chuyển trang">';
     if (curIdx > 0) {
-        const prev = window.HUB.pages[curIdx - 1];
+        const prev = navPages[curIdx - 1];
         pagerHtml += `<a href="${rel}${prev.file}" class="pv"><small>← Trang trước</small><b>${prev.title}</b></a>`;
     } else { pagerHtml += `<span></span>`; }
-    if (curIdx < window.HUB.pages.length - 1) {
-        const nx = window.HUB.pages[curIdx + 1];
+    if (curIdx >= 0 && curIdx < navPages.length - 1) {
+        const nx = navPages[curIdx + 1];
         pagerHtml += `<a href="${rel}${nx.file}" class="nx"><small>Trang tiếp →</small><b>${nx.title}</b></a>`;
     } else { pagerHtml += `<span></span>`; }
     pagerHtml += '</nav>';
@@ -221,6 +228,14 @@ document.addEventListener('DOMContentLoaded', () => {
             </main>
         </div>
     `;
+
+    // Re-execute inline scripts inside .content after DOM shell injection
+    document.querySelectorAll('.content script').forEach(oldScript => {
+        const newScript = document.createElement('script');
+        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+        newScript.textContent = oldScript.textContent;
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
 
     // --- Xử lý nút Menu Drawer trên Mobile ---
     const menuBtn = document.querySelector('.menubtn');
