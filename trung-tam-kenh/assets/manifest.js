@@ -27,6 +27,7 @@ window.HUB = {
     { id: "storytelling", file: "dinh-dang/storytelling.html", group: "flow", parent: "dinh-dang", sub: true, n: "5.4", title: "Storytelling 2.5", short: "Storytelling", stage: "dinhdang", icon: "📖", q: "Chạm đúng chỗ đau giấu kín?" },
     { id: "chuyen-canh",  file: "dinh-dang/chuyen-canh.html",  group: "flow", parent: "dinh-dang", sub: true, n: "5.5", title: "Chuyển cảnh (chất keo)", short: "Chuyển cảnh", stage: "dinhdang", icon: "⚡", q: "Video giật, mất người xem?" },
     { id: "vo-boc-31",    file: "dinh-dang/vo-boc-31.html",    group: "flow", parent: "dinh-dang", sub: true, n: "5.6", title: "31 vỏ bọc video tạo lead", short: "31 vỏ bọc", stage: "dinhdang", icon: "🎭", q: "Nghĩ gì để quay hôm nay?" },
+    { id: "aiedit-affilate", file: "aiedit-affilate.html",     group: "flow", parent: "dinh-dang", sub: true, n: "5.7", title: "Affiliate AIDA & AI Edit V3.3", short: "Affiliate AIDA", stage: "dinhdang", icon: "🛒", q: "Quay & dựng sản phẩm Affiliate ra đơn thế nào?" },
 
     // Chặng 05 (Bản 2.0 Mới Nhất — Tách riêng để đối chiếu trực tiếp với mục cũ)
     { id: "dinh-dang-2",     file: "05-dinh-dang-2.0.html",          group: "flow", n: "2.0", title: "4 định dạng video và chuyển cảnh 2.0", short: "Định dạng 2.0", stage: "dinhdang", icon: "🎬", v2: true, q: "Bản nâng cấp 2.0: 4 Định dạng, Chuyển cảnh, Bố cục Cinematic, Ví dụ & Slide .html" },
