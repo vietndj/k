@@ -46,7 +46,7 @@ window.HUB = {
     { id: "megaprompt-2",       file: "dinh-dang/megaprompt2.0.html",     group: "flow", parent: "dinh-dang-2", sub: true, hiddenFromMenu: true, activeMenuId: "dinh-dang-2",     v2: true, n: "2.7",  title: "Trung tâm MegaPrompt 2.0 (4 Định dạng)", short: "MegaPrompt 2.0", stage: "dinhdang", icon: "🧰", q: "Cỗ máy AI viết kịch bản theo 4 định dạng video + Lịch 4 bài/tuần" },
 
     { id: "ky-nang",     file: "06-ky-nang.html",    group: "flow", n: "06", title: "Bản đồ kỹ năng", short: "Kỹ năng", stage: "kynang", icon: "🛠️", q: "Cần giỏi những kỹ năng gì, học ở đâu?" },
-    { id: "aieditskill", file: "aieditskill.html",   group: "flow", parent: "ky-nang", sub: true, n: "6.1", title: "Hệ thống Kỹ năng AI Video Edit & 35 Mẫu MFX", short: "AI Edit Skill", stage: "kynang", icon: "🎞️", q: "Hệ thống 10 cụm skill dựng AI, 35 mẫu chữ & bản vẽ 2D vận hành thế nào?" },
+    { id: "aieditskill", file: "aieditskill.html",   group: "flow", n: "6.1", title: "Hệ thống Kỹ năng AI Video Edit & 35 Mẫu MFX", short: "AI Edit Skill", stage: "kynang", icon: "🎞️", v2: true, q: "Hệ thống 10 cụm skill dựng AI, 35 mẫu chữ, 16 Archetypes 60fps & bản vẽ 2D vận hành thế nào?" },
     { id: "thuc-hanh",   file: "07-thuc-hanh.html",  group: "flow", n: "07", title: "Lộ trình thực hành", short: "Thực hành", stage: "thuchanh", icon: "🏋️", q: "Tuần 1, tuần 2... làm chính xác việc gì?" },
 
     { id: "tai-nguyen",  file: "08-tai-nguyen.html", group: "ref", n: "08", title: "Tài nguyên hệ thống & link mở ngay", short: "Tài nguyên", stage: "tainguyen", icon: "🔗", q: "Công cụ nào hỗ trợ bước nào? Bấm vào là ra." },
