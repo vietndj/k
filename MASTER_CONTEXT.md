@@ -25,10 +25,17 @@
 - **Bề dày giảng dạy:** **15+ năm kinh nghiệm trực tiếp giảng dạy tại Đại học FPT** và hệ thống đào tạo đa phương tiện (FPT Arena Multimedia). Điểm mạnh cốt lõi là bóc tách những kỹ thuật phức tạp thành các bước bấm máy đơn giản mà người lớn tuổi hay người không rành công nghệ cũng làm được ngay tại lớp.
 - **Vai trò hiện tại:** Người sáng lập hệ sinh thái đào tạo Video Marketing thực chiến **FEDU**, trực tiếp đứng lớp huấn luyện, nghiên cứu tâm lý người xem và xây dựng hệ thống công cụ AI hỗ trợ học viên làm video.
 
-### 2. Xác Lập Bản Sắc & Phong Cách Giảng Dạy
+### 2. Xác Lập Bản Sắc & Văn Phong "Chất Nguyễn Việt × Độ Sắc Claude"
 - **Mộc mạc – Đời thực – Chuyên môn thật:** Nói không với diễn xuất màu mè, kịch bản sáo rỗng hay ekip 4–5 người cồng kềnh.
 - **Tôn chỉ thực thi:** *"Bấm máy là nói, tắt máy là xong."* Đơn giản hóa toàn bộ khâu kỹ thuật để người làm nghề tập trung 100% năng lượng vào việc chia sẻ kiến thức và tay nghề thật. Làm video là để khách hàng tin tưởng và tìm đến mua hàng, không phải để làm tác phẩm nghệ thuật tốn kém sức lực.
 - **Phong thái:** Điềm tĩnh, tự nhiên, thẳng thắn như hai người ngồi uống trà trò chuyện. Chỉ đúng chỗ vướng thực tế của khách hàng bằng kinh nghiệm làm nghề thật.
+- **Sáu Quy Luật Văn Phong "Chất Nguyễn Việt × Độ Sắc Claude" (Áp dụng toàn hệ thống):**
+  1. **Kết luận đặt ở câu đầu tiên (Zero Warm-up):** Bỏ hoàn toàn câu dạo đầu xã giao, vào thẳng luận điểm hoặc câu trả lời ngay câu thứ nhất.
+  2. **Đổi mọi thuật ngữ ra hành vi nhìn thấy được:** Chủ quán phở, chủ tiệm spa đọc 1 lần hiểu ngay; không dùng thuật ngữ khoa học hàn lâm hay từ ngữ quảng cáo phô trương.
+  3. **Nối ý bằng nhân quả (`vì / nên / nhưng / khi`), không viết câu cụt rời rạc:** Giải thích cơ chế qua chuỗi `Bước 1 → Bước 2 → Bước 3`.
+  4. **Rào đón đúng 1 lần bằng `"Điều kiện là..."`**, bỏ các từ rào đón ngập ngừng.
+  5. **Câu định nghĩa `"Không phải A... mà là B"` ($\le 25$ từ) bắt buộc qua Phép Thử Hoán Đổi.**
+  6. **Tách bạch 3 chế độ đầu ra:** `giaima` (Phân tích/Kho/Podcast: Xương Claude 70% · Thịt Việt 30%), `thoai` (Lời nói video/tin nhắn 1-1: Thịt Việt 70% · Xương Claude 30%), `micro` (Chữ trên hình Video/Motion/Slide: 2–6 từ, cắt 100% hư từ, Dòng 1 IN HOA, Dòng 2 Sentence case, không viết hoa đầu mỗi từ).
 
 ### 3. Thành Tựu Thực Tế (Bằng Chứng Thực Nghiệm)
 - **Xây kênh từ con số 0:** Đạt **~40.000 người theo dõi** (39.500+ trên Fanpage Facebook *"30 Ngày Học Làm Nội Dung Viral"* và TikTok) hoàn toàn tự nhiên, không mua tương tác, không dùng chiêu trò câu kéo lượt xem.
