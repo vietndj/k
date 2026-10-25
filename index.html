@@ -640,8 +640,33 @@
 
         // ================= NEW APP LOGIC =================
 
-        // Constants & State
-        const SMART_TAGS = {
+        // Constants & State (Dynamic Universal Repo Hub Config)
+        let SITE_CONFIG = {
+            site_id: 'k',
+            github_repo: 'vietndj/k',
+            live_discovery: true
+        };
+        const FALLBACK_COVERS = [
+            "https://media.fedu.vn/k_covers/poster_the_dark_knight_rises_1790915630558.webp",
+            "https://media.fedu.vn/k_covers/poster_bloodborne_1790915839906.webp",
+            "https://media.fedu.vn/k_covers/poster_skyrim_1790915855678.webp",
+            "https://media.fedu.vn/k_covers/harvey_specter_poster_1791005427104.webp",
+            "https://media.fedu.vn/k_covers/v_cyberpunk_poster_1791005532729.webp",
+            "https://media.fedu.vn/k_covers/walter_white_poster_1790936796056.webp",
+            "https://media.fedu.vn/k_covers/bruce_wayne_poster_1790936369227.webp",
+            "https://media.fedu.vn/k_covers/poster_nier_automata_1790917224295.webp",
+            "https://media.fedu.vn/k_covers/poster_heat_1790916780101.webp",
+            "https://media.fedu.vn/k_covers/akira_kaneda_poster_1790935387833.webp"
+        ];
+        function getDeterministicFallbackCover(filename) {
+            const s = String(filename || 'default');
+            let h = 0;
+            for (let i = 0; i < s.length; i++) {
+                h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+            }
+            return FALLBACK_COVERS[Math.abs(h) % FALLBACK_COVERS.length];
+        }
+        let SMART_TAGS = {
             'triet-ly': { keywords: ['triet-ly', 'thoi-quen', 'khac-ky', 'tu-chu', 'bay-tien-nghi', 'lo-au'], label: '🧭 Triết lý sống & Thói quen' },
             'ai-tech': { keywords: ['ai', 'cong-nghe', 'sam-altman', 'mo-gawdat', 'lovable', 'second-brain'], label: '🤖 AI & Công nghệ' },
             'tam-ly': { keywords: ['tam-ly', 'nao-bo', 'phan-xa', 'the-dien', 'neuroplasticity', 'hach-hanh-nhan'], label: '🧠 Tâm lý học & Não bộ' },
@@ -695,6 +720,29 @@
         // Init App
         async function initApp() {
             try {
+                const cfgRes = await fetch(`./repo-config.json?t=${Date.now()}`);
+                if (cfgRes.ok) {
+                    const cfg = await cfgRes.json();
+                    SITE_CONFIG = Object.assign(SITE_CONFIG, cfg);
+                    if (cfg.title) document.title = cfg.title;
+                    if (cfg.smart_tags && Object.keys(cfg.smart_tags).length > 0) {
+                        SMART_TAGS = cfg.smart_tags;
+                    }
+                    if (cfg.sidebar_sections) {
+                        const ns = cfg.site_id && cfg.site_id !== 'k' ? `_${cfg.site_id}` : '';
+                        if (cfg.sidebar_sections.hub_links && !localStorage.getItem('fedu_hub_links' + ns)) {
+                            hubLinks = [...cfg.sidebar_sections.hub_links];
+                        }
+                        if (cfg.sidebar_sections.wiki_links && !localStorage.getItem('fedu_wiki_links' + ns)) {
+                            wikiLinks = [...cfg.sidebar_sections.wiki_links];
+                        }
+                        if (cfg.sidebar_sections.video_links && !localStorage.getItem('fedu_video_links' + ns)) {
+                            videoLinks = [...cfg.sidebar_sections.video_links];
+                        }
+                    }
+                }
+            } catch (e) {}
+            try {
                 const res = await fetch(`./posts-manifest.json?t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
@@ -719,6 +767,9 @@
         function processPostsData() {
             const now = new Date();
             allPosts.forEach(post => {
+                if (!post.cover_image) {
+                    post.cover_image = getDeterministicFallbackCover(post.filename);
+                }
                 // Auto tag detection
                 post.tags = [];
                 const searchStr = removeAccents((post.title + ' ' + post.filename + ' ' + (post.excerpt||'')).toLowerCase());
@@ -746,25 +797,29 @@
         }
 
         async function checkGitHubLiveUpdates() {
+            if (SITE_CONFIG.live_discovery === false) return;
             try {
-                // Anonymous fetch without token to avoid security issues
-                const res = await fetch(`https://api.github.com/repos/vietndj/k/contents?t=${Date.now()}`, {
+                const repoSlug = SITE_CONFIG.github_repo || 'vietndj/k';
+                const excludeList = SITE_CONFIG.exclude_files || ['index.html', 'fix-url.html', '404.html', 'rajchannel.html', 'skills.html', 'admin.html'];
+                const res = await fetch(`https://api.github.com/repos/${repoSlug}/contents?t=${Date.now()}`, {
                     headers: { 'Accept': 'application/vnd.github.v3+json' }
                 });
                 if (!res.ok) return;
                 const contents = await res.json();
+                if (!Array.isArray(contents)) return;
                 const existing = new Set(allPosts.map(p => p.filename));
                 let newFound = false;
 
                 contents.forEach(item => {
-                    if (item.type === 'file' && item.name.endsWith('.html') && !['index.html', 'fix-url.html', '404.html'].includes(item.name)) {
+                    if (item.type === 'file' && item.name.endsWith('.html') && !excludeList.includes(item.name)) {
                         if (!existing.has(item.name)) {
                             allPosts.unshift({
                                 filename: item.name,
-                                title: item.name.replace('.html', '').replace(/-/g, ' '),
-                                excerpt: 'Tài liệu mới',
+                                title: item.name.replace('.html', '').replace(/[-_]/g, ' '),
+                                excerpt: 'Tài liệu mới vừa được đồng bộ lên kho lưu trữ.',
+                                cover_image: getDeterministicFallbackCover(item.name),
                                 updated_at: new Date().toISOString(),
-                                tags: ['hub'], // Default tag
+                                tags: ['hub'],
                                 badge: 'new'
                             });
                             newFound = true;
@@ -838,7 +893,7 @@
                 const isGlobalPinned = globalPinnedPosts.includes(post.filename);
                 const isLocalPinned = pinnedPosts.includes(post.filename);
                 const isPinned = isGlobalPinned || isLocalPinned;
-                const tagsHtml = post.tags.map(t => `<span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 truncate max-w-[80px]" title="${SMART_TAGS[t].label}">${SMART_TAGS[t].label.split(' ')[1]}</span>`).join('');
+                const tagsHtml = post.tags.map(t => `<span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 truncate max-w-[80px]" title="${(SMART_TAGS[t] ? SMART_TAGS[t].label : "📌 Khác")}">${(SMART_TAGS[t] ? SMART_TAGS[t].label : "📌 Khác").split(' ')[1]}</span>`).join('');
                 
                 let badgeHtml = '';
                 if (post.badge === 'new') badgeHtml = '<span class="absolute top-2 left-2 z-20 bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">Mới</span>';
@@ -872,7 +927,9 @@
                         </a>
                     </div>`;
                 } else {
-                    const coverImgHtml = post.cover_image ? `<div class="w-full aspect-[3/4] bg-gray-100 relative overflow-hidden shrink-0 border-b border-gray-100"><img src="${post.cover_image}" alt="${post.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" onerror="this.style.display='none'"></div>` : '';
+                    const fallbackCover = getDeterministicFallbackCover(post.filename);
+                    const finalCover = post.cover_image || fallbackCover;
+                    const coverImgHtml = `<div class="w-full aspect-[3/4] bg-gray-100 relative overflow-hidden shrink-0 border-b border-gray-100"><img src="${finalCover}" alt="${post.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" onerror="this.onerror=null; this.src='${fallbackCover}';"></div>`;
                     return `
                     <div class="rounded-xl border ${isPinned ? 'border-amber-300 shadow-sm' : 'border-gray-100'} hover:border-gray-200 hover:shadow-md transition bg-white overflow-hidden relative flex flex-col group h-full">
                         ${badgeHtml}
@@ -906,7 +963,7 @@
                         <div class="bg-gray-50 border-t border-gray-100 px-4 py-2 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
                             <span class="text-[10px] text-gray-500">${post.read_time || '5 min'}</span>
                             <div class="flex items-center gap-2">
-                                <a href="https://github.com/vietndj/k/delete/main/${post.filename}" target="_blank" class="text-[10px] text-rose-500 hover:text-rose-700 uppercase" onclick="event.stopPropagation()">Xóa file</a>
+                                <a href="https://github.com/${SITE_CONFIG.github_repo || 'vietndj/k'}/delete/main/${post.filename}" target="_blank" class="text-[10px] text-rose-500 hover:text-rose-700 uppercase" onclick="event.stopPropagation()">Xóa file</a>
                                 <a href="./${post.filename}" target="_blank" class="text-[10px] font-bold text-gray-900 hover:text-emerald-600 uppercase tracking-wide flex items-center gap-1" onclick="markAsRead('${post.filename}'); event.stopPropagation()">
                                     Đọc <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                 </a>
@@ -1421,7 +1478,7 @@
             rc.innerHTML = recs.map(post => `
                 <a href="./${post.filename}" target="_blank" onclick="markAsRead('${post.filename}')" class="block p-2 bg-white rounded border border-gray-100 cursor-pointer hover:border-gray-300">
                     <div class="text-xs font-bold text-gray-800 line-clamp-1">${post.title}</div>
-                    <div class="text-[10px] text-gray-500 mt-1">${post.tags.map(t => SMART_TAGS[t].label.split(' ')[1] || SMART_TAGS[t].label.split(' ')[0]).join(', ')}</div>
+                    <div class="text-[10px] text-gray-500 mt-1">${post.tags.map(t => (SMART_TAGS[t] ? SMART_TAGS[t].label : "📌 Khác").split(' ')[1] || (SMART_TAGS[t] ? SMART_TAGS[t].label : "📌 Khác").split(' ')[0]).join(', ')}</div>
                 </a>
             `).join('');
         }
