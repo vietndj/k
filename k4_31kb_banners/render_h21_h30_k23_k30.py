@@ -97,12 +97,12 @@ NEW_SUBBOX_SPECS: List[Dict[str, Any]] = [
         "h_focal_style": "italic",
         "sub_med_file": "FDAeonikSoft-Medium.woff2",
         "sub_bold_file": "FDAeonikSoft-Bold.woff2",
-        "mono_file": "FDAeonikMono-Bold.woff2",
+        "mono_file": "FDRMMono-Bold.woff2",
         "subbox_html": """
         <div class="sub-box box-k25">
-          <div class="def-row old"><span class="badge-muted">TẦNG 1 · LỌC</span><span>Loại <b class="mono" style="margin-right:3px;">90%</b> khách xem dạo ngay từ tiêu đề</span></div>
+          <div class="def-row old"><span class="badge-muted">TẦNG 1 · LỌC</span><span>Loại <b class="mono" style="display:inline-block; margin-right:6px;">90%</b>khách xem dạo ngay từ tiêu đề</span></div>
           <div class="div-line"></div>
-          <div class="def-row new"><span class="badge-gold">TẦNG 2 · CHỐT</span><span>Giữ <b class="mono gold" style="margin-right:3px;">10%</b> khách thật tự nhắn hỏi lịch</span></div>
+          <div class="def-row new"><span class="badge-gold">TẦNG 2 · CHỐT</span><span>Giữ <b class="mono gold" style="display:inline-block; margin-right:6px;">10%</b>khách thật tự nhắn hỏi lịch</span></div>
         </div>
         """,
     },
