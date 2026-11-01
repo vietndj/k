@@ -194,30 +194,25 @@ def build_dual_zero_blur_bgs(
             nh = int(frame_meta["nh"])
             x_shift = int(frame_meta.get("x_shift", 0))
             y0 = int(frame_meta.get("y0", 0))
+            # Đảm bảo nw - x_shift >= target_w (1080) và nh >= target_h (1350) để 0% phải pad gương BORDER_REFLECT_101
+            min_req_w = target_w + x_shift
+            if nw < min_req_w or nh < target_h:
+                fix_ratio = max(min_req_w / float(max(1, nw)), target_h / float(max(1, nh)))
+                nw = int(round(nw * fix_ratio))
+                nh = int(round(nh * fix_ratio))
+                y0 = int(round(y0 * fix_ratio))
             im_resized = im.resize((nw, nh), Image.Resampling.LANCZOS)
             arr_s = np.array(im_resized, dtype=np.uint8)
             y0 = max(0, min(nh - target_h, y0))
             arr_h = arr_s[y0 : y0 + target_h, :, :]
 
             if side == "left":
-                # Dịch sang trái x_shift pixel để đầu/tai nằm gọn bên trái x <= 425px
                 arr_shifted = arr_h[:, x_shift:, :]
-                cur_w = arr_shifted.shape[1]
-                if cur_w >= target_w:
-                    arr_u8 = arr_shifted[:, :target_w, :]
-                else:
-                    pad_right = target_w - cur_w
-                    arr_u8 = cv2.copyMakeBorder(arr_shifted, 0, 0, 0, pad_right, cv2.BORDER_REFLECT_101)
+                arr_u8 = arr_shifted[:, :target_w, :]
             else:
-                # side == "right": Dịch sang phải x_shift pixel để đầu/tai nằm gọn bên phải x >= 655px
                 end_col = nw - x_shift
                 arr_shifted = arr_h[:, :end_col, :]
-                cur_w = arr_shifted.shape[1]
-                if cur_w >= target_w:
-                    arr_u8 = arr_shifted[:, cur_w - target_w :, :]
-                else:
-                    pad_left = target_w - cur_w
-                    arr_u8 = cv2.copyMakeBorder(arr_shifted, 0, 0, pad_left, 0, cv2.BORDER_REFLECT_101)
+                arr_u8 = arr_shifted[:, arr_shifted.shape[1] - target_w :, :]
             arr = arr_u8.astype(np.float32) / 255.0
         else:
             scale = max(target_w / float(w0), target_h / float(h0))
