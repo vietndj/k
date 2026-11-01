@@ -178,11 +178,11 @@ def build_style_html(
     if style_code == "K03":
         d = spec["k03"]
         return common_head + f"""
-  .sub-box {{ display: grid; grid-template-columns: 1fr 28px 1fr; align-items: center; }}
+  .sub-box {{ display: grid; grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr); align-items: center; }}
   .col-stat {{ display: flex; flex-direction: column; gap: 4px; min-width: 0; }}
   .n-gold {{ font-family: "MetaMono", monospace; font-size: 62px; line-height: 1.0; color: {accent}; white-space: nowrap; }}
   .n-white {{ font-family: "MetaMono", monospace; font-size: 62px; line-height: 1.0; color: #FFFFFF; white-space: nowrap; }}
-  .lbl-sub {{ font-family: "SubMed", sans-serif; font-size: 24.5px; line-height: 1.25; color: #CBD5E1; white-space: nowrap; }}
+  .lbl-sub {{ font-family: "SubMed", sans-serif; font-size: 22px; line-height: 1.28; color: #CBD5E1; white-space: normal; word-wrap: break-word; }}
   .arrow {{ font-family: "SubBold", sans-serif; font-size: 28px; color: {accent}; text-align: center; }}
 </style></head>
 <body><div class="zone">
@@ -190,7 +190,7 @@ def build_style_html(
   <div class="sub-box">
     <div class="col-stat"><span class="n-gold">{d["n1"]}</span><span class="lbl-sub auto-sub">{d["l1"]}</span></div>
     <div class="arrow">→</div>
-    <div class="col-stat" style="padding-left: 8px;"><span class="n-white">{d["n2"]}</span><span class="lbl-sub auto-sub">{d["l2"]}</span></div>
+    <div class="col-stat" style="padding-left: 14px;"><span class="n-white">{d["n2"]}</span><span class="lbl-sub auto-sub">{d["l2"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -253,12 +253,12 @@ def build_style_html(
         d = spec["k07"]
         return common_head + f"""
   .sub-box {{ padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); overflow: hidden; }}
-  .col-left {{ padding: 18px 14px; border-right: 1px solid rgba(255, 255, 255, 0.12); min-width: 0; }}
-  .col-right {{ padding: 18px 14px; background: rgba(255, 255, 255, 0.04); min-width: 0; }}
+  .col-left {{ padding: 18px 15px; border-right: 1px solid rgba(255, 255, 255, 0.12); min-width: 0; }}
+  .col-right {{ padding: 18px 15px; background: rgba(255, 255, 255, 0.04); min-width: 0; }}
   .c-head-muted {{ font-family: "SubBold", sans-serif; font-size: 19.5px; white-space: nowrap; color: #94A3B8; margin-bottom: 6px; display: block; }}
   .c-head-gold {{ font-family: "SubBold", sans-serif; font-size: 19.5px; white-space: nowrap; color: {accent}; margin-bottom: 6px; display: block; }}
-  .c-body-muted {{ font-family: "SubMed", sans-serif; font-size: 24px; line-height: 1.32; white-space: nowrap; color: #CBD5E1; display: block; }}
-  .c-body-bright {{ font-family: "SubBold", sans-serif; font-size: 24px; line-height: 1.32; white-space: nowrap; color: #FFFFFF; display: block; }}
+  .c-body-muted {{ font-family: "SubMed", sans-serif; font-size: 21.5px; line-height: 1.32; white-space: normal; word-wrap: break-word; color: #CBD5E1; display: block; }}
+  .c-body-bright {{ font-family: "SubBold", sans-serif; font-size: 21.5px; line-height: 1.32; white-space: normal; word-wrap: break-word; color: #FFFFFF; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
@@ -308,12 +308,12 @@ def build_style_html(
         d = spec["k10"]
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 13px; }}
-  .m-row {{ display: flex; align-items: center; gap: 10px; white-space: nowrap; }}
-  .m-lbl {{ font-family: "SubBold", sans-serif; font-size: 23px; color: #CBD5E1; width: 145px; flex-shrink: 0; }}
-  .m-track {{ flex: 1; height: 12px; background: rgba(255, 255, 255, 0.12); border-radius: 99px; overflow: hidden; }}
+  .m-row {{ display: flex; align-items: center; gap: 12px; white-space: nowrap; }}
+  .m-lbl {{ font-family: "SubBold", sans-serif; font-size: 22.5px; color: #CBD5E1; min-width: 170px; width: auto; flex-shrink: 0; }}
+  .m-track {{ flex: 1; height: 12px; background: rgba(255, 255, 255, 0.12); border-radius: 99px; overflow: hidden; min-width: 60px; }}
   .m-fill-low {{ width: 18%; height: 100%; background: #64748B; border-radius: 99px; }}
   .m-fill-high {{ width: 94%; height: 100%; background: {accent}; border-radius: 99px; }}
-  .m-val {{ font-family: "MetaMono", monospace; font-size: 22px; color: #94A3B8; width: 105px; text-align: right; flex-shrink: 0; }}
+  .m-val {{ font-family: "MetaMono", monospace; font-size: 21.5px; color: #94A3B8; min-width: 112px; width: auto; text-align: right; flex-shrink: 0; }}
   .m-val.hi {{ color: {accent}; }}
 </style></head>
 <body><div class="zone">
@@ -515,9 +515,9 @@ def build_style_html(
     # Default K21 (03s Scroll Filter)
     d = spec["k21"]
     return common_head + f"""
-  .sub-box {{ display: grid; grid-template-columns: 86px 2px 1fr; gap: 14px; align-items: center; }}
-  .s-badge {{ display: flex; flex-direction: column; align-items: center; justify-content: center; }}
-  .s-num {{ font-family: "MetaMono", monospace; font-size: 62px; line-height: 1; color: {accent}; }}
+  .sub-box {{ display: grid; grid-template-columns: 106px 2px 1fr; gap: 14px; align-items: center; }}
+  .s-badge {{ display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding-left: 2px; }}
+  .s-num {{ font-family: "MetaMono", monospace; font-size: 56px; line-height: 1; color: {accent}; }}
   .s-lbl {{ font-family: "SubBold", sans-serif; font-size: 19.5px; color: #94A3B8; margin-top: 4px; }}
   .s-div {{ width: 2px; height: 64px; background: {accent}; opacity: 0.45; }}
   .s-right {{ display: flex; flex-direction: column; gap: 8px; min-width: 0; }}
