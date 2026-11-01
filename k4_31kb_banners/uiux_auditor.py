@@ -182,6 +182,7 @@ def audit_v3_banner(
     final_img_path: Path,
     expected_lines: int = 3,
     person_side: str = "right",
+    heatmap_out_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """
     Chấm điểm toàn diện 13 Cổng Thực Chiến (G1..G13) trên file HTML lớp chữ + Ảnh Banner 1080x1350.
@@ -602,6 +603,139 @@ def audit_v3_banner(
     bottom_margin = max(0, 1350 - block_y2)
     vert_balance_err = round(abs(top_margin - bottom_margin) / float(max(1, top_margin + bottom_margin)), 3)
 
+    # =========================================================================
+    # Cổng G21 (CLAUDE2): Multi-Channel Saliency Heatmap & WTA Scanpath (F1..F4)
+    # S = norm(0.30*SR + 0.25*C_lab + 0.15*Edge + 0.30*P_face)
+    # =========================================================================
+    H_img, W_img = 1350, 1080
+    # 1. Spectral Residual FFT Saliency (Hou & Zhang CVPR)
+    gray_small = cv2.resize(gray, (216, 270), interpolation=cv2.INTER_AREA).astype(np.float32)
+    fft = np.fft.fft2(gray_small)
+    log_amp = np.log(np.abs(fft) + 1e-8)
+    phase = np.angle(fft)
+    spec_res = log_amp - cv2.blur(log_amp, (3, 3))
+    sr_small = np.abs(np.fft.ifft2(np.exp(spec_res + 1j * phase))) ** 2
+    sr_small = cv2.GaussianBlur(sr_small.astype(np.float32), (9, 9), 2.2)
+    sr_map = cv2.resize(sr_small, (W_img, H_img), interpolation=cv2.INTER_LINEAR)
+    sr_map = (sr_map - sr_map.min()) / (sr_map.max() - sr_map.min() + 1e-8)
+
+    # 2. CIE Lab Chroma Pop × Local Luminance Contrast (C_lab)
+    lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB).astype(np.float32)
+    L_ch = lab[:, :, 0] / 255.0
+    a_ch = (lab[:, :, 1] - 128.0) / 127.0
+    b_ch = (lab[:, :, 2] - 128.0) / 127.0
+    chroma = np.hypot(a_ch, b_ch)
+    L_local = cv2.GaussianBlur(L_ch, (0, 0), sigmaX=28.0)
+    lum_diff = np.abs(L_ch - L_local)
+    c_lab = (0.55 * lum_diff + 0.45 * chroma * (0.4 + lum_diff))
+    c_lab = cv2.GaussianBlur(c_lab.astype(np.float32), (0, 0), sigmaX=14.0)
+    c_lab = (c_lab - c_lab.min()) / (c_lab.max() - c_lab.min() + 1e-8)
+
+    # 3. Sobel Edge Density
+    gx = cv2.Sobel(L_ch, cv2.CV_32F, 1, 0, ksize=3)
+    gy = cv2.Sobel(L_ch, cv2.CV_32F, 0, 1, ksize=3)
+    edge_m = cv2.GaussianBlur(np.hypot(gx, gy), (0, 0), sigmaX=18.0)
+    edge_m = (edge_m - edge_m.min()) / (edge_m.max() - edge_m.min() + 1e-8)
+
+    # 4. Face Gaussian Prior (P_face)
+    yy_g, xx_g = np.mgrid[0:H_img, 0:W_img].astype(np.float32)
+    if face_detected and fw > 0:
+        fcx = fx + 0.5 * fw
+        fcy = fy + 0.48 * fh
+        p_face = np.exp(-(((xx_g - fcx) / (0.62 * fw)) ** 2 + ((yy_g - fcy) / (0.65 * fh)) ** 2))
+    else:
+        p_face = np.zeros((H_img, W_img), dtype=np.float32)
+
+    sal_raw = 0.30 * sr_map + 0.25 * c_lab + 0.15 * edge_m + 0.30 * p_face
+    sal_map = cv2.GaussianBlur(sal_raw.astype(np.float32), (0, 0), sigmaX=24.0)
+    sal_map = (sal_map - sal_map.min()) / (sal_map.max() - sal_map.min() + 1e-8)
+
+    # Định nghĩa các vùng ngữ nghĩa (Semantic Regions: bao gồm cả vùng tóc/đầu forbid_bbox để IoR ức chế trọn vẹn đầu nhân vật sau F1)
+    face_mask = np.zeros((H_img, W_img), dtype=bool)
+    if face_detected:
+        face_mask[max(0, forbid_y1) : min(H_img, forbid_y2), max(0, forbid_x1) : min(W_img, forbid_x2)] = True
+
+    headline_mask = np.zeros((H_img, W_img), dtype=bool)
+    headline_mask[max(0, hy - 12) : min(H_img, hy + hh + 12), max(0, hx - 12) : min(W_img, block_x2 + 12)] = True
+
+    subbox_mask = np.zeros((H_img, W_img), dtype=bool)
+    subbox_mask[max(0, sy - 8) : min(H_img, block_y2 + 8), max(0, sx - 8) : min(W_img, sx + sw + 8)] = True
+
+    text_union_mask = headline_mask | subbox_mask
+    distractor_mask = ~(face_mask | text_union_mask)
+
+    face_energy_sum = float(sal_map[face_mask].sum()) if face_mask.any() else 1.0
+    text_energy_sum = float(sal_map[text_union_mask].sum()) if text_union_mask.any() else 0.0
+    total_text_to_face_energy_ratio = round(text_energy_sum / max(face_energy_sum, 1.0), 3)
+
+    face_mean_sal = float(sal_map[face_mask].mean()) if face_mask.any() else 0.5
+    headline_mean_sal = float(sal_map[headline_mask].mean()) if headline_mask.any() else 0.0
+    distractor_p92_sal = float(np.percentile(sal_map[distractor_mask], 92)) if distractor_mask.any() else 0.0
+
+    # Winner-Take-All (WTA) + Inhibition-of-Return (IoR) Scanpath Simulation (F1..F4)
+    ior_work = sal_map.copy()
+    ior_radius = 135
+    fixations = []
+    for step_idx in range(1, 5):
+        flat_idx = int(np.argmax(ior_work))
+        py, px = divmod(flat_idx, W_img)
+        val = float(ior_work[py, px])
+        if headline_mask[py, px]:
+            zone_tag = "HEADLINE"
+        elif face_mask[py, px]:
+            zone_tag = "FACE"
+        elif subbox_mask[py, px]:
+            zone_tag = "SUBBOX"
+        else:
+            zone_tag = "DISTRACTOR_BG"
+        fixations.append({"step": f"F{step_idx}", "x": int(px), "y": int(py), "zone": zone_tag, "sal": round(val, 3)})
+        # Apply Gaussian Inhibition-of-Return around (px, py) with region suppression
+        dist_sq = (xx_g - px) ** 2 + (yy_g - py) ** 2
+        ior_suppress = 1.0 - np.exp(-dist_sq / (2.0 * (ior_radius ** 2)))
+        ior_work = ior_work * ior_suppress
+        if zone_tag == "FACE":
+            ior_work[face_mask] *= 0.25
+        elif zone_tag == "HEADLINE" and step_idx >= 2:
+            ior_work[headline_mask] *= 0.45
+
+    f1_zone = fixations[0]["zone"]
+    f2_zone = fixations[1]["zone"]
+    f3_zone = fixations[2]["zone"]
+    scanpath_order = [f["zone"] for f in fixations]
+    # F1 & F2 bắt buộc phải bao gồm cả FACE và HEADLINE, và F1..F3 cấm rơi vào vùng nhiễu nền/đèn/áo (DISTRACTOR_BG)
+    f1_f2_valid = (
+        (({f1_zone, f2_zone} == {"FACE", "HEADLINE"}) or (f1_zone == "HEADLINE" and f2_zone == "HEADLINE"))
+        and ("DISTRACTOR_BG" not in scanpath_order[:3])
+    )
+
+    if heatmap_out_path is not None:
+        hm_u8 = np.clip(sal_map * 255.0, 0, 255).astype(np.uint8)
+        hm_color = cv2.applyColorMap(hm_u8, cv2.COLORMAP_JET)
+        hm_rgb = cv2.cvtColor(hm_color, cv2.COLOR_BGR2RGB)
+        blend = np.clip(0.52 * rgb.astype(np.float32) + 0.48 * hm_rgb.astype(np.float32), 0, 255).astype(np.uint8)
+        vis_bgr = cv2.cvtColor(blend, cv2.COLOR_RGB2BGR)
+        # Vẽ đường nối Scanpath F1 -> F2 -> F3 -> F4
+        for i in range(len(fixations) - 1):
+            p1 = (fixations[i]["x"], fixations[i]["y"])
+            p2 = (fixations[i + 1]["x"], fixations[i + 1]["y"])
+            cv2.arrowedLine(vis_bgr, p1, p2, (255, 255, 255), 4, cv2.LINE_AA, tipLength=0.12)
+        for f in fixations:
+            pt = (f["x"], f["y"])
+            col = (0, 215, 255) if f["zone"] in ("HEADLINE", "SUBBOX") else ((50, 220, 100) if f["zone"] == "FACE" else (0, 0, 255))
+            cv2.circle(vis_bgr, pt, 28, (10, 15, 28), -1, cv2.LINE_AA)
+            cv2.circle(vis_bgr, pt, 28, col, 3, cv2.LINE_AA)
+            cv2.putText(vis_bgr, f["step"], (pt[0] - 16, pt[1] + 8), cv2.FONT_HERSHEY_SIMPLEX, 0.78, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.imwrite(str(heatmap_out_path), vis_bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 92])
+
+    # =========================================================================
+    # Cổng G22 (CLAUDE2 LAW_18): Adaptive Space-Filling Typography Scale
+    # =========================================================================
+    zone_w_px = dom["z_bbox"][2]
+    actual_headline_w = dom["max_line_right_x"] - hx
+    zone_fill_ratio = round(actual_headline_w / float(max(1, zone_w_px)), 3)
+    min_adaptive_hfs = round(max(68.0, 0.285 * fw), 1) if face_detected else 68.0
+    no_wasted_horizontal_space = (head_to_text_gap_px <= 88) or (dom["h_fs"] >= 82.0) or (zone_w_px >= 545)
+
     gates = {
         "G1_font_scale_hierarchy": {
             "headline_fs_px": dom["h_fs"],
@@ -724,6 +858,36 @@ def audit_v3_banner(
             "unique_1to1_plate": unique_1to1_plate,
             "pass": polite_executive and unique_1to1_plate,
         },
+        "G21_CLAUDE2_saliency_heatmap_scanpath": {
+            "scanpath_order": scanpath_order,
+            "f1_f2_valid": f1_f2_valid,
+            "total_text_to_face_energy_ratio": total_text_to_face_energy_ratio,
+            "headline_mean_saliency": round(headline_mean_sal, 3),
+            "face_mean_saliency": round(face_mean_sal, 3),
+            "distractor_p92_saliency": round(distractor_p92_sal, 3),
+            "fixations": fixations,
+            "pass": (
+                f1_f2_valid
+                and (total_text_to_face_energy_ratio >= 1.18)
+                and (distractor_p92_sal <= max(0.68, headline_mean_sal * 1.15))
+            ),
+        },
+        "G22_LAW18_adaptive_space_filling_scale": {
+            "zone_width_px": zone_w_px,
+            "headline_width_px": actual_headline_w,
+            "zone_fill_ratio": zone_fill_ratio,
+            "headline_fs_px": dom["h_fs"],
+            "min_adaptive_hfs_px": min_adaptive_hfs,
+            "min_subline_fs_px": dom["min_sub_fs"],
+            "head_to_text_gap_px": head_to_text_gap_px,
+            "text_area_pct": text_area_pct,
+            "pass": (
+                (dom["h_fs"] >= min_adaptive_hfs)
+                and (zone_fill_ratio >= 0.88)
+                and no_wasted_horizontal_space
+                and (text_area_pct >= 14.0)
+            ),
+        },
     }
 
     passed = sum(1 for v in gates.values() if v["pass"])
@@ -745,10 +909,12 @@ if __name__ == "__main__":
     parser.add_argument("--image", type=str, help="Đường dẫn file ảnh Banner 1080x1350")
     parser.add_argument("--lines", type=int, default=3, help="Số dòng tiêu đề kỳ vọng (mặc định: 3)")
     parser.add_argument("--side", type=str, default="right", choices=["left", "right"], help="Vị trí đứng của nhân vật")
+    parser.add_argument("--heatmap-out", type=str, default="", help="Đường dẫn xuất ảnh Saliency Heatmap & Scanpath")
     args = parser.parse_args()
 
     if args.html and args.image:
-        res = audit_v3_banner(Path(args.html), Path(args.image), expected_lines=args.lines, person_side=args.side)
+        hm_out = Path(args.heatmap_out) if args.heatmap_out else None
+        res = audit_v3_banner(Path(args.html), Path(args.image), expected_lines=args.lines, person_side=args.side, heatmap_out_path=hm_out)
         print(json.dumps(res, ensure_ascii=False, indent=2))
         try:
             sys.path.insert(0, "/Users/vietmac/Documents/CODE/Quản gia")

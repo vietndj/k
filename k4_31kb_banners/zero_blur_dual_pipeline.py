@@ -249,6 +249,35 @@ def build_dual_zero_blur_bgs(
     burn_factor = 1.0 - text_zone_mask * (1.0 - target_mult)
 
     # =========================================================================
+    # CLAUDE2 LAW_18: SELECTIVE DISTRACTOR HIGHLIGHT ROLL-OFF (0% ĐỤNG PIXEL MẶT)
+    # Dìm nhẹ đèn tường phía trên/sau đầu & giảm độ chói áo sơ mi trắng dưới cằm
+    # để mắt quét thẳng Mặt (F1) -> Tiêu đề (F2) -> Từ khóa vàng & Hộp phụ (F3)
+    # =========================================================================
+    if frame_meta and frame_meta.get("cropped_face_bbox"):
+        fx, fy, fw, fh = [float(v) for v in frame_meta["cropped_face_bbox"]]
+    else:
+        fx, fy, fw, fh = (700.0 if side == "right" else 120.0), 220.0, 240.0, 330.0
+
+    fcx = fx + 0.50 * fw
+    fcy = fy + 0.54 * fh
+    face_dist = ((xx - fcx) / (0.54 * fw)) ** 2 + ((yy - fcy) / (0.58 * fh)) ** 2
+    face_protect = np.clip(1.0 - np.clip((face_dist - 0.65) / 0.55, 0.0, 1.0), 0.0, 1.0)[:, :, None]
+
+    full_luma = (0.2126 * arr[:, :, 0] + 0.7152 * arr[:, :, 1] + 0.0722 * arr[:, :, 2])[:, :, None]
+    # 1. Dìm đèn tường/nền sáng phía trên và xung quanh đầu (ngoài elip mặt)
+    upper_bg_mask = np.clip((fy + 0.35 * fh - yy) / 180.0, 0.0, 1.0)[:, :, None] * (1.0 - face_protect)
+    bright_bg_hot = np.clip((full_luma - 0.34) / 0.38, 0.0, 1.0) * (1.0 - face_protect)
+    top_lamp_atten = 1.0 - np.clip(0.55 * upper_bg_mask + 0.45 * bright_bg_hot * np.clip((650.0 - yy) / 260.0, 0.0, 1.0)[:, :, None], 0.0, 0.65)
+
+    # 2. Dìm nhẹ độ chói của áo sơ mi trắng phía dưới cằm (y > fy + 1.02*fh)
+    shirt_zone = np.clip((yy - (fy + 1.00 * fh)) / 120.0, 0.0, 1.0)[:, :, None] * (1.0 - face_protect)
+    shirt_glare = np.clip((full_luma - 0.50) / 0.35, 0.0, 1.0)
+    shirt_atten = 1.0 - 0.32 * shirt_zone * shirt_glare
+
+    distractor_atten = top_lamp_atten * shirt_atten
+    burn_factor = burn_factor * distractor_atten
+
+    # =========================================================================
     # 1. BẢN MÀU ẤM (KODAK PORTRA 400 + OPTICAL DARKROOM BURN)
     # =========================================================================
     color_arr = arr.copy()
@@ -282,7 +311,7 @@ def build_dual_zero_blur_bgs(
     # Optical Darkroom Burn cho B&W (sâu hơn nhẹ ở vùng chữ để chữ trắng + điểm nhấn vàng/xanh bật lên)
     bw_target_mult = min(0.72, 0.24 / max(p95_luma, 0.01))
     bw_target_mult = max(0.24, bw_target_mult)
-    bw_burn_factor = 1.0 - text_zone_mask * (1.0 - bw_target_mult)
+    bw_burn_factor = (1.0 - text_zone_mask * (1.0 - bw_target_mult)) * distractor_atten
     bw_burned = bw_s * bw_burn_factor
 
     # Hạt film Leica Monochrom 2%
@@ -336,32 +365,73 @@ def make_dual_3col_sbs_image(
     canvas.save(out_sbs_path, "JPEG", quality=88)
 
 
-def render_overlay_png_on_page(page, html_str: str, html_out_path: Path, overlay_png_path: Path) -> Dict[str, Any]:
-    """Dùng Playwright page có sẵn để auto-fit chữ chuẩn LAW_09 & LAW_11 (Range rect) và chụp lớp chữ PNG trong suốt."""
+def render_overlay_png_on_page(
+    page,
+    html_str: str,
+    html_out_path: Path,
+    overlay_png_path: Path,
+    frame_meta: Optional[Dict[str, Any]] = None,
+    side: str = "right",
+) -> Dict[str, Any]:
+    """Dùng Playwright page có sẵn để auto-fit chữ chuẩn LAW_09, LAW_11 & LAW_18 (Dynamic Space-Filling) và chụp lớp chữ PNG."""
     html_out_path.write_text(html_str, encoding="utf-8")
     page.goto(f"file://{html_out_path.resolve()}", wait_until="load")
     page.evaluate("() => document.fonts.ready")
 
+    # Tính dynamic_zone_width dựa trên khoảng trống thực tế tới vùng bảo vệ đầu/tai (LAW_18)
+    dyn_zone_w = 520
+    dyn_zone_left = None
+    if frame_meta and frame_meta.get("cropped_face_bbox"):
+        fx, fy, fw, fh = [float(v) for v in frame_meta["cropped_face_bbox"]]
+        forbid_x1 = fx - 0.18 * fw
+        forbid_x2 = fx + 1.18 * fw
+        if side == "right":
+            # zone đặt tại left = 48px, mở rộng tới forbid_x1 - 36px
+            avail_w = int(round(forbid_x1 - 36 - 48))
+            dyn_zone_w = max(492, min(595, avail_w))
+        else:
+            # nhân vật bên trái: chữ đặt bên phải, mép phải cách biên 48px, mép trái cách forbid_x2 >= 36px
+            avail_w = int(round(1080 - 48 - (forbid_x2 + 36)))
+            dyn_zone_w = max(492, min(595, avail_w))
+            dyn_zone_left = 1080 - 48 - dyn_zone_w
+
     fit_info = page.evaluate(
-        """() => {
+        """(cfg) => {
             const h = document.querySelector('.headline');
             const zone = document.querySelector('.zone');
+            const subBox = document.querySelector('.sub-box');
+            if (zone && cfg.dyn_zone_w) {
+                zone.style.width = cfg.dyn_zone_w + 'px';
+                if (cfg.dyn_zone_left !== null) {
+                    zone.style.left = cfg.dyn_zone_left + 'px';
+                    zone.style.right = 'auto';
+                }
+            }
+            if (subBox && cfg.dyn_zone_w) {
+                subBox.style.width = cfg.dyn_zone_w + 'px';
+                subBox.style.maxWidth = cfg.dyn_zone_w + 'px';
+                subBox.style.boxSizing = 'border-box';
+            }
             const lines = Array.from(document.querySelectorAll('.headline .line'));
-            // Đặt width: fit-content cho từng .line để getBoundingClientRect().width và scrollWidth phản ánh chính xác bề rộng mực chữ
             lines.forEach(l => { l.style.width = 'fit-content'; });
-            const zWidth = zone ? zone.getBoundingClientRect().width : 492;
+            const zWidth = zone ? zone.getBoundingClientRect().width : 520;
             const maxLineW = zWidth - 2;
-            let fs = parseFloat(window.getComputedStyle(h).fontSize);
+
+            // LAW_18 (CLAUDE2): Phóng to tối đa cỡ chữ tiêu đề đồng nhất (Expand-to-Fill 104px -> 64px) lấp đầy >= 92% vùng trống
+            h.style.letterSpacing = '-0.02em';
+            lines.forEach(l => { l.style.letterSpacing = '-0.02em'; });
+            let fs = 104;
+            h.style.fontSize = fs + 'px';
             while (fs > 67) {
                 const maxW = Math.max(...lines.map(l => Math.max(l.scrollWidth, l.getBoundingClientRect().width)));
                 if (maxW <= maxLineW) break;
-                fs -= 1;
+                fs -= 0.5;
                 h.style.fontSize = fs + 'px';
             }
             let curMaxW = Math.max(...lines.map(l => Math.max(l.scrollWidth, l.getBoundingClientRect().width)));
             if (curMaxW > maxLineW) {
-                h.style.letterSpacing = '-0.025em';
-                lines.forEach(l => { l.style.letterSpacing = '-0.025em'; });
+                h.style.letterSpacing = '-0.028em';
+                lines.forEach(l => { l.style.letterSpacing = '-0.028em'; });
                 while (fs > 64) {
                     curMaxW = Math.max(...lines.map(l => Math.max(l.scrollWidth, l.getBoundingClientRect().width)));
                     if (curMaxW <= maxLineW) break;
@@ -449,7 +519,6 @@ def render_overlay_png_on_page(page, html_str: str, html_out_path: Path, overlay
             lines.forEach(l => { l.style.lineHeight = String(best.targetLh); });
 
             // LAW_11: Auto-fit mọi dòng chữ trong .sub-box bằng Range.getBoundingClientRect() + scrollWidth (lề phải >= 14px, 0% tràn hộp)
-            const subBox = document.querySelector('.sub-box');
             if (subBox) {
                 // Đảm bảo các icon cố định không bị báo inner_clip do width hẹp và có khoảng thở ngang >= 10px
                 Array.from(subBox.querySelectorAll('.icon-x, .icon-ok, .arrow')).forEach(ic => {
@@ -469,7 +538,8 @@ def render_overlay_png_on_page(page, html_str: str, html_out_path: Path, overlay
                     const ws = window.getComputedStyle(el).whiteSpace;
                     if (ws === 'normal') continue;
                     el.style.width = 'fit-content';
-                    let sfs = parseFloat(window.getComputedStyle(el).fontSize);
+                    let sfs = Math.max(parseFloat(window.getComputedStyle(el).fontSize), 26.0);
+                    el.style.fontSize = sfs + 'px';
                     const colParent = el.closest('.col-left, .col-right, .col-stat, .s-right');
                     const rowParent = el.closest('.row, .nb-row, .qa-row, .tl-row, .r14, .ld-row, .ck-row, .rx-r');
                     const limitRight = colParent ? Math.min(colParent.getBoundingClientRect().right - 14, boxRect.right - 15) : (boxRect.right - 15);
@@ -494,11 +564,20 @@ def render_overlay_png_on_page(page, html_str: str, html_out_path: Path, overlay
                 }
             }
 
+            // Căn lại tâm dọc của .zone sau khi đã phóng to Headline & Sub-box (G14 Optical Vertical Center)
+            if (zone) {
+                const zH = zone.getBoundingClientRect().height;
+                const idealTop = Math.max(120, Math.round((1350 - zH) * 0.50));
+                zone.style.top = idealTop + 'px';
+                zone.style.transform = 'none';
+            }
+
             return {
                 final_h_fs: fs,
                 updated_html: document.documentElement.outerHTML
             };
-        }"""
+        }""",
+        {"dyn_zone_w": dyn_zone_w, "dyn_zone_left": dyn_zone_left},
     )
 
     html_out_path.write_text("<!DOCTYPE html>\n" + fit_info["updated_html"], encoding="utf-8")
@@ -579,8 +658,8 @@ def process_kb_chunk(kb_ids: List[str], master: Dict[str, Any], plate_map: Dict[
             html_primary = build_style_html(style_code, spec, master)
             html_alt = build_style_html(alt_code, spec, master)
 
-            render_overlay_png_on_page(page, html_primary, html_primary_path, ov_primary_png)
-            render_overlay_png_on_page(page, html_alt, html_alt_path, ov_alt_png)
+            render_overlay_png_on_page(page, html_primary, html_primary_path, ov_primary_png, frame_meta=frame_meta, side=side)
+            render_overlay_png_on_page(page, html_alt, html_alt_path, ov_alt_png, frame_meta=frame_meta, side=side)
 
             # Ghép lớp chữ lên Bản Màu và Bản Đen Trắng
             with Image.open(color_bg_path) as c_bg, Image.open(bw_bg_path) as b_bg, Image.open(ov_primary_png) as ov_p, Image.open(ov_alt_png) as ov_a:
