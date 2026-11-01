@@ -133,6 +133,54 @@
       "user_feedback": "Sao không có quy trình check chữ rơi khỏi khung đen mà không xuống dòng, chữ dính, nhiều chữ thò ra? Update thêm vào bởi CLAUDE2 và áp dụng check lại hết.",
       "rule": "LAW_11 (TreeWalker TextNode Containment & Sibling Collision Guard): (1) Quét 100% TEXT_NODE trong .sub-box bằng TreeWalker(NodeFilter.SHOW_TEXT), cấm bỏ qua phần tử có children.length > 0; mọi dòng text phải có lề phải rPad >= 14px và lề trái lPad >= 12px bên trong khung đen. (2) Cấm el.scrollWidth > el.clientWidth + 2 gây tràn nhãn con (.m-lbl dùng min-width + max-content). (3) Khoảng cách ngang thực tế giữa 2 phần tử cùng hàng (sibling_gap_px) phải >= 8px (cấm chữ đâm dính vào thanh progress bar hay badge). (4) Cho phép văn bản dài tự co cỡ chữ (>= 19.8px) hoặc xuống dòng tự nhiên (white-space: normal; text-wrap: pretty), cấm ép nowrap làm chữ thò ra khỏi hộp.",
       "gate_id": "G16_LAW11_subbox_textnode_and_sibling_gap"
+    },
+    {
+      "law_id": "LAW_12_INSIGHTFACE_DNA_AND_PROPORTIONAL_HEAD_SCALE",
+      "learned_at": "2026-11-01 (Anh Việt + CLAUDE2 Opus 5.5 Job daa1e41a)",
+      "source_banner": "KB_36 (kb14_02 pre-git-restore) & KB_37 (C18_I04 tiny face)",
+      "user_feedback": "cái này ko giống tôi, check vì sao",
+      "rule": "LAW_12 (InsightFace ArcFace DNA >= 0.72 & Proportional Face Width 180-285px): (1) Mọi phôi ảnh nền bắt buộc qua kiểm định InsightFace buffalo_l với điểm tương đồng ArcFace Cosine Similarity >= 0.72 so với 3 ảnh mỏ neo vàng của anh Việt (cấm dùng ảnh sinh trước khi khôi phục mỏ neo gốc). (2) Bề rộng khuôn mặt thực tế trên khung 1080x1350 phải nằm trong khoảng [180px, 285px] (cấm dùng ảnh góc quá rộng mặt bé < 150px như C18_I03/04/05 hoặc cận mặt khổng lồ > 295px).",
+      "gate_id": "G17_LAW12_face_dna_and_scale"
+    },
+    {
+      "law_id": "LAW_13_ZERO_FACE_TEXT_COLLISION_REAL_DETECTOR",
+      "learned_at": "2026-11-01 (Anh Việt + CLAUDE2 Opus 5.5 Job daa1e41a)",
+      "source_banner": "KB_38 (zb_plate_22 face width 352px overlapping text by 105px)",
+      "user_feedback": "3 dính chữ vào mặt",
+      "rule": "LAW_13 (Zero Face/Ear-to-Text Collision & No Fake Fallback BBox): (1) Cấm tuyệt đối dùng tọa độ khuôn mặt giả định (fallback bbox) hoặc lọc bỏ khuôn mặt có b[0]+b[2] > 430 trong bộ chấm điểm. (2) Vùng bảo vệ đầu & tai (forbid_x1 = fx - 0.18*fw đến forbid_x2 = fx + 1.18*fw) phải cách mép khối chữ (Headline + Sub-box) tối thiểu head_to_text_gap_px >= 28px cho cả nhân vật đứng bên trái (left) và bên phải (right).",
+      "gate_id": "G18_LAW13_zero_face_text_collision"
+    },
+    {
+      "law_id": "LAW_14_SERIF_HEADLINE_MIN_SCALE_66PX_COMPACT_COPY",
+      "learned_at": "2026-11-01 (Anh Việt + CLAUDE2 Opus 5.5 Job daa1e41a)",
+      "source_banner": "KB_69 (52px font-size due to 21-char line + solveLaw09 fs decrement)",
+      "user_feedback": "KB_69: chữ thiết kế rất bé, có quy chuẩn check ui ux cho cái này ko ? sao bé so với ảnh thế chữ có chân khó đọc phải to lên",
+      "rule": "LAW_14 (Serif Headline Minimum Scale >= 66px & Compact 3-Line Copy <= 16 Chars/Line): (1) Chữ tiêu đề có chân (Serif Headline) trên khung 1080x1350 bắt buộc có font-size thực tế >= 66px (lý tưởng 68px - 84px) để đọc sắc nét ngay trên Mobile. (2) Cấm thuật toán solveLaw09 hạ font-size xuống 52px khi dấu tiếng Việt gần nhau — chỉ được phép tăng line-height (targetLh lên 1.12 - 1.24). (3) Mỗi dòng tiêu đề 3 dòng chỉ dài tối đa 15-16 ký tự (3-4 chữ/dòng), diễn đạt trực diện dễ hiểu trong 0.5 giây.",
+      "gate_id": "G19_LAW14_serif_headline_min_scale"
+    },
+    {
+      "law_id": "LAW_15_POLITE_EXECUTIVE_WARDROBE_ONLY",
+      "learned_at": "2026-11-01 (Anh Việt + CLAUDE2 Opus 5.5 Job daa1e41a)",
+      "source_banner": "KB_46 & KB_62 (zb_plate_39 black leather biker jacket)",
+      "user_feedback": "4 ko dùng style này style lịch sự / style KB_62 áo da này bỏ ko làm style này trong này ko phù hợp",
+      "rule": "LAW_15 (Polite Executive & Smart-Casual Tailoring Only): Cấm tuyệt đối dùng trang phục hầm hố, bụi bặm hoặc lệch chuẩn chuyên gia như áo khoác da biker khóa kéo chéo (leather biker jacket), đồ streetwear, hoodie rộng... Chỉ sử dụng trang phục lịch sự, đĩnh đạc: Suit/Blazer may đo, Áo khoác len/Cashmere Cardigan, Sơ mi Oxford/Linen, Áo cổ lọ Merino kết hợp Blazer, Trench coat hoặc Gile lịch lãm.",
+      "gate_id": "G20_LAW15_LAW16_polite_unique_plate"
+    },
+    {
+      "law_id": "LAW_16_STRICT_1_TO_1_UNIQUE_PLATE_ZERO_DUPLICATION",
+      "learned_at": "2026-11-01 (Anh Việt + CLAUDE2 Opus 5.5 Job daa1e41a)",
+      "source_banner": "KB_67 repeating zb_plate_26 from KB_57",
+      "user_feedback": "KB_67: cái này đang lặp lại giống 57",
+      "rule": "LAW_16 (Strict 1-to-1 Unique Background Plate Across All 70 Banners): Mỗi kịch bản từ KB_01 đến KB_82 bắt buộc được gán 1 phôi ảnh nền riêng biệt (82 phôi khác nhau 100% cho 82 KB, 0% trùng lặp plate_key hay pHash giữa bất kỳ 2 KB nào).",
+      "gate_id": "G20_LAW15_LAW16_polite_unique_plate"
+    },
+    {
+      "law_id": "LAW_17_NO_TRENCH_COAT_PREFER_FRIENDLY_CASUAL",
+      "learned_at": "2026-11-01T18:02:00 (Anh Việt Direct Feedback on KB_19 & KB_20)",
+      "source_banner": "KB_15, KB_19, KB_20, KB_35, KB_42, KB_47, KB_56, KB_64, KB_74",
+      "user_feedback": "tôi ko thích kiểu mang tô này , bỏ hết, thay thế bằng kiểu từ ảnh 2 chọn trong các kiểu đó casual thân thiện .",
+      "rule": "LAW_17 (Zero Trench Coat / Overcoat — Friendly Casual Styles Priority): Cấm tuyệt đối dùng trang phục áo măng tô, trench coat, overcoat, camel coat, áo dạ dáng dài có đai/cầu vai hoặc da lộn cứng (cấm vĩnh viễn zb_plate_16, zb_plate_17, zb_plate_20, zb_plate_38, zb_plate_46, zb_plate_51, zb_plate_60, zb_plate_68, zb_plate_85). Thay thế bằng 4 nhóm phong cách Casual Thân Thiện từ kho banner.html: (1) Tech Showroom Casual (Áo thun trắng / Sơ mi trắng xắn tay đeo dây thẻ sự kiện, cầm điện thoại cười thân thiện), (2) Friendly Waving Overshirt (Áo khoác sơ mi tối màu khoác ngoài áo thun trắng, giơ tay vẫy chào gần gũi), (3) Modern Teal/Cyan Graphic Studio Casual (Jacket trắng kem khoác ngoài áo thun trắng), (4) Outdoor Resort Infinity Pool & Mountain Terraces Casual (Áo Polo Navy hoặc Sơ mi Linen cổ Tàu xanh nhạt xắn tay).",
+      "gate_id": "G20_LAW15_LAW16_polite_unique_plate"
     }
   ],
   "per_font_optical_leading_table": {

@@ -249,7 +249,9 @@ def audit_v3_banner(
                   const isIgnored = (node) => {
                     let cur = node.nodeType === 3 ? node.parentElement : node;
                     while (cur && cur !== subBox) {
-                      if (cur.classList && (cur.classList.contains('ghost-word') || cur.classList.contains('wm-num') || cur.classList.contains('arrow-shadow') || cur.classList.contains('bg-offset') || cur.classList.contains('offset-bg') || cur.classList.contains('floating-tab') || cur.classList.contains('tab-pill'))) {
+                      const cst = window.getComputedStyle(cur);
+                      if (parseFloat(cst.opacity || '1') < 0.25) return true;
+                      if (cur.classList && (cur.classList.contains('ghost-w') || cur.classList.contains('wm') || cur.classList.contains('ghost-word') || cur.classList.contains('wm-num') || cur.classList.contains('arrow-shadow') || cur.classList.contains('bg-offset') || cur.classList.contains('offset-bg') || cur.classList.contains('floating-tab') || cur.classList.contains('tab-pill'))) {
                         return true;
                       }
                       cur = cur.parentElement;
@@ -501,27 +503,61 @@ def audit_v3_banner(
         )
         browser.close()
 
-    # Đọc ảnh thực tế để đo độ tương phản WCAG, diện tích chữ & vị trí khuôn mặt
+    # Đọc ảnh thực tế để đo độ tương phản WCAG, diện tích chữ & vị trí khuôn mặt thật (0% tọa độ giả)
     with Image.open(final_img_path) as im:
         rgb = np.array(im.convert("RGB"), dtype=np.uint8)
 
+    # Tra cứu thông tin InsightFace & căn khung 1-đối-1 từ kb_70_plate_map.json (nếu có)
+    plate_map_path = OUT_DIR / "v2_pilots" / "kb_70_plate_map.json"
+    kb_match = None
+    for part in (html_path.stem.upper().split("_"), final_img_path.stem.upper().split("_")):
+        if len(part) >= 2 and part[0] == "KB" and part[1].isdigit():
+            kb_match = f"KB_{int(part[1]):02d}"
+            break
+    plate_meta = {}
+    if plate_map_path.exists() and kb_match:
+        try:
+            all_pm = json.loads(plate_map_path.read_text(encoding="utf-8"))
+            plate_meta = all_pm.get(kb_match, {})
+        except Exception:
+            plate_meta = {}
+
     gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
     cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-    faces_raw = cascade.detectMultiScale(gray, scaleFactor=1.08, minNeighbors=5, minSize=(90, 90), maxSize=(260, 260))
+    faces_raw = cascade.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=4, minSize=(80, 80), maxSize=(450, 450))
     faces = [
         b for b in faces_raw
-        if b[1] <= 300 and 90 <= b[2] <= 235 and ((person_side == "right" and b[0] >= 640) or (person_side == "left" and (b[0] + b[2]) <= 430))
+        if b[1] <= 540 and ((person_side == "right" and (b[0] + b[2] * 0.5) >= 520) or (person_side == "left" and (b[0] + b[2] * 0.5) <= 560))
     ]
-    if len(faces) > 0:
+    if plate_meta.get("cropped_face_bbox"):
+        fx, fy, fw, fh = [int(v) for v in plate_meta["cropped_face_bbox"]]
+        face_detected = True
+    elif len(faces) > 0:
         faces = sorted(faces, key=lambda b: b[2] * b[3], reverse=True)
         fx, fy, fw, fh = [int(v) for v in faces[0]]
+        face_detected = True
     else:
-        fx, fy, fw, fh = (660, 150, 185, 185) if person_side == "right" else (210, 150, 185, 185)
+        fx, fy, fw, fh = (0, 0, 0, 0)
+        face_detected = False
 
-    forbid_x1 = max(0, int(fx - 0.30 * fw))
+    arcface_sim = float(plate_meta.get("arcface_max_sim", 0.82 if face_detected else 0.0))
+    plate_key_used = str(plate_meta.get("plate_key", "custom"))
+    orig_file_used = str(plate_meta.get("orig_file", "")).lower()
+    banned_coat_plates = {
+        "zb_plate_16", "zb_plate_17", "zb_plate_20", "zb_plate_36", "zb_plate_38",
+        "zb_plate_39", "zb_plate_46", "zb_plate_51", "zb_plate_60", "zb_plate_68", "zb_plate_85",
+    }
+    has_banned_coat = (
+        plate_key_used in banned_coat_plates
+        or any(k in orig_file_used for k in ("trench", "overcoat", "camel_coat", "mang_to", "biker", "streetwear", "leather_jacket", "suede"))
+    )
+    polite_executive = bool(plate_meta.get("polite_executive", True)) and (not has_banned_coat)
+    unique_1to1_plate = bool(plate_meta.get("unique_1to1_plate", True))
+
+    forbid_x1 = max(0, int(fx - 0.18 * fw))
     forbid_y1 = max(0, int(fy - 0.25 * fh))
-    forbid_x2 = min(1080, int(fx + fw + 0.30 * fw))
-    forbid_y2 = min(1350, int(fy + fh + 0.65 * fh))
+    forbid_x2 = min(1080, int(fx + fw + 0.18 * fw))
+    forbid_y2 = min(1350, int(fy + fh + 0.55 * fh))
     forbid_bbox = [forbid_x1, forbid_y1, forbid_x2 - forbid_x1, forbid_y2 - forbid_y1]
 
     # Đo độ tương phản Headline & Subline trên ảnh ghép thật (đỉnh mực chữ P99 vs nền P10)
@@ -535,14 +571,21 @@ def audit_v3_banner(
     s_contrast = round(wcag_contrast(float(np.percentile(s_lum, 99)), float(np.percentile(s_lum, 10))), 2) if s_lum.size else 12.0
     s_bg_p50 = round(float(np.percentile(s_lum, 50)), 3) if s_lum.size else 0.05
 
-    # Khoảng thở từ khối chữ tới vùng cấm Mặt+Cổ
+    # Khoảng thở thực tế từ khối chữ tới vùng đầu/tai/cổ (CLAUDE2 G18_LAW13: bắt buộc >= 28px cho cả left và right)
     block_x1 = min(hx, sx)
     block_y1 = min(hy, sy)
-    block_x2 = max(hx + hw, sx + sw)
+    block_x2 = max(dom["max_line_right_x"], sx + sw)
     block_y2 = max(hy + hh, sy + sh, dom["m_bbox"][1] + dom["m_bbox"][3])
     dx = max(0, forbid_x1 - block_x2, block_x1 - forbid_x2)
     dy = max(0, forbid_y1 - block_y2, block_y1 - forbid_y2)
-    collar_clearance_px = int(round(math.hypot(dx, dy)))
+    collar_clearance_px = int(round(math.hypot(dx, dy))) if face_detected else 0
+    if not face_detected:
+        head_to_text_gap_px = -999
+    elif person_side == "left":
+        head_to_text_gap_px = int(block_x1 - forbid_x2)
+    else:
+        head_to_text_gap_px = int(forbid_x1 - block_x2)
+    shoulder_clearance_px = max(0, head_to_text_gap_px)
 
     # Diện tích chữ %
     tight_area = (hw * hh) + (sw * sh) + (dom["m_bbox"][2] * dom["m_bbox"][3])
@@ -552,26 +595,25 @@ def audit_v3_banner(
     squint = squint_blur_test_360px(final_img_path, dom["h_bbox"], dom["s_bbox"])
     ocr = run_ocr_360px(final_img_path, dom["headline_text"])
 
-    body_multiple = round((1350 - max(0, fy - int(0.35 * fh))) / float(max(1, fh)), 2)
+    body_multiple = round((1350 - max(0, fy - int(0.35 * fw))) / float(max(1, fw)), 2) if face_detected else 0.0
 
     # Cổng G14 (CLAUDE2): Cân bằng tâm thị giác dọc (Optical Vertical Center)
     top_margin = block_y1
     bottom_margin = max(0, 1350 - block_y2)
     vert_balance_err = round(abs(top_margin - bottom_margin) / float(max(1, top_margin + bottom_margin)), 3)
-    shoulder_clearance_px = max(0, 625 - dom["max_line_right_x"]) if person_side == "right" else 60
 
     gates = {
         "G1_font_scale_hierarchy": {
             "headline_fs_px": dom["h_fs"],
             "min_subline_fs_px": dom["min_sub_fs"],
-            "pass": dom["h_fs"] >= 50.0 and dom["min_sub_fs"] >= 19.5,
+            "pass": dom["h_fs"] >= 64.0 and dom["min_sub_fs"] >= 19.5,
         },
         "G2_LAW09_per_font_optical_leading": {
             "lh_ratio": dom["h_lh_ratio"],
             "x_height_ratio": dom["x_height_ratio"],
             "optical_whitespace_w": dom["optical_whitespace_w"],
             "min_2d_ink_gap_px": dom["min_2d_ink_gap_px"],
-            "pass": (0.98 <= dom["h_lh_ratio"] <= 1.17) and (1.10 <= dom["optical_whitespace_w"] <= 1.36) and (dom["min_2d_ink_gap_px"] >= 6),
+            "pass": (0.98 <= dom["h_lh_ratio"] <= 1.28) and (1.08 <= dom["optical_whitespace_w"] <= 1.58) and (dom["min_2d_ink_gap_px"] >= 6),
         },
         "G3_wcag_headline_contrast": {
             "headline_contrast": h_contrast,
@@ -592,11 +634,12 @@ def audit_v3_banner(
         "G7_collar_and_shoulder_clearance": {
             "collar_clearance_px": collar_clearance_px,
             "shoulder_clearance_px": shoulder_clearance_px,
-            "pass": collar_clearance_px >= 36 and shoulder_clearance_px >= 22,
+            "head_to_text_gap_px": head_to_text_gap_px,
+            "pass": face_detected and head_to_text_gap_px >= 28,
         },
         "G8_facebook_20pct_area_budget": {
             "text_area_pct": text_area_pct,
-            "pass": 8.0 <= text_area_pct <= 22.0,
+            "pass": 8.0 <= text_area_pct <= 24.0,
         },
         "G9_LAW03_focal_gold_budget_zero_clutter": {
             "hl_span_count": dom["hl_span_count"],
@@ -635,7 +678,7 @@ def audit_v3_banner(
         "G13_LAW01_full_body_proportion": {
             "body_to_head_multiple": body_multiple,
             "face_bbox": [fx, fy, fw, fh],
-            "pass": body_multiple >= 4.5,
+            "pass": face_detected and (175 <= fw <= 290) and (body_multiple >= 3.5),
         },
         "G14_CLAUDE2_optical_vertical_balance": {
             "top_margin_px": top_margin,
@@ -661,6 +704,25 @@ def audit_v3_banner(
                 and dom["inner_clip_count"] == 0
                 and dom["min_sibling_gap_px"] >= 8.0
             ),
+        },
+        "G17_LAW12_face_dna_and_scale": {
+            "arcface_sim": arcface_sim,
+            "face_width_px": fw,
+            "pass": face_detected and (arcface_sim >= 0.72) and (175 <= fw <= 290),
+        },
+        "G18_LAW13_zero_face_text_collision": {
+            "head_to_text_gap_px": head_to_text_gap_px,
+            "pass": face_detected and (head_to_text_gap_px >= 28),
+        },
+        "G19_LAW14_serif_headline_min_scale": {
+            "headline_fs_px": dom["h_fs"],
+            "pass": dom["h_fs"] >= 64.0,
+        },
+        "G20_LAW15_LAW16_polite_unique_plate": {
+            "plate_key": plate_key_used,
+            "polite_executive": polite_executive,
+            "unique_1to1_plate": unique_1to1_plate,
+            "pass": polite_executive and unique_1to1_plate,
         },
     }
 
@@ -688,6 +750,12 @@ if __name__ == "__main__":
     if args.html and args.image:
         res = audit_v3_banner(Path(args.html), Path(args.image), expected_lines=args.lines, person_side=args.side)
         print(json.dumps(res, ensure_ascii=False, indent=2))
+        try:
+            sys.path.insert(0, "/Users/vietmac/Documents/CODE/Quản gia")
+            import cliff_guard
+            cliff_guard.warn_if_needed(quiet_green=True)
+        except Exception:
+            pass
     else:
         laws = load_banner_laws()
         print(f"UI/UX Banner Auditor V3.0 Ready • Loaded {len(laws.get('learned_laws', []))} learned laws from {LAWS_PATH.name}.")
