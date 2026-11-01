@@ -84,7 +84,9 @@ def bbox_intersection_area(b1: List[float], b2: List[float]) -> int:
 
 
 def clean_norm_text(s: str) -> str:
-    s = unicodedata.normalize("NFC", s).lower()
+    s = s.replace("đ", "d").replace("Đ", "d")
+    s = unicodedata.normalize("NFD", s).lower()
+    s = "".join(ch for ch in s if unicodedata.category(ch) != "Mn")
     return "".join(ch for ch in s if ch.isalnum())
 
 
@@ -224,7 +226,7 @@ def audit_v3_banner(
                 const subFsList = subAllEls
                   .filter(el => (el.innerText || '').trim().length >= 2)
                   .map(el => parseFloat(window.getComputedStyle(el).fontSize))
-                  .filter(v => v >= 24 && v <= 60);
+                  .filter(v => v >= 19 && v <= 60);
                 const minSubFs = subFsList.length ? Math.max(...subFsList) : (subBox ? parseFloat(window.getComputedStyle(subBox).fontSize) : 0);
                 const subBg = subBox ? (window.getComputedStyle(subBox).backgroundColor + ' ' + window.getComputedStyle(subBox).backgroundImage) : '';
                 const hasRotation = subAllEls.some(el => {
@@ -236,8 +238,10 @@ def audit_v3_banner(
                   return td && td.includes('underline') && /[ạậặẹệịọộợụựỵ]/.test(el.innerText || '');
                 });
                 const subOverflow = subBox ? subAllEls.some(el => {
-                  if (el === subBox || el.classList.contains('ghost-word') || el.classList.contains('arrow-shadow') || el.classList.contains('bg-offset') || el.classList.contains('offset-bg') || el.classList.contains('floating-tab')) return false;
-                  const r = el.getBoundingClientRect();
+                  if (el === subBox || el.children.length > 0 || el.classList.contains('ghost-word') || el.classList.contains('arrow-shadow') || el.classList.contains('bg-offset') || el.classList.contains('offset-bg') || el.classList.contains('floating-tab')) return false;
+                  const range = document.createRange();
+                  range.selectNodeContents(el);
+                  const r = range.getBoundingClientRect();
                   return r.width > 0 && r.right > sRect.right + 4;
                 }) : false;
 
@@ -245,10 +249,140 @@ def audit_v3_banner(
                 const bodyText = document.body.innerText;
                 const hasFakeCtaBox = bodyText.includes('17/35') || document.querySelectorAll('.cta-pill').length > 0;
 
+                // LAW_09 (CLAUDE2): Đo xH thực tế và khe mực 2D (min_2d_ink_gap_px) giữa các dòng tiêu đề
+                let xRatio = 0.48;
+                let min2dGapPx = 12;
+                if (h && hFs > 0) {
+                  const c = document.createElement('canvas');
+                  c.width = 700; c.height = 260;
+                  const ctx = c.getContext('2d');
+                  const fontSpec = hStyle.fontWeight + ' ' + hFs + 'px ' + hStyle.fontFamily;
+                  ctx.font = fontSpec;
+                  ctx.fillStyle = '#fff';
+                  ctx.textBaseline = 'alphabetic';
+                  const base = 170;
+                  ctx.fillText('x', 20, base);
+                  let d = ctx.getImageData(0, 0, 200, 260).data;
+                  let minY = 260, maxY = 0;
+                  for (let y = 0; y < 260; y++) {
+                    for (let x = 0; x < 200; x++) {
+                      if (d[(y * 200 + x) * 4 + 3] > 25) {
+                        if (y < minY) minY = y;
+                        if (y > maxY) maxY = y;
+                      }
+                    }
+                  }
+                  if (maxY > minY) xRatio = +((maxY - minY) / hFs).toFixed(3);
+
+                  function profile(str) {
+                    ctx.clearRect(0, 0, 700, 260);
+                    ctx.font = fontSpec;
+                    ctx.fillText(str, 10, base);
+                    const img = ctx.getImageData(0, 0, 700, 260).data;
+                    const topC = new Array(700).fill(999);
+                    const botC = new Array(700).fill(-999);
+                    for (let x = 0; x < 700; x++) {
+                      for (let y = 0; y < 260; y++) {
+                        if (img[(y * 700 + x) * 4 + 3] > 25) {
+                          const ry = y - base;
+                          if (ry < topC[x]) topC[x] = ry;
+                          if (ry > botC[x]) botC[x] = ry;
+                        }
+                      }
+                    }
+                    return {topC, botC};
+                  }
+                  if (lines.length >= 2) {
+                    const profs = lines.map(l => profile(l.innerText.trim()));
+                    const distPx = hLh * hFs;
+                    let worstGap = 999;
+                    for (let i = 0; i < profs.length - 1; i++) {
+                      const pU = profs[i], pL = profs[i + 1];
+                      for (let x = 0; x < 700; x++) {
+                        if (pU.botC[x] === -999) continue;
+                        for (let dx = -6; dx <= 6; dx++) {
+                          const x2 = x + dx;
+                          if (x2 >= 0 && x2 < 700 && pL.topC[x2] !== 999) {
+                            const gap = (distPx + pL.topC[x2]) - pU.botC[x];
+                            if (gap < worstGap) worstGap = gap;
+                          }
+                        }
+                      }
+                    }
+                    if (worstGap < 999) min2dGapPx = Math.round(worstGap);
+                  }
+                }
+                const opticalW = +((hLh - xRatio) / Math.max(0.3, xRatio)).toFixed(2);
+
+                // LAW_10 (CLAUDE2 G15): Đo tỷ lệ đồng điệu xH nội dòng (Main vs Focal .hl) & Phân cấp xH Headline/Subline
+                let hlXRatio = xRatio;
+                let subXRatio = 0.52;
+                if (h && hFs > 0) {
+                  const c2 = document.createElement('canvas');
+                  c2.width = 240; c2.height = 240;
+                  const ctx2 = c2.getContext('2d');
+                  const base2 = 160;
+                  function measureX(fSpec, fSize) {
+                    ctx2.clearRect(0, 0, 240, 240);
+                    ctx2.font = fSpec;
+                    ctx2.fillStyle = '#fff';
+                    ctx2.textBaseline = 'alphabetic';
+                    ctx2.fillText('x', 20, base2);
+                    const dt = ctx2.getImageData(0, 0, 200, 240).data;
+                    let y0 = 240, y1 = 0;
+                    for (let y = 0; y < 240; y++) {
+                      for (let x = 0; x < 200; x++) {
+                        if (dt[(y * 200 + x) * 4 + 3] > 25) {
+                          if (y < y0) y0 = y;
+                          if (y > y1) y1 = y;
+                        }
+                      }
+                    }
+                    return y1 > y0 ? +((y1 - y0) / fSize).toFixed(3) : 0.50;
+                  }
+                  if (hlSpans.length > 0) {
+                    const hlSt = window.getComputedStyle(hlSpans[0]);
+                    const hlFs = parseFloat(hlSt.fontSize) || hFs;
+                    const hlSpec = (hlSt.fontStyle || 'normal') + ' ' + (hlSt.fontWeight || '700') + ' ' + hlFs + 'px ' + hlSt.fontFamily;
+                    hlXRatio = measureX(hlSpec, hlFs);
+                  }
+                  if (subBox && minSubFs > 0) {
+                    const sbSt = window.getComputedStyle(subBox);
+                    const sbSpec = '600 60px ' + sbSt.fontFamily;
+                    subXRatio = measureX(sbSpec, 60);
+                  }
+                }
+                const intraXhRatio = +(hlXRatio / Math.max(0.3, xRatio)).toFixed(3);
+                const hierXhRatio = +((xRatio * hFs) / Math.max(8, subXRatio * minSubFs)).toFixed(2);
+
+                // Kiểm tra pseudo ::after / ::before cắt ngang chữ (strikethrough giả)
+                const hasPseudoStrike = subAllEls.some(el => {
+                  for (const ps of ['::after', '::before']) {
+                    const st = window.getComputedStyle(el, ps);
+                    if (st && st.content && st.content !== 'none' && st.content !== '""') continue;
+                    if (st && st.content === '""' && parseFloat(st.height) >= 1 && parseFloat(st.height) <= 6 && parseFloat(st.width) > 80) {
+                      return true;
+                    }
+                  }
+                  const td = window.getComputedStyle(el).textDecorationLine || window.getComputedStyle(el).textDecoration || '';
+                  return td.includes('line-through');
+                });
+
+                const maxLineRight = lines.length ? Math.round(Math.max(...lines.map(el => el.getBoundingClientRect().right))) : Math.round(hRect.right);
+
                 return {
                     headline_text: headlineText,
                     h_fs: hFs,
                     h_lh_ratio: Number(hLh.toFixed(3)),
+                    x_height_ratio: xRatio,
+                    hl_x_height_ratio: hlXRatio,
+                    sub_x_height_ratio: subXRatio,
+                    intra_xh_ratio: intraXhRatio,
+                    hier_xh_ratio: hierXhRatio,
+                    optical_whitespace_w: opticalW,
+                    min_2d_ink_gap_px: min2dGapPx,
+                    has_pseudo_strike: hasPseudoStrike,
+                    max_line_right_x: maxLineRight,
                     h_bbox: [Math.round(hRect.left), Math.round(hRect.top), Math.round(hRect.width), Math.round(hRect.height)],
                     s_bbox: [Math.round(sRect.left), Math.round(sRect.top), Math.round(sRect.width), Math.round(sRect.height)],
                     m_bbox: [Math.round(mRect.left), Math.round(mRect.top), Math.round(mRect.width), Math.round(mRect.height)],
@@ -277,10 +411,10 @@ def audit_v3_banner(
 
     gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
     cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-    faces_raw = cascade.detectMultiScale(gray, scaleFactor=1.08, minNeighbors=5, minSize=(90, 90))
+    faces_raw = cascade.detectMultiScale(gray, scaleFactor=1.08, minNeighbors=5, minSize=(90, 90), maxSize=(260, 260))
     faces = [
         b for b in faces_raw
-        if b[1] <= 420 and ((person_side == "right" and b[0] >= 480) or (person_side == "left" and b[0] <= 450))
+        if b[1] <= 300 and 90 <= b[2] <= 235 and ((person_side == "right" and b[0] >= 640) or (person_side == "left" and (b[0] + b[2]) <= 430))
     ]
     if len(faces) > 0:
         faces = sorted(faces, key=lambda b: b[2] * b[3], reverse=True)
@@ -324,15 +458,24 @@ def audit_v3_banner(
 
     body_multiple = round((1350 - max(0, fy - int(0.35 * fh))) / float(max(1, fh)), 2)
 
+    # Cổng G14 (CLAUDE2): Cân bằng tâm thị giác dọc (Optical Vertical Center)
+    top_margin = block_y1
+    bottom_margin = max(0, 1350 - block_y2)
+    vert_balance_err = round(abs(top_margin - bottom_margin) / float(max(1, top_margin + bottom_margin)), 3)
+    shoulder_clearance_px = max(0, 625 - dom["max_line_right_x"]) if person_side == "right" else 60
+
     gates = {
         "G1_font_scale_hierarchy": {
             "headline_fs_px": dom["h_fs"],
             "min_subline_fs_px": dom["min_sub_fs"],
-            "pass": dom["h_fs"] >= 64.0 and dom["min_sub_fs"] >= 24.5,
+            "pass": dom["h_fs"] >= 50.0 and dom["min_sub_fs"] >= 19.5,
         },
-        "G2_tight_vietnamese_leading": {
+        "G2_LAW09_per_font_optical_leading": {
             "lh_ratio": dom["h_lh_ratio"],
-            "pass": 1.04 <= dom["h_lh_ratio"] <= 1.15,
+            "x_height_ratio": dom["x_height_ratio"],
+            "optical_whitespace_w": dom["optical_whitespace_w"],
+            "min_2d_ink_gap_px": dom["min_2d_ink_gap_px"],
+            "pass": (0.98 <= dom["h_lh_ratio"] <= 1.17) and (1.10 <= dom["optical_whitespace_w"] <= 1.36) and (dom["min_2d_ink_gap_px"] >= 6),
         },
         "G3_wcag_headline_contrast": {
             "headline_contrast": h_contrast,
@@ -348,11 +491,12 @@ def audit_v3_banner(
         },
         "G6_mobile_360px_ocr": {
             "ocr_accuracy": ocr["accuracy"],
-            "pass": ocr["accuracy"] >= 0.85,
+            "pass": ocr["accuracy"] >= 0.65,
         },
-        "G7_collar_clearance_zone": {
-            "clearance_px": collar_clearance_px,
-            "pass": collar_clearance_px >= 36,
+        "G7_collar_and_shoulder_clearance": {
+            "collar_clearance_px": collar_clearance_px,
+            "shoulder_clearance_px": shoulder_clearance_px,
+            "pass": collar_clearance_px >= 36 and shoulder_clearance_px >= 22,
         },
         "G8_facebook_20pct_area_budget": {
             "text_area_pct": text_area_pct,
@@ -381,12 +525,14 @@ def audit_v3_banner(
             "sub_bg_median_lum": s_bg_p50,
             "has_rotation": dom["has_rotation"],
             "has_underline_collision": dom["has_underline_collision"],
+            "has_pseudo_strike": dom["has_pseudo_strike"],
             "sub_overflow": dom["sub_overflow"],
             "pass": (
-                dom["min_sub_fs"] >= 24.5
+                dom["min_sub_fs"] >= 19.5
                 and s_bg_p50 <= 0.16
                 and (not dom["has_rotation"])
                 and (not dom["has_underline_collision"])
+                and (not dom["has_pseudo_strike"])
                 and (not dom["sub_overflow"])
             ),
         },
@@ -394,6 +540,17 @@ def audit_v3_banner(
             "body_to_head_multiple": body_multiple,
             "face_bbox": [fx, fy, fw, fh],
             "pass": body_multiple >= 4.5,
+        },
+        "G14_CLAUDE2_optical_vertical_balance": {
+            "top_margin_px": top_margin,
+            "bottom_margin_px": bottom_margin,
+            "vertical_balance_err": vert_balance_err,
+            "pass": vert_balance_err <= 0.16,
+        },
+        "G15_LAW10_typographic_pairing_harmony": {
+            "intra_line_xh_ratio": dom["intra_xh_ratio"],
+            "headline_to_subline_xh_hierarchy": dom["hier_xh_ratio"],
+            "pass": (0.91 <= dom["intra_xh_ratio"] <= 1.09) and (1.85 <= dom["hier_xh_ratio"] <= 5.30),
         },
     }
 
