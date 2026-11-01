@@ -173,10 +173,110 @@
     }
     .dock-preview { display: flex; align-items: center; gap: 14px; }
     .mini-stack {
+      position: relative;
       display: flex; flex-direction: column; gap: 2px; background: #0C1424;
-      border: 1.5px solid #4ADE80; border-radius: 10px; padding: 4px; width: 145px;
+      border: 2px solid #4ADE80; border-radius: 10px; padding: 4px; width: 152px;
+      cursor: pointer; transition: transform 0.16s, box-shadow 0.16s;
+    }
+    .mini-stack:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 24px rgba(74, 222, 128, 0.35);
+      border-color: #FACC15;
     }
     .mini-stack img { width: 100%; border-radius: 5px; display: block; }
+    .mini-zoom-badge {
+      background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+      color: #052E16; font-family: var(--font-mono); font-size: 9.8px; font-weight: 800;
+      text-align: center; padding: 3px 4px; border-radius: 4px; margin-top: 2px;
+    }
+    .big-view-btn {
+      background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
+      color: #04131F; border: none; padding: 8px 14px; border-radius: 8px;
+      font-weight: 800; font-size: 12.5px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(56, 189, 248, 0.32);
+    }
+    .big-view-btn:hover { filter: brightness(1.08); }
+
+    /* Full-Screen Interactive Example Banner Modal (Bảng Xem To 1080x1350) */
+    .big-modal-backdrop {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(4, 7, 15, 0.94); backdrop-filter: blur(18px);
+      display: none; align-items: center; justify-content: center; padding: 18px;
+    }
+    .big-modal-backdrop.open { display: flex; }
+    .big-modal-box {
+      width: 100%; max-width: 1500px; height: 92vh;
+      background: #0B1222; border: 1.5px solid rgba(74, 222, 128, 0.55);
+      border-radius: 18px; box-shadow: 0 32px 80px rgba(0, 0, 0, 0.85);
+      display: grid; grid-template-columns: 1.25fr 1fr; overflow: hidden;
+    }
+    .modal-stage {
+      position: relative; background: #050811;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 16px; overflow: auto; border-right: 1px solid var(--border);
+    }
+    .modal-stage-toolbar {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 12px; background: rgba(11, 18, 34, 0.92);
+      border: 1px solid var(--border); padding: 7px 12px; border-radius: 10px;
+    }
+    .stage-mode-btn {
+      background: rgba(148, 163, 184, 0.14); color: var(--text-soft);
+      border: 1px solid var(--border); padding: 6px 12px; border-radius: 7px;
+      font-size: 11.8px; font-weight: 700; cursor: pointer;
+    }
+    .stage-mode-btn.active {
+      background: var(--gold-bright); color: #070B14; border-color: var(--gold-bright); font-weight: 800;
+    }
+    /* Composite 1080x1350 Example Banner Canvas */
+    .example-banner-frame {
+      position: relative; height: 78vh; aspect-ratio: 1080 / 1350;
+      border-radius: 14px; overflow: hidden;
+      border: 2px solid rgba(250, 204, 21, 0.55);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.80);
+      background: #070B14; transition: transform 0.2s ease;
+    }
+    .example-banner-frame.zoom-180 {
+      height: 132vh;
+    }
+    .example-banner-frame img.layer-head-full {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .example-banner-frame img.layer-sub-full {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+      clip-path: inset(44.2% 0 0 0);
+    }
+    /* Close-up stacked view in modal */
+    .closeup-stack-frame {
+      display: none; flex-direction: column; gap: 6px; width: 100%; max-width: 680px;
+      background: #070B14; border: 2px solid #4ADE80; border-radius: 14px; padding: 10px;
+    }
+    .closeup-stack-frame img { width: 100%; border-radius: 8px; display: block; }
+
+    .modal-sidebar {
+      display: flex; flex-direction: column; padding: 20px 22px; overflow-y: auto; gap: 14px;
+    }
+    .modal-close-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      border-bottom: 1px solid var(--border); padding-bottom: 12px;
+    }
+    .close-modal-btn {
+      background: rgba(248, 113, 113, 0.18); color: #F87171; border: 1px solid rgba(248, 113, 113, 0.45);
+      padding: 7px 14px; border-radius: 8px; font-weight: 800; font-size: 12.5px; cursor: pointer;
+    }
+    .quick-pills-wrap {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .q-pill {
+      background: #152038; color: var(--text-soft); border: 1px solid var(--border);
+      padding: 5px 9px; border-radius: 6px; font-family: var(--font-mono); font-size: 11px;
+      font-weight: 700; cursor: pointer;
+    }
+    .q-pill:hover { border-color: var(--gold-bright); color: #fff; }
+    .q-pill.active-p { background: rgba(34, 197, 94, 0.24); color: #4ADE80; border-color: #4ADE80; }
+    .q-pill.active-h { background: rgba(245, 158, 11, 0.24); color: var(--gold-bright); border-color: var(--gold-bright); }
+    .q-pill.active-k { background: rgba(56, 189, 248, 0.24); color: var(--cyan); border-color: var(--cyan); }
     .dock-info { display: flex; flex-direction: column; gap: 5px; }
     .dock-title { font-size: 11.8px; font-family: var(--font-mono); color: #4ADE80; font-weight: 800; text-transform: uppercase; }
     .dock-slots { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -321,7 +421,7 @@
 
       <div class="cards-grid" id="grid-pairings">
         
-        <article class="item-card p-card" data-pid="P01" data-plaw="L1" data-pname="Klim Domaine Superfamily (Baroque Serif × Flared Sans)" data-kcode="K01" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p01_l1_domaine_superfamily.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p01_l1_domaine_superfamily.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p01_l1_domaine_superfamily.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p01_l1_domaine_superfamily.jpg?v=law10_v6" data-spec="/* P01 (L1) - Klim Domaine Superfamily (Baroque Serif × Flared Sans) | 15/15 GATES PASS */\nHeadline Main: FDDomaineDisplay-Bold.woff2 (78px, LH=1.11, xH=0.5)\nHeadline Focal (.hl): FDDomaineDisplay-BoldItalic.woff2 (style=italic, intraXH=1.026)\nSubline Sans: FDDomaineSansDisplay-Medium.woff2 / FDDomaineSansDisplay-Bold.woff2\nNumeric/Meta Mono: FDMonumentGroteskMono-Bold.woff2 | Default Box: K01" onclick="selectPairing('P01')">
+        <article class="item-card p-card" data-pid="P01" data-plaw="L1" data-pname="Klim Domaine Superfamily (Baroque Serif × Flared Sans)" data-kcode="K01" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p01_l1_domaine_superfamily.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p01_l1_domaine_superfamily.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p01_l1_domaine_superfamily.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p01_l1_domaine_superfamily.jpg?v=law11_v7" data-spec="/* P01 (L1) - Klim Domaine Superfamily (Baroque Serif × Flared Sans) | 16/16 GATES PASS */\nHeadline Main: FDDomaineDisplay-Bold.woff2 (78px, LH=1.11, xH=0.5)\nHeadline Focal (.hl): FDDomaineDisplay-BoldItalic.woff2 (style=italic, intraXH=1.026)\nSubline Sans: FDDomaineSansDisplay-Medium.woff2 / FDDomaineSansDisplay-Bold.woff2\nNumeric/Meta Mono: FDMonumentGroteskMono-Bold.woff2 | Default Box: K01" onclick="selectPairing('P01')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P01 • L1 (KLIM TYPE FOUNDRY + DINAMO)</span>
@@ -335,7 +435,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1.026</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.02×</b></span>
+              <span>Phân cấp H/S: <b>3.14×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDDomaineDisplay-Bold.woff2</code></div>
@@ -345,20 +445,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Skeleton Klim, xH=0.500, Aperture | Đối lập: Baroque Bracketed Serif ↔ High-Contrast Sans<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Bất động sản cao cấp, Đầu tư, Thương hiệu Chủ doanh nghiệp</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p01_l1_domaine_superfamily.jpg?v=law10_v6" alt="P01 Klim Domaine Superfamily (Baroque Serif × Flared Sans)" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P01 × K01)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P01'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p01_l1_domaine_superfamily.jpg?v=law11_v7" alt="P01 Klim Domaine Superfamily (Baroque Serif × Flared Sans)" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P01 × K01)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>15px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>15px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P01'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P01', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P01')">✓ Chọn P01</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P02" data-plaw="L1" data-pname="CoType Lock Superfamily (Editorial Serif + Stencil × Lock Sans)" data-kcode="K18" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p02_l1_lock_stencil_superfamily.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p02_l1_lock_stencil_superfamily.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p02_l1_lock_stencil_superfamily.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p02_l1_lock_stencil_superfamily.jpg?v=law10_v6" data-spec="/* P02 (L1) - CoType Lock Superfamily (Editorial Serif + Stencil × Lock Sans) | 15/15 GATES PASS */\nHeadline Main: FDLockSerif-Bold.woff2 (80px, LH=1.15, xH=0.522)\nHeadline Focal (.hl): FDLockSerifStencil-Bold.woff2 (style=normal, intraXH=1)\nSubline Sans: FDLockSans-Medium.woff2 / FDLockSans-Bold.woff2\nNumeric/Meta Mono: FDRMMono-Bold.woff2 | Default Box: K18" onclick="selectPairing('P02')">
+        <article class="item-card p-card" data-pid="P02" data-plaw="L1" data-pname="CoType Lock Superfamily (Editorial Serif + Stencil × Lock Sans)" data-kcode="K18" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p02_l1_lock_stencil_superfamily.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p02_l1_lock_stencil_superfamily.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p02_l1_lock_stencil_superfamily.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p02_l1_lock_stencil_superfamily.jpg?v=law11_v7" data-spec="/* P02 (L1) - CoType Lock Superfamily (Editorial Serif + Stencil × Lock Sans) | 16/16 GATES PASS */\nHeadline Main: FDLockSerif-Bold.woff2 (80px, LH=1.15, xH=0.522)\nHeadline Focal (.hl): FDLockSerifStencil-Bold.woff2 (style=normal, intraXH=1)\nSubline Sans: FDLockSans-Medium.woff2 / FDLockSans-Bold.woff2\nNumeric/Meta Mono: FDRMMono-Bold.woff2 | Default Box: K18" onclick="selectPairing('P02')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P02 • L1 (COTYPE FOUNDRY (LONDON))</span>
@@ -372,7 +473,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.57×</b></span>
+              <span>Phân cấp H/S: <b>3.66×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDLockSerif-Bold.woff2</code></div>
@@ -382,20 +483,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Khung xương Lock (xH=0.522) | Đối lập: Nét liền Solid ↔ Nét cắt khe Stencil công nghiệp<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Hệ thống AI, Tự động hóa, Quy trình kỹ thuật, Khóa học thực chiến</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p02_l1_lock_stencil_superfamily.jpg?v=law10_v6" alt="P02 CoType Lock Superfamily (Editorial Serif + Stencil × Lock Sans)" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P02 × K18)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P02'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p02_l1_lock_stencil_superfamily.jpg?v=law11_v7" alt="P02 CoType Lock Superfamily (Editorial Serif + Stencil × Lock Sans)" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P02 × K18)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>15px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>15px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P02'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P02', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P02')">✓ Chọn P02</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P03" data-plaw="L2" data-pname="Grilli Sectra Scalpel × Klim Founders Grotesk & Pitch Mono" data-kcode="K06" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p03_l2_sectra_founders.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p03_l2_sectra_founders.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p03_l2_sectra_founders.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p03_l2_sectra_founders.jpg?v=law10_v6" data-spec="/* P03 (L2) - Grilli Sectra Scalpel × Klim Founders Grotesk & Pitch Mono | 15/15 GATES PASS */\nHeadline Main: GRSectraDisplay-Bold.woff2 (87px, LH=1.06, xH=0.478)\nHeadline Focal (.hl): GRSectraDisplay-BoldItalic.woff2 (style=italic, intraXH=1.074)\nSubline Sans: FDFoundersGrotesk-Medium.woff2 / FDFoundersGrotesk-Bold.woff2\nNumeric/Meta Mono: FDPitch-Bold.woff2 | Default Box: K06" onclick="selectPairing('P03')">
+        <article class="item-card p-card" data-pid="P03" data-plaw="L2" data-pname="Grilli Sectra Scalpel × Klim Founders Grotesk & Pitch Mono" data-kcode="K06" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p03_l2_sectra_founders.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p03_l2_sectra_founders.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p03_l2_sectra_founders.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p03_l2_sectra_founders.jpg?v=law11_v7" data-spec="/* P03 (L2) - Grilli Sectra Scalpel × Klim Founders Grotesk & Pitch Mono | 16/16 GATES PASS */\nHeadline Main: GRSectraDisplay-Bold.woff2 (87px, LH=1.06, xH=0.478)\nHeadline Focal (.hl): GRSectraDisplay-BoldItalic.woff2 (style=italic, intraXH=1.074)\nSubline Sans: FDFoundersGrotesk-Medium.woff2 / FDFoundersGrotesk-Bold.woff2\nNumeric/Meta Mono: FDPitch-Bold.woff2 | Default Box: K06" onclick="selectPairing('P03')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P03 • L2 (GRILLI TYPE × KLIM TYPE FOUNDRY)</span>
@@ -409,7 +511,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1.074</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.66×</b></span>
+              <span>Phân cấp H/S: <b>3.82×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>GRSectraDisplay-Bold.woff2</code></div>
@@ -419,20 +521,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: xH (~0.48) & Mật độ mực | Đối lập: Góc dao khắc nghiêng Calligraphic ↔ Grotesque trục đứng<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Giải mã cơ chế, Tư vấn chiến lược, Pháp lý, Phản biện chuyên gia</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p03_l2_sectra_founders.jpg?v=law10_v6" alt="P03 Grilli Sectra Scalpel × Klim Founders Grotesk & Pitch Mono" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P03 × K06)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P03'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p03_l2_sectra_founders.jpg?v=law11_v7" alt="P03 Grilli Sectra Scalpel × Klim Founders Grotesk & Pitch Mono" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P03 × K06)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>10px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>10px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P03'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P03', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P03')">✓ Chọn P03</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P04" data-plaw="L2" data-pname="Klim Martina Plantijn × Söhne (Akzidenz Heir) & Aeonik Mono" data-kcode="K20" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p04_l2_plantijn_sohne.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p04_l2_plantijn_sohne.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p04_l2_plantijn_sohne.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p04_l2_plantijn_sohne.jpg?v=law10_v6" data-spec="/* P04 (L2) - Klim Martina Plantijn × Söhne (Akzidenz Heir) & Aeonik Mono | 15/15 GATES PASS */\nHeadline Main: FDMartinaPlantijn-Bold.woff2 (86px, LH=1.09, xH=0.489)\nHeadline Focal (.hl): FDMartinaPlantijn-BoldItalic.woff2 (style=italic, intraXH=1.049)\nSubline Sans: FDSohne-Halbfett.woff2 / FDSohne-Dreiviertelfett.woff2\nNumeric/Meta Mono: FDAeonikMono-Bold.woff2 | Default Box: K20" onclick="selectPairing('P04')">
+        <article class="item-card p-card" data-pid="P04" data-plaw="L2" data-pname="Klim Martina Plantijn × Söhne (Akzidenz Heir) & Aeonik Mono" data-kcode="K20" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p04_l2_plantijn_sohne.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p04_l2_plantijn_sohne.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p04_l2_plantijn_sohne.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p04_l2_plantijn_sohne.jpg?v=law11_v7" data-spec="/* P04 (L2) - Klim Martina Plantijn × Söhne (Akzidenz Heir) & Aeonik Mono | 16/16 GATES PASS */\nHeadline Main: FDMartinaPlantijn-Bold.woff2 (86px, LH=1.09, xH=0.489)\nHeadline Focal (.hl): FDMartinaPlantijn-BoldItalic.woff2 (style=italic, intraXH=1.049)\nSubline Sans: FDSohne-Halbfett.woff2 / FDSohne-Dreiviertelfett.woff2\nNumeric/Meta Mono: FDAeonikMono-Bold.woff2 | Default Box: K20" onclick="selectPairing('P04')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P04 • L2 (KLIM TYPE FOUNDRY × COTYPE)</span>
@@ -446,7 +549,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1.049</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.28×</b></span>
+              <span>Phân cấp H/S: <b>3.42×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDMartinaPlantijn-Bold.woff2</code></div>
@@ -456,20 +559,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Lòng chữ mở thoáng (xH=0.49) | Đối lập: Serif Phục hưng Hà Lan ấm áp ↔ Söhne kỷ luật Thụy Sĩ<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Y khoa, Nha khoa, Giáo dục chuyên sâu, Đào tạo nghề chuẩn mực</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p04_l2_plantijn_sohne.jpg?v=law10_v6" alt="P04 Klim Martina Plantijn × Söhne (Akzidenz Heir) & Aeonik Mono" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P04 × K20)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P04'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p04_l2_plantijn_sohne.jpg?v=law11_v7" alt="P04 Klim Martina Plantijn × Söhne (Akzidenz Heir) & Aeonik Mono" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P04 × K20)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>14px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>14px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P04'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P04', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P04')">✓ Chọn P04</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P05" data-plaw="L3" data-pname="Klim Epicene Baroque Opulence × National 2 & Pitch Mono" data-kcode="K09" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p05_l3_epicene_national2.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p05_l3_epicene_national2.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p05_l3_epicene_national2.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p05_l3_epicene_national2.jpg?v=law10_v6" data-spec="/* P05 (L3) - Klim Epicene Baroque Opulence × National 2 & Pitch Mono | 15/15 GATES PASS */\nHeadline Main: FDEpiceneDisplay-Bold.woff2 (90px, LH=1.07, xH=0.478)\nHeadline Focal (.hl): FDEpiceneDisplay-BoldItalic.woff2 (style=italic, intraXH=1.046)\nSubline Sans: FDNational2-Medium.woff2 / FDNational2-Bold.woff2\nNumeric/Meta Mono: FDPitch-Bold.woff2 | Default Box: K09" onclick="selectPairing('P05')">
+        <article class="item-card p-card" data-pid="P05" data-plaw="L3" data-pname="Klim Epicene Baroque Opulence × National 2 & Pitch Mono" data-kcode="K09" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p05_l3_epicene_national2.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p05_l3_epicene_national2.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p05_l3_epicene_national2.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p05_l3_epicene_national2.jpg?v=law11_v7" data-spec="/* P05 (L3) - Klim Epicene Baroque Opulence × National 2 & Pitch Mono | 16/16 GATES PASS */\nHeadline Main: FDEpiceneDisplay-Bold.woff2 (90px, LH=1.07, xH=0.478)\nHeadline Focal (.hl): FDEpiceneDisplay-BoldItalic.woff2 (style=italic, intraXH=1.046)\nSubline Sans: FDNational2-Medium.woff2 / FDNational2-Bold.woff2\nNumeric/Meta Mono: FDPitch-Bold.woff2 | Default Box: K09" onclick="selectPairing('P05')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P05 • L3 (KLIM TYPE FOUNDRY)</span>
@@ -483,7 +587,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1.046</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.23×</b></span>
+              <span>Phân cấp H/S: <b>3.36×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDEpiceneDisplay-Bold.woff2</code></div>
@@ -493,20 +597,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Độ đầm khối chính | Đối lập cực đại: Nét thanh-đậm giọt lệ Baroque (≥5:1) ↔ Nét đơn đều cơ khí (1:1)<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Spa, Thẩm mỹ viện, Thời trang, Mỹ phẩm, Làm đẹp cao cấp</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p05_l3_epicene_national2.jpg?v=law10_v6" alt="P05 Klim Epicene Baroque Opulence × National 2 & Pitch Mono" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P05 × K09)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P05'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p05_l3_epicene_national2.jpg?v=law11_v7" alt="P05 Klim Epicene Baroque Opulence × National 2 & Pitch Mono" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P05 × K09)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>9px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>9px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P05'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P05', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P05')">✓ Chọn P05</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P06" data-plaw="L3" data-pname="Commercial Type Orlando Flare × Dinamo Monument Grotesk" data-kcode="K03" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p06_l3_orlando_monument.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p06_l3_orlando_monument.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p06_l3_orlando_monument.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p06_l3_orlando_monument.jpg?v=law10_v6" data-spec="/* P06 (L3) - Commercial Type Orlando Flare × Dinamo Monument Grotesk | 15/15 GATES PASS */\nHeadline Main: FDOrlando-Bold.woff2 (86px, LH=1.15, xH=0.522)\nHeadline Focal (.hl): FDOrlando-BoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: FDMonumentGrotesk-Medium.woff2 / FDMonumentGrotesk-Bold.woff2\nNumeric/Meta Mono: FDMonumentGroteskMono-Bold.woff2 | Default Box: K03" onclick="selectPairing('P06')">
+        <article class="item-card p-card" data-pid="P06" data-plaw="L3" data-pname="Commercial Type Orlando Flare × Dinamo Monument Grotesk" data-kcode="K03" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p06_l3_orlando_monument.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p06_l3_orlando_monument.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p06_l3_orlando_monument.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p06_l3_orlando_monument.jpg?v=law11_v7" data-spec="/* P06 (L3) - Commercial Type Orlando Flare × Dinamo Monument Grotesk | 16/16 GATES PASS */\nHeadline Main: FDOrlando-Bold.woff2 (86px, LH=1.15, xH=0.522)\nHeadline Focal (.hl): FDOrlando-BoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: FDMonumentGrotesk-Medium.woff2 / FDMonumentGrotesk-Bold.woff2\nNumeric/Meta Mono: FDMonumentGroteskMono-Bold.woff2 | Default Box: K03" onclick="selectPairing('P06')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P06 • L3 (COMMERCIAL TYPE × DINAMO)</span>
@@ -520,7 +625,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.95×</b></span>
+              <span>Phân cấp H/S: <b>4.26×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDOrlando-Bold.woff2</code></div>
@@ -530,20 +635,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: xH cực đại (0.544) | Đối lập: Chân chữ loe điêu khắc La Mã ↔ Grotesque công nghiệp thô ráp<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Kiến trúc, Nội thất, Nghệ thuật điêu khắc, Sự kiện, F&B Thượng lưu</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p06_l3_orlando_monument.jpg?v=law10_v6" alt="P06 Commercial Type Orlando Flare × Dinamo Monument Grotesk" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P06 × K03)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P06'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p06_l3_orlando_monument.jpg?v=law11_v7" alt="P06 Commercial Type Orlando Flare × Dinamo Monument Grotesk" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P06 × K03)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>11px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>11px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P06'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P06', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P06')">✓ Chọn P06</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P07" data-plaw="L4" data-pname="Klim Tiempos Roman+Italic × Untitled Sans (Super-Normal)" data-kcode="K14" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p07_l4_tiempos_untitled.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p07_l4_tiempos_untitled.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p07_l4_tiempos_untitled.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p07_l4_tiempos_untitled.jpg?v=law10_v6" data-spec="/* P07 (L4) - Klim Tiempos Roman+Italic × Untitled Sans (Super-Normal) | 15/15 GATES PASS */\nHeadline Main: FDTiemposHeadline-Bold.woff2 (80px, LH=1.15, xH=0.544)\nHeadline Focal (.hl): FDTiemposHeadline-BoldItalic.woff2 (style=italic, intraXH=1.048)\nSubline Sans: FDUntitledSans-Medium.woff2 / FDUntitledSans-Bold.woff2\nNumeric/Meta Mono: FDRMMono-SemiBold.woff2 | Default Box: K14" onclick="selectPairing('P07')">
+        <article class="item-card p-card" data-pid="P07" data-plaw="L4" data-pname="Klim Tiempos Roman+Italic × Untitled Sans (Super-Normal)" data-kcode="K14" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p07_l4_tiempos_untitled.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p07_l4_tiempos_untitled.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p07_l4_tiempos_untitled.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p07_l4_tiempos_untitled.jpg?v=law11_v7" data-spec="/* P07 (L4) - Klim Tiempos Roman+Italic × Untitled Sans (Super-Normal) | 16/16 GATES PASS */\nHeadline Main: FDTiemposHeadline-Bold.woff2 (80px, LH=1.15, xH=0.544)\nHeadline Focal (.hl): FDTiemposHeadline-BoldItalic.woff2 (style=italic, intraXH=1.048)\nSubline Sans: FDUntitledSans-Medium.woff2 / FDUntitledSans-Bold.woff2\nNumeric/Meta Mono: FDRMMono-SemiBold.woff2 | Default Box: K14" onclick="selectPairing('P07')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P07 • L4 (KLIM TYPE FOUNDRY × COTYPE)</span>
@@ -557,7 +663,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1.048</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.5×</b></span>
+              <span>Phân cấp H/S: <b>3.66×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDTiemposHeadline-Bold.woff2</code></div>
@@ -567,20 +673,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Baseline & xH=0.544 trùng khít 100% | Đối lập: Trục đứng đĩnh đạc ↔ Trục nghiêng 12° nhấn cảm xúc<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Kể chuyện nghề (Storytelling), Xây kênh chuyên gia, Podcast, Bản tin</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p07_l4_tiempos_untitled.jpg?v=law10_v6" alt="P07 Klim Tiempos Roman+Italic × Untitled Sans (Super-Normal)" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P07 × K14)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P07'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p07_l4_tiempos_untitled.jpg?v=law11_v7" alt="P07 Klim Tiempos Roman+Italic × Untitled Sans (Super-Normal)" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P07 × K14)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>16px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>16px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P07'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P07', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P07')">✓ Chọn P07</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P08" data-plaw="L4" data-pname="Pentagram Cross-Genre: Monument Grotesk × Domaine Bold Italic" data-kcode="K05" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p08_l4_monument_domaine_mix.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p08_l4_monument_domaine_mix.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p08_l4_monument_domaine_mix.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p08_l4_monument_domaine_mix.jpg?v=law10_v6" data-spec="/* P08 (L4) - Pentagram Cross-Genre: Monument Grotesk × Domaine Bold Italic | 15/15 GATES PASS */\nHeadline Main: FDMonumentGrotesk-Bold.woff2 (81px, LH=1.11, xH=0.5)\nHeadline Focal (.hl): FDDomaineDisplay-BoldItalic.woff2 (style=italic, intraXH=1.026)\nSubline Sans: FDMonumentGrotesk-Medium.woff2 / FDMonumentGrotesk-Bold.woff2\nNumeric/Meta Mono: FDMonumentGroteskSemiMono-Bold.woff2 | Default Box: K05" onclick="selectPairing('P08')">
+        <article class="item-card p-card" data-pid="P08" data-plaw="L4" data-pname="Pentagram Cross-Genre: Monument Grotesk × Domaine Bold Italic" data-kcode="K05" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p08_l4_monument_domaine_mix.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p08_l4_monument_domaine_mix.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p08_l4_monument_domaine_mix.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p08_l4_monument_domaine_mix.jpg?v=law11_v7" data-spec="/* P08 (L4) - Pentagram Cross-Genre: Monument Grotesk × Domaine Bold Italic | 16/16 GATES PASS */\nHeadline Main: FDMonumentGrotesk-Bold.woff2 (81px, LH=1.11, xH=0.5)\nHeadline Focal (.hl): FDDomaineDisplay-BoldItalic.woff2 (style=italic, intraXH=1.026)\nSubline Sans: FDMonumentGrotesk-Medium.woff2 / FDMonumentGrotesk-Bold.woff2\nNumeric/Meta Mono: FDMonumentGroteskSemiMono-Bold.woff2 | Default Box: K05" onclick="selectPairing('P08')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P08 • L4 (DINAMO × KLIM TYPE FOUNDRY)</span>
@@ -594,7 +701,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1.026</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.3×</b></span>
+              <span>Phân cấp H/S: <b>3.45×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDMonumentGrotesk-Bold.woff2</code></div>
@@ -604,20 +711,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Cỡ chữ đồng nhất & xH (~0.51) | Đối lập nội dòng: Khung Grotesque hiện đại ↔ Từ khóa Serif Italic cổ điển<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Sáng tạo nội dung, Marketing hiện đại, Agency, Khởi nghiệp, Thiết kế</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p08_l4_monument_domaine_mix.jpg?v=law10_v6" alt="P08 Pentagram Cross-Genre: Monument Grotesk × Domaine Bold Italic" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P08 × K05)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P08'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p08_l4_monument_domaine_mix.jpg?v=law11_v7" alt="P08 Pentagram Cross-Genre: Monument Grotesk × Domaine Bold Italic" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P08 × K05)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>17px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>17px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P08'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P08', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P08')">✓ Chọn P08</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P09" data-plaw="L5" data-pname="Grilli Flexa Inktrap Architecture × Walsheim Pro & Aeonik Fono" data-kcode="K10" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p09_l5_flexa_walsheim.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p09_l5_flexa_walsheim.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p09_l5_flexa_walsheim.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p09_l5_flexa_walsheim.jpg?v=law10_v6" data-spec="/* P09 (L5) - Grilli Flexa Inktrap Architecture × Walsheim Pro & Aeonik Fono | 15/15 GATES PASS */\nHeadline Main: GRFlexaBold.woff2 (79px, LH=1.11, xH=0.5)\nHeadline Focal (.hl): GRFlexaBoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: GRWalsheimPro-Medium.woff2 / GRWalsheimPro-Bold.woff2\nNumeric/Meta Mono: FDAeonikFono-Bold.woff2 | Default Box: K10" onclick="selectPairing('P09')">
+        <article class="item-card p-card" data-pid="P09" data-plaw="L5" data-pname="Grilli Flexa Inktrap Architecture × Walsheim Pro & Aeonik Fono" data-kcode="K10" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p09_l5_flexa_walsheim.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p09_l5_flexa_walsheim.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p09_l5_flexa_walsheim.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p09_l5_flexa_walsheim.jpg?v=law11_v7" data-spec="/* P09 (L5) - Grilli Flexa Inktrap Architecture × Walsheim Pro & Aeonik Fono | 16/16 GATES PASS */\nHeadline Main: GRFlexaBold.woff2 (79px, LH=1.11, xH=0.5)\nHeadline Focal (.hl): GRFlexaBoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: GRWalsheimPro-Medium.woff2 / GRWalsheimPro-Bold.woff2\nNumeric/Meta Mono: FDAeonikFono-Bold.woff2 | Default Box: K10" onclick="selectPairing('P09')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P09 • L5 (GRILLI TYPE × COTYPE)</span>
@@ -631,7 +739,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.59×</b></span>
+              <span>Phân cấp H/S: <b>3.76×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>GRFlexaBold.woff2</code></div>
@@ -641,20 +749,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Độ dày nét Bold | Đối lập: Khe bẫy mực Inktrap khoét sâu góc giao ↔ Hình học tròn trịa Walsheim<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Công nghệ, Phần mềm, Hiệu suất làm việc, Quảng cáo ra đơn thực tế</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p09_l5_flexa_walsheim.jpg?v=law10_v6" alt="P09 Grilli Flexa Inktrap Architecture × Walsheim Pro & Aeonik Fono" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P09 × K10)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P09'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p09_l5_flexa_walsheim.jpg?v=law11_v7" alt="P09 Grilli Flexa Inktrap Architecture × Walsheim Pro & Aeonik Fono" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P09 × K10)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>16px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>16px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P09'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P09', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P09')">✓ Chọn P09</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P10" data-plaw="L5" data-pname="Klim American Grotesk Condensed (96px Tower) × Calibre & Karbon Slab" data-kcode="K21" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p10_l5_americangrotesk_calibre.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p10_l5_americangrotesk_calibre.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p10_l5_americangrotesk_calibre.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p10_l5_americangrotesk_calibre.jpg?v=law10_v6" data-spec="/* P10 (L5) - Klim American Grotesk Condensed (96px Tower) × Calibre & Karbon Slab | 15/15 GATES PASS */\nHeadline Main: FDAmericanGroteskCondensed-Bold.woff2 (95px, LH=1.13, xH=0.511)\nHeadline Focal (.hl): FDAmericanGroteskCondensed-BoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: FDCalibre-Medium.woff2 / FDCalibre-Bold.woff2\nNumeric/Meta Mono: FDKarbonSlabStencil-Bold.woff2 | Default Box: K21" onclick="selectPairing('P10')">
+        <article class="item-card p-card" data-pid="P10" data-plaw="L5" data-pname="Klim American Grotesk Condensed (96px Tower) × Calibre & Karbon Slab" data-kcode="K21" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p10_l5_americangrotesk_calibre.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p10_l5_americangrotesk_calibre.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p10_l5_americangrotesk_calibre.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p10_l5_americangrotesk_calibre.jpg?v=law11_v7" data-spec="/* P10 (L5) - Klim American Grotesk Condensed (96px Tower) × Calibre & Karbon Slab | 16/16 GATES PASS */\nHeadline Main: FDAmericanGroteskCondensed-Bold.woff2 (95px, LH=1.13, xH=0.511)\nHeadline Focal (.hl): FDAmericanGroteskCondensed-BoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: FDCalibre-Medium.woff2 / FDCalibre-Bold.woff2\nNumeric/Meta Mono: FDKarbonSlabStencil-Bold.woff2 | Default Box: K21" onclick="selectPairing('P10')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P10 • L5 (KLIM TYPE FOUNDRY)</span>
@@ -668,7 +777,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>4.77×</b></span>
+              <span>Phân cấp H/S: <b>1.87×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDAmericanGroteskCondensed-Bold.woff2</code></div>
@@ -678,20 +787,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Trục đứng Grotesque | Đối lập chiều rộng: Thân chữ nén cao 96px (Condensed) ↔ Chữ ngang mở rộng Calibre<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Sự kiện Offline, Tuyển sinh khóa học, Chiến dịch tốc độ, Thể thao</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p10_l5_americangrotesk_calibre.jpg?v=law10_v6" alt="P10 Klim American Grotesk Condensed (96px Tower) × Calibre & Karbon Slab" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P10 × K21)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P10'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p10_l5_americangrotesk_calibre.jpg?v=law11_v7" alt="P10 Klim American Grotesk Condensed (96px Tower) × Calibre & Karbon Slab" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P10 × K21)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>23px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>23px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P10'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P10', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P10')">✓ Chọn P10</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P11" data-plaw="L6" data-pname="Financial Times Authority (Financier 95px) × CoType RM Neue & Mono" data-kcode="K02" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p11_l6_financier_rmneue.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p11_l6_financier_rmneue.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p11_l6_financier_rmneue.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p11_l6_financier_rmneue.jpg?v=law10_v6" data-spec="/* P11 (L6) - Financial Times Authority (Financier 95px) × CoType RM Neue & Mono | 15/15 GATES PASS */\nHeadline Main: FDFinancierDisplay-Bold.woff2 (95px, LH=1.01, xH=0.444)\nHeadline Focal (.hl): FDFinancierDisplay-BoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: FDRMNeue-Regular.woff2 / FDRMNeue-Bold.woff2\nNumeric/Meta Mono: FDRMMono-Bold.woff2 | Default Box: K02" onclick="selectPairing('P11')">
+        <article class="item-card p-card" data-pid="P11" data-plaw="L6" data-pname="Financial Times Authority (Financier 95px) × CoType RM Neue & Mono" data-kcode="K02" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p11_l6_financier_rmneue.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p11_l6_financier_rmneue.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p11_l6_financier_rmneue.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p11_l6_financier_rmneue.jpg?v=law11_v7" data-spec="/* P11 (L6) - Financial Times Authority (Financier 95px) × CoType RM Neue & Mono | 16/16 GATES PASS */\nHeadline Main: FDFinancierDisplay-Bold.woff2 (95px, LH=1.01, xH=0.444)\nHeadline Focal (.hl): FDFinancierDisplay-BoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: FDRMNeue-Regular.woff2 / FDRMNeue-Bold.woff2\nNumeric/Meta Mono: FDRMMono-Bold.woff2 | Default Box: K02" onclick="selectPairing('P11')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P11 • L6 (KLIM TYPE FOUNDRY × COTYPE)</span>
@@ -705,7 +815,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.25×</b></span>
+              <span>Phân cấp H/S: <b>3.38×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>FDFinancierDisplay-Bold.woff2</code></div>
@@ -715,20 +825,21 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Khí chất quyền lực điềm tĩnh | Đối lập: Serif cổ điển Anh Quốc (xH=0.444) ↔ Swiss Grid RM Neue (xH=0.520)<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Tài chính, Chứng khoán, Quản trị doanh nghiệp, BĐS Vốn lớn</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p11_l6_financier_rmneue.jpg?v=law10_v6" alt="P11 Financial Times Authority (Financier 95px) × CoType RM Neue & Mono" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P11 × K02)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P11'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p11_l6_financier_rmneue.jpg?v=law11_v7" alt="P11 Financial Times Authority (Financier 95px) × CoType RM Neue & Mono" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P11 × K02)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>17px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>17px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P11'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P11', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P11')">✓ Chọn P11</button>
             </div>
           </div>
         </article>
         
-        <article class="item-card p-card" data-pid="P12" data-plaw="L6" data-pname="Grilli Zirkon Chiseled Serif × CoType Aeonik Soft & Pitch Mono" data-kcode="K15" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p12_l6_zirkon_aeonik_soft.jpg?v=law10_v6" data-full="k4_31kb_banners/v2_pilots/p12_l6_zirkon_aeonik_soft.jpg?v=law10_v6" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p12_l6_zirkon_aeonik_soft.jpg?v=law10_v6" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p12_l6_zirkon_aeonik_soft.jpg?v=law10_v6" data-spec="/* P12 (L6) - Grilli Zirkon Chiseled Serif × CoType Aeonik Soft & Pitch Mono | 15/15 GATES PASS */\nHeadline Main: GRZirkonBold.woff2 (82px, LH=1.13, xH=0.511)\nHeadline Focal (.hl): GRZirkonBoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: FDAeonikSoft-Medium.woff2 / FDAeonikSoft-Bold.woff2\nNumeric/Meta Mono: FDPitch-Bold.woff2 | Default Box: K15" onclick="selectPairing('P12')">
+        <article class="item-card p-card" data-pid="P12" data-plaw="L6" data-pname="Grilli Zirkon Chiseled Serif × CoType Aeonik Soft & Pitch Mono" data-kcode="K15" data-crop="k4_31kb_banners/v2_pilots/crop_pair_p12_l6_zirkon_aeonik_soft.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/p12_l6_zirkon_aeonik_soft.jpg?v=law11_v7" data-hcrop="k4_31kb_banners/v2_pilots/crop_head_p12_l6_zirkon_aeonik_soft.jpg?v=law11_v7" data-scrop="k4_31kb_banners/v2_pilots/crop_sub_p12_l6_zirkon_aeonik_soft.jpg?v=law11_v7" data-spec="/* P12 (L6) - Grilli Zirkon Chiseled Serif × CoType Aeonik Soft & Pitch Mono | 16/16 GATES PASS */\nHeadline Main: GRZirkonBold.woff2 (82px, LH=1.13, xH=0.511)\nHeadline Focal (.hl): GRZirkonBoldItalic.woff2 (style=italic, intraXH=1)\nSubline Sans: FDAeonikSoft-Medium.woff2 / FDAeonikSoft-Bold.woff2\nNumeric/Meta Mono: FDPitch-Bold.woff2 | Default Box: K15" onclick="selectPairing('P12')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill p-pill">P12 • L6 (GRILLI TYPE × COTYPE & KLIM)</span>
@@ -742,7 +853,7 @@
               <span>•</span>
               <span>Đồng điệu nội dòng: <b>r=1</b></span>
               <span>•</span>
-              <span>Phân cấp H/S: <b>3.35×</b></span>
+              <span>Phân cấp H/S: <b>3.58×</b></span>
             </div>
             <div class="dna-table">
               <div><span class="dna-k">1. Tiêu đề chính:</span> <code>GRZirkonBold.woff2</code></div>
@@ -752,13 +863,14 @@
             </div>
             <p class="card-desc" style="margin-top:7px;"><b>Giải phẫu:</b> Giữ nguyên: Lòng chữ rộng dễ đọc | Đối lập đầu nét: Chân chữ vát góc cạnh Zirkon ↔ Đầu nét bo tròn ấm áp Aeonik Soft<br/><b>Ngành hợp nhất:</b> <span style="color:#FACC15;">Văn hóa, Ẩm thực/F&B truyền thống, Du lịch, Đời sống, Quà tặng</span></p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p12_l6_zirkon_aeonik_soft.jpg?v=law10_v6" alt="P12 Grilli Zirkon Chiseled Serif × CoType Aeonik Soft & Pitch Mono" loading="lazy" />
-            <span class="img-mode-tag p-tag">🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (P12 × K15)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectPairing('P12'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_pair_p12_l6_zirkon_aeonik_soft.jpg?v=law11_v7" alt="P12 Grilli Zirkon Chiseled Serif × CoType Aeonik Soft & Pitch Mono" loading="lazy" />
+            <span class="img-mode-tag p-tag">🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (P12 × K15)</span>
           </div>
           <div class="card-foot">
-            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">15/15 CỔNG PASS</code> • Khe 2D: <code>18px</code></span>
+            <span>Kiểm toán: <code style="color:#4ADE80;font-weight:800;">16/16 CỔNG PASS</code> • Khe 2D: <code>18px</code></span>
             <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectPairing('P12'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
               <button type="button" class="btn-pick" style="background:rgba(148,163,184,0.16);color:#E2E8F0;border-color:rgba(148,163,184,0.35);" onclick="event.stopPropagation(); copySpecCard('P12', this)">📄 Copy Spec</button>
               <button type="button" class="btn-pick p-btn" onclick="event.stopPropagation(); selectPairing('P12')">✓ Chọn P12</button>
             </div>
@@ -789,7 +901,7 @@
 
       <div class="cards-grid" id="grid-headlines">
         
-        <article class="item-card h-card" data-hid="H01" data-hgroup="H1A" data-hname="Tiempos Headline Bold (80px, LH=1.15)" data-crop="k4_31kb_banners/v2_pilots/crop_head_d6_t01_tiempos_headline.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/d6_t01_tiempos_headline.jpg?v=sci_v5" onclick="selectHeadline('H01')">
+        <article class="item-card h-card" data-hid="H01" data-hgroup="H1A" data-hname="Tiempos Headline Bold (80px, LH=1.15)" data-crop="k4_31kb_banners/v2_pilots/crop_head_d6_t01_tiempos_headline.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/d6_t01_tiempos_headline.jpg?v=law11_v7" onclick="selectHeadline('H01')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H01 • TIEMPOS HEADLINE BOLD</span>
@@ -806,17 +918,20 @@
             </div>
             <p class="card-desc">Lòng chữ cực đại (xH=0.544), nét đầm rõ số 1 khi lướt nhanh trên điện thoại.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_d6_t01_tiempos_headline.jpg?v=sci_v5" alt="H01 Tiempos Headline Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H01'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_d6_t01_tiempos_headline.jpg?v=law11_v7" alt="H01 Tiempos Headline Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDTiemposHeadline-Bold</code> • Khe 2D: <code>16px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H01')">✓ Chọn Tiêu Đề H01</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H01'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H01')">✓ Chọn H01</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H02" data-hgroup="H1A" data-hname="Orlando Bold (Flare Serif) (85px, LH=1.15)" data-crop="k4_31kb_banners/v2_pilots/crop_head_d6_t08_orlando_bold.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/d6_t08_orlando_bold.jpg?v=sci_v5" onclick="selectHeadline('H02')">
+        <article class="item-card h-card" data-hid="H02" data-hgroup="H1A" data-hname="Orlando Bold (Flare Serif) (85px, LH=1.15)" data-crop="k4_31kb_banners/v2_pilots/crop_head_d6_t08_orlando_bold.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/d6_t08_orlando_bold.jpg?v=law11_v7" onclick="selectHeadline('H02')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H02 • ORLANDO BOLD (FLARE SERIF)</span>
@@ -833,17 +948,20 @@
             </div>
             <p class="card-desc">Quán quân x-height từ luồng d6c99485; chân chữ loe nhẹ kiểu điêu khắc sắc nét.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_d6_t08_orlando_bold.jpg?v=sci_v5" alt="H02 Orlando Bold (Flare Serif)" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H02'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_d6_t08_orlando_bold.jpg?v=law11_v7" alt="H02 Orlando Bold (Flare Serif)" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDOrlando-Bold</code> • Khe 2D: <code>12px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H02')">✓ Chọn Tiêu Đề H02</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H02'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H02')">✓ Chọn H02</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H03" data-hgroup="H1A" data-hname="Lock Serif Bold (81px, LH=1.15)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s17_muc_luc.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s17_muc_luc.jpg?v=sci_v5" onclick="selectHeadline('H03')">
+        <article class="item-card h-card" data-hid="H03" data-hgroup="H1A" data-hname="Lock Serif Bold (81px, LH=1.15)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s17_muc_luc.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s17_muc_luc.jpg?v=law11_v7" onclick="selectHeadline('H03')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H03 • LOCK SERIF BOLD</span>
@@ -860,17 +978,20 @@
             </div>
             <p class="card-desc">Chân chữ vuông khỏe, lòng chữ cao (0.522), dấu tiếng Việt đặt thoáng.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s17_muc_luc.jpg?v=sci_v5" alt="H03 Lock Serif Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H03'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s17_muc_luc.jpg?v=law11_v7" alt="H03 Lock Serif Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDLockSerif-Bold</code> • Khe 2D: <code>19px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H03')">✓ Chọn Tiêu Đề H03</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H03'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H03')">✓ Chọn H03</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H04" data-hgroup="H1A" data-hname="Super Display Bold (84px, LH=1.13)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k14_timeline.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k14_timeline.jpg?v=sci_v5" onclick="selectHeadline('H04')">
+        <article class="item-card h-card" data-hid="H04" data-hgroup="H1A" data-hname="Super Display Bold (84px, LH=1.13)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k14_timeline.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k14_timeline.jpg?v=law11_v7" onclick="selectHeadline('H04')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H04 • SUPER DISPLAY BOLD</span>
@@ -887,17 +1008,20 @@
             </div>
             <p class="card-desc">Bụng chữ tròn ấm áp, nét dày dặn, tạo khối trắng cực nổi trên nền tối.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k14_timeline.jpg?v=sci_v5" alt="H04 Super Display Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H04'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k14_timeline.jpg?v=law11_v7" alt="H04 Super Display Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>GRSuperDisplay-Bold</code> • Khe 2D: <code>21px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H04')">✓ Chọn Tiêu Đề H04</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H04'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H04')">✓ Chọn H04</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H05" data-hgroup="H1A" data-hname="Feijoa Bold (81px, LH=1.13)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s15_lich_tuan.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s15_lich_tuan.jpg?v=sci_v5" onclick="selectHeadline('H05')">
+        <article class="item-card h-card" data-hid="H05" data-hgroup="H1A" data-hname="Feijoa Bold (81px, LH=1.13)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s15_lich_tuan.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s15_lich_tuan.jpg?v=law11_v7" onclick="selectHeadline('H05')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H05 • FEIJOA BOLD</span>
@@ -914,17 +1038,20 @@
             </div>
             <p class="card-desc">Thiết kế Klim Type với bầu chữ ấm áp, thân thiện nhưng vẫn đĩnh đạc.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s15_lich_tuan.jpg?v=sci_v5" alt="H05 Feijoa Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H05'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s15_lich_tuan.jpg?v=law11_v7" alt="H05 Feijoa Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDFeijoa-Bold</code> • Khe 2D: <code>17px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H05')">✓ Chọn Tiêu Đề H05</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H05'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H05')">✓ Chọn H05</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H06" data-hgroup="H1A" data-hname="Canon Standard Bold (81px, LH=1.13)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_s21_dong_ho_3s.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s21_dong_ho_3s.jpg?v=sci_v5" onclick="selectHeadline('H06')">
+        <article class="item-card h-card" data-hid="H06" data-hgroup="H1A" data-hname="Canon Standard Bold (81px, LH=1.13)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_s21_dong_ho_3s.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s21_dong_ho_3s.jpg?v=law11_v7" onclick="selectHeadline('H06')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H06 • CANON STANDARD BOLD</span>
@@ -941,17 +1068,20 @@
             </div>
             <p class="card-desc">Tỷ lệ cân đối chuẩn mực, khe thở dấu 2D rộng tới 23px.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_s21_dong_ho_3s.jpg?v=sci_v5" alt="H06 Canon Standard Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H06'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_s21_dong_ho_3s.jpg?v=law11_v7" alt="H06 Canon Standard Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>GRCanonStandard-Bold</code> • Khe 2D: <code>23px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H06')">✓ Chọn Tiêu Đề H06</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H06'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H06')">✓ Chọn H06</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H07" data-hgroup="H1A" data-hname="Acta ExtraBold (83px, LH=1.11)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k12_hoi_dap.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k12_hoi_dap.jpg?v=sci_v5" onclick="selectHeadline('H07')">
+        <article class="item-card h-card" data-hid="H07" data-hgroup="H1A" data-hname="Acta ExtraBold (83px, LH=1.11)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k12_hoi_dap.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k12_hoi_dap.jpg?v=law11_v7" onclick="selectHeadline('H07')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H07 • ACTA EXTRABOLD</span>
@@ -968,17 +1098,20 @@
             </div>
             <p class="card-desc">Trọng lượng ExtraBold (wt=800) dày đầm chắc, lực đập thị giác cực mạnh.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k12_hoi_dap.jpg?v=sci_v5" alt="H07 Acta ExtraBold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H07'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k12_hoi_dap.jpg?v=law11_v7" alt="H07 Acta ExtraBold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDActa-ExtraBold</code> • Khe 2D: <code>19px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H07')">✓ Chọn Tiêu Đề H07</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H07'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H07')">✓ Chọn H07</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H08" data-hgroup="H1A" data-hname="Noe Display Bold (85px, LH=1.11)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_pa3_noe_callout.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_pa3_noe_callout.jpg?v=sci_v5" onclick="selectHeadline('H08')">
+        <article class="item-card h-card" data-hid="H08" data-hgroup="H1A" data-hname="Noe Display Bold (85px, LH=1.11)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_pa3_noe_callout.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_pa3_noe_callout.jpg?v=law11_v7" onclick="selectHeadline('H08')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H08 • NOE DISPLAY BOLD</span>
@@ -995,17 +1128,20 @@
             </div>
             <p class="card-desc">Chân chữ vát tam giác sắc lẹm, độ tương phản cao, bắt mắt ngay lập tức.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_pa3_noe_callout.jpg?v=sci_v5" alt="H08 Noe Display Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H08'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_pa3_noe_callout.jpg?v=law11_v7" alt="H08 Noe Display Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDNoeDisplay-Bold</code> • Khe 2D: <code>20px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H08')">✓ Chọn Tiêu Đề H08</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H08'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H08')">✓ Chọn H08</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H09" data-hgroup="H1A" data-hname="Domaine Display Bold (81px, LH=1.11)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k9_gach_chan_card.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k9_gach_chan_card.jpg?v=sci_v5" onclick="selectHeadline('H09')">
+        <article class="item-card h-card" data-hid="H09" data-hgroup="H1A" data-hname="Domaine Display Bold (81px, LH=1.11)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k9_gach_chan_card.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k9_gach_chan_card.jpg?v=law11_v7" onclick="selectHeadline('H09')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H09 • DOMAINE DISPLAY BOLD</span>
@@ -1022,17 +1158,20 @@
             </div>
             <p class="card-desc">Đường cong bo tròn bề thế, mang âm hưởng biên tập tạp chí cao cấp.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k9_gach_chan_card.jpg?v=sci_v5" alt="H09 Domaine Display Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H09'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k9_gach_chan_card.jpg?v=law11_v7" alt="H09 Domaine Display Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDDomaineDisplay-Bold</code> • Khe 2D: <code>19px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H09')">✓ Chọn Tiêu Đề H09</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H09'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H09')">✓ Chọn H09</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H10" data-hgroup="H1B" data-hname="Martina Plantijn Bold (86px, LH=1.09)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k8_hai_cot.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k8_hai_cot.jpg?v=sci_v5" onclick="selectHeadline('H10')">
+        <article class="item-card h-card" data-hid="H10" data-hgroup="H1B" data-hname="Martina Plantijn Bold (86px, LH=1.09)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k8_hai_cot.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k8_hai_cot.jpg?v=law11_v7" onclick="selectHeadline('H10')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H10 • MARTINA PLANTIJN BOLD</span>
@@ -1049,17 +1188,20 @@
             </div>
             <p class="card-desc">Nét ngang dày khỏe chống lóa nền tối tuyệt đối, dấu tiếng Việt tách bạch.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k8_hai_cot.jpg?v=sci_v5" alt="H10 Martina Plantijn Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H10'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k8_hai_cot.jpg?v=law11_v7" alt="H10 Martina Plantijn Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDMartinaPlantijn-Bold</code> • Khe 2D: <code>14px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H10')">✓ Chọn Tiêu Đề H10</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H10'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H10')">✓ Chọn H10</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H11" data-hgroup="H1B" data-hname="Epicene Display Bold (90px, LH=1.07)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k09_tin_nhan.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k09_tin_nhan.jpg?v=sci_v5" onclick="selectHeadline('H11')">
+        <article class="item-card h-card" data-hid="H11" data-hgroup="H1B" data-hname="Epicene Display Bold (90px, LH=1.07)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k09_tin_nhan.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k09_tin_nhan.jpg?v=law11_v7" onclick="selectHeadline('H11')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H11 • EPICENE DISPLAY BOLD</span>
@@ -1076,17 +1218,20 @@
             </div>
             <p class="card-desc">Đường cong thanh-đậm sắc sảo, đẩy cỡ lên 90px; hợp Spa, Thẩm mỹ, Nghệ thuật.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k09_tin_nhan.jpg?v=sci_v5" alt="H11 Epicene Display Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H11'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k09_tin_nhan.jpg?v=law11_v7" alt="H11 Epicene Display Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDEpiceneDisplay-Bold</code> • Khe 2D: <code>13px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H11')">✓ Chọn Tiêu Đề H11</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H11'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H11')">✓ Chọn H11</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H12" data-hgroup="H1B" data-hname="GT Sectra Display Bold (85px, LH=1.06)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k6_mui_ten.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k6_mui_ten.jpg?v=sci_v5" onclick="selectHeadline('H12')">
+        <article class="item-card h-card" data-hid="H12" data-hgroup="H1B" data-hname="GT Sectra Display Bold (85px, LH=1.06)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k6_mui_ten.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k6_mui_ten.jpg?v=law11_v7" onclick="selectHeadline('H12')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H12 • GT SECTRA DISPLAY BOLD</span>
@@ -1103,17 +1248,20 @@
             </div>
             <p class="card-desc">Góc cắt dao khắc Thụy Sĩ kết hợp nhịp bút cọ; cực hợp bài Giải Mã Cơ Chế.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k6_mui_ten.jpg?v=sci_v5" alt="H12 GT Sectra Display Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H12'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k6_mui_ten.jpg?v=law11_v7" alt="H12 GT Sectra Display Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>GRSectraDisplay-Bold</code> • Khe 2D: <code>16px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H12')">✓ Chọn Tiêu Đề H12</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H12'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H12')">✓ Chọn H12</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H13" data-hgroup="H1B" data-hname="Alpina Fine Bold (86px, LH=1.06)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k13_but_da_quang.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k13_but_da_quang.jpg?v=sci_v5" onclick="selectHeadline('H13')">
+        <article class="item-card h-card" data-hid="H13" data-hgroup="H1B" data-hname="Alpina Fine Bold (86px, LH=1.06)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k13_but_da_quang.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k13_but_da_quang.jpg?v=law11_v7" onclick="selectHeadline('H13')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H13 • ALPINA FINE BOLD</span>
@@ -1130,17 +1278,20 @@
             </div>
             <p class="card-desc">Phong thái Thụy Sĩ tinh gọn, điềm tĩnh, dễ đọc ở mọi kích thước.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k13_but_da_quang.jpg?v=sci_v5" alt="H13 Alpina Fine Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H13'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k13_but_da_quang.jpg?v=law11_v7" alt="H13 Alpina Fine Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>GRAlpinaFine-Bold</code> • Khe 2D: <code>18px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H13')">✓ Chọn Tiêu Đề H13</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H13'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H13')">✓ Chọn H13</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H14" data-hgroup="H1B" data-hname="Untitled Serif Bold (82px, LH=1.04)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s14_gach_sua.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s14_gach_sua.jpg?v=sci_v5" onclick="selectHeadline('H14')">
+        <article class="item-card h-card" data-hid="H14" data-hgroup="H1B" data-hname="Untitled Serif Bold (82px, LH=1.04)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s14_gach_sua.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s14_gach_sua.jpg?v=law11_v7" onclick="selectHeadline('H14')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H14 • UNTITLED SERIF BOLD</span>
@@ -1157,17 +1308,20 @@
             </div>
             <p class="card-desc">Cổ điển thuần khiết của Klim Type; khi khóa LH=1.04 tạo khối chữ đầm chắc sắc bén.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s14_gach_sua.jpg?v=sci_v5" alt="H14 Untitled Serif Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H14'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s14_gach_sua.jpg?v=law11_v7" alt="H14 Untitled Serif Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDUntitledSerif-Bold</code> • Khe 2D: <code>14px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H14')">✓ Chọn Tiêu Đề H14</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H14'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H14')">✓ Chọn H14</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H15" data-hgroup="H1C" data-hname="Heldane Display Bold (96px, LH=1.03)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k4_con_so.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k4_con_so.jpg?v=sci_v5" onclick="selectHeadline('H15')">
+        <article class="item-card h-card" data-hid="H15" data-hgroup="H1C" data-hname="Heldane Display Bold (96px, LH=1.03)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k4_con_so.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k4_con_so.jpg?v=law11_v7" onclick="selectHeadline('H15')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H15 • HELDANE DISPLAY BOLD</span>
@@ -1184,17 +1338,20 @@
             </div>
             <p class="card-desc">Quán quân cỡ chữ (96px) nhờ thân chữ siêu gọn, thanh lịch và cao ráo.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k4_con_so.jpg?v=sci_v5" alt="H15 Heldane Display Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H15'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k4_con_so.jpg?v=law11_v7" alt="H15 Heldane Display Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDHeldaneDisplay-Bold</code> • Khe 2D: <code>11px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H15')">✓ Chọn Tiêu Đề H15</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H15'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H15')">✓ Chọn H15</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H16" data-hgroup="H1C" data-hname="Signifier Bold (86px, LH=1.07)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k10_thanh_do.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k10_thanh_do.jpg?v=sci_v5" onclick="selectHeadline('H16')">
+        <article class="item-card h-card" data-hid="H16" data-hgroup="H1C" data-hname="Signifier Bold (86px, LH=1.07)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k10_thanh_do.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k10_thanh_do.jpg?v=law11_v7" onclick="selectHeadline('H16')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H16 • SIGNIFIER BOLD</span>
@@ -1211,17 +1368,20 @@
             </div>
             <p class="card-desc">Đường cắt thẳng khắc đá Brutalist học thuật, mang chất tri thức sâu sắc.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k10_thanh_do.jpg?v=sci_v5" alt="H16 Signifier Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H16'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_k10_thanh_do.jpg?v=law11_v7" alt="H16 Signifier Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDSignifier-Bold</code> • Khe 2D: <code>10px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H16')">✓ Chọn Tiêu Đề H16</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H16'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H16')">✓ Chọn H16</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H17" data-hgroup="H1C" data-hname="Financier Display Bold (95px, LH=1.01)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_pa2_financier_split.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_pa2_financier_split.jpg?v=sci_v5" onclick="selectHeadline('H17')">
+        <article class="item-card h-card" data-hid="H17" data-hgroup="H1C" data-hname="Financier Display Bold (95px, LH=1.01)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_pa2_financier_split.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_pa2_financier_split.jpg?v=law11_v7" onclick="selectHeadline('H17')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H17 • FINANCIER DISPLAY BOLD</span>
@@ -1238,17 +1398,20 @@
             </div>
             <p class="card-desc">Phong thái báo Financial Times sang trọng, đẩy cỡ lên 95px với LH=1.01 nén chặt.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_pa2_financier_split.jpg?v=sci_v5" alt="H17 Financier Display Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H17'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_pa2_financier_split.jpg?v=law11_v7" alt="H17 Financier Display Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDFinancierDisplay-Bold</code> • Khe 2D: <code>20px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H17')">✓ Chọn Tiêu Đề H17</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H17'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H17')">✓ Chọn H17</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H18" data-hgroup="H1C" data-hname="Addington CF Bold (84px, LH=1.01)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_s18_phuong_trinh.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s18_phuong_trinh.jpg?v=sci_v5" onclick="selectHeadline('H18')">
+        <article class="item-card h-card" data-hid="H18" data-hgroup="H1C" data-hname="Addington CF Bold (84px, LH=1.01)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_s18_phuong_trinh.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s18_phuong_trinh.jpg?v=law11_v7" onclick="selectHeadline('H18')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H18 • ADDINGTON CF BOLD</span>
@@ -1265,17 +1428,20 @@
             </div>
             <p class="card-desc">Nét chữ mềm mại, hiền hòa, kết cấu khối chặt ở LH=1.01.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_s18_phuong_trinh.jpg?v=sci_v5" alt="H18 Addington CF Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H18'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_s18_phuong_trinh.jpg?v=law11_v7" alt="H18 Addington CF Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDAddingtonCF-Bold</code> • Khe 2D: <code>18px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H18')">✓ Chọn Tiêu Đề H18</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H18'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H18')">✓ Chọn H18</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H19" data-hgroup="H1C" data-hname="Newzald Bold (91px, LH=1.01)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k7_khong_phai_ma_la.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k7_khong_phai_ma_la.jpg?v=sci_v5" onclick="selectHeadline('H19')">
+        <article class="item-card h-card" data-hid="H19" data-hgroup="H1C" data-hname="Newzald Bold (91px, LH=1.01)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k7_khong_phai_ma_la.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k7_khong_phai_ma_la.jpg?v=law11_v7" onclick="selectHeadline('H19')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H19 • NEWZALD BOLD</span>
@@ -1292,17 +1458,20 @@
             </div>
             <p class="card-desc">Tạp chí chuyên sâu điềm tĩnh, đẩy cỡ chữ lên 91px.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k7_khong_phai_ma_la.jpg?v=sci_v5" alt="H19 Newzald Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H19'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_gm_k7_khong_phai_ma_la.jpg?v=law11_v7" alt="H19 Newzald Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDNewzald-Bold</code> • Khe 2D: <code>18px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H19')">✓ Chọn Tiêu Đề H19</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H19'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H19')">✓ Chọn H19</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card h-card" data-hid="H20" data-hgroup="H1C" data-hname="Financier Text Bold (89px, LH=1.01)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s16_chu_bong.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s16_chu_bong.jpg?v=sci_v5" onclick="selectHeadline('H20')">
+        <article class="item-card h-card" data-hid="H20" data-hgroup="H1C" data-hname="Financier Text Bold (89px, LH=1.01)" data-crop="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s16_chu_bong.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s16_chu_bong.jpg?v=law11_v7" onclick="selectHeadline('H20')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill h-pill">H20 • FINANCIER TEXT BOLD</span>
@@ -1319,13 +1488,16 @@
             </div>
             <p class="card-desc">Bản Text đầm nét hơn Financier Display, đạt cỡ 89px và khe mực 2D 17px.</p>
           </div>
-          <div class="img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s16_chu_bong.jpg?v=sci_v5" alt="H20 Financier Text Bold" loading="lazy" />
-            <span class="img-mode-tag">🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)</span>
+          <div class="img-box" onclick="event.stopPropagation(); selectHeadline('H20'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_head_kb_15_c2_s16_chu_bong.jpg?v=law11_v7" alt="H20 Financier Text Bold" loading="lazy" />
+            <span class="img-mode-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)</span>
           </div>
           <div class="card-foot">
             <span>File: <code>FDFinancierText-Bold</code> • Khe 2D: <code>17px</code></span>
-            <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H20')">✓ Chọn Tiêu Đề H20</button>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectHeadline('H20'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick" onclick="event.stopPropagation(); selectHeadline('H20')">✓ Chọn H20</button>
+            </div>
           </div>
         </article>
         
@@ -1355,7 +1527,7 @@
 
       <div class="cards-grid" id="grid-subboxes">
         
-        <article class="item-card k-card" data-kid="K01" data-kgroup="KA" data-kname="Hai Vế Đối Lập (× / ✓)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_pa2_financier_split.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_pa2_financier_split.jpg?v=sci_v5" onclick="selectSubbox('K01')">
+        <article class="item-card k-card" data-kid="K01" data-kgroup="KA" data-kname="Hai Vế Đối Lập (× / ✓)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_pa2_financier_split.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_pa2_financier_split.jpg?v=law11_v7" onclick="selectSubbox('K01')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K01 • HAI VẾ ĐỐI LẬP (× / ✓)</span>
@@ -1364,17 +1536,20 @@
             <div class="sample-quote">× 10 clip quay vội: khách lướt  |  ✓ 1 bài trúng việc: khách nhắn</div>
             <p class="card-desc">Đặt thói quen sai (× xám) ở trên và cách làm đúng (✓ trắng/vàng) ở dưới, phân cách bằng đường kẻ mảnh. Đọc hiểu trong 0.2 giây.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_pa2_financier_split.jpg?v=sci_v5" alt="K01 Hai Vế Đối Lập (× / ✓)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K01'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_pa2_financier_split.jpg?v=law11_v7" alt="K01 Hai Vế Đối Lập (× / ✓)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CHỐT GỐC</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K01')">✓ Chọn Khung K01</button>
+            <span>Tác giả khuôn: <code>CHỐT GỐC</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K01'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K01')">✓ Chọn K01</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K06" data-kgroup="KA" data-kname="Không Phải A – Mà Là B" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k7_khong_phai_ma_la.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k7_khong_phai_ma_la.jpg?v=sci_v5" onclick="selectSubbox('K06')">
+        <article class="item-card k-card" data-kid="K06" data-kgroup="KA" data-kname="Không Phải A – Mà Là B" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k7_khong_phai_ma_la.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k7_khong_phai_ma_la.jpg?v=law11_v7" onclick="selectSubbox('K06')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K06 • KHÔNG PHẢI A – MÀ LÀ B</span>
@@ -1383,17 +1558,20 @@
             <div class="sample-quote">KHÔNG PHẢI quay thật nhiều clip  |  MÀ LÀ 1 bài gãi đúng chỗ ngứa</div>
             <p class="card-desc">Khuôn Định nghĩa Âm bản kinh điển: bác bỏ ngộ nhận ở dòng 1 và chốt bản chất thật ở dòng 2.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k7_khong_phai_ma_la.jpg?v=sci_v5" alt="K06 Không Phải A – Mà Là B" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K06'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k7_khong_phai_ma_la.jpg?v=law11_v7" alt="K06 Không Phải A – Mà Là B" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K06')">✓ Chọn Khung K06</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K06'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K06')">✓ Chọn K06</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K07" data-kgroup="KA" data-kname="Chia 2 Ngăn Trái / Phải (50/50)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k8_hai_cot.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k8_hai_cot.jpg?v=sci_v5" onclick="selectSubbox('K07')">
+        <article class="item-card k-card" data-kid="K07" data-kgroup="KA" data-kname="Chia 2 Ngăn Trái / Phải (50/50)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k8_hai_cot.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k8_hai_cot.jpg?v=law11_v7" onclick="selectSubbox('K07')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K07 • CHIA 2 NGĂN TRÁI / PHẢI (50/50)</span>
@@ -1402,17 +1580,20 @@
             <div class="sample-quote">[LÀM VỘI: Khách xem rồi quên]  |  [LÀM KỸ: Khách nhớ & nhắn]</div>
             <p class="card-desc">Chia hộp thành 2 cột đối xứng 50/50 đặt cạnh nhau để mắt so sánh ngang tức thì.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k8_hai_cot.jpg?v=sci_v5" alt="K07 Chia 2 Ngăn Trái / Phải (50/50)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K07'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k8_hai_cot.jpg?v=law11_v7" alt="K07 Chia 2 Ngăn Trái / Phải (50/50)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K07')">✓ Chọn Khung K07</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K07'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K07')">✓ Chọn K07</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K17" data-kgroup="KA" data-kname="Đường Chấm Dẫn Đối Chiếu (Leader Dots)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s17_muc_luc.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s17_muc_luc.jpg?v=sci_v5" onclick="selectSubbox('K17')">
+        <article class="item-card k-card" data-kid="K17" data-kgroup="KA" data-kname="Đường Chấm Dẫn Đối Chiếu (Leader Dots)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s17_muc_luc.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s17_muc_luc.jpg?v=law11_v7" onclick="selectSubbox('K17')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K17 • ĐƯỜNG CHẤM DẪN ĐỐI CHIẾU (LEADER DOTS)</span>
@@ -1421,17 +1602,20 @@
             <div class="sample-quote">Đăng vội mỗi ngày ....... quên ngay  |  1 bài trúng việc ....... khách nhắn</div>
             <p class="card-desc">Dùng hàng chấm mảnh dẫn mắt từ Hành động (bên trái) sang Kết quả (bên phải) như bảng thực đơn/mục lục cao cấp.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s17_muc_luc.jpg?v=sci_v5" alt="K17 Đường Chấm Dẫn Đối Chiếu (Leader Dots)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K17'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s17_muc_luc.jpg?v=law11_v7" alt="K17 Đường Chấm Dẫn Đối Chiếu (Leader Dots)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K17')">✓ Chọn Khung K17</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K17'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K17')">✓ Chọn K17</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K20" data-kgroup="KA" data-kname="Thẻ Chẩn Đoán ([BỆNH] → [THUỐC])" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s20_chan_doan.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s20_chan_doan.jpg?v=sci_v5" onclick="selectSubbox('K20')">
+        <article class="item-card k-card" data-kid="K20" data-kgroup="KA" data-kname="Thẻ Chẩn Đoán ([BỆNH] → [THUỐC])" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s20_chan_doan.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s20_chan_doan.jpg?v=law11_v7" onclick="selectSubbox('K20')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K20 • THẺ CHẨN ĐOÁN ([BỆNH] → [THUỐC])</span>
@@ -1440,17 +1624,20 @@
             <div class="sample-quote">[BỆNH] Đăng đều nhưng vắng khách  |  [THUỐC] 1 bài kỹ → khách tự nhắn</div>
             <p class="card-desc">Đóng khung y khoa / chẩn đoán thực chiến: chỉ đúng triệu chứng kênh và kê đơn giải pháp.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s20_chan_doan.jpg?v=sci_v5" alt="K20 Thẻ Chẩn Đoán ([BỆNH] → [THUỐC])" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K20'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s20_chan_doan.jpg?v=law11_v7" alt="K20 Thẻ Chẩn Đoán ([BỆNH] → [THUỐC])" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K20')">✓ Chọn Khung K20</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K20'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K20')">✓ Chọn K20</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K03" data-kgroup="KB" data-kname="Con Số Bằng Chứng Lớn (1/10)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k4_con_so.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k4_con_so.jpg?v=sci_v5" onclick="selectSubbox('K03')">
+        <article class="item-card k-card" data-kid="K03" data-kgroup="KB" data-kname="Con Số Bằng Chứng Lớn (1/10)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k4_con_so.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k4_con_so.jpg?v=law11_v7" onclick="selectSubbox('K03')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K03 • CON SỐ BẰNG CHỨNG LỚN (1/10)</span>
@@ -1459,17 +1646,20 @@
             <div class="sample-quote">1/10  |  Làm 1 bài kỹ bằng 10 clip vội. Khách tự nhắn hỏi.</div>
             <p class="card-desc">Cột trái là con số tỷ lệ lớn màu vàng (1/10), cột phải là lời giải thích ngắn gọn.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k4_con_so.jpg?v=sci_v5" alt="K03 Con Số Bằng Chứng Lớn (1/10)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K03'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k4_con_so.jpg?v=law11_v7" alt="K03 Con Số Bằng Chứng Lớn (1/10)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K03')">✓ Chọn Khung K03</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K03'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K03')">✓ Chọn K03</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K10" data-kgroup="KB" data-kname="Thanh Đo Độ Nhớ (Progress Meter)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k10_thanh_do.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k10_thanh_do.jpg?v=sci_v5" onclick="selectSubbox('K10')">
+        <article class="item-card k-card" data-kid="K10" data-kgroup="KB" data-kname="Thanh Đo Độ Nhớ (Progress Meter)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k10_thanh_do.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k10_thanh_do.jpg?v=law11_v7" onclick="selectSubbox('K10')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K10 • THANH ĐO ĐỘ NHỚ (PROGRESS METER)</span>
@@ -1478,17 +1668,20 @@
             <div class="sample-quote">Clip vội [== 10%] Lướt qua  |  Bài trúng [========= 95%] Nhắn tin</div>
             <p class="card-desc">Trực quan hóa sự chênh lệch hiệu quả bằng 2 thanh mức độ (10% xám vs 95% vàng sáng).</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k10_thanh_do.jpg?v=sci_v5" alt="K10 Thanh Đo Độ Nhớ (Progress Meter)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K10'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k10_thanh_do.jpg?v=law11_v7" alt="K10 Thanh Đo Độ Nhớ (Progress Meter)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K10')">✓ Chọn Khung K10</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K10'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K10')">✓ Chọn K10</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K14" data-kgroup="KB" data-kname="Trục Thời Gian 2 Nấc (Timeline Node)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k14_timeline.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k14_timeline.jpg?v=sci_v5" onclick="selectSubbox('K14')">
+        <article class="item-card k-card" data-kid="K14" data-kgroup="KB" data-kname="Trục Thời Gian 2 Nấc (Timeline Node)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k14_timeline.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k14_timeline.jpg?v=law11_v7" onclick="selectSubbox('K14')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K14 • TRỤC THỜI GIAN 2 NẤC (TIMELINE NODE)</span>
@@ -1497,17 +1690,20 @@
             <div class="sample-quote">○ Ngày 1–6: Nghiên cứu kỹ nỗi đau  →  ● Ngày 7: Lên 1 bài khách nhắn</div>
             <p class="card-desc">Dẫn dắt theo trình tự thời gian từ bước chuẩn bị âm thầm đến điểm bùng nổ.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k14_timeline.jpg?v=sci_v5" alt="K14 Trục Thời Gian 2 Nấc (Timeline Node)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K14'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k14_timeline.jpg?v=law11_v7" alt="K14 Trục Thời Gian 2 Nấc (Timeline Node)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K14')">✓ Chọn Khung K14</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K14'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K14')">✓ Chọn K14</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K15" data-kgroup="KB" data-kname="Lịch Tuần 7 Ô (T2–CN)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s15_lich_tuan.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s15_lich_tuan.jpg?v=sci_v5" onclick="selectSubbox('K15')">
+        <article class="item-card k-card" data-kid="K15" data-kgroup="KB" data-kname="Lịch Tuần 7 Ô (T2–CN)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s15_lich_tuan.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s15_lich_tuan.jpg?v=law11_v7" onclick="selectSubbox('K15')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K15 • LỊCH TUẦN 7 Ô (T2–CN)</span>
@@ -1516,17 +1712,20 @@
             <div class="sample-quote">[T2][T3][T4 sáng][T5][T6][T7 sáng][CN] — Đăng chắc có ý → khách tự nhắn.</div>
             <p class="card-desc">Minh họa trực tiếp câu tiêu đề 'Đừng ép mình đăng bài mỗi ngày' bằng 7 ô thứ trong tuần (chỉ sáng 2 ngày T4 & T7).</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s15_lich_tuan.jpg?v=sci_v5" alt="K15 Lịch Tuần 7 Ô (T2–CN)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K15'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s15_lich_tuan.jpg?v=law11_v7" alt="K15 Lịch Tuần 7 Ô (T2–CN)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K15')">✓ Chọn Khung K15</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K15'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K15')">✓ Chọn K15</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K21" data-kgroup="KB" data-kname="Bộ Lọc 3 Giây Đầu (03s LƯỚT XEM)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s21_dong_ho_3s.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s21_dong_ho_3s.jpg?v=sci_v5" onclick="selectSubbox('K21')">
+        <article class="item-card k-card" data-kid="K21" data-kgroup="KB" data-kname="Bộ Lọc 3 Giây Đầu (03s LƯỚT XEM)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s21_dong_ho_3s.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s21_dong_ho_3s.jpg?v=law11_v7" onclick="selectSubbox('K21')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K21 • BỘ LỌC 3 GIÂY ĐẦU (03S LƯỚT XEM)</span>
@@ -1535,17 +1734,20 @@
             <div class="sample-quote">03s LƯỚT XEM  |  Bài vội: khách lướt ngay • Bài trúng: dừng & nhắn</div>
             <p class="card-desc">Nhấn mạnh quy luật 3 giây đầu tiên quyết định khách lướt qua hay dừng lại trên Newsfeed.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s21_dong_ho_3s.jpg?v=sci_v5" alt="K21 Bộ Lọc 3 Giây Đầu (03s LƯỚT XEM)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K21'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s21_dong_ho_3s.jpg?v=law11_v7" alt="K21 Bộ Lọc 3 Giây Đầu (03s LƯỚT XEM)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K21')">✓ Chọn Khung K21</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K21'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K21')">✓ Chọn K21</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K05" data-kgroup="KC" data-kname="Chuỗi Mũi Tên Nhân Quả (A → B)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k6_mui_ten.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k6_mui_ten.jpg?v=sci_v5" onclick="selectSubbox('K05')">
+        <article class="item-card k-card" data-kid="K05" data-kgroup="KC" data-kname="Chuỗi Mũi Tên Nhân Quả (A → B)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k6_mui_ten.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k6_mui_ten.jpg?v=law11_v7" onclick="selectSubbox('K05')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K05 • CHUỖI MŨI TÊN NHÂN QUẢ (A → B)</span>
@@ -1554,17 +1756,20 @@
             <div class="sample-quote">[Quay vội] → Khách lướt  |  [Trúng việc] → Khách nhắn</div>
             <p class="card-desc">Biểu diễn cơ chế nguyên nhân → kết quả bằng pill bo góc và mũi tên định hướng.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k6_mui_ten.jpg?v=sci_v5" alt="K05 Chuỗi Mũi Tên Nhân Quả (A → B)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K05'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k6_mui_ten.jpg?v=law11_v7" alt="K05 Chuỗi Mũi Tên Nhân Quả (A → B)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K05')">✓ Chọn Khung K05</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K05'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K05')">✓ Chọn K05</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K18" data-kgroup="KC" data-kname="Phương Trình Đóng Khung ([A] + [B] = C)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s18_phuong_trinh.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s18_phuong_trinh.jpg?v=sci_v5" onclick="selectSubbox('K18')">
+        <article class="item-card k-card" data-kid="K18" data-kgroup="KC" data-kname="Phương Trình Đóng Khung ([A] + [B] = C)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s18_phuong_trinh.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s18_phuong_trinh.jpg?v=law11_v7" onclick="selectSubbox('K18')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K18 • PHƯƠNG TRÌNH ĐÓNG KHUNG ([A] + [B] = C)</span>
@@ -1573,17 +1778,20 @@
             <div class="sample-quote">[1 bài kỹ / tuần] + [Đúng nỗi đau]  =  Khách nhớ & tự nhắn hỏi lịch.</div>
             <p class="card-desc">Đóng gói tư duy thành công thức toán học cộng hưởng ngắn gọn, dễ nhớ.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s18_phuong_trinh.jpg?v=sci_v5" alt="K18 Phương Trình Đóng Khung ([A] + [B] = C)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K18'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s18_phuong_trinh.jpg?v=law11_v7" alt="K18 Phương Trình Đóng Khung ([A] + [B] = C)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K18')">✓ Chọn Khung K18</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K18'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K18')">✓ Chọn K18</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K19" data-kgroup="KC" data-kname="Bảng Kiểm 2 Ô Tích Vàng (Checklist)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s19_checklist.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s19_checklist.jpg?v=sci_v5" onclick="selectSubbox('K19')">
+        <article class="item-card k-card" data-kid="K19" data-kgroup="KC" data-kname="Bảng Kiểm 2 Ô Tích Vàng (Checklist)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s19_checklist.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_s19_checklist.jpg?v=law11_v7" onclick="selectSubbox('K19')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K19 • BẢNG KIỂM 2 Ô TÍCH VÀNG (CHECKLIST)</span>
@@ -1592,17 +1800,20 @@
             <div class="sample-quote">[✓] Bỏ áp lực quay vội mỗi ngày  |  [✓] 1 bài trúng việc → khách nhắn</div>
             <p class="card-desc">Tạo cảm giác hành động hoàn tất (Actionable Checklist) với 2 ô tích vuông màu vàng.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s19_checklist.jpg?v=sci_v5" alt="K19 Bảng Kiểm 2 Ô Tích Vàng (Checklist)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K19'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_s19_checklist.jpg?v=law11_v7" alt="K19 Bảng Kiểm 2 Ô Tích Vàng (Checklist)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K19')">✓ Chọn Khung K19</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K19'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K19')">✓ Chọn K19</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K09" data-kgroup="KD" data-kname="Bong Bóng Tin Nhắn Khách Hàng" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k09_tin_nhan.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k09_tin_nhan.jpg?v=sci_v5" onclick="selectSubbox('K09')">
+        <article class="item-card k-card" data-kid="K09" data-kgroup="KD" data-kname="Bong Bóng Tin Nhắn Khách Hàng" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k09_tin_nhan.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k09_tin_nhan.jpg?v=law11_v7" onclick="selectSubbox('K09')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K09 • BONG BÓNG TIN NHẮN KHÁCH HÀNG</span>
@@ -1611,17 +1822,20 @@
             <div class="sample-quote">● TIN NHẮN KHÁCH HÀNG: 'Xem đúng 1 bài của anh là em nhắn đăng ký luôn.'</div>
             <p class="card-desc">Mô phỏng giao diện tin nhắn thực tế của khách hàng với chấm tròn xanh lá hoạt động.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k09_tin_nhan.jpg?v=sci_v5" alt="K09 Bong Bóng Tin Nhắn Khách Hàng" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K09'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k09_tin_nhan.jpg?v=law11_v7" alt="K09 Bong Bóng Tin Nhắn Khách Hàng" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K09')">✓ Chọn Khung K09</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K09'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K09')">✓ Chọn K09</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K12" data-kgroup="KD" data-kname="Hỏi Xoáy – Đáp Gọn ([HỎI] / [ĐÁP])" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k12_hoi_dap.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k12_hoi_dap.jpg?v=sci_v5" onclick="selectSubbox('K12')">
+        <article class="item-card k-card" data-kid="K12" data-kgroup="KD" data-kname="Hỏi Xoáy – Đáp Gọn ([HỎI] / [ĐÁP])" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k12_hoi_dap.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k12_hoi_dap.jpg?v=law11_v7" onclick="selectSubbox('K12')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K12 • HỎI XOÁY – ĐÁP GỌN ([HỎI] / [ĐÁP])</span>
@@ -1630,17 +1844,20 @@
             <div class="sample-quote">[HỎI] Đăng ít có sợ mất tương tác?  |  [ĐÁP] 1 bài trúng = khách tự tìm.</div>
             <p class="card-desc">Bắt trúng câu hỏi thầm kín trong đầu người xem và trả lời dứt khoát ở dòng dưới.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k12_hoi_dap.jpg?v=sci_v5" alt="K12 Hỏi Xoáy – Đáp Gọn ([HỎI] / [ĐÁP])" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K12'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k12_hoi_dap.jpg?v=law11_v7" alt="K12 Hỏi Xoáy – Đáp Gọn ([HỎI] / [ĐÁP])" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K12')">✓ Chọn Khung K12</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K12'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K12')">✓ Chọn K12</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K02" data-kgroup="KE" data-kname="Khối Trích Dẫn Tối Sâu (Viền Đỉnh Vàng)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_pa3_noe_callout.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_pa3_noe_callout.jpg?v=sci_v5" onclick="selectSubbox('K02')">
+        <article class="item-card k-card" data-kid="K02" data-kgroup="KE" data-kname="Khối Trích Dẫn Tối Sâu (Viền Đỉnh Vàng)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_pa3_noe_callout.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_pa3_noe_callout.jpg?v=law11_v7" onclick="selectSubbox('K02')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K02 • KHỐI TRÍCH DẪN TỐI SÂU (VIỀN ĐỈNH VÀNG)</span>
@@ -1649,17 +1866,20 @@
             <div class="sample-quote">10 clip quay vội khách lướt qua. Chỉ 1 bài đúng việc làm khách tự nhắn.</div>
             <p class="card-desc">Hộp nền tối sâu có thanh viền vàng 2px ở đỉnh, tôn vinh lời đúc kết nghề nghiệp.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_pa3_noe_callout.jpg?v=sci_v5" alt="K02 Khối Trích Dẫn Tối Sâu (Viền Đỉnh Vàng)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K02'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_pa3_noe_callout.jpg?v=law11_v7" alt="K02 Khối Trích Dẫn Tối Sâu (Viền Đỉnh Vàng)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CHỐT GỐC</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K02')">✓ Chọn Khung K02</button>
+            <span>Tác giả khuôn: <code>CHỐT GỐC</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K02'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K02')">✓ Chọn K02</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K04" data-kgroup="KE" data-kname="Nhãn Tab Vàng Gắn Đỉnh Hộp" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k5_nhan_tab.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k5_nhan_tab.jpg?v=sci_v5" onclick="selectSubbox('K04')">
+        <article class="item-card k-card" data-kid="K04" data-kgroup="KE" data-kname="Nhãn Tab Vàng Gắn Đỉnh Hộp" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k5_nhan_tab.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_k5_nhan_tab.jpg?v=law11_v7" onclick="selectSubbox('K04')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K04 • NHÃN TAB VÀNG GẮN ĐỈNH HỘP</span>
@@ -1668,17 +1888,20 @@
             <div class="sample-quote">[QUY TẮC K4] 10 clip quay vội khách lướt qua. 1 bài trúng đích khách tự nhắn.</div>
             <p class="card-desc">Có nhãn Tab màu vàng gắn nổi trên mép trái đỉnh hộp để đóng dấu quy luật.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k5_nhan_tab.jpg?v=sci_v5" alt="K04 Nhãn Tab Vàng Gắn Đỉnh Hộp" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K04'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_k5_nhan_tab.jpg?v=law11_v7" alt="K04 Nhãn Tab Vàng Gắn Đỉnh Hộp" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K04')">✓ Chọn Khung K04</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K04'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K04')">✓ Chọn K04</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K08" data-kgroup="KE" data-kname="Gạch Chân Đáy Liền Mạch" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k9_gach_chan_card.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k9_gach_chan_card.jpg?v=sci_v5" onclick="selectSubbox('K08')">
+        <article class="item-card k-card" data-kid="K08" data-kgroup="KE" data-kname="Gạch Chân Đáy Liền Mạch" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k9_gach_chan_card.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k9_gach_chan_card.jpg?v=law11_v7" onclick="selectSubbox('K08')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K08 • GẠCH CHÂN ĐÁY LIỀN MẠCH</span>
@@ -1687,17 +1910,20 @@
             <div class="sample-quote">Đừng lấy số lượng bù chất lượng. 1 bài đúng nỗi đau = khách nhắn.</div>
             <p class="card-desc">Khung hộp tối giản với thanh nhấn vàng chạy dọc dưới đáy tạo bệ đỡ vững chãi.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k9_gach_chan_card.jpg?v=sci_v5" alt="K08 Gạch Chân Đáy Liền Mạch" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K08'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k9_gach_chan_card.jpg?v=law11_v7" alt="K08 Gạch Chân Đáy Liền Mạch" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K08')">✓ Chọn Khung K08</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K08'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K08')">✓ Chọn K08</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K13" data-kgroup="KE" data-kname="Khung Ngắm 4 Góc & Bút Dạ Quang" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k13_but_da_quang.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k13_but_da_quang.jpg?v=sci_v5" onclick="selectSubbox('K13')">
+        <article class="item-card k-card" data-kid="K13" data-kgroup="KE" data-kname="Khung Ngắm 4 Góc & Bút Dạ Quang" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k13_but_da_quang.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_gm_k13_but_da_quang.jpg?v=law11_v7" onclick="selectSubbox('K13')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K13 • KHUNG NGẮM 4 GÓC & BÚT DẠ QUANG</span>
@@ -1706,17 +1932,20 @@
             <div class="sample-quote">┌ 10 clip quay vội: khách lướt qua · 1 bài trúng việc: [khách tự nhắn] ┘</div>
             <p class="card-desc">Bốn góc khung ngắm máy ảnh (Viewfinder Brackets) kết hợp nền highlight dạ quang vàng.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k13_but_da_quang.jpg?v=sci_v5" alt="K13 Khung Ngắm 4 Góc & Bút Dạ Quang" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K13'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_gm_k13_but_da_quang.jpg?v=law11_v7" alt="K13 Khung Ngắm 4 Góc & Bút Dạ Quang" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K13')">✓ Chọn Khung K13</button>
+            <span>Tác giả khuôn: <code>GEMINI</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K13'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K13')">✓ Chọn K13</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K16" data-kgroup="KE" data-kname="Chữ Bóng Chìm Nền (Watermark 01)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s16_chu_bong.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s16_chu_bong.jpg?v=sci_v5" onclick="selectSubbox('K16')">
+        <article class="item-card k-card" data-kid="K16" data-kgroup="KE" data-kname="Chữ Bóng Chìm Nền (Watermark 01)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s16_chu_bong.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s16_chu_bong.jpg?v=law11_v7" onclick="selectSubbox('K16')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K16 • CHỮ BÓNG CHÌM NỀN (WATERMARK 01)</span>
@@ -1725,17 +1954,20 @@
             <div class="sample-quote">Bài quay vội: khách lướt qua. 1 bài có ý: khách tự nhắn.  (Chìm số 01)</div>
             <p class="card-desc">Đặt con số 01 viền mảnh chìm ở góc phải hộp nền tối tạo chiều sâu tạp chí.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s16_chu_bong.jpg?v=sci_v5" alt="K16 Chữ Bóng Chìm Nền (Watermark 01)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K16'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s16_chu_bong.jpg?v=law11_v7" alt="K16 Chữ Bóng Chìm Nền (Watermark 01)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K16')">✓ Chọn Khung K16</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K16'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K16')">✓ Chọn K16</button>
+            </div>
           </div>
         </article>
         
-        <article class="item-card k-card" data-kid="K22" data-kgroup="KA" data-kname="Thay Thói Quen Cũ ([CŨ] → Mới)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s14_gach_sua.jpg?v=sci_v5" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s14_gach_sua.jpg?v=sci_v5" onclick="selectSubbox('K22')">
+        <article class="item-card k-card" data-kid="K22" data-kgroup="KA" data-kname="Thay Thói Quen Cũ ([CŨ] → Mới)" data-crop="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s14_gach_sua.jpg?v=law11_v7" data-full="k4_31kb_banners/v2_pilots/kb_15_c2_s14_gach_sua.jpg?v=law11_v7" onclick="selectSubbox('K22')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill k-pill">K22 • THAY THÓI QUEN CŨ ([CŨ] → MỚI)</span>
@@ -1744,13 +1976,16 @@
             <div class="sample-quote">[CŨ] Ngày nào cũng phải gồng đăng  →  Đăng ít mà khách nhớ & nhắn.</div>
             <p class="card-desc">Dùng nhãn [CŨ] xám trầm cho thói quen sai lầm phía trên (không dùng gạch đè chữ) và tôn dòng kết luận vàng phía dưới.</p>
           </div>
-          <div class="img-box sub-img-box">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s14_gach_sua.jpg?v=sci_v5" alt="K22 Thay Thói Quen Cũ ([CŨ] → Mới)" loading="lazy" />
-            <span class="img-mode-tag sub-tag">🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)</span>
+          <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectSubbox('K22'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_sub_kb_15_c2_s14_gach_sua.jpg?v=law11_v7" alt="K22 Thay Thói Quen Cũ ([CŨ] → Mới)" loading="lazy" />
+            <span class="img-mode-tag sub-tag">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)</span>
           </div>
           <div class="card-foot">
-            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 15/15 Cổng</span>
-            <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K22')">✓ Chọn Khung K22</button>
+            <span>Tác giả khuôn: <code>CLAUDE2</code> • Đạt 16/16 Cổng</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-pick" style="background:rgba(56,189,248,0.16);color:#38BDF8;border-color:rgba(56,189,248,0.4);" onclick="event.stopPropagation(); selectSubbox('K22'); openBigPreviewModal();">🖼️ Xem Bảng To</button>
+              <button type="button" class="btn-pick k-btn" onclick="event.stopPropagation(); selectSubbox('K22')">✓ Chọn K22</button>
+            </div>
           </div>
         </article>
         
@@ -1792,23 +2027,88 @@
   <div class="combinator-dock">
     <div class="dock-inner">
       <div class="dock-preview">
-        <div class="mini-stack" title="Bản ghép trực tiếp: Ảnh cắt Tiêu đề đặt trên Ảnh cắt Khung chữ bé">
-          <img id="dockImgH" src="k4_31kb_banners/v2_pilots/crop_head_p01_l1_domaine_superfamily.jpg?v=law10_v6" alt="Selected Headline Crop" />
-          <img id="dockImgK" src="k4_31kb_banners/v2_pilots/crop_sub_p01_l1_domaine_superfamily.jpg?v=law10_v6" alt="Selected Subbox Crop" />
+        <div class="mini-stack" onclick="openBigPreviewModal()" title="Bấm vào khung này để mở BẢNG XEM TO (Ảnh Banner Ví Dụ 1080×1350)">
+          <img id="dockImgH" src="k4_31kb_banners/v2_pilots/crop_head_p01_l1_domaine_superfamily.jpg?v=law11_v7" alt="Selected Headline Crop" />
+          <img id="dockImgK" src="k4_31kb_banners/v2_pilots/crop_sub_p01_l1_domaine_superfamily.jpg?v=law11_v7" alt="Selected Subbox Crop" />
+          <div class="mini-zoom-badge">🔍 CLICK XEM BẢNG TO</div>
         </div>
         <div class="dock-info">
-          <span class="dock-title">⚡ BÀN LẮP GHÉP TRỰC TIẾP (CHỌN TỔ HỢP P01–P12 HOẶC GHÉP RIÊNG H × K)</span>
+          <span class="dock-title">⚡ BÀN LẮP GHÉP TRỰC TIẾP • CLICK KHUNG ẢNH BÊN TRÁI ĐỂ XEM TRÊN BẢNG TO (ẢNH VÍ DỤ 1080×1350)</span>
           <div class="dock-slots">
             <span class="slot-badge slot-p" id="slotPText">🔬 PHỐI CHỮ: P01 • Klim Domaine Superfamily (L1)</span>
             <span style="font-weight:800;color:var(--text-soft);">×</span>
             <span class="slot-badge slot-k" id="slotKText">🔸 KHUNG BÉ: K01 • Hai Vế Đối Lập (× / ✓)</span>
           </div>
-          <span style="font-size:11.8px;color:var(--muted);">✓ Đã khóa sẵn thông số trong <code>banner_laws.json</code> (<b>15/15 Cổng UI/UX V5.0 PASS</b>) • Lấy thông tin 0 bước chờ</span>
+          <span style="font-size:11.8px;color:var(--muted);">✓ Đã vượt <b>16/16 Cổng UI/UX V6.0 (LAW_11 TreeWalker 0% Chữ Thò / 0% Chữ Dính)</b> • Bấm khung bên trái để soi to</span>
         </div>
       </div>
       <div class="cmd-box">
+        <button type="button" class="big-view-btn" onclick="openBigPreviewModal()">🖼️ Xem Bảng To (1080×1350)</button>
         <span class="cmd-text" id="cmdOutput">LÀM BANNER: P01 × K01</span>
         <button type="button" class="copy-btn" id="copyBtn" onclick="copyCommand()">📋 Copy Lệnh</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FULL-SCREEN INTERACTIVE EXAMPLE BANNER MODAL (BẢNG XEM TO 1080x1350) ==================== -->
+  <div class="big-modal-backdrop" id="bigPreviewModal" onclick="if(event.target===this) closeBigPreviewModal()">
+    <div class="big-modal-box">
+      <div class="modal-stage">
+        <div class="modal-stage-toolbar">
+          <button type="button" class="stage-mode-btn active" id="btnModeFullExample" onclick="setModalStageMode('FULL_EXAMPLE')">🖼️ Ảnh Ví Dụ Nguyên Tấm (1080×1350)</button>
+          <button type="button" class="stage-mode-btn" id="btnModeCloseup" onclick="setModalStageMode('CLOSEUP')">🔬 Soi Phóng Đại Cận Cảnh Chữ</button>
+          <button type="button" class="stage-mode-btn" id="btnModeZoom180" onclick="setModalStageMode('ZOOM_180')">🔍 Phóng Đại 180% Soi Khe Chữ</button>
+          <button type="button" class="stage-mode-btn" onclick="stepModalSelection(-1)">◀ Trước</button>
+          <button type="button" class="stage-mode-btn" onclick="stepModalSelection(1)">Tiếp ▶</button>
+        </div>
+
+        <!-- 1. Live Composite 1080x1350 Example Banner (Uses same base photo kb_15_v22_bg.png for seamless top+bottom synthesis) -->
+        <div class="example-banner-frame" id="modalFullExampleFrame">
+          <img class="layer-head-full" id="modalFullHeadImg" src="k4_31kb_banners/v2_pilots/p01_l1_domaine_superfamily.jpg?v=law11_v7" alt="Example Banner Top Layer" />
+          <img class="layer-sub-full" id="modalFullSubImg" src="k4_31kb_banners/v2_pilots/p01_l1_domaine_superfamily.jpg?v=law11_v7" alt="Example Banner Bottom Layer" />
+        </div>
+
+        <!-- 2. Close-up Stacked Text Inspection -->
+        <div class="closeup-stack-frame" id="modalCloseupFrame">
+          <img id="modalCropHeadImg" src="k4_31kb_banners/v2_pilots/crop_head_p01_l1_domaine_superfamily.jpg?v=law11_v7" alt="Closeup Headline" />
+          <img id="modalCropSubImg" src="k4_31kb_banners/v2_pilots/crop_sub_p01_l1_domaine_superfamily.jpg?v=law11_v7" alt="Closeup Subbox" />
+        </div>
+      </div>
+
+      <div class="modal-sidebar">
+        <div class="modal-close-row">
+          <div>
+            <div style="font-family:var(--font-mono);font-size:11.5px;color:#4ADE80;font-weight:800;">🖼️ BẢNG XEM TO • ẢNH BANNER VÍ DỤ THỰC TẾ (1080×1350)</div>
+            <h3 id="modalTitleText" style="font-size:17px;font-weight:800;color:#F8FAFC;margin-top:3px;">P01 × K01 • Klim Domaine Superfamily</h3>
+          </div>
+          <button type="button" class="close-modal-btn" onclick="closeBigPreviewModal()">✕ Đóng (ESC)</button>
+        </div>
+
+        <div style="background:#121C32;border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:11.5px;font-family:var(--font-mono);color:var(--gold-bright);font-weight:800;margin-bottom:6px;">⚡ LỆNH ĐANG CHỌN (GHÉP TRỰC TIẾP TRÊN ẢNH VÍ DỤ BÊN TRÁI):</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#050811;padding:8px 12px;border-radius:8px;border:1px solid rgba(74,222,128,0.4);">
+            <code id="modalCmdText" style="font-family:var(--font-mono);font-size:14px;color:#4ADE80;font-weight:800;">LÀM BANNER: P01 × K01</code>
+            <button type="button" class="copy-btn" onclick="copyCommand()">📋 Copy Lệnh</button>
+          </div>
+          <div style="font-size:11.5px;color:var(--text-soft);margin-top:8px;line-height:1.45;">
+            ✓ Đã kiểm định <b>16/16 Cổng UI/UX (`G1..G16`)</b>: Quét `TreeWalker(SHOW_TEXT)` bảo đảm <b>0% chữ thò khỏi khung đen</b> (`rPad ≥ 14px`) và <b>0% chữ dính thanh bar/nhãn</b> (`sibGap ≥ 8px`).
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11.5px;color:#4ADE80;font-weight:800;margin-bottom:6px;">1. ĐỔI NHANH 12 TỔ HỢP GIẢI PHẪU (P01 → P12):</div>
+          <div class="quick-pills-wrap" id="modalPQuickList"></div>
+        </div>
+
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--gold-bright);font-weight:800;margin-bottom:6px;">2. HOẶC ĐỔI NHANH 20 FONT TIÊU ĐỀ ĐƠN (H01 → H20):</div>
+          <div class="quick-pills-wrap" id="modalHQuickList"></div>
+        </div>
+
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--cyan);font-weight:800;margin-bottom:6px;">3. ĐỔI NHANH 21 KHUÔN KHUNG CHỮ BÉ (K01 → K22, ĐÃ BỎ #11):</div>
+          <div class="quick-pills-wrap" id="modalKQuickList"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1819,6 +2119,10 @@
     let currentH = 'H01';
     let currentK = 'K01';
     let isFullMode = false;
+    let currentFullHeadUrl = 'k4_31kb_banners/v2_pilots/p01_l1_domaine_superfamily.jpg?v=law11_v7';
+    let currentFullSubUrl = 'k4_31kb_banners/v2_pilots/p01_l1_domaine_superfamily.jpg?v=law11_v7';
+    let currentCropHeadUrl = 'k4_31kb_banners/v2_pilots/crop_head_p01_l1_domaine_superfamily.jpg?v=law11_v7';
+    let currentCropSubUrl = 'k4_31kb_banners/v2_pilots/crop_sub_p01_l1_domaine_superfamily.jpg?v=law11_v7';
 
     function selectPairing(pid) {
       activeMode = 'PAIRING';
@@ -1830,8 +2134,12 @@
           currentK = el.dataset.kcode;
           document.getElementById('slotPText').className = 'slot-badge slot-p';
           document.getElementById('slotPText').textContent = '🔬 PHỐI CHỮ: ' + pid + ' • ' + el.dataset.pname;
-          document.getElementById('dockImgH').src = el.dataset.hcrop;
-          document.getElementById('dockImgK').src = el.dataset.scrop;
+          currentCropHeadUrl = el.dataset.hcrop;
+          currentCropSubUrl = el.dataset.scrop;
+          currentFullHeadUrl = el.dataset.full;
+          currentFullSubUrl = el.dataset.full;
+          document.getElementById('dockImgH').src = currentCropHeadUrl;
+          document.getElementById('dockImgK').src = currentCropSubUrl;
         } else {
           el.classList.remove('selected-p');
         }
@@ -1845,6 +2153,7 @@
         }
       });
       updateCommandText();
+      syncModalView();
     }
 
     function selectHeadline(hid) {
@@ -1856,12 +2165,15 @@
           el.classList.add('selected-h');
           document.getElementById('slotPText').className = 'slot-badge slot-h';
           document.getElementById('slotPText').textContent = '🔹 TIÊU ĐỀ: ' + hid + ' • ' + el.dataset.hname;
-          document.getElementById('dockImgH').src = el.dataset.crop;
+          currentCropHeadUrl = el.dataset.crop;
+          currentFullHeadUrl = el.dataset.full;
+          document.getElementById('dockImgH').src = currentCropHeadUrl;
         } else {
           el.classList.remove('selected-h');
         }
       });
       updateCommandText();
+      syncModalView();
     }
 
     function selectSubbox(kid) {
@@ -1870,21 +2182,142 @@
         if (el.dataset.kid === kid) {
           el.classList.add('selected-k');
           document.getElementById('slotKText').textContent = '🔸 KHUNG BÉ: ' + kid + ' • ' + el.dataset.kname;
-          document.getElementById('dockImgK').src = el.dataset.crop;
+          currentCropSubUrl = el.dataset.crop;
+          currentFullSubUrl = el.dataset.full;
+          document.getElementById('dockImgK').src = currentCropSubUrl;
         } else {
           el.classList.remove('selected-k');
         }
       });
       updateCommandText();
+      syncModalView();
     }
 
     function updateCommandText() {
-      if (activeMode === 'PAIRING') {
-        document.getElementById('cmdOutput').textContent = `LÀM BANNER: ${currentP} × ${currentK}`;
-      } else {
-        document.getElementById('cmdOutput').textContent = `LÀM BANNER: ${currentH} × ${currentK}`;
+      const cmd = (activeMode === 'PAIRING') ? `LÀM BANNER: ${currentP} × ${currentK}` : `LÀM BANNER: ${currentH} × ${currentK}`;
+      document.getElementById('cmdOutput').textContent = cmd;
+      const mCmd = document.getElementById('modalCmdText');
+      if (mCmd) mCmd.textContent = cmd;
+    }
+
+    function syncModalView() {
+      const fh = document.getElementById('modalFullHeadImg');
+      const fs = document.getElementById('modalFullSubImg');
+      const ch = document.getElementById('modalCropHeadImg');
+      const cs = document.getElementById('modalCropSubImg');
+      if (fh) fh.src = currentFullHeadUrl;
+      if (fs) fs.src = currentFullSubUrl;
+      if (ch) ch.src = currentCropHeadUrl;
+      if (cs) cs.src = currentCropSubUrl;
+
+      const tEl = document.getElementById('modalTitleText');
+      if (tEl) {
+        const pTxt = document.getElementById('slotPText').textContent;
+        const kTxt = document.getElementById('slotKText').textContent;
+        tEl.textContent = pTxt + '  ×  ' + kTxt;
+      }
+
+      document.querySelectorAll('#modalPQuickList .q-pill').forEach(b => {
+        b.classList.toggle('active-p', activeMode === 'PAIRING' && b.dataset.code === currentP);
+      });
+      document.querySelectorAll('#modalHQuickList .q-pill').forEach(b => {
+        b.classList.toggle('active-h', activeMode === 'CUSTOM_HK' && b.dataset.code === currentH);
+      });
+      document.querySelectorAll('#modalKQuickList .q-pill').forEach(b => {
+        b.classList.toggle('active-k', b.dataset.code === currentK);
+      });
+    }
+
+    function buildModalQuickLists() {
+      const pWrap = document.getElementById('modalPQuickList');
+      const hWrap = document.getElementById('modalHQuickList');
+      const kWrap = document.getElementById('modalKQuickList');
+      if (pWrap && pWrap.children.length === 0) {
+        document.querySelectorAll('.p-card').forEach(c => {
+          const pid = c.dataset.pid;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'q-pill';
+          btn.dataset.code = pid;
+          btn.textContent = pid + ' (' + c.dataset.plaw + ')';
+          btn.onclick = () => selectPairing(pid);
+          pWrap.appendChild(btn);
+        });
+      }
+      if (hWrap && hWrap.children.length === 0) {
+        document.querySelectorAll('.h-card').forEach(c => {
+          const hid = c.dataset.hid;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'q-pill';
+          btn.dataset.code = hid;
+          btn.textContent = hid;
+          btn.onclick = () => selectHeadline(hid);
+          hWrap.appendChild(btn);
+        });
+      }
+      if (kWrap && kWrap.children.length === 0) {
+        document.querySelectorAll('.k-card').forEach(c => {
+          const kid = c.dataset.kid;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'q-pill';
+          btn.dataset.code = kid;
+          btn.textContent = kid;
+          btn.onclick = () => selectSubbox(kid);
+          kWrap.appendChild(btn);
+        });
       }
     }
+
+    function openBigPreviewModal() {
+      buildModalQuickLists();
+      syncModalView();
+      document.getElementById('bigPreviewModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeBigPreviewModal() {
+      document.getElementById('bigPreviewModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function setModalStageMode(mode) {
+      const exFrame = document.getElementById('modalFullExampleFrame');
+      const cuFrame = document.getElementById('modalCloseupFrame');
+      document.getElementById('btnModeFullExample').classList.toggle('active', mode === 'FULL_EXAMPLE');
+      document.getElementById('btnModeCloseup').classList.toggle('active', mode === 'CLOSEUP');
+      document.getElementById('btnModeZoom180').classList.toggle('active', mode === 'ZOOM_180');
+
+      if (mode === 'CLOSEUP') {
+        exFrame.style.display = 'none';
+        cuFrame.style.display = 'flex';
+      } else {
+        cuFrame.style.display = 'none';
+        exFrame.style.display = 'block';
+        exFrame.classList.toggle('zoom-180', mode === 'ZOOM_180');
+      }
+    }
+
+    function stepModalSelection(dir) {
+      if (activeMode === 'PAIRING') {
+        const pList = Array.from(document.querySelectorAll('.p-card')).map(c => c.dataset.pid);
+        const idx = (pList.indexOf(currentP) + dir + pList.length) % pList.length;
+        selectPairing(pList[idx]);
+      } else {
+        const hList = Array.from(document.querySelectorAll('.h-card')).map(c => c.dataset.hid);
+        const idx = (hList.indexOf(currentH) + dir + hList.length) % hList.length;
+        selectHeadline(hList[idx]);
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('bigPreviewModal');
+      if (!modal || !modal.classList.contains('open')) return;
+      if (e.key === 'Escape') closeBigPreviewModal();
+      if (e.key === 'ArrowRight') stepModalSelection(1);
+      if (e.key === 'ArrowLeft') stepModalSelection(-1);
+    });
 
     function copyCommand() {
       const txt = document.getElementById('cmdOutput').textContent;
@@ -1943,11 +2376,11 @@
         const tag = card.querySelector('.img-mode-tag');
         img.src = isFullMode ? card.dataset.full : card.dataset.crop;
         if (card.classList.contains('p-card')) {
-          tag.textContent = isFullMode ? '🖼️ NGUYÊN TẤM 1080×1350' : `🔬 CẬN CẢNH PHỐI CHỮ 3 TẦNG (${card.dataset.pid} × ${card.dataset.kcode})`;
+          tag.textContent = isFullMode ? '🖼️ NGUYÊN TẤM 1080×1350 (CLICK XEM BẢNG TO)' : `🔍 CLICK ẢNH ĐỂ XEM BẢNG TO (${card.dataset.pid} × ${card.dataset.kcode})`;
         } else if (card.classList.contains('h-card')) {
-          tag.textContent = isFullMode ? '🖼️ NGUYÊN TẤM 1080×1350' : '🔍 CẬN CẢNH TIÊU ĐỀ (LỚP 1)';
+          tag.textContent = isFullMode ? '🖼️ NGUYÊN TẤM 1080×1350 (CLICK XEM BẢNG TO)' : '🔍 CLICK ẢNH XEM BẢNG TO (LỚP 1)';
         } else {
-          tag.textContent = isFullMode ? '🖼️ NGUYÊN TẤM 1080×1350' : '🔍 CẬN CẢNH KHUNG CHỮ BÉ (LỚP 2)';
+          tag.textContent = isFullMode ? '🖼️ NGUYÊN TẤM 1080×1350 (CLICK XEM BẢNG TO)' : '🔍 CLICK ẢNH XEM BẢNG TO (LỚP 2)';
         }
       });
     }

@@ -224,9 +224,9 @@ def audit_v3_banner(
                 // Kiểm tra cỡ chữ bé & nền đệm tối & LAW_07 (cấm xoay nghiêng, cấm underline đè dấu nặng)
                 const subAllEls = subBox ? [subBox, ...Array.from(subBox.querySelectorAll('*'))] : [];
                 const subFsList = subAllEls
-                  .filter(el => (el.innerText || '').trim().length >= 2)
+                  .filter(el => !el.classList.contains('big-metric') && !el.classList.contains('num-big') && (el.innerText || '').trim().length >= 2)
                   .map(el => parseFloat(window.getComputedStyle(el).fontSize))
-                  .filter(v => v >= 19 && v <= 60);
+                  .filter(v => v >= 18.5 && v <= 42);
                 const minSubFs = subFsList.length ? Math.max(...subFsList) : (subBox ? parseFloat(window.getComputedStyle(subBox).fontSize) : 0);
                 const subBg = subBox ? (window.getComputedStyle(subBox).backgroundColor + ' ' + window.getComputedStyle(subBox).backgroundImage) : '';
                 const hasRotation = subAllEls.some(el => {
@@ -237,13 +237,104 @@ def audit_v3_banner(
                   const td = window.getComputedStyle(el).textDecorationLine || window.getComputedStyle(el).textDecoration;
                   return td && td.includes('underline') && /[ạậặẹệịọộợụựỵ]/.test(el.innerText || '');
                 });
-                const subOverflow = subBox ? subAllEls.some(el => {
-                  if (el === subBox || el.children.length > 0 || el.classList.contains('ghost-word') || el.classList.contains('arrow-shadow') || el.classList.contains('bg-offset') || el.classList.contains('offset-bg') || el.classList.contains('floating-tab')) return false;
-                  const range = document.createRange();
-                  range.selectNodeContents(el);
-                  const r = range.getBoundingClientRect();
-                  return r.width > 0 && r.right > sRect.right + 4;
-                }) : false;
+                // G12 & G16 (CLAUDE2 Job c8b47f47): Quét 100% TEXT_NODE bằng TreeWalker + Kiểm tra Inner Clip & Sibling Gap
+                let subOverflow = false;
+                let minRightPadPx = 999;
+                let minLeftPadPx = 999;
+                let innerClipCount = 0;
+                let minSiblingGapPx = 999;
+                const overflowDetails = [];
+
+                if (subBox) {
+                  const isIgnored = (node) => {
+                    let cur = node.nodeType === 3 ? node.parentElement : node;
+                    while (cur && cur !== subBox) {
+                      if (cur.classList && (cur.classList.contains('ghost-word') || cur.classList.contains('wm-num') || cur.classList.contains('arrow-shadow') || cur.classList.contains('bg-offset') || cur.classList.contains('offset-bg') || cur.classList.contains('floating-tab') || cur.classList.contains('tab-pill'))) {
+                        return true;
+                      }
+                      cur = cur.parentElement;
+                    }
+                    return false;
+                  };
+
+                  const walker = document.createTreeWalker(subBox, NodeFilter.SHOW_TEXT, null);
+                  let tNode;
+                  while ((tNode = walker.nextNode())) {
+                    if (!tNode.nodeValue || !tNode.nodeValue.trim()) continue;
+                    if (isIgnored(tNode)) continue;
+                    const range = document.createRange();
+                    range.selectNodeContents(tNode);
+                    const rects = Array.from(range.getClientRects());
+                    for (const r of rects) {
+                      if (r.width <= 0.5 || r.height <= 0.5) continue;
+                      const rPad = Math.round((sRect.right - r.right) * 10) / 10;
+                      const lPad = Math.round((r.left - sRect.left) * 10) / 10;
+                      if (rPad < minRightPadPx) minRightPadPx = rPad;
+                      if (lPad < minLeftPadPx) minLeftPadPx = lPad;
+                      if (rPad < 14.0 || lPad < 12.0 || r.bottom > sRect.bottom - 6) {
+                        subOverflow = true;
+                        overflowDetails.push({type: 'text_bounds', text: tNode.nodeValue.trim().slice(0, 22), rPad, lPad});
+                      }
+                    }
+                  }
+
+                  // G16a: Inner element scrollWidth clip check
+                  for (const el of subAllEls) {
+                    if (el === subBox || isIgnored(el)) continue;
+                    const st = window.getComputedStyle(el);
+                    if (st.display === 'inline') continue;
+                    if (el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 2) {
+                      innerClipCount += 1;
+                      overflowDetails.push({type: 'inner_clip', text: (el.innerText || '').trim().slice(0, 22), scrollW: el.scrollWidth, clientW: el.clientWidth});
+                    }
+                  }
+
+                  // G16b: Sibling horizontal collision check inside flex/grid rows
+                  const getTightTextRect = (el) => {
+                    const r = document.createRange();
+                    r.selectNodeContents(el);
+                    const b = r.getBoundingClientRect();
+                    return b.width > 0 ? b : el.getBoundingClientRect();
+                  };
+                  for (const container of subAllEls) {
+                    const st = window.getComputedStyle(container);
+                    if (!st.display.includes('flex') && !st.display.includes('grid')) continue;
+                    const kids = Array.from(container.children).filter(c => {
+                      if (isIgnored(c)) return false;
+                      const cst = window.getComputedStyle(c);
+                      if (cst.position === 'absolute' || cst.position === 'fixed') return false;
+                      const br = c.getBoundingClientRect();
+                      return br.width > 6 && br.height > 6;
+                    });
+                    if (kids.length < 2) continue;
+                    for (let i = 0; i < kids.length; i++) {
+                      for (let j = i + 1; j < kids.length; j++) {
+                        const rA = kids[i].getBoundingClientRect();
+                        const rB = kids[j].getBoundingClientRect();
+                        const overlapY = Math.min(rA.bottom, rB.bottom) - Math.max(rA.top, rB.top);
+                        const minH = Math.min(rA.height, rB.height);
+                        if (minH > 0 && overlapY >= 0.5 * minH) {
+                          const leftEl = rA.left <= rB.left ? kids[i] : kids[j];
+                          const rightEl = rA.left <= rB.left ? kids[j] : kids[i];
+                          const lRect = leftEl.getBoundingClientRect();
+                          const rRect = rightEl.getBoundingClientRect();
+                          const lTextRect = getTightTextRect(leftEl);
+                          const rTextRect = getTightTextRect(rightEl);
+                          const lRightEff = Math.max(lTextRect.right, lRect.left + (leftEl.scrollWidth > leftEl.clientWidth + 2 ? leftEl.scrollWidth : 0));
+                          const rLeftEff = (rightEl.innerText || '').trim().length > 0 ? rTextRect.left : rRect.left;
+                          const gap = Math.round((rLeftEff - lRightEff) * 10) / 10;
+                          if (gap < minSiblingGapPx) minSiblingGapPx = gap;
+                          if (gap < 8.0) {
+                            overflowDetails.push({type: 'sibling_collision', left: (leftEl.innerText || '').trim().slice(0, 16), right: (rightEl.innerText || '').trim().slice(0, 16), gap});
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                if (minRightPadPx === 999) minRightPadPx = 24;
+                if (minLeftPadPx === 999) minLeftPadPx = 24;
+                if (minSiblingGapPx === 999) minSiblingGapPx = 16;
 
                 // Kiểm tra có nút CTA giả kiểu cũ ("Còn 17/35 chỗ") hay không
                 const bodyText = document.body.innerText;
@@ -399,6 +490,11 @@ def audit_v3_banner(
                     has_rotation: hasRotation,
                     has_underline_collision: hasUnderlineCollision,
                     sub_overflow: subOverflow,
+                    min_right_pad_px: minRightPadPx,
+                    min_left_pad_px: minLeftPadPx,
+                    inner_clip_count: innerClipCount,
+                    min_sibling_gap_px: minSiblingGapPx,
+                    overflow_details: overflowDetails,
                     has_fake_cta_box: hasFakeCtaBox
                 };
             }"""
@@ -551,6 +647,20 @@ def audit_v3_banner(
             "intra_line_xh_ratio": dom["intra_xh_ratio"],
             "headline_to_subline_xh_hierarchy": dom["hier_xh_ratio"],
             "pass": (0.91 <= dom["intra_xh_ratio"] <= 1.09) and (1.85 <= dom["hier_xh_ratio"] <= 5.30),
+        },
+        "G16_LAW11_subbox_textnode_and_sibling_gap": {
+            "min_right_pad_px": dom["min_right_pad_px"],
+            "min_left_pad_px": dom["min_left_pad_px"],
+            "inner_clip_count": dom["inner_clip_count"],
+            "min_sibling_gap_px": dom["min_sibling_gap_px"],
+            "overflow_details": dom["overflow_details"][:6],
+            "pass": (
+                (not dom["sub_overflow"])
+                and dom["min_right_pad_px"] >= 14.0
+                and dom["min_left_pad_px"] >= 12.0
+                and dom["inner_clip_count"] == 0
+                and dom["min_sibling_gap_px"] >= 8.0
+            ),
         },
     }
 
