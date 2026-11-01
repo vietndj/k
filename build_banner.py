@@ -213,8 +213,10 @@ def extract_db_from_html(html_path: Path = BANNER_HTML_PATH, db_path: Path = BAN
 
 def render_card_html(card: Dict[str, Any]) -> str:
     id_attr = f' id="{card["id"]}"' if card.get("id") else ""
+    grp_attr = f' data-group="{card["group_id"]}"' if card.get("group_id") else ""
+    code_attr = f' data-code="{card["code"]}"' if card.get("code") else ""
     lines = [
-        f'<div class="batch-card"{id_attr}>',
+        f'<div class="batch-card"{id_attr}{grp_attr}{code_attr}>',
         '  <div class="batch-header">',
         f'    <h3>{card.get("title_html", "")}</h3>',
         f'    <p>{card.get("desc_html", "")}</p>',
@@ -279,11 +281,112 @@ def upload_to_r2(local_path: str) -> str:
     return f"https://media.fedu.vn/{r2_key}?v=2"
 
 
+def resolve_natural_query(query: str, db_path: Path = BANNER_DB_PATH) -> Dict[str, Any]:
+    """Natural Language Style Resolver: Tra cứu kiểu banner hoặc khuôn Q từ câu nói tự nhiên của anh Việt."""
+    db_obj = json.loads(db_path.read_text(encoding="utf-8"))
+    cards = db_obj.get("cards", [])
+    q = query.strip().lower()
+
+    # 1. Tìm mã Khuôn Q (Q1..Q13) và Số Kiểu (1..50) trực tiếp trong câu nói
+    q_match = re.findall(r"\bq\s*(\d{1,2})\b", q)
+    num_match = re.findall(r"(?:kiểu|kieu|số|so|mẫu|mau|#)\s*(\d{1,2})\b", q)
+    if not num_match and re.fullmatch(r"\d{1,2}", q):
+        num_match = [q]
+
+    matched_styles = []
+    matched_templates = []
+
+    if q_match:
+        q_num = int(q_match[0])
+        for c in cards:
+            if c.get("kind") == "ad_template":
+                code_range = c.get("code", "")
+                m_rng = re.match(r"Q(\d+)-Q(\d+)", code_range)
+                if m_rng and int(m_rng.group(1)) <= q_num <= int(m_rng.group(2)):
+                    matched_templates.append({
+                        "requested_q": f"Q{q_num}",
+                        "card_code": code_range,
+                        "short_name": c.get("short_name"),
+                        "spirit": c.get("spirit"),
+                        "sample_images": [it["src"] for it in c.get("items", [])],
+                    })
+
+    if num_match:
+        s_num = int(num_match[0])
+        for c in cards:
+            if c.get("kind") == "style" and c.get("style_number") == s_num:
+                matched_styles.append({
+                    "match_type": "EXACT_NUMBER",
+                    "score": 100,
+                    "style_number": c.get("style_number"),
+                    "short_name": c.get("short_name"),
+                    "group_name": c.get("group_name"),
+                    "aliases": c.get("aliases"),
+                    "variants": c.get("variants"),
+                    "spirit": c.get("spirit"),
+                    "sample_images": [it["src"] for it in c.get("items", [])],
+                })
+
+    # 2. Chấm điểm ngữ nghĩa theo short_name, aliases, variants, spirit
+    scored = []
+    q_tokens = [t for t in re.split(r"[^\w]+", q) if len(t) >= 2]
+    for c in cards:
+        score = 0
+        sname = c.get("short_name", "").lower()
+        aliases = [a.lower() for a in c.get("aliases", [])]
+        spirit = c.get("spirit", "").lower()
+        variants = " ".join(c.get("variants", [])).lower()
+
+        if sname and sname in q:
+            score += 80
+        for al in aliases:
+            if al in q:
+                score += 70
+        for tok in q_tokens:
+            if tok in sname:
+                score += 18
+            elif any(tok in al for al in aliases):
+                score += 14
+            elif tok in variants:
+                score += 10
+            elif tok in spirit:
+                score += 6
+        if score > 0:
+            scored.append((score, c))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    semantic_top = []
+    for sc, c in scored[:4]:
+        if any(m.get("style_number") == c.get("style_number") for m in matched_styles):
+            continue
+        semantic_top.append({
+            "match_type": "SEMANTIC",
+            "score": sc,
+            "code": c.get("code"),
+            "kind": c.get("kind"),
+            "style_number": c.get("style_number"),
+            "short_name": c.get("short_name"),
+            "group_name": c.get("group_name"),
+            "aliases": c.get("aliases"),
+            "variants": c.get("variants"),
+            "spirit": c.get("spirit"),
+            "sample_images": [it["src"] for it in c.get("items", [])[:3]],
+        })
+
+    return {
+        "query": query,
+        "exact_style_matches": matched_styles,
+        "ad_template_matches": matched_templates,
+        "semantic_candidates": semantic_top,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Banner Studio Engine & Face/pHash Gate")
     parser.add_argument("--extract", action="store_true", help="Trích xuất banner.html sang banner_db.json")
     parser.add_argument("--build", action="store_true", help="Biên dịch banner.html từ banner_db.json")
     parser.add_argument("--list-styles", action="store_true", help="In danh sách các kiểu bố cục chuẩn")
+    parser.add_argument("--resolve", default="", help="Tra cứu kiểu banner từ câu nói tự nhiên hoặc số kiểu")
     parser.add_argument("--contact-sheet", nargs="+", help="Danh sách ảnh cần kiểm tra pHash và ghép Contact Sheet")
     parser.add_argument("--output", default="/tmp/banner_contact_sheet.jpg", help="Đường dẫn ảnh Contact Sheet đầu ra")
     parser.add_argument("--add-card", action="store_true", help="Thêm 1 batch-card mới vào banner_db.json và build")
@@ -306,6 +409,11 @@ def main() -> None:
         db = json.loads(BANNER_DB_PATH.read_text(encoding="utf-8"))
         for s in db.get("styles_dictionary", []):
             print(s)
+        return
+
+    if args.resolve:
+        res = resolve_natural_query(args.resolve)
+        print(json.dumps(res, ensure_ascii=False, indent=2))
         return
 
     if args.contact_sheet:
@@ -340,11 +448,23 @@ def main() -> None:
         BANNER_DB_PATH.write_text(json.dumps(db, ensure_ascii=False, indent=2), encoding="utf-8")
         res = build_html_from_db()
         print(json.dumps(res, ensure_ascii=False))
+        try:
+            sys.path.insert(0, "/Users/vietmac/Documents/CODE/Quản gia")
+            import cliff_guard
+            cliff_guard.warn_if_needed(quiet_green=True)
+        except Exception:
+            pass
         return
 
     if args.build:
         res = build_html_from_db()
         print(json.dumps(res, ensure_ascii=False))
+        try:
+            sys.path.insert(0, "/Users/vietmac/Documents/CODE/Quản gia")
+            import cliff_guard
+            cliff_guard.warn_if_needed(quiet_green=True)
+        except Exception:
+            pass
         return
 
     parser.print_help()
