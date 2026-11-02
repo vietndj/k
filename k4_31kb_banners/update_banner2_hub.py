@@ -59,16 +59,20 @@ def build_default_versions_if_missing(c: Dict[str, Any], ver: str) -> List[Dict[
         out = []
         for item in existing:
             u = item.get("img_url", "")
+            if u.startswith("./k4_31kb_banners/v2_pilots/batch_out/") or "media.fedu.vn/banner2/" in u:
+                fn = u.split("/")[-1].split("?")[0]
+                u = f"https://fedu.vn/k/k4_31kb_banners/v2_pilots/batch_out/{fn}"
             u_ver = f"{u}?v={ver}" if ("?" not in u and u) else u
             cp = dict(item)
             cp["img_url"] = u_ver
             out.append(cp)
         return out
 
-    color_url = c.get("color_img_url", f"https://media.fedu.vn/banner2/{kb_lower}_color.jpg")
-    bw_url = c.get("bw_img_url", f"https://media.fedu.vn/banner2/{kb_lower}_bw.jpg")
-    alt_url = c.get("alt_img_url", f"https://media.fedu.vn/banner2/{kb_lower}_alt.jpg")
-    hm_url = c.get("heatmap_img_url", f"https://media.fedu.vn/banner2/{kb_lower}_heatmap.jpg")
+    gh_base = "https://fedu.vn/k/k4_31kb_banners/v2_pilots/batch_out"
+    color_url = f"{gh_base}/{kb_lower}_color.jpg"
+    bw_url = f"{gh_base}/{kb_lower}_bw.jpg"
+    alt_url = f"{gh_base}/{kb_lower}_hook2.jpg"
+    hm_url = f"{gh_base}/{kb_lower}_heatmap.jpg"
     return [
         {
             "step": 1,
@@ -125,26 +129,26 @@ def build_card_html(c: Dict[str, Any]) -> str:
     subline_summary = c.get("subline_summary", "")
 
     ver = c.get("ver", "v8")
-    # Ưu tiên đường dẫn local nếu chạy trên máy hoặc fallback sang R2 CDN
+    # Ưu tiên đường dẫn tuyệt đối https://fedu.vn/k/... để hiển thị 100% trên cả media.fedu.vn và fedu.vn/k/
     local_rel_dir = "./k4_31kb_banners/v2_pilots/batch_out"
     local_abs_dir = BASE_DIR / "v2_pilots" / "batch_out"
+    gh_base = "https://fedu.vn/k/k4_31kb_banners/v2_pilots/batch_out"
 
-    r2_color = c.get("color_img_url") or f"https://media.fedu.vn/banner2/{kb_lower}_color.jpg"
-    r2_bw = c.get("bw_img_url") or f"https://media.fedu.vn/banner2/{kb_lower}_bw.jpg"
-    r2_alt = c.get("hook2_img_url") or c.get("alt_img_url") or f"https://media.fedu.vn/banner2/{kb_lower}_alt.jpg"
-    r2_hm = c.get("heatmap_img_url") or f"https://media.fedu.vn/banner2/{kb_lower}_heatmap.jpg"
-    r2_sbs = c.get("sbs_img_url") or r2_color
-
-    def resolve_img_src(filename: str, r2_fallback: str) -> str:
-        if (local_abs_dir / filename).exists():
-            return f"{local_rel_dir}/{filename}?v={ver}"
-        return f"{r2_fallback}?v={ver}" if "?" not in r2_fallback else r2_fallback
-
-    color_src = resolve_img_src(f"{kb_lower}_color.jpg", r2_color)
-    bw_src = resolve_img_src(f"{kb_lower}_bw.jpg", r2_bw)
     hook2_file = f"{kb_lower}_hook2.jpg" if (local_abs_dir / f"{kb_lower}_hook2.jpg").exists() else f"{kb_lower}_alt.jpg"
-    alt_src = resolve_img_src(hook2_file, r2_alt)
-    hm_src = resolve_img_src(f"{kb_lower}_heatmap.jpg", r2_hm)
+    r2_color = f"{gh_base}/{kb_lower}_color.jpg?v={ver}"
+    r2_bw = f"{gh_base}/{kb_lower}_bw.jpg?v={ver}"
+    r2_alt = f"{gh_base}/{hook2_file}?v={ver}"
+    r2_hm = f"{gh_base}/{kb_lower}_heatmap.jpg?v={ver}"
+
+    local_color = f"{local_rel_dir}/{kb_lower}_color.jpg?v={ver}"
+    local_bw = f"{local_rel_dir}/{kb_lower}_bw.jpg?v={ver}"
+    local_alt = f"{local_rel_dir}/{hook2_file}?v={ver}"
+    local_hm = f"{local_rel_dir}/{kb_lower}_heatmap.jpg?v={ver}"
+
+    color_src = r2_color
+    bw_src = r2_bw
+    alt_src = r2_alt
+    hm_src = r2_hm
 
     score = c.get("audit_score", "25/25 PASS")
     min_sub_fs = c.get("min_sub_fs_px", 27.0)
@@ -239,15 +243,15 @@ def build_card_html(c: Dict[str, Any]) -> str:
             <span class="vc-score">{score}</span>
           </div>
           <div class="vc-img-box" id="imgbox-{kb_id}">
-            <img id="img-{kb_id}" src="{color_src}" onerror="this.onerror=null;this.src='{r2_color}';" alt="{kb_id} - {_esc(title)}" loading="lazy" decoding="async" onclick="openLightbox(this.src)" />
+            <img id="img-{kb_id}" src="{color_src}" onerror="this.onerror=null;this.src='{local_color}';" alt="{kb_id} - {_esc(title)}" loading="lazy" decoding="async" onclick="openLightbox(this.src)" />
             <div class="dual-img-view" id="dualview-{kb_id}" style="display:none;">
               <div class="dual-col">
                 <span class="dual-tag tag-h1">🎨 ẢNH 1 (HOOK 1)</span>
-                <img src="{color_src}" onerror="this.onerror=null;this.src='{r2_color}';" alt="Hook 1" onclick="openLightbox(this.src)" />
+                <img src="{color_src}" onerror="this.onerror=null;this.src='{local_color}';" alt="Hook 1" onclick="openLightbox(this.src)" />
               </div>
               <div class="dual-col">
                 <span class="dual-tag tag-h2">⚡ ẢNH 2 (HOOK 2 MỚI)</span>
-                <img src="{alt_src}" onerror="this.onerror=null;this.src='{r2_alt}';" alt="Hook 2" onclick="openLightbox(this.src)" />
+                <img src="{alt_src}" onerror="this.onerror=null;this.src='{local_alt}';" alt="Hook 2" onclick="openLightbox(this.src)" />
               </div>
             </div>
           </div>
@@ -281,8 +285,8 @@ def generate_html_content(cards: List[Dict[str, Any]]) -> str:
     for c in cards:
         ver = c.get("ver", "v8")
         kb_id = c["kb_id"]
-        sbs_url = c.get("sbs_img_url", "")
-        sbs_src = f"{sbs_url}?v={ver}" if ("?" not in sbs_url and sbs_url) else sbs_url
+        kb_lower = kb_id.lower()
+        sbs_src = f"https://fedu.vn/k/k4_31kb_banners/v2_pilots/batch_out/{kb_lower}_sbs.jpg?v={ver}"
         kb_versions_map[kb_id] = {
             "kb_id": kb_id,
             "title": c.get("title", kb_id),
@@ -723,6 +727,21 @@ def generate_html_content(cards: List[Dict[str, Any]]) -> str:
       if (dualView) dualView.style.display = 'none';
       if (singleImg) {{
         singleImg.style.display = 'block';
+        const fn = newUrl.split('/').pop().split('?')[0];
+        singleImg.onerror = function() {{
+          if (!this.dataset.triedAlt && fn.endsWith('_hook2.jpg')) {{
+            this.dataset.triedAlt = '1';
+            this.src = newUrl.replace('_hook2.jpg', '_alt.jpg');
+            return;
+          }}
+          this.onerror = null;
+          if (newUrl.includes('media.fedu.vn')) {{
+            this.src = './k4_31kb_banners/v2_pilots/batch_out/' + fn;
+          }} else {{
+            this.src = 'https://media.fedu.vn/banner2/' + fn;
+          }}
+        }};
+        delete singleImg.dataset.triedAlt;
         singleImg.src = newUrl;
       }}
       if (btnEl && btnEl.parentElement) {{
