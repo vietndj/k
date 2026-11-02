@@ -250,9 +250,9 @@ def build_html_from_db(db_path: Path = BANNER_DB_PATH, html_path: Path = BANNER_
     cards = db_obj.get("cards", [])
     total_items = sum(len(c.get("items", [])) for c in cards)
 
-    if len(cards) < 45 or total_items < 95:
+    if len(cards) < 45 or total_items < 229:
         raise RuntimeError(
-            f"[MONOTONIC GUARD] Từ chối ghi đè: số card ({len(cards)} < 45) hoặc số ảnh ({total_items} < 95) bị tụt!"
+            f"[MONOTONIC GUARD] Từ chối ghi đè: số card ({len(cards)} < 45) hoặc số ảnh ({total_items} < 229) bị tụt!"
         )
 
     cards_html = "\n\n".join(render_card_html(c) for c in cards)
