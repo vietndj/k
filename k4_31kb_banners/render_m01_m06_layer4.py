@@ -157,48 +157,195 @@ def build_layer4_html(meta_code: str, mt_info: Dict[str, Any], vars_dict: Dict[s
   .meta.meta-v3 {{
     width: 496px;
     max-width: 496px;
-    border-top: 1.5px solid rgba(255, 255, 255, 0.52);
-    padding-top: 14px;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.42);
+    padding-top: 15px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 6px;
+    gap: 0px;
     font-size: 20.0px;
   }}
-  .meta-v3-main {{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    white-space: nowrap;
-    gap: 12px;
-  }}
-  .meta-when {{
-    font-family: "SubBold", sans-serif;
-    font-size: 23.0px;
-    line-height: 1.1;
-    color: #F1F5F9;
-    letter-spacing: -0.01em;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-  }}
   .meta-price {{
-    font-family: "MetaMono", sans-serif;
-    font-size: 34.0px;
+    font-family: "SubBold", sans-serif;
+    font-size: 36.0px;
     font-weight: 700;
     line-height: 1.0;
     color: #FFFFFF;
     font-variant-numeric: tabular-nums lining-nums;
     letter-spacing: -0.02em;
     text-shadow: 0 10px 26px rgba(0, 0, 0, 0.78);
-  }}
-  .meta-note {{
-    font-family: "SubMed", sans-serif;
-    font-size: 19.5px;
-    line-height: 1.25;
-    color: #E2E8F0;
     white-space: nowrap;
+  }}
+  .meta-price .p-dot {{
+    display: inline-block;
+    margin: 0 -0.5px;
+  }}
+  .meta-price .p-cur {{
+    font-size: 0.84em;
+    margin-left: 1.5px;
+    font-weight: 700;
+  }}
+  .g-check {{
+    font-family: "SubBold", sans-serif;
+    color: #4ADE80;
+    flex-shrink: 0;
+  }}
+  /* KIỂU 1 (D1): Eyebrow Lịch Học Trên + Giá Lớn & Bảo Lãnh Dưới */
+  .d1-eyebrow {{
+    font-family: "SubBold", sans-serif;
+    font-size: 14.8px;
+    letter-spacing: 0.055em;
+    color: #94A3B8;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    white-space: nowrap;
+  }}
+  .d1-main-row {{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+  }}
+  .d1-price {{
+    font-size: 38.5px;
+  }}
+  .d1-divider {{
+    width: 1.5px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.28);
+    margin: 0 24px;
+    flex-shrink: 0;
+  }}
+  .d1-guarantee {{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+  }}
+  .d1-g-l1 {{
+    font-family: "SubMed", sans-serif;
+    font-size: 16.0px;
+    line-height: 1.15;
+    color: #CBD5E1;
+    white-space: nowrap;
+  }}
+  .d1-g-l2 {{
+    font-family: "SubBold", sans-serif;
+    font-size: 17.5px;
+    line-height: 1.15;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }}
+  /* KIỂU 2 (D2): Bảng Chia 2 Cột Trái – Phải Độc Lập (Split Ledger) */
+  .d2-grid {{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    width: 100%;
+  }}
+  .d2-left {{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 22px;
+    min-width: 0;
+  }}
+  .d2-when {{
+    font-family: "SubBold", sans-serif;
+    font-size: 21.0px;
+    line-height: 1.15;
+    color: #F8FAFC;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }}
+  .d2-note {{
+    font-family: "SubMed", sans-serif;
+    font-size: 16.5px;
+    line-height: 1.25;
+    color: #CBD5E1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }}
+  .d2-right {{
+    border-left: 1.5px solid rgba(255, 255, 255, 0.28);
+    padding-left: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }}
+  .d2-price-lbl {{
+    font-family: "SubBold", sans-serif;
+    font-size: 12.8px;
+    letter-spacing: 0.08em;
+    color: #94A3B8;
+    text-transform: uppercase;
+    line-height: 1.0;
+    white-space: nowrap;
+  }}
+  .d2-price {{
+    font-size: 35.0px;
+  }}
+  /* KIỂU 3 (D3): Hàng Chính Tương Phản Mảnh/Đậm + Đóng Khung Thanh Pill */
+  .d3-top-row {{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    margin-bottom: 14px;
+    white-space: nowrap;
+  }}
+  .d3-when {{
+    font-family: "SubMed", sans-serif;
+    font-size: 20.0px;
+    line-height: 1.1;
+    color: #CBD5E1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }}
+  .d3-price {{
+    font-size: 36.0px;
+  }}
+  .d3-pill-bar {{
+    width: 100%;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    padding: 8px 13px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }}
+  .d3-badge {{
+    font-family: "SubBold", sans-serif;
+    font-size: 16.0px;
+    color: #4ADE80;
+    flex-shrink: 0;
+  }}
+  .d3-pill-txt {{
+    font-family: "SubMed", sans-serif;
+    font-size: 16.0px;
+    color: #CBD5E1;
+    line-height: 1.2;
+  }}
+  .d3-hi {{
+    font-family: "SubBold", sans-serif;
+    color: #FFFFFF;
+    font-weight: 700;
   }}
   .dot {{ width: 10px; height: 10px; border-radius: 50%; background: {accent}; flex-shrink: 0; }}
 </style></head>
@@ -396,13 +543,21 @@ def main():
     except Exception:
         lbl_font = ImageFont.load_default()
 
+    short_grid_titles = {
+        "M01": "KIỂU 1 (M01) • Logic 1: Nhãn Lịch Học Trên + Giá & Bảo Lãnh Dưới",
+        "M02": "KIỂU 2 (M02) • Logic 2: Bảng Chia 2 Cột Trái–Phải Độc Lập",
+        "M03": "KIỂU 3 (M03) • Logic 3: Hàng Chính Tương Phản + Thanh Pill",
+        "M04": "KIỂU 1B (M04) • Biến Thể Logic 1: Giá 4.000.000đ + Tặng Online",
+        "M05": "KIỂU 2B (M05) • Biến Thể Logic 2: Bảng 2 Cột + Cầm Video Về Ngay",
+        "M06": "KIỂU 3B (M06) • Biến Thể Logic 3: Hàng Chính Thoáng + Pill Quyền Lợi",
+    }
     for idx, rec in enumerate(final_records):
         col = idx % 3
         row = idx // 3
         x0 = pad + col * (cw + pad)
         y0 = pad + row * (ch + hdr_h + pad)
-        title_str = f"{rec['mid']} • {rec['when_resolved']} × {rec['price_resolved']} ({rec['score']} PASS)"
-        draw.text((x0 + 6, y0 + 10), title_str, fill=(250, 204, 21), font=lbl_font)
+        title_str = short_grid_titles.get(rec["mid"], f"{rec['mid']} • {rec['price_resolved']}")
+        draw.text((x0 + 6, y0 + 12), title_str, fill=(250, 204, 21), font=lbl_font)
         with Image.open(rec["crop_path"]) as cim:
             grid_im.paste(cim.convert("RGB"), (x0, y0 + hdr_h))
         draw.rectangle([x0, y0 + hdr_h, x0 + cw, y0 + hdr_h + ch], outline=(245, 158, 11), width=2)

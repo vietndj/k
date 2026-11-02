@@ -237,12 +237,12 @@ def main():
         "MC": "background:rgba(56,189,248,0.18);color:#38BDF8;border:1px solid rgba(56,189,248,0.45);",
     }
     m_short_label_map = {
-        "M01": "07–08/11 Long Biên · 4.000.000đ",
-        "M02": "4.000.000đ + Hoàn 100% Ngày 1",
-        "M03": "4.000.000đ + Tặng Online & 35 chỗ",
-        "M04": "Offline 2 ngày 07–08/11 · 4.000.000đ",
-        "M05": "4.000.000đ + Cầm video tại lớp",
-        "M06": "Khuôn động K5/K6 · 4.000.000đ",
+        "M01": "Kiểu 1 (Logic 1): Giá 4Tr Trung Tâm + Vạch Dọc",
+        "M02": "Kiểu 2 (Logic 2): Bảng Chia 2 Cột Trái–Phải",
+        "M03": "Kiểu 3 (Logic 3): Hàng Chính Thoáng + Thanh Pill",
+        "M04": "Kiểu 1B: Nhãn Lịch Trên + Giá & Tặng Online",
+        "M05": "Kiểu 2B: Bảng 2 Cột + Cầm Video Về Ngay",
+        "M06": "Kiểu 3B: Hàng Chính Thoáng + Pill Quyền Lợi",
     }
 
     m_cards_html = []
@@ -259,24 +259,22 @@ def main():
         selected_cls = " selected-h" if mid == "M01" else ""
 
         m_cards_html.append(f"""
-        <article class="item-card m-card{selected_cls}" data-mid="{mid}" data-mgroup="{mgrp}" data-mname="{short_lbl}" data-crop="k4_31kb_banners/v2_pilots/crop_{stem}.jpg?v=v9_r2_sync3" data-full="k4_31kb_banners/v2_pilots/{stem}.jpg?v=v9_r2_sync3" onclick="selectMetastrip('{mid}')">
+        <article class="item-card m-card{selected_cls}" data-mid="{mid}" data-mgroup="{mgrp}" data-mname="{short_lbl}" data-crop="k4_31kb_banners/v2_pilots/crop_{stem}.jpg?v=v10_3designs" data-full="k4_31kb_banners/v2_pilots/{stem}.jpg?v=v10_3designs" onclick="selectMetastrip('{mid}')">
           <div class="card-head">
             <div class="card-top-row">
               <span class="code-pill" style="background:rgba(245,158,11,0.22);color:#FACC15;border:1px solid rgba(245,158,11,0.55);">{mid} • {mitem['name'].upper()}</span>
               <span class="grp-badge" style="{m_badge_map.get(mgrp, m_badge_map['MA'])}">{mgrp_label}</span>
             </div>
             <div class="metrics-bar">
-              <span>Lịch &amp; Địa điểm: <b>{when_res}</b> (23px Bold)</span>
+              <span>Lịch &amp; Địa điểm: <b>{when_res}</b></span>
               <span>•</span>
-              <span>Giá lọc 0.5s: <b>{price_res}</b> (34px Tabular-Nums)</span>
-              <span>•</span>
-              <span>Biến động: <b>{mitem['when_template']}</b></span>
+              <span>Giá Chính (Hero): <b>{price_res}</b> (FDAeonik Bold Kerning Khít)</span>
             </div>
             <div class="sample-quote" style="border-left-color:#FACC15;">{quote_str}</div>
             <p class="card-desc">{mitem['desc']}</p>
           </div>
           <div class="img-box sub-img-box" onclick="event.stopPropagation(); selectMetastrip('{mid}'); openBigPreviewModal();" title="Click vào ảnh để mở BẢNG XEM TO (Ảnh Ví Dụ 1080×1350)">
-            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_{stem}.jpg?v=v9_r2_sync3" alt="{mid} {mitem['name']}" loading="lazy" />
+            <img class="preview-img" src="k4_31kb_banners/v2_pilots/crop_{stem}.jpg?v=v10_3designs" alt="{mid} {mitem['name']}" loading="lazy" />
             <span class="img-mode-tag" style="background:rgba(245,158,11,0.92);color:#070B14;border-color:#FACC15;">🔍 CLICK ẢNH XEM BẢNG TO (LỚP 4 {mid})</span>
           </div>
           <div class="card-foot">
@@ -317,20 +315,21 @@ def main():
   <section class="section" id="sec-layer4-meta" style="background:radial-gradient(circle at 18% 25%, rgba(245,158,11,0.10), transparent 55%);">
     <div class="container">
       <div class="sec-head">
-        <span class="sec-tag" style="background:rgba(245,158,11,0.20);color:#FACC15;border:1px solid rgba(245,158,11,0.50);">LỚP 4 (MỚI • KIẾN TRÚC GIÁO SƯ CLAUDE2) • BỘ CHỌN PHÂN CẤP THÔNG TIN LỌC GIÁ &amp; SỰ KIỆN (M01 → M06)</span>
-        <h2 class="sec-title">🔶 LỚP 4: BỘ CHỌN 6 KHUÔN PHÂN CẤP THÔNG TIN LỌC GIÁ &amp; SỰ KIỆN (M01 → M06 • TỰ LỌC KHÁCH TRONG 0.5 GIÂY)</h2>
+        <span class="sec-tag" style="background:rgba(245,158,11,0.20);color:#FACC15;border:1px solid rgba(245,158,11,0.50);">LỚP 4 (NÂNG CẤP V2.0 • 3 LOGIC CHÍNH–PHỤ × 3 KIỂU THIẾT KẾ) • BỘ CHỌN PHÂN CẤP GIÁ &amp; CAM KẾT (M01 → M06)</span>
+        <h2 class="sec-title">🔶 LỚP 4: 3 LOGIC CHÍNH–PHỤ × 3 KIỂU THIẾT KẾ KHUNG GIÁ &amp; BẢO LÃNH (M01 → M06 • ĐÃ KHẮC PHỤC TRIỆT ĐỂ LỖI SÁT CHỮ &amp; DẤU CHẤM RỖNG)</h2>
         <p class="sec-desc">
-          Thiết kế theo <b>2 Quy Luật Kiến Trúc Quảng Cáo Thực Chiến</b> của <b>Giáo sư CLAUDE2</b>:<br/>
-          <b>(1) Tách bạch <code>Kho Phôi Bất Biến</code> và <code>Lớp Áo Chiến Dịch (campaign_config.json)</code>:</b> Ngày học (<code>[[NGAY_HOC]] = 07–08/11</code>), địa điểm (<code>[[DIA_DIEM_NGAN]] = Long Biên, HN</code>), học phí (<code>[[HOC_PHI]] = 4.000.000đ</code>) và cam kết hoàn tiền được nạp động từ 1 file cấu hình duy nhất — sang khóa K5/K6 chỉ cần đổi 1 dòng trong <code>campaign_config.json</code>.<br/>
-          <b>(2) Quy luật 1 Mức Giá Duy Nhất Dưới Đường Kẻ Mảnh Editorial (<code>Editorial Price Rule</code>):</b> Chỉ in <b>1 mức giá duy nhất <code>4.000.000đ</code></b> bằng font <code>34px Bold Tabular-Nums</code> trắng tinh khiết đặt bên phải dưới đường kẻ mảnh <code>1.5px solid rgba(255,255,255,0.52)</code> (tuyệt đối không gạch giá cũ 5tr→4tr, không đóng khung nút vàng giả CTA) để khách lướt điện thoại <code>360px</code> tự lọc tài chính trong <code>0.5s</code> mà giữ nguyên sự chỉn chu của người làm nghề!
+          Thiết kế mới theo <b>3 Logic Phân Cấp Chính – Phụ</b> (khắc phục hoàn toàn lỗi dấu chấm rỗng <code>4 . 000 . 000đ</code> của font Mono và lỗi 2 hàng chữ dính sát nhau):<br/>
+          <b>• Kiểu 1 (<code>M01</code>, <code>M04</code> — Logic 1: Giá &amp; Bảo Lãnh Làm Trung Tâm, Lịch Học Lên Nhãn Eyebrow Trên):</b> Đưa Lịch học lên dòng nhãn nhỏ (<code>14.8px Uppercase #94A3B8</code>) ở trên để giải phóng mặt bằng; Hàng chính bên dưới đặt <b>Giá <code>4.000.000đ</code> (<code>38.5px Bold</code>)</b> làm nhân vật chính bên trái, ngăn cách bằng vạch dọc thoáng <code>48px</code> với khối Bảo lãnh 2 dòng bên phải.<br/>
+          <b>• Kiểu 2 (<code>M02</code>, <code>M05</code> — Logic 2: Bảng Chia 2 Cột Trái–Phải Độc Lập / Split Ledger):</b> Chia mặt bằng thành 2 cột bằng vạch ngăn dọc xuyên suốt: <b>Cột Trái</b> xếp chồng Lịch học (<code>21px Bold</code>) + Cam kết hoàn tiền (<code>16.5px Medium</code>, cách dòng <code>10px</code>); <b>Cột Phải</b> là Ô Giá độc lập gồm nhãn <code>HỌC PHÍ 2 NGÀY</code> và số <code>4.000.000đ</code> (<code>35px Bold</code>).<br/>
+          <b>• Kiểu 3 (<code>M03</code>, <code>M06</code> — Logic 3: Hàng Chính Tương Phản Mảnh/Đậm + Đóng Khung Thanh Pill Bảo Lãnh):</b> Hàng trên hạ Lịch học xuống <code>20px Medium #CBD5E1</code> để tôn <b>Giá <code>4.000.000đ</code> (<code>36px Bold #FFFFFF</code>)</b> làm chính (khoảng trống giữa 2 cụm rộng <code>&gt;70px</code>); Hàng dưới cách <code>14px</code> đóng gọn vào <b>Thanh Pill nền mờ viền mảnh</b> tách biệt.
         </p>
       </div>
 
       <div class="filter-row">
-        <button class="filter-btn m-filter active" onclick="filterMetastrips('ALL', this)">Tất cả 6 Khuôn Giá &amp; Sự Kiện (M01–M06)</button>
-        <button class="filter-btn m-filter" onclick="filterMetastrips('MA', this)">Nhóm M1 • Lọc Giá Trực Diện (M01, M04)</button>
-        <button class="filter-btn m-filter" onclick="filterMetastrips('MB', this)">Nhóm M2 • Lọc Giá + Hoàn 100% Ngày 1 (M02, M05)</button>
-        <button class="filter-btn m-filter" onclick="filterMetastrips('MC', this)">Nhóm M3 • Retarget Ấm &amp; Khuôn Động K5/K6 (M03, M06)</button>
+        <button class="filter-btn m-filter active" onclick="filterMetastrips('ALL', this)">Tất cả 3 Kiểu Thiết Kế (M01–M06)</button>
+        <button class="filter-btn m-filter" onclick="filterMetastrips('MA', this)">Kiểu 1 • Logic 1: Eyebrow Trên + Giá &amp; Bảo Lãnh Dưới (M01, M04)</button>
+        <button class="filter-btn m-filter" onclick="filterMetastrips('MB', this)">Kiểu 2 • Logic 2: Bảng Chia 2 Cột Trái–Phải Độc Lập (M02, M05)</button>
+        <button class="filter-btn m-filter" onclick="filterMetastrips('MC', this)">Kiểu 3 • Logic 3: Hàng Chính Tương Phản + Thanh Pill (M03, M06)</button>
       </div>
 
       <div class="cards-grid" id="grid-metastrips" style="grid-template-columns: repeat(3, 1fr);">
@@ -393,8 +392,8 @@ def main():
 
     m_grid_sheet = """
       <div class="arch-box" style="margin-top:18px;border:1.5px solid #F59E0B;border-radius:16px;padding:18px;background:#0E1526;">
-        <div style="font-family:var(--font-mono);font-size:13px;font-weight:800;color:#FACC15;margin-bottom:10px;">BẢNG MỚI (ĐỢT 4 • LỚP 4 CLAUDE2) • 6 KHUÔN PHÂN CẤP THÔNG TIN LỌC GIÁ &amp; SỰ KIỆN (M01 → M06 • 4.000.000Đ EDITORIAL RULE)</div>
-        <img src="k4_31kb_banners/v2_pilots/m01_m06_layer4_grid.jpg?v=v9_r2_sync3" alt="M01-M06 Layer 4 Grid" style="width:100%;border-radius:12px;display:block;" />
+        <div style="font-family:var(--font-mono);font-size:13px;font-weight:800;color:#FACC15;margin-bottom:10px;">BẢNG MỚI (ĐỢT 4 • LỚP 4 V2.0) • 3 LOGIC CHÍNH–PHỤ × 3 KIỂU THIẾT KẾ KHUNG GIÁ &amp; BẢO LÃNH (M01 → M06 • 4.000.000Đ)</div>
+        <img src="k4_31kb_banners/v2_pilots/m01_m06_layer4_grid.jpg?v=v10_3designs" alt="M01-M06 Layer 4 Grid" style="width:100%;border-radius:12px;display:block;" />
       </div>"""
     if "m01_m06_layer4_grid.jpg" not in html:
         html = html.replace(
@@ -458,10 +457,10 @@ def main():
     let isFullMode = false;
     let currentFullHeadUrl = 'k4_31kb_banners/v2_pilots/p01_l1_domaine_superfamily.jpg?v=v9_r2_sync3';
     let currentFullSubUrl = 'k4_31kb_banners/v2_pilots/p01_l1_domaine_superfamily.jpg?v=v9_r2_sync3';
-    let currentFullMetaUrl = 'k4_31kb_banners/v2_pilots/meta_m01_v3.jpg?v=v9_r2_sync3';
+    let currentFullMetaUrl = 'k4_31kb_banners/v2_pilots/meta_m01_v3.jpg?v=v10_3designs';
     let currentCropHeadUrl = 'k4_31kb_banners/v2_pilots/crop_head_p01_l1_domaine_superfamily.jpg?v=v9_r2_sync3';
     let currentCropSubUrl = 'k4_31kb_banners/v2_pilots/crop_sub_p01_l1_domaine_superfamily.jpg?v=v9_r2_sync3';
-    let currentCropMetaUrl = 'k4_31kb_banners/v2_pilots/crop_meta_m01_v3.jpg?v=v9_r2_sync3';
+    let currentCropMetaUrl = 'k4_31kb_banners/v2_pilots/crop_meta_m01_v3.jpg?v=v10_3designs';
 
     function selectPairing(pid) {
       activeMode = 'PAIRING';

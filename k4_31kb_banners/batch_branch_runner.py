@@ -25,6 +25,7 @@ from playwright.sync_api import sync_playwright, Browser
 
 BASE_DIR = Path("/Users/vietmac/Documents/CODE/k/k4_31kb_banners")
 SPECS_PATH = BASE_DIR / "kb_31_master_specs.json"
+CAMPAIGN_CFG_PATH = BASE_DIR / "campaign_config.json"
 CARDS_DIR = BASE_DIR / "banner2_cards"
 OUT_RENDER_DIR = BASE_DIR / "v2_pilots" / "batch_out"
 R2_MANAGER = Path("/Users/vietmac/Documents/CODE/Quản gia/r2_manager.py")
@@ -35,7 +36,120 @@ from uiux_auditor import audit_v3_banner
 from update_banner2_hub import atomic_rebuild_and_sync
 
 
-def build_style_html(
+def load_campaign_config() -> Dict[str, Any]:
+    if CAMPAIGN_CFG_PATH.exists():
+        try:
+            return json.loads(CAMPAIGN_CFG_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+
+def fill_campaign_vars(text: str, vars_dict: Dict[str, str]) -> str:
+    res = text or ""
+    for k, v in vars_dict.items():
+        res = res.replace(f"[[{k}]]", str(v))
+    return res
+
+
+def format_price_html(price_txt: str) -> str:
+    s = (price_txt or "4.000.000đ").strip()
+    if s.endswith("đ"):
+        num_part = s[:-1]
+        cur_part = '<span class="p-cur">đ</span>'
+    else:
+        num_part = s
+        cur_part = ""
+    num_html = num_part.replace(".", '<span class="p-dot">.</span>')
+    return f"{num_html}{cur_part}"
+
+
+def build_meta_strip_html(spec: Dict[str, Any], accent: str) -> str:
+    meta_code = spec.get("meta_code", "")
+    if not meta_code:
+        return '<div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>'
+    cfg = load_campaign_config()
+    vars_dict = cfg.get("variables", {
+        "NGAY_HOC": "07–08/11",
+        "DIA_DIEM_NGAN": "Long Biên, HN",
+        "HOC_PHI": "4.000.000đ",
+        "CAM_KET_HOAN_TIEN": "Chưa thấy hợp sau Ngày 1: hoàn 100% học phí",
+        "QUA_TANG": "Tặng kèm khóa Online quay sẵn + 30 ngày sửa bài qua Zalo",
+    })
+    tpls = cfg.get("meta_strip_templates", {})
+    mt = tpls.get(meta_code, tpls.get("M01", {}))
+    design_style = mt.get("design_style") or (
+        "D1" if meta_code in ("M01", "M04") else ("D2" if meta_code in ("M02", "M05") else "D3")
+    )
+
+    when_txt = fill_campaign_vars(spec.get("meta_when") or mt.get("when_template", "07–08/11 · Long Biên, HN"), vars_dict)
+    price_txt = fill_campaign_vars(spec.get("meta_price") or mt.get("price_template", "4.000.000đ"), vars_dict)
+    note_txt = fill_campaign_vars(spec.get("meta_note") if "meta_note" in spec else mt.get("note_template", ""), vars_dict)
+    price_html = format_price_html(price_txt)
+
+    if design_style == "D1":
+        l1_txt = fill_campaign_vars(mt.get("note_line1_template", "Chưa thấy hợp sau Ngày 1:"), vars_dict)
+        l2_txt = fill_campaign_vars(mt.get("note_line2_template", "✓ Hoàn 100% học phí"), vars_dict)
+        l2_clean = l2_txt.lstrip("✓✔ ").strip()
+        return (
+            f'<div class="meta meta-v3 meta-d1" data-tpl="{meta_code}">'
+            f'<div class="d1-eyebrow"><span class="dot"></span><span>{when_txt}</span></div>'
+            f'<div class="d1-main-row">'
+            f'<span class="meta-price d1-price">{price_html}</span>'
+            f'<span class="d1-divider"></span>'
+            f'<div class="d1-guarantee">'
+            f'<span class="d1-g-l1">{l1_txt}</span>'
+            f'<span class="d1-g-l2"><span class="g-check">✓</span><span>{l2_clean}</span></span>'
+            f'</div>'
+            f'</div>'
+            f'</div>'
+        )
+
+    if design_style == "D2":
+        price_lbl = fill_campaign_vars(mt.get("price_label_template", "HỌC PHÍ 2 NGÀY"), vars_dict)
+        note_clean = (note_txt or "Hoàn 100% sau Ngày 1 nếu chưa hợp").lstrip("✓✔ ").strip()
+        return (
+            f'<div class="meta meta-v3 meta-d2" data-tpl="{meta_code}">'
+            f'<div class="d2-grid">'
+            f'<div class="d2-left">'
+            f'<div class="d2-when"><span class="dot"></span><span>{when_txt}</span></div>'
+            f'<div class="d2-note"><span class="g-check">✓</span><span>{note_clean}</span></div>'
+            f'</div>'
+            f'<div class="d2-right">'
+            f'<span class="d2-price-lbl">{price_lbl}</span>'
+            f'<span class="meta-price d2-price">{price_html}</span>'
+            f'</div>'
+            f'</div>'
+            f'</div>'
+        )
+
+    # D3: Contrast Top Row + Guarantee Pill Bar
+    badge_txt = fill_campaign_vars(mt.get("note_badge_template", "✓ Cam kết:"), vars_dict)
+    raw_note = (note_txt or "Chưa thấy hợp sau Ngày 1 · hoàn 100% học phí").lstrip("✓✔ ").strip()
+    if "·" in raw_note:
+        p1, p2 = raw_note.split("·", 1)
+        pill_html = f'{p1.strip()} · <strong class="d3-hi">{p2.strip()}</strong>'
+    elif ":" in raw_note:
+        p1, p2 = raw_note.split(":", 1)
+        pill_html = f'{p1.strip()}: <strong class="d3-hi">{p2.strip()}</strong>'
+    else:
+        pill_html = f'<strong class="d3-hi">{raw_note}</strong>'
+
+    return (
+        f'<div class="meta meta-v3 meta-d3" data-tpl="{meta_code}">'
+        f'<div class="d3-top-row">'
+        f'<span class="d3-when"><span class="dot"></span><span>{when_txt}</span></span>'
+        f'<span class="meta-price d3-price">{price_html}</span>'
+        f'</div>'
+        f'<div class="d3-pill-bar">'
+        f'<span class="d3-badge">{badge_txt}</span>'
+        f'<span class="d3-pill-txt">{pill_html}</span>'
+        f'</div>'
+        f'</div>'
+    )
+
+
+def _build_raw_style_html(
     style_code: str,
     spec: Dict[str, Any],
     master: Dict[str, Any],
@@ -129,12 +243,205 @@ def build_style_html(
   }}
   .meta {{
     font-family: "SubMed", sans-serif;
-    font-size: 24.5px;
-    color: #E2E8F0;
+    font-size: 20.0px;
+    color: #CBD5E1;
     letter-spacing: 0.02em;
     display: flex; align-items: center; gap: 12px;
   }}
-  .dot {{ width: 10px; height: 10px; border-radius: 50%; background: {accent}; }}
+  .meta.meta-v3 {{
+    width: {card_width}px;
+    max-width: {card_width}px;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.42);
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0px;
+    font-size: 20.0px;
+  }}
+  .meta-price {{
+    font-family: "SubBold", sans-serif;
+    font-size: 36.0px;
+    font-weight: 700;
+    line-height: 1.0;
+    color: #FFFFFF;
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: -0.02em;
+    text-shadow: 0 10px 26px rgba(0, 0, 0, 0.78);
+    white-space: nowrap;
+  }}
+  .meta-price .p-dot {{
+    display: inline-block;
+    margin: 0 -0.5px;
+  }}
+  .meta-price .p-cur {{
+    font-size: 0.84em;
+    margin-left: 1.5px;
+    font-weight: 700;
+  }}
+  .g-check {{
+    font-family: "SubBold", sans-serif;
+    color: #4ADE80;
+    flex-shrink: 0;
+  }}
+  /* KIỂU 1 (D1): Eyebrow Lịch Học Trên + Giá Lớn & Bảo Lãnh Dưới */
+  .d1-eyebrow {{
+    font-family: "SubBold", sans-serif;
+    font-size: 14.8px;
+    letter-spacing: 0.055em;
+    color: #94A3B8;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    white-space: nowrap;
+  }}
+  .d1-main-row {{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+  }}
+  .d1-price {{
+    font-size: 38.5px;
+  }}
+  .d1-divider {{
+    width: 1.5px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.28);
+    margin: 0 24px;
+    flex-shrink: 0;
+  }}
+  .d1-guarantee {{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+  }}
+  .d1-g-l1 {{
+    font-family: "SubMed", sans-serif;
+    font-size: 16.0px;
+    line-height: 1.15;
+    color: #CBD5E1;
+    white-space: nowrap;
+  }}
+  .d1-g-l2 {{
+    font-family: "SubBold", sans-serif;
+    font-size: 17.5px;
+    line-height: 1.15;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }}
+  /* KIỂU 2 (D2): Bảng Chia 2 Cột Trái – Phải Độc Lập (Split Ledger) */
+  .d2-grid {{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    width: 100%;
+  }}
+  .d2-left {{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 22px;
+    min-width: 0;
+  }}
+  .d2-when {{
+    font-family: "SubBold", sans-serif;
+    font-size: 21.0px;
+    line-height: 1.15;
+    color: #F8FAFC;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }}
+  .d2-note {{
+    font-family: "SubMed", sans-serif;
+    font-size: 16.5px;
+    line-height: 1.25;
+    color: #CBD5E1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }}
+  .d2-right {{
+    border-left: 1.5px solid rgba(255, 255, 255, 0.28);
+    padding-left: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }}
+  .d2-price-lbl {{
+    font-family: "SubBold", sans-serif;
+    font-size: 12.8px;
+    letter-spacing: 0.08em;
+    color: #94A3B8;
+    text-transform: uppercase;
+    line-height: 1.0;
+    white-space: nowrap;
+  }}
+  .d2-price {{
+    font-size: 35.0px;
+  }}
+  /* KIỂU 3 (D3): Hàng Chính Tương Phản Mảnh/Đậm + Đóng Khung Thanh Pill */
+  .d3-top-row {{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    margin-bottom: 14px;
+    white-space: nowrap;
+  }}
+  .d3-when {{
+    font-family: "SubMed", sans-serif;
+    font-size: 20.0px;
+    line-height: 1.1;
+    color: #CBD5E1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }}
+  .d3-price {{
+    font-size: 36.0px;
+  }}
+  .d3-pill-bar {{
+    width: 100%;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    padding: 8px 13px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }}
+  .d3-badge {{
+    font-family: "SubBold", sans-serif;
+    font-size: 16.0px;
+    color: #4ADE80;
+    flex-shrink: 0;
+  }}
+  .d3-pill-txt {{
+    font-family: "SubMed", sans-serif;
+    font-size: 16.0px;
+    color: #CBD5E1;
+    line-height: 1.2;
+  }}
+  .d3-hi {{
+    font-family: "SubBold", sans-serif;
+    color: #FFFFFF;
+    font-weight: 700;
+  }}
+  .dot {{ width: 10px; height: 10px; border-radius: 50%; background: {accent}; flex-shrink: 0; }}
   .accent-txt {{ color: {accent}; font-family: "SubBold", sans-serif; }}
 """
 
@@ -143,10 +450,10 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ border-left: 4px solid {accent}; display: flex; flex-direction: column; gap: 13px; }}
   .row {{ display: flex; align-items: center; gap: 11px; white-space: nowrap; }}
-  .icon-x {{ font-family: "SubBold", sans-serif; font-size: 25px; color: #EF4444; width: 22px; text-align: center; flex-shrink: 0; }}
-  .icon-ok {{ font-family: "SubBold", sans-serif; font-size: 25px; color: {accent}; width: 22px; text-align: center; flex-shrink: 0; }}
-  .txt-old {{ font-family: "SubMed", sans-serif; font-size: 26.5px; color: #94A3B8; white-space: nowrap; }}
-  .txt-new {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; }}
+  .icon-x {{ font-family: "SubBold", sans-serif; font-size: 26px; color: #F87171; width: 22px; text-align: center; flex-shrink: 0; }}
+  .icon-ok {{ font-family: "SubBold", sans-serif; font-size: 26px; color: {accent}; width: 22px; text-align: center; flex-shrink: 0; }}
+  .txt-old {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; }}
+  .txt-new {{ font-family: "SubBold", sans-serif; font-size: 28px; color: #FFFFFF; white-space: nowrap; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
@@ -162,13 +469,13 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ border-top: 3px solid {accent}; padding: 21px 22px; }}
   .eyebrow {{ font-family: "SubBold", sans-serif; font-size: 19.5px; letter-spacing: 0.06em; color: {accent}; margin-bottom: 9px; display: block; text-transform: uppercase; white-space: nowrap; }}
-  .l1 {{ font-family: "SubMed", sans-serif; font-size: 26.5px; line-height: 1.32; color: #94A3B8; white-space: nowrap; display: block; margin-bottom: 4px; }}
-  .l2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; line-height: 1.34; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .l1 {{ font-family: "SubMed", sans-serif; font-size: 27px; line-height: 1.32; color: #E2E8F0; white-space: nowrap; display: block; margin-bottom: 4px; }}
+  .l2 {{ font-family: "SubBold", sans-serif; font-size: 28px; line-height: 1.34; color: #FFFFFF; white-space: nowrap; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <span class="eyebrow auto-sub">{d["eyebrow"]}</span>
+    <span class="eyebrow p-tag">{d["eyebrow"]}</span>
     <span class="l1 auto-sub">{d["l1"]}</span>
     <span class="l2 auto-sub">{d["l2"]}</span>
   </div>
@@ -180,17 +487,17 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: grid; grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr); align-items: center; }}
   .col-stat {{ display: flex; flex-direction: column; gap: 4px; min-width: 0; }}
-  .n-gold {{ font-family: "MetaMono", monospace; font-size: 62px; line-height: 1.0; color: {accent}; white-space: nowrap; }}
-  .n-white {{ font-family: "MetaMono", monospace; font-size: 62px; line-height: 1.0; color: #FFFFFF; white-space: nowrap; }}
-  .lbl-sub {{ font-family: "SubMed", sans-serif; font-size: 22px; line-height: 1.28; color: #CBD5E1; white-space: normal; word-wrap: break-word; }}
+  .n-gold {{ font-family: "MetaMono", monospace; font-size: 56px; line-height: 1.0; color: {accent}; white-space: nowrap; }}
+  .n-white {{ font-family: "MetaMono", monospace; font-size: 56px; line-height: 1.0; color: #FFFFFF; white-space: nowrap; }}
+  .lbl-sub {{ font-family: "SubMed", sans-serif; font-size: 26.5px; line-height: 1.25; color: #E2E8F0; white-space: normal; word-wrap: break-word; }}
   .arrow {{ font-family: "SubBold", sans-serif; font-size: 28px; color: {accent}; text-align: center; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="col-stat"><span class="n-gold">{d["n1"]}</span><span class="lbl-sub auto-sub">{d["l1"]}</span></div>
+    <div class="col-stat"><span class="n-gold big-metric">{d["n1"]}</span><span class="lbl-sub auto-sub">{d["l1"]}</span></div>
     <div class="arrow">→</div>
-    <div class="col-stat" style="padding-left: 14px;"><span class="n-white">{d["n2"]}</span><span class="lbl-sub auto-sub">{d["l2"]}</span></div>
+    <div class="col-stat" style="padding-left: 14px;"><span class="n-white big-metric">{d["n2"]}</span><span class="lbl-sub auto-sub" style="color:#FFFFFF;font-family:'SubBold',sans-serif;">{d["l2"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -200,8 +507,8 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ position: relative; padding: 30px 22px 20px; }}
   .floating-tab {{ position: absolute; top: -14px; left: 20px; background: {accent}; color: #070B14; font-family: "SubBold", sans-serif; font-size: 19.5px; letter-spacing: 0.05em; padding: 4px 12px; border-radius: 6px; text-transform: uppercase; white-space: nowrap; }}
-  .l1 {{ font-family: "SubMed", sans-serif; font-size: 26.5px; line-height: 1.34; color: #94A3B8; white-space: nowrap; display: block; margin-bottom: 4px; }}
-  .l2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; line-height: 1.35; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .l1 {{ font-family: "SubMed", sans-serif; font-size: 27px; line-height: 1.34; color: #E2E8F0; white-space: nowrap; display: block; margin-bottom: 4px; }}
+  .l2 {{ font-family: "SubBold", sans-serif; font-size: 28px; line-height: 1.35; color: #FFFFFF; white-space: nowrap; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
@@ -217,8 +524,8 @@ def build_style_html(
         d = spec["k05"]
         return common_head + f"""
   .sub-box {{ border: 1.5px solid {accent}; }}
-  .l1 {{ font-family: "SubMed", sans-serif; font-size: 26.5px; line-height: 1.35; color: #94A3B8; margin-bottom: 6px; white-space: nowrap; display: block; }}
-  .l2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; line-height: 1.35; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .l1 {{ font-family: "SubMed", sans-serif; font-size: 27px; line-height: 1.35; color: #E2E8F0; margin-bottom: 6px; white-space: nowrap; display: block; }}
+  .l2 {{ font-family: "SubBold", sans-serif; font-size: 28px; line-height: 1.35; color: #FFFFFF; white-space: nowrap; display: block; }}
   .l2 em {{ font-style: normal; color: {accent}; padding: 0 3px; }}
 </style></head>
 <body><div class="zone">
@@ -235,16 +542,16 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 13px; }}
   .nb-row {{ display: flex; align-items: center; gap: 10px; white-space: nowrap; }}
-  .tag-not {{ font-family: "SubBold", sans-serif; font-size: 19.5px; background: rgba(148, 163, 184, 0.18); color: #94A3B8; padding: 4px 9px; border-radius: 6px; flex-shrink: 0; }}
+  .tag-not {{ font-family: "SubBold", sans-serif; font-size: 19.5px; background: rgba(248, 113, 113, 0.18); color: #FCA5A5; padding: 4px 10px; border-radius: 6px; flex-shrink: 0; }}
   .tag-but {{ font-family: "SubBold", sans-serif; font-size: 19.5px; background: {accent}; color: #070B14; padding: 4px 10px; border-radius: 6px; flex-shrink: 0; }}
-  .txt-not {{ font-family: "SubMed", sans-serif; font-size: 26px; color: #94A3B8; white-space: nowrap; }}
-  .txt-but {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; }}
+  .txt-not {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; }}
+  .txt-but {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="nb-row"><span class="tag-not">KHÔNG PHẢI</span><span class="txt-not auto-sub">{d["not"]}</span></div>
-    <div class="nb-row"><span class="tag-but">MÀ LÀ</span><span class="txt-but auto-sub">{d["but"]}</span></div>
+    <div class="nb-row"><span class="tag-not p-tag">× SAI</span><span class="txt-not auto-sub">{d["not"]}</span></div>
+    <div class="nb-row"><span class="tag-but p-tag">✓ ĐÚNG</span><span class="txt-but auto-sub">{d["but"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -253,18 +560,18 @@ def build_style_html(
         d = spec["k07"]
         return common_head + f"""
   .sub-box {{ padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); overflow: hidden; }}
-  .col-left {{ padding: 18px 15px; border-right: 1px solid rgba(255, 255, 255, 0.12); min-width: 0; }}
-  .col-right {{ padding: 18px 15px; background: rgba(255, 255, 255, 0.04); min-width: 0; }}
-  .c-head-muted {{ font-family: "SubBold", sans-serif; font-size: 19.5px; white-space: nowrap; color: #94A3B8; margin-bottom: 6px; display: block; }}
+  .col-left {{ padding: 18px 15px; border-right: 1px solid rgba(255, 255, 255, 0.14); min-width: 0; }}
+  .col-right {{ padding: 18px 15px; background: rgba(255, 255, 255, 0.05); min-width: 0; }}
+  .c-head-muted {{ font-family: "SubBold", sans-serif; font-size: 19.5px; white-space: nowrap; color: #FCA5A5; margin-bottom: 6px; display: block; }}
   .c-head-gold {{ font-family: "SubBold", sans-serif; font-size: 19.5px; white-space: nowrap; color: {accent}; margin-bottom: 6px; display: block; }}
-  .c-body-muted {{ font-family: "SubMed", sans-serif; font-size: 21.5px; line-height: 1.32; white-space: normal; word-wrap: break-word; color: #CBD5E1; display: block; }}
-  .c-body-bright {{ font-family: "SubBold", sans-serif; font-size: 21.5px; line-height: 1.32; white-space: normal; word-wrap: break-word; color: #FFFFFF; display: block; }}
+  .c-body-muted {{ font-family: "SubMed", sans-serif; font-size: 26.5px; line-height: 1.26; white-space: normal; word-wrap: break-word; color: #E2E8F0; display: block; }}
+  .c-body-bright {{ font-family: "SubBold", sans-serif; font-size: 26.5px; line-height: 1.26; white-space: normal; word-wrap: break-word; color: #FFFFFF; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box two-col-box">
-    <div class="col-left"><span class="c-head-muted">{d["lh"]}</span><span class="c-body-muted auto-sub">{d["lb"]}</span></div>
-    <div class="col-right"><span class="c-head-gold">{d["rh"]}</span><span class="c-body-bright auto-sub">{d["rb"]}</span></div>
+    <div class="col-left"><span class="c-head-muted c-head">{d["lh"]}</span><span class="c-body-muted c-body auto-sub">{d["lb"]}</span></div>
+    <div class="col-right"><span class="c-head-gold c-head">{d["rh"]}</span><span class="c-body-bright c-body auto-sub">{d["rb"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -273,8 +580,8 @@ def build_style_html(
         d = spec["k08"]
         return common_head + f"""
   .sub-box {{ border-bottom: 4px solid {accent}; }}
-  .l1 {{ font-family: "SubMed", sans-serif; font-size: 26.5px; color: #94A3B8; margin-bottom: 8px; white-space: nowrap; display: block; }}
-  .l2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .l1 {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; margin-bottom: 8px; white-space: nowrap; display: block; }}
+  .l2 {{ font-family: "SubBold", sans-serif; font-size: 28px; color: #FFFFFF; white-space: nowrap; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
@@ -289,15 +596,15 @@ def build_style_html(
         d = spec["k09"]
         return common_head + f"""
   .sub-box {{ border: 1.5px solid {accent}; border-radius: 22px 22px 22px 6px; }}
-  .chat-meta {{ font-family: "SubBold", sans-serif; font-size: 20px; color: #94A3B8; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }}
+  .chat-meta {{ font-family: "SubBold", sans-serif; font-size: 19.5px; color: #CBD5E1; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }}
   .online-dot {{ width: 10px; height: 10px; border-radius: 50%; background: #22C55E; }}
-  .chat-msg1 {{ font-family: "SubBold", sans-serif; font-size: 26.5px; color: #FFFFFF; white-space: nowrap; display: block; margin-bottom: 4px; }}
+  .chat-msg1 {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; display: block; margin-bottom: 4px; }}
   .chat-msg2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: {accent}; white-space: nowrap; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="chat-meta"><span class="online-dot"></span><span>{d["meta"]}</span></div>
+    <div class="chat-meta p-tag"><span class="online-dot"></span><span>{d["meta"]}</span></div>
     <span class="chat-msg1 auto-sub">{d["msg1"]}</span>
     <span class="chat-msg2 auto-sub">{d["msg2"]}</span>
   </div>
@@ -309,11 +616,11 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 13px; }}
   .m-row {{ display: flex; align-items: center; gap: 12px; white-space: nowrap; }}
-  .m-lbl {{ font-family: "SubBold", sans-serif; font-size: 22.5px; color: #CBD5E1; min-width: 170px; width: auto; flex-shrink: 0; }}
-  .m-track {{ flex: 1; height: 12px; background: rgba(255, 255, 255, 0.12); border-radius: 99px; overflow: hidden; min-width: 60px; }}
-  .m-fill-low {{ width: 18%; height: 100%; background: #64748B; border-radius: 99px; }}
+  .m-lbl {{ font-family: "SubBold", sans-serif; font-size: 26.5px; color: #E2E8F0; min-width: 168px; width: auto; flex-shrink: 0; }}
+  .m-track {{ flex: 1; height: 12px; background: rgba(255, 255, 255, 0.14); border-radius: 99px; overflow: hidden; min-width: 50px; }}
+  .m-fill-low {{ width: 22%; height: 100%; background: #F87171; border-radius: 99px; }}
   .m-fill-high {{ width: 94%; height: 100%; background: {accent}; border-radius: 99px; }}
-  .m-val {{ font-family: "MetaMono", monospace; font-size: 21.5px; color: #94A3B8; min-width: 112px; width: auto; text-align: right; flex-shrink: 0; }}
+  .m-val {{ font-family: "MetaMono", monospace; font-size: 26.0px; color: #E2E8F0; min-width: 118px; width: auto; text-align: right; flex-shrink: 0; }}
   .m-val.hi {{ color: {accent}; }}
 </style></head>
 <body><div class="zone">
@@ -330,16 +637,16 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 13px; }}
   .qa-row {{ display: flex; align-items: center; gap: 10px; white-space: nowrap; }}
-  .q-tag {{ font-family: "SubBold", sans-serif; font-size: 19.5px; background: rgba(148,163,184,0.2); color: #CBD5E1; padding: 4px 9px; border-radius: 6px; flex-shrink: 0; }}
+  .q-tag {{ font-family: "SubBold", sans-serif; font-size: 19.5px; background: rgba(248,113,113,0.2); color: #FCA5A5; padding: 4px 9px; border-radius: 6px; flex-shrink: 0; }}
   .a-tag {{ font-family: "SubBold", sans-serif; font-size: 19.5px; background: {accent}; color: #070B14; padding: 4px 9px; border-radius: 6px; flex-shrink: 0; }}
-  .q-txt {{ font-family: "SubMed", sans-serif; font-size: 26px; color: #94A3B8; white-space: nowrap; }}
-  .a-txt {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; }}
+  .q-txt {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; }}
+  .a-txt {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="qa-row"><span class="q-tag">HỎI</span><span class="q-txt auto-sub">{d["q"]}</span></div>
-    <div class="qa-row"><span class="a-tag">ĐÁP</span><span class="a-txt auto-sub">{d["a"]}</span></div>
+    <div class="qa-row"><span class="q-tag p-tag">HỎI</span><span class="q-txt auto-sub">{d["q"]}</span></div>
+    <div class="qa-row"><span class="a-tag p-tag">ĐÁP</span><span class="a-txt auto-sub">{d["a"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -348,8 +655,8 @@ def build_style_html(
         d = spec["k12"]
         return common_head + f"""
   .sub-box {{ border: 1.5px dashed {accent}; display: flex; flex-direction: column; gap: 10px; }}
-  .vf-1 {{ font-family: "SubMed", sans-serif; font-size: 26px; color: #CBD5E1; white-space: nowrap; display: block; }}
-  .vf-2 {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .vf-1 {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; display: block; }}
+  .vf-2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; display: block; }}
   .vf-hl {{ background: rgba(250, 204, 21, 0.22); color: #FFFFFF; border-bottom: 2px solid {accent}; padding: 2px 8px; border-radius: 6px; }}
 </style></head>
 <body><div class="zone">
@@ -366,16 +673,16 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 12px; }}
   .tl-row {{ display: flex; align-items: center; gap: 11px; white-space: nowrap; }}
-  .node-o {{ font-family: "SubBold", sans-serif; font-size: 23px; color: #94A3B8; flex-shrink: 0; }}
-  .node-f {{ font-family: "SubBold", sans-serif; font-size: 23px; color: {accent}; flex-shrink: 0; }}
-  .tl-1 {{ font-family: "SubMed", sans-serif; font-size: 26px; color: #94A3B8; white-space: nowrap; }}
-  .tl-2 {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; }}
+  .node-o {{ font-family: "SubBold", sans-serif; font-size: 24px; color: #F87171; flex-shrink: 0; }}
+  .node-f {{ font-family: "SubBold", sans-serif; font-size: 24px; color: {accent}; flex-shrink: 0; }}
+  .tl-1 {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; }}
+  .tl-2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="tl-row"><span class="node-o">○</span><span class="tl-1 auto-sub">{d["t1"]}</span></div>
-    <div class="tl-row"><span class="node-f">●</span><span class="tl-2 auto-sub">{d["t2"]}</span></div>
+    <div class="tl-row"><span class="node-o p-tag">○</span><span class="tl-1 auto-sub">{d["t1"]}</span></div>
+    <div class="tl-row"><span class="node-f p-tag">●</span><span class="tl-2 auto-sub">{d["t2"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -385,16 +692,16 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 12px; }}
   .r14 {{ display: flex; align-items: center; gap: 10px; white-space: nowrap; }}
-  .b-old {{ font-family: "MetaMono", monospace; font-size: 19.5px; color: #94A3B8; background: rgba(148,163,184,0.16); padding: 3px 8px; border-radius: 6px; flex-shrink: 0; }}
+  .b-old {{ font-family: "MetaMono", monospace; font-size: 19.5px; color: #FCA5A5; background: rgba(248,113,113,0.18); padding: 3px 8px; border-radius: 6px; flex-shrink: 0; }}
   .b-new {{ font-family: "MetaMono", monospace; font-size: 19.5px; color: #070B14; background: {accent}; padding: 3px 8px; border-radius: 6px; flex-shrink: 0; }}
-  .t-old {{ font-family: "SubMed", sans-serif; font-size: 26px; color: #94A3B8; white-space: nowrap; }}
-  .t-new {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; }}
+  .t-old {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; }}
+  .t-new {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="r14"><span class="b-old">CŨ</span><span class="t-old auto-sub">{d["old"]}</span></div>
-    <div class="r14"><span class="b-new">MỚI</span><span class="t-new auto-sub">{d["new"]}</span></div>
+    <div class="r14"><span class="b-old p-tag">CŨ</span><span class="t-old auto-sub">{d["old"]}</span></div>
+    <div class="r14"><span class="b-new p-tag">MỚI</span><span class="t-new auto-sub">{d["new"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -404,15 +711,15 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 13px; }}
   .wk-row {{ display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }}
-  .wk-c {{ height: 38px; border-radius: 7px; border: 1.5px solid rgba(148,163,184,0.22); color: #94A3B8; font-family: "MetaMono", monospace; font-size: 19.5px; display: flex; align-items: center; justify-content: center; }}
-  .wk-c.on {{ background: rgba(250,204,21,0.18); border: 2px solid {accent}; color: {accent}; }}
-  .wk-cap {{ font-family: "SubBold", sans-serif; font-size: 26.5px; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .wk-c {{ height: 38px; border-radius: 7px; border: 1.5px solid rgba(226,232,240,0.28); color: #CBD5E1; font-family: "MetaMono", monospace; font-size: 19.5px; display: flex; align-items: center; justify-content: center; }}
+  .wk-c.on {{ background: rgba(250,204,21,0.22); border: 2px solid {accent}; color: {accent}; }}
+  .wk-cap {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
     <div class="wk-row">
-      <span class="wk-c">T2</span><span class="wk-c">T3</span><span class="wk-c on">T4</span><span class="wk-c">T5</span><span class="wk-c">T6</span><span class="wk-c on">T7</span><span class="wk-c">CN</span>
+      <span class="wk-c p-tag">T2</span><span class="wk-c p-tag">T3</span><span class="wk-c on p-tag">T4</span><span class="wk-c p-tag">T5</span><span class="wk-c p-tag">T6</span><span class="wk-c on p-tag">T7</span><span class="wk-c p-tag">CN</span>
     </div>
     <span class="wk-cap auto-sub">→ {d["caption"]}</span>
   </div>
@@ -424,8 +731,8 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }}
   .ghost-w {{ position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-family: "MetaMono", monospace; font-size: 96px; line-height: 1; color: rgba(255,255,255,0.06); pointer-events: none; }}
-  .gl1 {{ position: relative; font-family: "SubMed", sans-serif; font-size: 26.5px; color: #94A3B8; white-space: nowrap; display: block; }}
-  .gl2 {{ position: relative; font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .gl1 {{ position: relative; font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; display: block; }}
+  .gl2 {{ position: relative; font-family: "SubBold", sans-serif; font-size: 28px; color: #FFFFFF; white-space: nowrap; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
@@ -442,11 +749,11 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 12px; }}
   .ld-row {{ display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }}
-  .ld-lo {{ font-family: "SubMed", sans-serif; font-size: 25px; color: #94A3B8; }}
-  .ld-dots {{ flex: 1; border-bottom: 2px dotted rgba(148,163,184,0.35); min-width: 18px; }}
-  .ld-ro {{ font-family: "SubBold", sans-serif; font-size: 25px; color: #64748B; }}
-  .ld-ln {{ font-family: "SubBold", sans-serif; font-size: 26px; color: #FFFFFF; }}
-  .ld-rn {{ font-family: "SubBold", sans-serif; font-size: 26px; color: {accent}; }}
+  .ld-lo {{ font-family: "SubMed", sans-serif; font-size: 26.5px; color: #E2E8F0; }}
+  .ld-dots {{ flex: 1; border-bottom: 2px dotted rgba(226,232,240,0.40); min-width: 18px; }}
+  .ld-ro {{ font-family: "SubBold", sans-serif; font-size: 26.5px; color: #FCA5A5; }}
+  .ld-ln {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; }}
+  .ld-rn {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: {accent}; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
@@ -462,14 +769,14 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 12px; }}
   .eq-top {{ display: flex; align-items: center; gap: 9px; white-space: nowrap; }}
-  .eq-chip {{ background: rgba(148,163,184,0.16); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 4px 11px; font-family: "SubBold", sans-serif; font-size: 23px; color: #E2E8F0; }}
+  .eq-chip {{ background: rgba(226,232,240,0.16); border: 1px solid rgba(255,255,255,0.24); border-radius: 8px; padding: 4px 11px; font-family: "SubBold", sans-serif; font-size: 23.5px; color: #F8FAFC; }}
   .eq-plus {{ font-family: "MetaMono", monospace; font-size: 24px; color: {accent}; }}
-  .eq-bot {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .eq-bot {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="eq-top"><span class="eq-chip">{d["p1"]}</span><span class="eq-plus">+</span><span class="eq-chip">{d["p2"]}</span></div>
+    <div class="eq-top"><span class="eq-chip p-tag">{d["p1"]}</span><span class="eq-plus p-tag">+</span><span class="eq-chip p-tag">{d["p2"]}</span></div>
     <span class="eq-bot auto-sub"><span class="accent-txt">=</span> {d["res"]}</span>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
@@ -480,15 +787,16 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 12px; }}
   .ck-row {{ display: flex; align-items: center; gap: 11px; white-space: nowrap; }}
-  .ck-b {{ width: 28px; height: 28px; border-radius: 6px; background: rgba(250,204,21,0.16); border: 2px solid {accent}; color: {accent}; font-family: "SubBold", sans-serif; font-size: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }}
-  .ck-1 {{ font-family: "SubMed", sans-serif; font-size: 26px; color: #CBD5E1; white-space: nowrap; }}
-  .ck-2 {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; }}
+  .ck-x {{ width: 28px; height: 28px; border-radius: 6px; background: rgba(248,113,113,0.18); border: 2px solid #F87171; color: #FCA5A5; font-family: "SubBold", sans-serif; font-size: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }}
+  .ck-b {{ width: 28px; height: 28px; border-radius: 6px; background: rgba(250,204,21,0.18); border: 2px solid {accent}; color: {accent}; font-family: "SubBold", sans-serif; font-size: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }}
+  .ck-1 {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; }}
+  .ck-2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="ck-row"><span class="ck-b">✓</span><span class="ck-1 auto-sub">{d["c1"]}</span></div>
-    <div class="ck-row"><span class="ck-b">✓</span><span class="ck-2 auto-sub">{d["c2"]}</span></div>
+    <div class="ck-row"><span class="ck-x p-tag">×</span><span class="ck-1 auto-sub">{d["c1"]}</span></div>
+    <div class="ck-row"><span class="ck-b p-tag">✓</span><span class="ck-2 auto-sub">{d["c2"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -498,16 +806,16 @@ def build_style_html(
         return common_head + f"""
   .sub-box {{ display: flex; flex-direction: column; gap: 12px; }}
   .rx-r {{ display: flex; align-items: center; gap: 10px; white-space: nowrap; }}
-  .rx-bo {{ background: rgba(148,163,184,0.2); color: #CBD5E1; font-family: "MetaMono", monospace; font-size: 19.5px; padding: 4px 9px; border-radius: 6px; flex-shrink: 0; }}
+  .rx-bo {{ background: rgba(248,113,113,0.2); color: #FCA5A5; font-family: "MetaMono", monospace; font-size: 19.5px; padding: 4px 9px; border-radius: 6px; flex-shrink: 0; }}
   .rx-bn {{ background: {accent}; color: #070B14; font-family: "MetaMono", monospace; font-size: 19.5px; padding: 4px 9px; border-radius: 6px; flex-shrink: 0; }}
-  .rx-to {{ font-family: "SubMed", sans-serif; font-size: 26px; color: #94A3B8; white-space: nowrap; }}
-  .rx-tn {{ font-family: "SubBold", sans-serif; font-size: 27px; color: #FFFFFF; white-space: nowrap; }}
+  .rx-to {{ font-family: "SubMed", sans-serif; font-size: 27px; color: #E2E8F0; white-space: nowrap; }}
+  .rx-tn {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="rx-r"><span class="rx-bo">BỆNH</span><span class="rx-to auto-sub">{d["benh"]}</span></div>
-    <div class="rx-r"><span class="rx-bn">THUỐC</span><span class="rx-tn auto-sub">{d["thuoc"]}</span></div>
+    <div class="rx-r"><span class="rx-bo p-tag">BỆNH</span><span class="rx-to auto-sub">{d["benh"]}</span></div>
+    <div class="rx-r"><span class="rx-bn p-tag">THUỐC</span><span class="rx-tn auto-sub">{d["thuoc"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
@@ -515,19 +823,19 @@ def build_style_html(
     # Default K21 (03s Scroll Filter)
     d = spec["k21"]
     return common_head + f"""
-  .sub-box {{ display: grid; grid-template-columns: 106px 2px 1fr; gap: 14px; align-items: center; }}
+  .sub-box {{ display: grid; grid-template-columns: 92px 2px 1fr; gap: 12px; align-items: center; }}
   .s-badge {{ display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding-left: 2px; }}
-  .s-num {{ font-family: "MetaMono", monospace; font-size: 56px; line-height: 1; color: {accent}; }}
-  .s-lbl {{ font-family: "SubBold", sans-serif; font-size: 19.5px; color: #94A3B8; margin-top: 4px; }}
+  .s-num {{ font-family: "MetaMono", monospace; font-size: 50px; line-height: 1; color: {accent}; }}
+  .s-lbl {{ font-family: "SubBold", sans-serif; font-size: 19.5px; color: #E2E8F0; margin-top: 4px; }}
   .s-div {{ width: 2px; height: 64px; background: {accent}; opacity: 0.45; }}
   .s-right {{ display: flex; flex-direction: column; gap: 8px; min-width: 0; }}
-  .sr-1 {{ font-family: "SubMed", sans-serif; font-size: 25px; color: #94A3B8; white-space: nowrap; display: block; }}
-  .sr-2 {{ font-family: "SubBold", sans-serif; font-size: 26px; color: #FFFFFF; white-space: nowrap; display: block; }}
+  .sr-1 {{ font-family: "SubMed", sans-serif; font-size: 26.5px; color: #E2E8F0; white-space: nowrap; display: block; }}
+  .sr-2 {{ font-family: "SubBold", sans-serif; font-size: 27.5px; color: #FFFFFF; white-space: nowrap; display: block; }}
 </style></head>
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="s-badge"><span class="s-num">03s</span><span class="s-lbl">LƯỚT</span></div>
+    <div class="s-badge"><span class="s-num big-metric">03s</span><span class="s-lbl p-tag">LƯỚT</span></div>
     <div class="s-div"></div>
     <div class="s-right">
       <span class="sr-1 auto-sub">{d["l1"]}</span>
@@ -536,6 +844,22 @@ def build_style_html(
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
+
+
+def build_style_html(
+    style_code: str,
+    spec: Dict[str, Any],
+    master: Dict[str, Any],
+) -> str:
+    raw_html = _build_raw_style_html(style_code, spec, master)
+    if spec.get("meta_code"):
+        accent = spec.get("accent_color", "#FACC15")
+        meta_html = build_meta_strip_html(spec, accent)
+        raw_html = raw_html.replace(
+            '<div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>',
+            meta_html,
+        )
+    return raw_html
 
 
 def render_html_onto_bg(
