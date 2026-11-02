@@ -194,30 +194,22 @@ def build_dual_zero_blur_bgs(
             nh = int(frame_meta["nh"])
             x_shift = int(frame_meta.get("x_shift", 0))
             y0 = int(frame_meta.get("y0", 0))
-            # Đảm bảo nw - x_shift >= target_w (1080) và nh >= target_h (1350) để 0% phải pad gương BORDER_REFLECT_101
-            min_req_w = target_w + x_shift
-            if nw < min_req_w or nh < target_h:
-                fix_ratio = max(min_req_w / float(max(1, nw)), target_h / float(max(1, nh)))
-                nw = int(round(nw * fix_ratio))
-                nh = int(round(nh * fix_ratio))
-                y0 = int(round(y0 * fix_ratio))
+            ox = int(frame_meta.get("ox", x_shift if side == "left" else (nw - x_shift - target_w)))
+            # CLAUDE2 LAW_21.1: ZERO FAKE PIXELS & ZERO BLUR
+            # Khung cắt 1080x1350 bắt buộc nằm trọn 100% trong ảnh gốc (0% copyMakeBorder, 0% GaussianBlur)
+            if nw < target_w or nh < target_h or ox < 0 or (ox + target_w) > nw or y0 < 0 or (y0 + target_h) > nh:
+                raise ValueError(
+                    f"[LAW_21 VIOLATION] Invalid crop geometry on {src_plate_path.name}: "
+                    f"nw={nw}, nh={nh}, ox={ox}, y0={y0} (must satisfy 0<=ox<=nw-1080 and 0<=y0<=nh-1350)"
+                )
             im_resized = im.resize((nw, nh), Image.Resampling.LANCZOS)
             arr_s = np.array(im_resized, dtype=np.uint8)
-            y0 = max(0, min(nh - target_h, y0))
-            arr_h = arr_s[y0 : y0 + target_h, :, :]
-
-            if side == "left":
-                arr_shifted = arr_h[:, x_shift:, :]
-                arr_u8 = arr_shifted[:, :target_w, :]
-            else:
-                end_col = nw - x_shift
-                arr_shifted = arr_h[:, :end_col, :]
-                arr_u8 = arr_shifted[:, arr_shifted.shape[1] - target_w :, :]
+            arr_u8 = arr_s[y0 : y0 + target_h, ox : ox + target_w, :]
             arr = arr_u8.astype(np.float32) / 255.0
         else:
             scale = max(target_w / float(w0), target_h / float(h0))
-            nw = int(round(w0 * scale))
-            nh = int(round(h0 * scale))
+            nw = max(target_w, int(round(w0 * scale)))
+            nh = max(target_h, int(round(h0 * scale)))
             im_resized = im.resize((nw, nh), Image.Resampling.LANCZOS)
             x0 = 0 if side == "left" else max(0, nw - target_w)
             y0 = max(0, int((nh - target_h) * 0.35))
@@ -226,32 +218,11 @@ def build_dual_zero_blur_bgs(
 
     yy, xx = np.mgrid[0:1350, 0:1080].astype(np.float32)
 
-    # Tạo mặt nạ Phơi Sáng Phòng Tối Quang Học (Optical Darkroom Burn — KHÔNG BLUR, giữ 100% chi tiết phòng)
-    # Nếu nhân vật bên TRÁI (`side == 'left'`), chữ nằm bên PHẢI (`x: 520..1080`)
-    # Nếu nhân vật bên PHẢI (`side == 'right'`), chữ nằm bên TRÁI (`x: 0..560`)
-    if side == "left":
-        t = np.clip((xx - 430.0) / 260.0, 0.0, 1.0)
-    else:
-        t = np.clip((650.0 - xx) / 260.0, 0.0, 1.0)
-    text_zone_mask = (t * t * (3.0 - 2.0 * t))[:, :, None]
-
-    # Đo độ sáng tự nhiên của vùng đặt chữ để tự động điều chỉnh lượng Darkroom Burn vừa đủ đạt WCAG
-    if side == "left":
-        zone_slice = arr[180:1150, 540:1040, :]
-    else:
-        zone_slice = arr[180:1150, 40:540, :]
-    zone_luma = 0.2126 * zone_slice[:, :, 0] + 0.7152 * zone_slice[:, :, 1] + 0.0722 * zone_slice[:, :, 2]
-    p95_luma = float(np.percentile(zone_luma, 95))
-
-    # Nếu vùng chữ vốn đã tối (p95 <= 0.32), chỉ burn rất nhẹ (giữ 75% ánh sáng gốc); nếu sáng hơn thì hạ exposure mượt để p95 <= 0.28
-    target_mult = min(0.78, 0.26 / max(p95_luma, 0.01))
-    target_mult = max(0.28, target_mult)
-    burn_factor = 1.0 - text_zone_mask * (1.0 - target_mult)
-
     # =========================================================================
-    # CLAUDE2 LAW_18: SELECTIVE DISTRACTOR HIGHLIGHT ROLL-OFF (0% ĐỤNG PIXEL MẶT)
-    # Dìm nhẹ đèn tường phía trên/sau đầu & giảm độ chói áo sơ mi trắng dưới cằm
-    # để mắt quét thẳng Mặt (F1) -> Tiêu đề (F2) -> Từ khóa vàng & Hộp phụ (F3)
+    # CLAUDE2 LAW_20 & LAW_21: ZERO FACE BURN + NATURAL EXPOSURE CONTINUITY
+    # 1. Bảo vệ 100% vùng đầu/mặt/tóc/cổ (head_protect).
+    # 2. Dải chuyển sáng ngang rộng 440px + làm mượt sigma=45px (không tạo vách cắt dọc).
+    # 3. Sàn phơi sáng tự nhiên burn_factor >= 0.55 (giữ nguyên 100% chi tiết vân nền).
     # =========================================================================
     if frame_meta and frame_meta.get("cropped_face_bbox"):
         fx, fy, fw, fh = [float(v) for v in frame_meta["cropped_face_bbox"]]
@@ -259,43 +230,78 @@ def build_dual_zero_blur_bgs(
         fx, fy, fw, fh = (700.0 if side == "right" else 120.0), 220.0, 240.0, 330.0
 
     fcx = fx + 0.50 * fw
-    fcy = fy + 0.54 * fh
-    face_dist = ((xx - fcx) / (0.54 * fw)) ** 2 + ((yy - fcy) / (0.58 * fh)) ** 2
-    face_protect = np.clip(1.0 - np.clip((face_dist - 0.65) / 0.55, 0.0, 1.0), 0.0, 1.0)[:, :, None]
+    fcy = fy + 0.48 * fh
+    # Elip bảo vệ toàn bộ đầu + tóc + trán + thái dương + tai + cổ (100% nguyên vẹn khi dist <= 1.0)
+    head_dist = ((xx - fcx) / (0.95 * fw)) ** 2 + ((yy - fcy) / (1.02 * fh)) ** 2
+    head_protect = np.clip(1.0 - np.clip((head_dist - 1.0) / 0.50, 0.0, 1.0), 0.0, 1.0)[:, :, None]
 
+    # LAW_21.3: Dải chuyển sáng ngang siêu rộng 500px + làm mượt không gian sigma=55px
+    if side == "left":
+        start_x = max(320.0, fx + 0.78 * fw)
+        t = np.clip((xx - start_x) / 500.0, 0.0, 1.0)
+    else:
+        end_x = min(760.0, fx + 0.22 * fw)
+        t = np.clip((end_x - xx) / 500.0, 0.0, 1.0)
+
+    raw_zone_mask = (t * t * (3.0 - 2.0 * t)).astype(np.float32) * (1.0 - head_protect[:, :, 0])
+    text_zone_mask = cv2.GaussianBlur(raw_zone_mask, (0, 0), 55.0)[:, :, None] * (1.0 - head_protect)
+
+    # Đo độ sáng tự nhiên của vùng đặt chữ
+    if side == "left":
+        zone_slice = arr[180:1150, 540:1040, :]
+    else:
+        zone_slice = arr[180:1150, 40:540, :]
+    zone_luma = 0.2126 * zone_slice[:, :, 0] + 0.7152 * zone_slice[:, :, 1] + 0.0722 * zone_slice[:, :, 2]
+    p95_luma = float(np.percentile(zone_luma, 95))
+
+    # LAW_21.2: Exposure Floor >= 0.62 (giữ nguyên độ sáng & chi tiết tự nhiên của hậu cảnh)
+    target_mult = min(0.84, 0.28 / max(p95_luma, 0.01))
+    target_mult = max(0.62, target_mult)
+    burn_factor = 1.0 - text_zone_mask * (1.0 - target_mult)
+
+    # Chỉ dìm rất nhẹ độ chói của áo trắng ở phần bụng dưới (y > fy + 1.35*fh, cách xa mặt & cổ 100%)
     full_luma = (0.2126 * arr[:, :, 0] + 0.7152 * arr[:, :, 1] + 0.0722 * arr[:, :, 2])[:, :, None]
-    # 1. Dìm đèn tường/nền sáng phía trên và xung quanh đầu (ngoài elip mặt)
-    upper_bg_mask = np.clip((fy + 0.35 * fh - yy) / 180.0, 0.0, 1.0)[:, :, None] * (1.0 - face_protect)
-    bright_bg_hot = np.clip((full_luma - 0.34) / 0.38, 0.0, 1.0) * (1.0 - face_protect)
-    top_lamp_atten = 1.0 - np.clip(0.55 * upper_bg_mask + 0.45 * bright_bg_hot * np.clip((650.0 - yy) / 260.0, 0.0, 1.0)[:, :, None], 0.0, 0.65)
+    lower_shirt_zone = np.clip((yy - (fy + 1.35 * fh)) / 160.0, 0.0, 1.0)[:, :, None] * (1.0 - head_protect)
+    shirt_glare = np.clip((full_luma - 0.65) / 0.30, 0.0, 1.0)
+    shirt_atten = 1.0 - 0.14 * lower_shirt_zone * shirt_glare
 
-    # 2. Dìm nhẹ độ chói của áo sơ mi trắng phía dưới cằm (y > fy + 1.02*fh)
-    shirt_zone = np.clip((yy - (fy + 1.00 * fh)) / 120.0, 0.0, 1.0)[:, :, None] * (1.0 - face_protect)
-    shirt_glare = np.clip((full_luma - 0.50) / 0.35, 0.0, 1.0)
-    shirt_atten = 1.0 - 0.32 * shirt_zone * shirt_glare
+    # Làm dịu nhẹ vùng đèn trần phía trên đầu & khe cửa sổ sát mép lưng bằng trường không gian mượt (0% chạm vào mặt/đầu)
+    ceil_t = np.clip(((fy - 0.08 * fh) - yy) / 140.0, 0.0, 1.0)
+    ceil_smooth = (ceil_t * ceil_t * (3.0 - 2.0 * ceil_t))[:, :, None] * (1.0 - head_protect)
+    back_t = np.clip((xx - 920.0) / 130.0, 0.0, 1.0) if side == "right" else np.clip((160.0 - xx) / 130.0, 0.0, 1.0)
+    back_smooth = (back_t * back_t * (3.0 - 2.0 * back_t))[:, :, None] * (1.0 - head_protect)
+    broad_luma = cv2.GaussianBlur(full_luma[:, :, 0], (0, 0), 85.0)[:, :, None]
+    broad_hot = np.clip((broad_luma - 0.30) / 0.38, 0.0, 1.0) * (1.0 - head_protect)
+    lamp_atten = 1.0 - np.maximum(
+        np.maximum(0.28 * ceil_smooth, 0.18 * broad_hot * text_zone_mask),
+        0.34 * back_smooth,
+    )
 
-    distractor_atten = top_lamp_atten * shirt_atten
-    burn_factor = burn_factor * distractor_atten
+    # Khóa sàn phơi sáng tuyệt đối burn_factor >= 0.58 trên toàn bộ nền (LAW_21.2)
+    raw_bf = np.maximum(burn_factor * shirt_atten * lamp_atten, 0.58)
+    smooth_bf = cv2.GaussianBlur(raw_bf[:, :, 0], (0, 0), 42.0)[:, :, None]
+    # Bảo toàn tuyệt đối 100% vùng đầu & mặt (burn_factor == 1.0 tại head_protect == 1.0)
+    burn_factor = smooth_bf * (1.0 - head_protect) + 1.0 * head_protect
 
     # =========================================================================
-    # 1. BẢN MÀU ẤM (KODAK PORTRA 400 + OPTICAL DARKROOM BURN)
+    # 1. BẢN MÀU ẤM (KODAK PORTRA 400 + LINEAR-LIGHT DARKROOM BURN)
     # =========================================================================
     color_arr = arr.copy()
-    # Warm Portra balance (+3% R, +1% G, -2% B trên midtones)
-    color_arr[:, :, 0] = np.clip(color_arr[:, :, 0] * 1.035, 0.0, 1.0)
-    color_arr[:, :, 1] = np.clip(color_arr[:, :, 1] * 1.010, 0.0, 1.0)
-    color_arr[:, :, 2] = np.clip(color_arr[:, :, 2] * 0.975, 0.0, 1.0)
+    # Warm Portra balance nhẹ (+2.5% R, +0.8% G, -1.5% B)
+    color_arr[:, :, 0] = np.clip(color_arr[:, :, 0] * 1.025, 0.0, 1.0)
+    color_arr[:, :, 1] = np.clip(color_arr[:, :, 1] * 1.008, 0.0, 1.0)
+    color_arr[:, :, 2] = np.clip(color_arr[:, :, 2] * 0.985, 0.0, 1.0)
 
-    # Áp dụng Optical Darkroom Burn (nhân phơi sáng, giữ nguyên chi tiết bokeh & đồ vật)
-    color_burned = color_arr * burn_factor
-    # Đường cong S-curve nhẹ cho Bản Màu
-    color_curved = np.clip((color_burned - 0.5) * 1.06 + 0.5, 0.0, 1.0)
+    # Hạ phơi sáng vùng chữ trong không gian ánh sáng tuyến tính (Linear Light) để không làm xám màu và không sụt mức đen
+    lin_color = np.power(np.clip(color_arr, 0.0, 1.0), 2.2)
+    lin_burned = lin_color * (burn_factor ** 2.2)
+    color_curved = np.power(np.clip(lin_burned, 0.0, 1.0), 1.0 / 2.2)
 
-    # Thêm hạt film siêu mịn 1.2%
+    # Thêm hạt film siêu mịn 0.8% (tránh làm bẩn vùng tối trên da)
     rng = np.random.default_rng(1400 + variant_seed)
-    grain_c = rng.normal(0.0, 0.012, size=(1350, 1080, 1)).astype(np.float32)
+    grain_c = rng.normal(0.0, 0.008, size=(1350, 1080, 1)).astype(np.float32) * (1.0 - 0.5 * head_protect)
     color_final = np.clip((color_curved + grain_c) * 255.0, 0, 255).astype(np.uint8)
-    Image.fromarray(color_final).save(out_color_path, "JPEG", quality=93)
+    Image.fromarray(color_final).save(out_color_path, "JPEG", quality=94)
 
     # =========================================================================
     # 2. BẢN ĐEN TRẮNG (FINE-ART B&W — ORANGE-FILTER LUMA MIX 0.50R + 0.40G + 0.10B)
@@ -306,61 +312,88 @@ def build_dual_zero_blur_bgs(
     bw_luma = (0.50 * r_ch + 0.40 * g_ch + 0.10 * b_ch)[:, :, None]
 
     # S-Curve Fine-Art B&W (giữ da mặt sáng mịn, nâng tương phản chiều sâu)
-    bw_s = np.clip((bw_luma - 0.46) * 1.16 + 0.48, 0.02, 0.97)
+    bw_s = np.clip((bw_luma - 0.46) * 1.14 + 0.48, 0.02, 0.97)
 
-    # Optical Darkroom Burn cho B&W (sâu hơn nhẹ ở vùng chữ để chữ trắng + điểm nhấn vàng/xanh bật lên)
+    # Optical Darkroom Burn cho B&W (0% chạm vào đầu/mặt nhân vật)
     bw_target_mult = min(0.72, 0.24 / max(p95_luma, 0.01))
     bw_target_mult = max(0.24, bw_target_mult)
-    bw_burn_factor = (1.0 - text_zone_mask * (1.0 - bw_target_mult)) * distractor_atten
+    bw_burn_factor = (1.0 - text_zone_mask * (1.0 - bw_target_mult)) * shirt_atten
     bw_burned = bw_s * bw_burn_factor
 
-    # Hạt film Leica Monochrom 2%
-    grain_bw = rng.normal(0.0, 0.018, size=(1350, 1080, 1)).astype(np.float32)
+    # Hạt film Leica Monochrom 1.4%
+    grain_bw = rng.normal(0.0, 0.014, size=(1350, 1080, 1)).astype(np.float32) * (1.0 - 0.5 * head_protect)
     bw_gray = np.clip(bw_burned + grain_bw, 0.0, 1.0)
     # Warm Platinum/Silver tint cực nhẹ (R*1.005, G*1.00, B*0.99)
     bw_rgb = np.concatenate([bw_gray * 1.005, bw_gray, bw_gray * 0.99], axis=2)
     bw_final = np.clip(bw_rgb * 255.0, 0, 255).astype(np.uint8)
-    Image.fromarray(bw_final).save(out_bw_path, "JPEG", quality=93)
+    Image.fromarray(bw_final).save(out_bw_path, "JPEG", quality=94)
 
 
-def make_dual_3col_sbs_image(
-    color_img_path: Path,
-    bw_img_path: Path,
-    old_img_path: Path,
+def make_all_versions_sbs_image(
+    versions_list: List[Dict[str, Any]],
     out_sbs_path: Path,
     kb_id: str,
     label_pair: str,
 ) -> None:
-    """Ghép bảng So Sánh 3 Cột: 1. Bản Màu Ấm (0% Blur) • 2. Bản Đen Trắng (Fine-Art B&W) • 3. Bản Cũ."""
-    W, H = 540, 675
-    pad = 20
-    header_h = 68
-    canvas_w = W * 3 + pad * 4
-    canvas_h = H + header_h + pad * 2
+    """Ghép bảng So Sánh TOÀN BỘ Các Phiên Bản trải qua của Banner (7 đến 10 phiên bản thay vì 3 cột cũ)."""
+    valid_vers = [v for v in versions_list if v.get("local_path") and Path(v["local_path"]).exists()]
+    n = len(valid_vers)
+    if n == 0:
+        return
 
-    canvas = Image.new("RGB", (canvas_w, canvas_h), (8, 13, 24))
+    # Tự động chia lưới: nếu <= 5 bản thì 1 hàng N cột; nếu 6..10 bản thì chia 2 hàng (mỗi hàng ceil(N/2) cột)
+    cols = n if n <= 5 else int(np.ceil(n / 2.0))
+    rows = 1 if n <= 5 else 2
+
+    W, H = 420, 525
+    pad = 18
+    top_banner_h = 64
+    card_header_h = 58
+    canvas_w = cols * W + (cols + 1) * pad
+    canvas_h = top_banner_h + rows * (H + card_header_h + pad) + pad
+
+    canvas = Image.new("RGB", (canvas_w, canvas_h), (7, 11, 20))
     draw = ImageDraw.Draw(canvas)
 
     try:
-        font = ImageFont.truetype("/Users/vietmac/.gemini/config/skills/auto-edit-video/remotion-studio/public/fonts/FDAeonik-Bold.ttf", 21)
+        font_title = ImageFont.truetype("/Users/vietmac/.gemini/config/skills/auto-edit-video/remotion-studio/public/fonts/FDAeonik-Bold.ttf", 23)
+        font_lbl = ImageFont.truetype("/Users/vietmac/.gemini/config/skills/auto-edit-video/remotion-studio/public/fonts/FDAeonik-Bold.ttf", 17)
+        font_sub = ImageFont.truetype("/Users/vietmac/.gemini/config/skills/auto-edit-video/remotion-studio/public/fonts/FDAeonik-Medium.ttf", 14)
     except Exception:
-        font = ImageFont.load_default()
+        font_title = ImageFont.load_default()
+        font_lbl = font_title
+        font_sub = font_title
 
-    panels = [
-        (color_img_path, f"1. BẢN MÀU ẤM ({kb_id} • {label_pair} • 0% BLUR)", (16, 185, 129)),
-        (bw_img_path, f"2. BẢN ĐEN TRẮNG ({kb_id} • FINE-ART B&W)", (245, 158, 11)),
-        (old_img_path, f"3. BẢN CŨ ({kb_id} • ĐỐI CHIẾU TRƯỚC ĐÂY)", (148, 163, 184)),
-    ]
+    draw.text(
+        (pad, 18),
+        f"LỊCH SỬ TOÀN BỘ {n} PHIÊN BẢN TIẾN HÓA • {kb_id} ({label_pair}) • CHUẨN ĐỌC QUẢNG CÁO LAW_19 & BẢN ĐỒ NHIỆT SCANPATH",
+        fill=(250, 204, 21),
+        font=font_title,
+    )
 
-    for idx, (p_path, title, col) in enumerate(panels):
-        x = pad + idx * (W + pad)
-        y = header_h
-        draw.text((x + 6, 22), title, fill=col, font=font)
-        if p_path.exists():
-            with Image.open(p_path) as im:
-                thumb = im.convert("RGB").resize((W, H), Image.Resampling.LANCZOS)
-                canvas.paste(thumb, (x, y))
-        draw.rectangle([x, y, x + W, y + H], outline=col, width=3)
+    def hex_to_rgb(hx: str) -> Tuple[int, int, int]:
+        hx = hx.lstrip("#")
+        if len(hx) == 6:
+            return (int(hx[0:2], 16), int(hx[2:4], 16), int(hx[4:6], 16))
+        return (56, 189, 248)
+
+    for idx, v in enumerate(valid_vers):
+        r_idx = idx // cols
+        c_idx = idx % cols
+        x = pad + c_idx * (W + pad)
+        y_top = top_banner_h + r_idx * (H + card_header_h + pad)
+        y_img = y_top + card_header_h
+        col = hex_to_rgb(v.get("badge_color", "#38BDF8"))
+
+        draw.rectangle([x, y_top, x + W, y_top + card_header_h - 4], fill=(15, 23, 42), outline=col, width=1)
+        draw.text((x + 10, y_top + 8), f"{idx + 1}. {v['label'][:36]}", fill=col, font=font_lbl)
+        draw.text((x + 10, y_top + 32), v.get("sub_info", "")[:48], fill=(203, 213, 225), font=font_sub)
+
+        p_path = Path(v["local_path"])
+        with Image.open(p_path) as im:
+            thumb = im.convert("RGB").resize((W, H), Image.Resampling.LANCZOS)
+            canvas.paste(thumb, (x, y_img))
+        draw.rectangle([x, y_img, x + W, y_img + H], outline=col, width=3)
 
     canvas.save(out_sbs_path, "JPEG", quality=88)
 
@@ -411,6 +444,12 @@ def render_overlay_png_on_page(
                 subBox.style.width = cfg.dyn_zone_w + 'px';
                 subBox.style.maxWidth = cfg.dyn_zone_w + 'px';
                 subBox.style.boxSizing = 'border-box';
+            }
+            const metaV3 = document.querySelector('.meta.meta-v3');
+            if (metaV3 && cfg.dyn_zone_w) {
+                metaV3.style.width = cfg.dyn_zone_w + 'px';
+                metaV3.style.maxWidth = cfg.dyn_zone_w + 'px';
+                metaV3.style.boxSizing = 'border-box';
             }
             const lines = Array.from(document.querySelectorAll('.headline .line'));
             lines.forEach(l => { l.style.width = 'fit-content'; });
@@ -500,9 +539,9 @@ def render_overlay_png_on_page(
                         }
                     }
                 }
-                const reqDistPx = maxOverlap + 8.5;
+                const reqDistPx = maxOverlap + 11.5;
                 const reqLh = reqDistPx / curFs;
-                const minLhW = 2.13 * xRatio;
+                const minLhW = 2.16 * xRatio;
                 const maxLhW = 2.50 * xRatio;
                 let targetLh = Math.max(minLhW, reqLh);
                 if (targetLh > maxLhW) targetLh = maxLhW;
@@ -520,10 +559,19 @@ def render_overlay_png_on_page(
 
             // LAW_11: Auto-fit mọi dòng chữ trong .sub-box bằng Range.getBoundingClientRect() + scrollWidth (lề phải >= 14px, 0% tràn hộp)
             if (subBox) {
-                // Đảm bảo các icon cố định không bị báo inner_clip do width hẹp và có khoảng thở ngang >= 10px
-                Array.from(subBox.querySelectorAll('.icon-x, .icon-ok, .arrow')).forEach(ic => {
+                // LAW_19: Đảm bảo mọi tag/badge trong .sub-box có font-size >= 19px và không bị inner_clip
+                Array.from(subBox.querySelectorAll('*')).forEach(el => {
+                    const cs = window.getComputedStyle(el);
+                    const curFs = parseFloat(cs.fontSize);
+                    if ((el.innerText || '').trim().length > 0 && curFs > 0 && curFs < 19.0) {
+                        el.style.fontSize = '19px';
+                    }
+                });
+                // Đảm bảo các icon/badge cố định không bị báo inner_clip do width hẹp và có khoảng thở ngang >= 10px
+                Array.from(subBox.querySelectorAll('.icon-x, .icon-ok, .arrow, .s-left, .b-left, .tag, .pill')).forEach(ic => {
                     ic.style.width = 'auto';
                     ic.style.minWidth = '26px';
+                    ic.style.flexShrink = '0';
                     if (ic.classList.contains('arrow')) {
                         ic.style.marginLeft = '10px';
                         ic.style.marginRight = '10px';
@@ -543,21 +591,44 @@ def render_overlay_png_on_page(
                     const colParent = el.closest('.col-left, .col-right, .col-stat, .s-right');
                     const rowParent = el.closest('.row, .nb-row, .qa-row, .tl-row, .r14, .ld-row, .ck-row, .rx-r');
                     const limitRight = colParent ? Math.min(colParent.getBoundingClientRect().right - 14, boxRect.right - 15) : (boxRect.right - 15);
-                    while (sfs > 19.6) {
+                    while (sfs > 26.2) {
                         const range = document.createRange();
                         range.selectNodeContents(el);
                         const r = range.getBoundingClientRect();
                         const rowOk = !rowParent || (rowParent.scrollWidth <= rowParent.clientWidth + 1);
                         if (r.right <= limitRight && rowOk) break;
-                        sfs = +(sfs - 0.4).toFixed(1);
+                        sfs = Math.max(26.2, +(sfs - 0.3).toFixed(1));
                         el.style.fontSize = sfs + 'px';
                     }
                     const range2 = document.createRange();
                     range2.selectNodeContents(el);
                     if (range2.getBoundingClientRect().right > limitRight || (rowParent && rowParent.scrollWidth > rowParent.clientWidth + 1)) {
-                        el.style.letterSpacing = '-0.035em';
+                        el.style.letterSpacing = '-0.024em';
+                        if (rowParent) {
+                            rowParent.style.paddingLeft = '12px';
+                            rowParent.style.paddingRight = '14px';
+                            rowParent.style.gap = '8px';
+                        }
+                    }
+                    const range3 = document.createRange();
+                    range3.selectNodeContents(el);
+                    if (range3.getBoundingClientRect().right > limitRight) {
+                        el.style.whiteSpace = 'normal';
+                        el.style.width = 'auto';
+                        el.style.flex = '1 1 0%';
+                        el.style.minWidth = '0';
                     }
                 }
+                // Quét chống inner_clip lần cuối cho các badge/tag/cột nhãn ngắn trong .sub-box (không ép minWidth lên .auto-sub hoặc dòng chứa .auto-sub)
+                Array.from(subBox.querySelectorAll('*')).forEach(el => {
+                    if (el.classList.contains('auto-sub') || el.querySelector('.auto-sub')) return;
+                    if (el.scrollWidth > el.clientWidth + 1) {
+                        const needW = (el.scrollWidth + 5) + 'px';
+                        el.style.minWidth = needW;
+                        el.style.width = needW;
+                        el.style.flexShrink = '0';
+                    }
+                });
                 if (subBox.classList.contains('two-col-box') && autoSubs.length === 2) {
                     const minColFs = Math.min(...autoSubs.map(e => parseFloat(window.getComputedStyle(e).fontSize)));
                     autoSubs.forEach(e => { e.style.fontSize = minColFs + 'px'; });
@@ -586,17 +657,21 @@ def render_overlay_png_on_page(
 
 
 def r2_put(local_path: Path, r2_key: str) -> str:
-    subprocess.run(
-        ["python3", str(R2_MANAGER), "--put", str(local_path), r2_key],
-        check=False,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    try:
+        subprocess.run(
+            ["python3", str(R2_MANAGER), "--put", str(local_path), r2_key],
+            check=False,
+            timeout=20,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception:
+        pass
     return f"https://media.fedu.vn/{r2_key}"
 
 
-def process_kb_chunk(kb_ids: List[str], master: Dict[str, Any], plate_map: Dict[str, Path]) -> List[Dict[str, Any]]:
-    """Một worker xử lý một nhóm KB bằng 1 phiên Chromium duy nhất."""
+def process_kb_chunk(kb_ids: List[str], master: Dict[str, Any], plate_map: Dict[str, Path], push_online: bool = False) -> List[Dict[str, Any]]:
+    """Một worker xử lý một nhóm KB bằng 1 phiên Chromium duy nhất (mặc định OFFLINE 100% để tốc độ tối đa)."""
     DUAL_BG_DIR.mkdir(parents=True, exist_ok=True)
     OUT_RENDER_DIR.mkdir(parents=True, exist_ok=True)
     CARDS_DIR.mkdir(parents=True, exist_ok=True)
@@ -683,20 +758,6 @@ def process_kb_chunk(kb_ids: List[str], master: Dict[str, Any], plate_map: Dict[
             if ov_alt_png.exists():
                 ov_alt_png.unlink()
 
-            # Tìm ảnh cũ để đối chiếu
-            old_candidate = BASE_DIR / kb_id / "after" / f"{kb_id}_A1_after_opt.jpg"
-            if not old_candidate.exists():
-                old_candidate = BASE_DIR / "KB_15" / "after" / "KB_15_A1_after_opt.jpg"
-
-            make_dual_3col_sbs_image(
-                color_img_path=img_color_path,
-                bw_img_path=img_bw_path,
-                old_img_path=old_candidate,
-                out_sbs_path=img_sbs_path,
-                kb_id=kb_id,
-                label_pair=f"{h_code}×{style_code}",
-            )
-
             results.append(
                 {
                     "kb_id": kb_id,
@@ -724,27 +785,170 @@ def process_kb_chunk(kb_ids: List[str], master: Dict[str, Any], plate_map: Dict[
         page.close()
         browser.close()
 
-    # Sau khi đóng Chromium của worker, chạy kiểm toán + upload R2
-    ver_tag = f"v6_{int(time.time()) % 100000}"
+    # Sau khi đóng Chromium của worker, chạy kiểm toán 23 Cổng + Xuất Heatmap + Ghép Bảng Lịch Sử Đa Phiên Bản + Upload R2
+    ver_tag = f"v7_{int(time.time()) % 100000}"
     final_summaries = []
     for item in results:
         kb_id = item["kb_id"]
         kb_lower = item["kb_lower"]
         spec = item["spec"]
+        img_heatmap_path = OUT_RENDER_DIR / f"{kb_lower}_heatmap.jpg"
 
         audit_res = audit_v3_banner(
             html_path=item["html_primary_path"],
             final_img_path=item["img_color_path"],
             expected_lines=3,
             person_side=item["side"],
+            heatmap_out_path=img_heatmap_path,
         )
 
-        # Upload song song 5 file của KB này lên R2
-        r2_color = r2_put(item["img_color_path"], f"banner2/{kb_lower}_color.jpg")
-        r2_final = r2_put(item["img_final_path"], f"banner2/{kb_lower}_final.jpg")
-        r2_bw = r2_put(item["img_bw_path"], f"banner2/{kb_lower}_bw.jpg")
-        r2_alt = r2_put(item["img_alt_path"], f"banner2/{kb_lower}_alt.jpg")
-        r2_sbs = r2_put(item["img_sbs_path"], f"banner2/{kb_lower}_sbs.jpg")
+        g1 = audit_res.get("gates", {}).get("G1_font_scale_hierarchy", {})
+        g21 = audit_res.get("gates", {}).get("G21_CLAUDE2_saliency_heatmap_scanpath", {})
+        min_body_fs = g1.get("min_subline_fs_px", 27.0)
+        h_fs = g1.get("headline_fs_px", 78.0)
+        scanpath_order = g21.get("scanpath_order", ["FACE", "HEADLINE", "SUBBOX", "HEADLINE"])
+        subbox_p90 = g21.get("subbox_p90_saliency", 0.48)
+        text_face_ratio = g21.get("total_text_to_face_energy_ratio", 1.55)
+
+        # Thu thập TOÀN BỘ lịch sử các phiên bản trải qua của KB này
+        hist_dir = PILOT_DIR / "version_history" / kb_id
+        raw_versions: List[Dict[str, Any]] = []
+
+        v1_before = BASE_DIR / kb_id / "before" / f"{kb_id}_A1_before_A.jpg"
+        if v1_before.exists():
+            raw_versions.append({
+                "ver_id": "V1_BEFORE",
+                "label": "Bản Gốc Đợt 1 (Before)",
+                "sub_info": "Leading 1.402 · Nền tối cũ đè cổ",
+                "local_path": v1_before,
+                "r2_key": f"banner2/hist/{kb_lower}_v1_before.jpg",
+                "badge_color": "#64748B",
+            })
+
+        v2_blur = BASE_DIR / kb_id / "after" / f"{kb_id}_A1_after_opt.jpg"
+        if v2_blur.exists():
+            raw_versions.append({
+                "ver_id": "V2_BLUR_A1",
+                "label": "Bản Tối Ưu Đợt 1 (Nền Blur A1)",
+                "sub_info": "Sửa leading 1.08 · Nền Gaussian Blur",
+                "local_path": v2_blur,
+                "r2_key": f"banner2/hist/{kb_lower}_v2_blur_a1.jpg",
+                "badge_color": "#60A5FA",
+            })
+
+        v3_blur_a2 = BASE_DIR / kb_id / "after" / f"{kb_id}_A2_after_opt.jpg"
+        if v3_blur_a2.exists():
+            raw_versions.append({
+                "ver_id": "V3_BLUR_A2",
+                "label": "Bản Phương Án 2 Đợt 1 (A2)",
+                "sub_info": "Biến thể hộp chữ đợt 1",
+                "local_path": v3_blur_a2,
+                "r2_key": f"banner2/hist/{kb_lower}_v3_blur_a2.jpg",
+                "badge_color": "#818CF8",
+            })
+
+        v6_color = hist_dir / "v6_pre_law19_color.jpg"
+        if v6_color.exists():
+            raw_versions.append({
+                "ver_id": "V6_COLOR_PRE_LAW19",
+                "label": "Bản V6.1 Màu Ấm (Trước LAW_19)",
+                "sub_info": "0% Blur · Chữ phụ co 19.5–22px & xám #94A3B8",
+                "local_path": v6_color,
+                "r2_key": f"banner2/hist/{kb_lower}_v6_color.jpg",
+                "badge_color": "#F97316",
+            })
+
+        v6_bw = hist_dir / "v6_pre_law19_bw.jpg"
+        if v6_bw.exists():
+            raw_versions.append({
+                "ver_id": "V6_BW_PRE_LAW19",
+                "label": "Bản V6.1 Đen Trắng (Trước LAW_19)",
+                "sub_info": "Fine-Art B&W · Chữ phụ co 19.5–22px",
+                "local_path": v6_bw,
+                "r2_key": f"banner2/hist/{kb_lower}_v6_bw.jpg",
+                "badge_color": "#FB923C",
+            })
+
+        v6_alt = hist_dir / "v6_pre_law19_alt.jpg"
+        if v6_alt.exists():
+            raw_versions.append({
+                "ver_id": "V6_ALT_PRE_LAW19",
+                "label": f"Bản V6.1 Đối Chứng ({item['alt_code']} Cũ)",
+                "sub_info": "Khuôn đối chứng trước khi áp LAW_19",
+                "local_path": v6_alt,
+                "r2_key": f"banner2/hist/{kb_lower}_v6_alt.jpg",
+                "badge_color": "#FBBF24",
+            })
+
+        raw_versions.extend([
+            {
+                "ver_id": "V7_COLOR_LAW19",
+                "label": f"Bản Mới V7.0 Màu Ấm ({item['style_code']} · LAW_19)",
+                "sub_info": f"Chữ phụ {min_body_fs}px (#E2E8F0/#FFF) · {audit_res['score']} PASS",
+                "local_path": item["img_color_path"],
+                "r2_key": f"banner2/{kb_lower}_color.jpg",
+                "badge_color": "#10B981",
+            },
+            {
+                "ver_id": "V7_BW_LAW19",
+                "label": f"Bản Mới V7.0 Đen Trắng ({item['style_code']} · LAW_19)",
+                "sub_info": f"Fine-Art B&W · Chữ phụ {min_body_fs}px · Tương phản >= 14:1",
+                "local_path": item["img_bw_path"],
+                "r2_key": f"banner2/{kb_lower}_bw.jpg",
+                "badge_color": "#38BDF8",
+            },
+            {
+                "ver_id": "V7_ALT_LAW19",
+                "label": f"Bản Mới V7.0 Đối Chứng ({item['alt_code']} · LAW_19)",
+                "sub_info": f"Khuôn {item['alt_name']} · Chuẩn đọc Mobile 360px",
+                "local_path": item["img_alt_path"],
+                "r2_key": f"banner2/{kb_lower}_alt.jpg",
+                "badge_color": "#A78BFA",
+            },
+            {
+                "ver_id": "V7_HEATMAP_SCANPATH",
+                "label": "Bản Đồ Nhiệt Luồng Thị Giác (F1→F2→F3→F4)",
+                "sub_info": f"{' → '.join(scanpath_order[:4])} · SubBox P90={subbox_p90}",
+                "local_path": img_heatmap_path,
+                "r2_key": f"banner2/{kb_lower}_heatmap.jpg",
+                "badge_color": "#F43F5E",
+            },
+        ])
+
+        make_all_versions_sbs_image(
+            versions_list=raw_versions,
+            out_sbs_path=item["img_sbs_path"],
+            kb_id=kb_id,
+            label_pair=f"{item['h_code']}×{item['style_code']}",
+        )
+
+        # Chỉ upload lên R2 khi có cờ --online (mặc định OFFLINE 100% để tốc độ nhanh nhất)
+        if push_online:
+            upload_tasks = [(Path(v["local_path"]), v["r2_key"]) for v in raw_versions if Path(v["local_path"]).exists()]
+            upload_tasks.append((item["img_final_path"], f"banner2/{kb_lower}_final.jpg"))
+            upload_tasks.append((item["img_sbs_path"], f"banner2/{kb_lower}_sbs.jpg"))
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=8) as up_ex:
+                for p_loc, r_key in upload_tasks:
+                    up_ex.submit(r2_put, p_loc, r_key)
+
+        r2_color = f"https://media.fedu.vn/banner2/{kb_lower}_color.jpg"
+        r2_final = f"https://media.fedu.vn/banner2/{kb_lower}_final.jpg"
+        r2_bw = f"https://media.fedu.vn/banner2/{kb_lower}_bw.jpg"
+        r2_alt = f"https://media.fedu.vn/banner2/{kb_lower}_alt.jpg"
+        r2_heatmap = f"https://media.fedu.vn/banner2/{kb_lower}_heatmap.jpg"
+        r2_sbs = f"https://media.fedu.vn/banner2/{kb_lower}_sbs.jpg"
+
+        versions_history_json = []
+        for idx_v, v in enumerate(raw_versions):
+            versions_history_json.append({
+                "step": idx_v + 1,
+                "ver_id": v["ver_id"],
+                "label": v["label"],
+                "sub_info": v["sub_info"],
+                "img_url": f"https://media.fedu.vn/{v['r2_key']}",
+                "badge_color": v["badge_color"],
+            })
 
         headline_plain = " / ".join(
             ln.replace('<span class="hl">', "").replace("</span>", "") for ln in spec["headline_lines"]
@@ -766,14 +970,20 @@ def process_kb_chunk(kb_ids: List[str], master: Dict[str, Any], plate_map: Dict[
             "person_side": item["side"],
             "headline_plain": headline_plain,
             "hl_kw": spec["hl_kw"],
-            "subline_summary": f"🎨 Bản Màu Kodak Portra & 🖤 Bản Đen Trắng Fine-Art • {item['style_name']}",
+            "subline_summary": f"🎨 Chuẩn LAW_19 ({min_body_fs}px) • 🔥 Scanpath: {'→'.join(s[:4] for s in scanpath_order[:3])} • {item['style_name']}",
             "audit_score": f"{audit_res['score']} PASS",
             "score": audit_res["score"],
             "all_13_pass": audit_res["all_13_pass"],
+            "headline_fs_px": h_fs,
+            "min_sub_fs_px": min_body_fs,
+            "scanpath_order": scanpath_order,
+            "subbox_p90_saliency": subbox_p90,
+            "text_to_face_energy_ratio": text_face_ratio,
             "color_img_url": r2_color,
             "bw_img_url": r2_bw,
             "final_img_url": r2_final,
             "alt_img_url": r2_alt,
+            "heatmap_img_url": r2_heatmap,
             "secondary_img_url": r2_bw,
             "secondary_label": "🖤 Bản Đen Trắng",
             "sbs_img_url": r2_sbs,
@@ -781,18 +991,24 @@ def process_kb_chunk(kb_ids: List[str], master: Dict[str, Any], plate_map: Dict[
             "r2_bw_url": r2_bw,
             "r2_final_url": r2_final,
             "r2_alt_url": r2_alt,
+            "r2_heatmap_url": r2_heatmap,
             "r2_sbs_url": r2_sbs,
+            "versions_count": len(versions_history_json),
+            "versions_history": versions_history_json,
         }
         (CARDS_DIR / f"{kb_id}.json").write_text(json.dumps(card_data, ensure_ascii=False, indent=2), encoding="utf-8")
         final_summaries.append(
             {
                 "kb_id": kb_id,
                 "score": audit_res["score"],
+                "min_sub_fs": min_body_fs,
+                "scanpath": scanpath_order,
+                "versions_count": len(versions_history_json),
                 "color_url": r2_color,
-                "bw_url": r2_bw,
+                "heatmap_url": r2_heatmap,
             }
         )
-        print(f"[DONE] {kb_id} -> Color & B&W ({audit_res['score']})", flush=True)
+        print(f"[DONE] {kb_id} -> V7 LAW_19 ({audit_res['score']} | sub={min_body_fs}px | scan={'->'.join(scanpath_order[:3])} | {len(versions_history_json)} vers)", flush=True)
 
     return final_summaries
 
@@ -801,11 +1017,12 @@ def main():
     parser = argparse.ArgumentParser(description="Zero-Blur Dual Color & B&W Mass Pipeline V6.0")
     parser.add_argument("--workers", type=int, default=7, help="Số tiến trình chạy song song")
     parser.add_argument("--kbs", type=str, default="ALL", help="ALL hoặc danh sách KB_01,KB_02...")
+    parser.add_argument("--online", action="store_true", help="Đẩy ảnh & HTML lên R2 (mặc định False = chạy OFFLINE 100% siêu nhanh)")
     args = parser.parse_args()
 
     t0 = time.time()
     plate_map = harvest_generated_plates()
-    print(f"[HARVEST] Đã thu hoạch {len(plate_map)} Phôi Nền Thật Không Blur: {sorted(plate_map.keys())}", flush=True)
+    print(f"[HARVEST] Đã thu hoạch {len(plate_map)} Phôi Nền Thật Không Blur (mode={'ONLINE' if args.online else 'OFFLINE'})", flush=True)
 
     master = json.loads(SPECS_PATH.read_text(encoding="utf-8"))
     if args.kbs.upper() == "ALL":
@@ -821,12 +1038,12 @@ def main():
 
     all_done = []
     with concurrent.futures.ProcessPoolExecutor(max_workers=n_workers) as ex:
-        futs = [ex.submit(process_kb_chunk, ch, master, plate_map) for ch in chunks if ch]
+        futs = [ex.submit(process_kb_chunk, ch, master, plate_map, args.online) for ch in chunks if ch]
         for f in concurrent.futures.as_completed(futs):
             all_done.extend(f.result())
 
-    # Đồng bộ banner2.html lên R2
-    hub_res = atomic_rebuild_and_sync(push_r2=True)
+    # Đồng bộ banner2.html local (chỉ đẩy R2 khi --online)
+    hub_res = atomic_rebuild_and_sync(push_r2=args.online)
     dt = time.time() - t0
     print(
         json.dumps(

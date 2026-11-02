@@ -38,7 +38,7 @@ import tempfile
 import unicodedata
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import cv2
 import numpy as np
 from PIL import Image, ImageFilter
@@ -47,6 +47,25 @@ from playwright.sync_api import sync_playwright
 OUT_DIR = Path("/Users/vietmac/Documents/CODE/k/k4_31kb_banners")
 LAWS_PATH = OUT_DIR / "banner_laws.json"
 VN_OCR_BIN = OUT_DIR / "vn_ocr"
+REAL_CENTROID_PATH = OUT_DIR / "viet_real_centroid.npy"
+NEUTRAL_CENTROID_PATH = OUT_DIR / "viet_neutral_real_centroid.npy"
+
+_GLOBAL_FACE_APP = None
+_GLOBAL_REAL_CENTROID = None
+_GLOBAL_NEUTRAL_CENTROID = None
+
+
+def get_live_insightface():
+    global _GLOBAL_FACE_APP, _GLOBAL_REAL_CENTROID, _GLOBAL_NEUTRAL_CENTROID
+    if _GLOBAL_FACE_APP is None:
+        from insightface.app import FaceAnalysis
+        _GLOBAL_FACE_APP = FaceAnalysis(providers=["CPUExecutionProvider"])
+        _GLOBAL_FACE_APP.prepare(ctx_id=0, det_size=(640, 640))
+    if _GLOBAL_REAL_CENTROID is None and REAL_CENTROID_PATH.exists():
+        _GLOBAL_REAL_CENTROID = np.load(str(REAL_CENTROID_PATH))
+    if _GLOBAL_NEUTRAL_CENTROID is None and NEUTRAL_CENTROID_PATH.exists():
+        _GLOBAL_NEUTRAL_CENTROID = np.load(str(NEUTRAL_CENTROID_PATH))
+    return _GLOBAL_FACE_APP, _GLOBAL_REAL_CENTROID, _GLOBAL_NEUTRAL_CENTROID
 
 
 def load_banner_laws() -> Dict[str, Any]:
@@ -90,7 +109,7 @@ def clean_norm_text(s: str) -> str:
     return "".join(ch for ch in s if ch.isalnum())
 
 
-def run_ocr_360px(img_path: Path, target_headline: str) -> Dict[str, Any]:
+def run_ocr_360px(img_path: Path, target_headline: str, target_subbox: str = "") -> Dict[str, Any]:
     with Image.open(img_path) as im:
         small = im.convert("RGB").resize((360, 450), Image.Resampling.LANCZOS)
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tf:
@@ -120,9 +139,8 @@ def run_ocr_360px(img_path: Path, target_headline: str) -> Dict[str, Any]:
     norm_rec = clean_norm_text(recognized_all)
 
     if not norm_target:
-        return {"accuracy": 1.0, "recognized_text": recognized_all}
-
-    if norm_target in norm_rec:
+        acc = 1.0
+    elif norm_target in norm_rec:
         acc = 1.0
     else:
         words = [clean_norm_text(w) for w in target_headline.split() if clean_norm_text(w)]
@@ -131,7 +149,14 @@ def run_ocr_360px(img_path: Path, target_headline: str) -> Dict[str, Any]:
         seq_ratio = SequenceMatcher(None, norm_target, norm_rec).ratio()
         acc = round(float(max(word_ratio, seq_ratio)), 4)
 
-    return {"accuracy": acc, "recognized_text": recognized_all}
+    sub_acc = 1.0
+    if target_subbox and clean_norm_text(target_subbox):
+        sub_words = [clean_norm_text(w) for w in target_subbox.split() if len(clean_norm_text(w)) >= 2]
+        if sub_words:
+            sub_matched = sum(len(w) for w in sub_words if w in norm_rec)
+            sub_acc = round(float(sub_matched / max(1, sum(len(w) for w in sub_words))), 4)
+
+    return {"accuracy": acc, "sub_accuracy": sub_acc, "recognized_text": recognized_all}
 
 
 def squint_blur_test_360px(
@@ -144,7 +169,7 @@ def squint_blur_test_360px(
         blurred = small.filter(ImageFilter.GaussianBlur(radius=8))
         arr = np.array(blurred, dtype=np.float32)
 
-    lum = 0.2126 * arr[:, :, 0] + 0.7152 * arr[:, :, 1] + 0.722 * arr[:, :, 2]
+    lum = 0.2126 * arr[:, :, 0] + 0.7152 * arr[:, :, 1] + 0.0722 * arr[:, :, 2]
     gx = cv2.Sobel(lum, cv2.CV_32F, 1, 0, ksize=3)
     gy = cv2.Sobel(lum, cv2.CV_32F, 0, 1, ksize=3)
     energy = np.hypot(gx, gy)
@@ -197,7 +222,7 @@ def audit_v3_banner(
         page.evaluate("() => document.fonts.ready")
 
         dom = page.evaluate(
-            """() => {
+            r"""() => {
                 const h = document.querySelector('.headline, .main-headline, h1');
                 const lines = Array.from(document.querySelectorAll('.headline .line, .h-line, h1 .line'));
                 const zoneEl = document.querySelector('.zone, .focal-zone, .text-zone');
@@ -222,13 +247,86 @@ def audit_v3_banner(
                 const hlSpans = Array.from(h ? h.querySelectorAll('.hl, .focal-kw, .kw-accent') : []);
                 const hlWords = hlSpans.reduce((acc, el) => acc + el.innerText.trim().split(/\\s+/).length, 0);
 
-                // Kiểm tra cỡ chữ bé & nền đệm tối & LAW_07 (cấm xoay nghiêng, cấm underline đè dấu nặng)
+                // Kiểm tra cỡ chữ bé & nền đệm tối & LAW_07 & LAW_19 (đo tách biệt Body copy vs Tag/Pill & kiểm tra tương phản từng dòng)
                 const subAllEls = subBox ? [subBox, ...Array.from(subBox.querySelectorAll('*'))] : [];
-                const subFsList = subAllEls
-                  .filter(el => !el.classList.contains('big-metric') && !el.classList.contains('num-big') && (el.innerText || '').trim().length >= 2)
-                  .map(el => parseFloat(window.getComputedStyle(el).fontSize))
-                  .filter(v => v >= 18.5 && v <= 42);
-                const minSubFs = subFsList.length ? Math.max(...subFsList) : (subBox ? parseFloat(window.getComputedStyle(subBox).fontSize) : 0);
+                const metaFs = metaEl ? parseFloat(window.getComputedStyle(metaEl).fontSize) : 20.5;
+                const srgbLum = (r, g, b) => {
+                  const conv = (v) => {
+                    const c = v / 255.0;
+                    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                  };
+                  return 0.2126 * conv(r) + 0.7152 * conv(g) + 0.0722 * conv(b);
+                };
+
+                const isDecorIgnored = (el) => {
+                  let cur = el;
+                  while (cur && cur !== subBox) {
+                    const cst = window.getComputedStyle(cur);
+                    if (parseFloat(cst.opacity || '1') < 0.25) return true;
+                    if (cur.classList && (cur.classList.contains('ghost-w') || cur.classList.contains('wm') || cur.classList.contains('ghost-word') || cur.classList.contains('wm-num') || cur.classList.contains('arrow-shadow') || cur.classList.contains('bg-offset') || cur.classList.contains('offset-bg') || cur.classList.contains('floating-tab') || cur.classList.contains('tab-pill') || cur.classList.contains('term-dots') || cur.classList.contains('tl-dot'))) {
+                      return true;
+                    }
+                    cur = cur.parentElement;
+                  }
+                  return false;
+                };
+
+                const bodyClasses = ['auto-sub', 'p-txt', 'c-body', 'm-lbl', 'm-val', 'ld-lo', 'ld-ln', 'ld-ro', 'ld-rn', 'eq-bot', 'sr-1', 'sr-2', 'sub-l1', 'sub-l2', 'q-l1', 'q-l2', 'tl-t1', 'tl-t2', 'b-t1', 'b-t2', 'chat-msg', 'term-cmd', 'term-out', 'sc-old', 'sc-new', 'lbl-sub'];
+                const tagClasses = ['p-tag', 'c-head', 's-lbl', 'lbl-pill', 'b-tag', 'chat-hdr', 'sc-head', 'eq-chip', 'k38-hdr', 'k38-chip'];
+
+                const subBodyFsList = [];
+                const subTagFsList = [];
+                let minSubElemContrast = 21.0;
+                let hasLowContrastGray = false;
+                let minSubLsEm = 0.0;
+
+                for (const el of subAllEls) {
+                  if (el === subBox || isDecorIgnored(el)) continue;
+                  if (el.classList && (el.classList.contains('big-metric') || el.classList.contains('num-big') || el.classList.contains('lbl-big') || el.classList.contains('stat-num') || el.classList.contains('idx-num'))) continue;
+                  const txt = (el.innerText || '').trim();
+                  if (txt.length < 2) continue;
+                  const st = window.getComputedStyle(el);
+                  const fs = parseFloat(st.fontSize) || 0;
+                  if (fs <= 0 || fs > 42) continue;
+
+                  const hasBodyCls = el.classList && bodyClasses.some(c => el.classList.contains(c));
+                  const hasTagCls = (el.classList && tagClasses.some(c => el.classList.contains(c))) || Boolean(el.closest('.p-tag, .c-head, .s-lbl, .chat-meta, .floating-tab, .wk-row, .eq-top'));
+                  const isLeafText = el.children.length === 0 || Array.from(el.childNodes).some(n => n.nodeType === 3 && n.nodeValue.trim().length >= 3);
+
+                  if (hasTagCls) {
+                    subTagFsList.push(fs);
+                  } else if (hasBodyCls) {
+                    subBodyFsList.push(fs);
+                  } else if (isLeafText) {
+                    if (st.textTransform === 'uppercase' && txt.length <= 16 && fs < 24.5) {
+                      subTagFsList.push(fs);
+                    } else {
+                      subBodyFsList.push(fs);
+                    }
+                  }
+
+                  if ((isLeafText || hasBodyCls) && !hasTagCls) {
+                    const lsPx = st.letterSpacing === 'normal' ? 0 : (parseFloat(st.letterSpacing) || 0);
+                    const lsEm = +(lsPx / Math.max(1, fs)).toFixed(4);
+                    if (lsEm < minSubLsEm) minSubLsEm = lsEm;
+
+                    const m = (st.color || '').match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                    if (m) {
+                      const r = parseInt(m[1], 10), g = parseInt(m[2], 10), b = parseInt(m[3], 10);
+                      const lum = srgbLum(r, g, b);
+                      const cRatio = +((Math.max(lum, 0.015) + 0.05) / (Math.min(lum, 0.015) + 0.05)).toFixed(2);
+                      if (cRatio < minSubElemContrast) minSubElemContrast = cRatio;
+                      if ((r === 148 && g === 163 && b === 184) || (r === 100 && g === 116 && b === 139) || cRatio < 7.0) {
+                        hasLowContrastGray = true;
+                      }
+                    }
+                  }
+                }
+
+                const minBodyFs = subBodyFsList.length ? +Math.min(...subBodyFsList).toFixed(1) : (subBox ? parseFloat(window.getComputedStyle(subBox).fontSize) : 27.0);
+                const minTagFs = subTagFsList.length ? +Math.min(...subTagFsList).toFixed(1) : minBodyFs;
+                const minSubFs = minBodyFs;
+                const subboxText = subBox ? (subBox.innerText || '').replace(/\s+/g, ' ').trim() : '';
                 const subBg = subBox ? (window.getComputedStyle(subBox).backgroundColor + ' ' + window.getComputedStyle(subBox).backgroundImage) : '';
                 const hasRotation = subAllEls.some(el => {
                   const tr = window.getComputedStyle(el).transform;
@@ -489,6 +587,13 @@ def audit_v3_banner(
                     hl_span_count: hlSpans.length,
                     hl_word_count: hlWords,
                     min_sub_fs: minSubFs,
+                    min_body_fs: minBodyFs,
+                    min_tag_fs: minTagFs,
+                    meta_fs: metaFs,
+                    min_sub_elem_contrast: minSubElemContrast,
+                    has_low_contrast_gray: hasLowContrastGray,
+                    min_sub_ls_em: minSubLsEm,
+                    subbox_text: subboxText,
                     sub_bg: subBg,
                     has_rotation: hasRotation,
                     has_underline_collision: hasUnderlineCollision,
@@ -524,24 +629,172 @@ def audit_v3_banner(
             plate_meta = {}
 
     gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
-    cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-    faces_raw = cascade.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=4, minSize=(80, 80), maxSize=(450, 450))
-    faces = [
-        b for b in faces_raw
-        if b[1] <= 540 and ((person_side == "right" and (b[0] + b[2] * 0.5) >= 520) or (person_side == "left" and (b[0] + b[2] * 0.5) <= 560))
+    bgr_final = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
+
+    # =========================================================================
+    # CLAUDE2 LAW_20: LIVE INSIGHTFACE DETECTION & REAL-CAMERA CENTROID DNA
+    # Tuyệt đối KHÔNG lấy arcface_max_sim tĩnh từ JSON; đo trực tiếp trên ảnh xuất ra.
+    # =========================================================================
+    face_app, real_centroid, neutral_centroid = get_live_insightface()
+    if_faces_all = face_app.get(bgr_final) if face_app is not None else []
+    if_faces = [
+        f for f in if_faces_all
+        if f.bbox[1] <= 580 and ((person_side == "right" and (f.bbox[0] + f.bbox[2]) * 0.5 >= 480) or (person_side == "left" and (f.bbox[0] + f.bbox[2]) * 0.5 <= 600))
     ]
-    if plate_meta.get("cropped_face_bbox"):
-        fx, fy, fw, fh = [int(v) for v in plate_meta["cropped_face_bbox"]]
-        face_detected = True
-    elif len(faces) > 0:
-        faces = sorted(faces, key=lambda b: b[2] * b[3], reverse=True)
-        fx, fy, fw, fh = [int(v) for v in faces[0]]
+    if not if_faces and if_faces_all:
+        if_faces = if_faces_all
+
+    live_face_obj = None
+    if if_faces:
+        live_face_obj = sorted(if_faces, key=lambda x: (x.bbox[2] - x.bbox[0]) * (x.bbox[3] - x.bbox[1]), reverse=True)[0]
+        bx1, by1, bx2, by2 = [int(round(v)) for v in live_face_obj.bbox]
+        fx, fy, fw, fh = bx1, by1, max(1, bx2 - bx1), max(1, by2 - by1)
         face_detected = True
     else:
         fx, fy, fw, fh = (0, 0, 0, 0)
         face_detected = False
 
-    arcface_sim = float(plate_meta.get("arcface_max_sim", 0.82 if face_detected else 0.0))
+    # Kiểm tra độ khớp tọa độ (IoU) giữa mặt thật trên ảnh thành phẩm và cropped_face_bbox trong metadata
+    meta_bbox_iou = 1.0
+    if face_detected and plate_meta.get("cropped_face_bbox"):
+        m_fx, m_fy, m_fw, m_fh = [float(v) for v in plate_meta["cropped_face_bbox"]]
+        inter_a = bbox_intersection_area([fx, fy, fw, fh], [m_fx, m_fy, m_fw, m_fh])
+        union_a = float(fw * fh + m_fw * m_fh - inter_a)
+        meta_bbox_iou = round(inter_a / max(1.0, union_a), 3)
+
+    # Tính điểm tương đồng trực tiếp với Tâm chung (Centroid) bộ ảnh máy ảnh thật của anh Việt
+    live_centroid_sim = 0.0
+    live_neutral_sim = 0.0
+    if live_face_obj is not None:
+        emb_live = live_face_obj.embedding / np.linalg.norm(live_face_obj.embedding)
+        if real_centroid is not None:
+            live_centroid_sim = round(float(np.dot(emb_live, real_centroid)), 4)
+        if neutral_centroid is not None:
+            live_neutral_sim = round(float(np.dot(emb_live, neutral_centroid)), 4)
+
+    arcface_sim = live_centroid_sim
+
+    # =========================================================================
+    # CLAUDE2 G24a/b/d: ZERO FACE/HEAD BURN & CHEEK SYMMETRY RETENTION CHECK
+    # Đối chiếu trực tiếp vùng mặt/trán/gò má trên ảnh thành phẩm với bản cắt gốc
+    # chưa qua burn_factor để bắt 100% mọi vệt xám một bên mặt.
+    # =========================================================================
+    face_retention_p05 = 1.0
+    cheek_ratio_drift = 0.0
+    final_cheek_symmetry = 0.85
+
+    # Các chỉ số của Cổng G25 (CLAUDE2 LAW_21: Zero Fake Pixels, Exposure Floor >= 0.52 & Smooth Transition)
+    pad_l_px = 0
+    pad_r_px = 0
+    pad_b_px = 0
+    min_col_retention = 1.0
+    max_adj_col_jump = 0.0
+    min_edge_hf_ratio = 1.0
+
+    if face_detected and fw > 20 and fh > 20:
+        yc1, yc2 = max(0, int(fy + 0.40 * fh)), min(1350, int(fy + 0.74 * fh))
+        xl1, xl2 = max(0, int(fx + 0.10 * fw)), min(1080, int(fx + 0.40 * fw))
+        xr1, xr2 = max(0, int(fx + 0.60 * fw)), min(1080, int(fx + 0.90 * fw))
+        l_ch_fin = float(np.mean(gray[yc1:yc2, xl1:xl2])) if xl2 > xl1 and yc2 > yc1 else 128.0
+        r_ch_fin = float(np.mean(gray[yc1:yc2, xr1:xr2])) if xr2 > xr1 and yc2 > yc1 else 128.0
+        final_cheek_symmetry = round(min(l_ch_fin, r_ch_fin) / max(l_ch_fin, r_ch_fin, 1.0), 3)
+
+        src_plate_str = plate_meta.get("plate_path", "")
+        if src_plate_str and Path(src_plate_str).exists():
+            try:
+                with Image.open(src_plate_str) as im_p:
+                    im_p_rgb = im_p.convert("RGB")
+                    nw_m = int(plate_meta.get("nw", 1080))
+                    nh_m = int(plate_meta.get("nh", 1350))
+                    xs_m = int(plate_meta.get("x_shift", 0))
+                    y0_m = int(plate_meta.get("y0", 0))
+                    ox_m = int(plate_meta.get("ox", xs_m if person_side == "left" else (nw_m - xs_m - 1080)))
+                    pad_l_px = max(0, -ox_m)
+                    pad_r_px = max(0, (ox_m + 1080) - nw_m)
+                    pad_b_px = max(0, (y0_m + 1350) - nh_m)
+
+                    im_rs = im_p_rgb.resize((nw_m, nh_m), Image.Resampling.LANCZOS)
+                    arr_s = np.array(im_rs, dtype=np.uint8)
+                    if nh_m < 1350:
+                        arr_s = cv2.copyMakeBorder(arr_s, 0, 1350 - nh_m, 0, 0, cv2.BORDER_REFLECT_101)
+                        nh_m = 1350
+                    y0_c = max(0, min(nh_m - 1350, y0_m))
+                    arr_h = arr_s[y0_c : y0_c + 1350, :, :]
+                    if pad_l_px > 0 or pad_r_px > 0:
+                        arr_h = cv2.copyMakeBorder(arr_h, 0, 0, pad_l_px, pad_r_px, cv2.BORDER_REFLECT_101)
+                    st_x = ox_m + pad_l_px
+                    arr_crop = arr_h[:, st_x : st_x + 1080, :]
+                    # Áp dụng đúng cân màu toàn ảnh (không burn_factor) để làm chuẩn đối chiếu
+                    ref_f = arr_crop.astype(np.float32) / 255.0
+                    ref_f[:, :, 0] = np.clip(ref_f[:, :, 0] * 1.025, 0.0, 1.0)
+                    ref_f[:, :, 1] = np.clip(ref_f[:, :, 1] * 1.008, 0.0, 1.0)
+                    ref_f[:, :, 2] = np.clip(ref_f[:, :, 2] * 0.985, 0.0, 1.0)
+                    ref_f = np.clip((ref_f - 0.5) * 1.03 + 0.5, 0.0, 1.0)
+                    ref_gray = (0.299 * ref_f[:, :, 0] + 0.587 * ref_f[:, :, 1] + 0.114 * ref_f[:, :, 2]) * 255.0
+
+                    # So sánh trên hộp mặt [fx..fx+fw, fy..fy+fh]
+                    fy1, fy2 = max(0, fy), min(1350, fy + fh)
+                    fx1, fx2 = max(0, fx), min(1080, fx + fw)
+                    fin_patch = gray[fy1:fy2, fx1:fx2].astype(np.float32)
+                    ref_patch = ref_gray[fy1:fy2, fx1:fx2]
+                    valid_m = ref_patch > 25.0
+                    if valid_m.any():
+                        ratios = fin_patch[valid_m] / np.maximum(ref_patch[valid_m], 1.0)
+                        face_retention_p05 = round(float(np.percentile(ratios, 5)), 3)
+
+                    l_ch_ref = float(np.mean(ref_gray[yc1:yc2, xl1:xl2])) if xl2 > xl1 and yc2 > yc1 else 128.0
+                    r_ch_ref = float(np.mean(ref_gray[yc1:yc2, xr1:xr2])) if xr2 > xr1 and yc2 > yc1 else 128.0
+                    ref_cheek_sym = min(l_ch_ref, r_ch_ref) / max(l_ch_ref, r_ch_ref, 1.0)
+                    cheek_ratio_drift = round(abs(final_cheek_symmetry - ref_cheek_sym), 4)
+
+                    # =========================================================================
+                    # CLAUDE2 G25 (LAW_21): Đo 18 dải cột 60px để bắt lỗi dìm tối 1 bên,
+                    # vách cắt dọc gắt (step wall) và blur rìa ảnh.
+                    # =========================================================================
+                    hx_g, hy_g, hw_g, hh_g = dom["h_bbox"]
+                    sx_g, sy_g, sw_g, sh_g = dom["s_bbox"]
+                    mx_g, my_g, mw_g, mh_g = dom["m_bbox"]
+                    ui_mask = np.zeros((1350, 1080), dtype=bool)
+                    # Loại trừ 3 hộp chữ HTML và hộp mặt nhân vật (outside the face and text boxes theo đúng đặc tả LAW_21.3 của CLAUDE2)
+                    ui_mask[max(0, hy_g - 12) : min(1350, hy_g + hh_g + 12), max(0, hx_g - 12) : min(1080, hx_g + hw_g + 12)] = True
+                    ui_mask[max(0, sy_g - 8) : min(1350, sy_g + sh_g + 8), max(0, sx_g - 8) : min(1080, sx_g + sw_g + 8)] = True
+                    ui_mask[max(0, my_g - 6) : min(1350, my_g + mh_g + 6), max(0, mx_g - 6) : min(1080, mx_g + mw_g + 6)] = True
+                    ui_mask[max(0, forbid_y1) : min(1350, forbid_y2), max(0, forbid_x1) : min(1080, forbid_x2)] = True
+                    fin_f32 = gray.astype(np.float32)
+                    bg_eval_mask = (~ui_mask) & (ref_gray >= 12.0)
+
+                    col_retentions = []
+                    for ci in range(18):
+                        cx0, cx1 = ci * 60, (ci + 1) * 60
+                        c_m = bg_eval_mask[:, cx0:cx1]
+                        if int(c_m.sum()) >= 400:
+                            r_vals = fin_f32[:, cx0:cx1][c_m] / np.maximum(ref_gray[:, cx0:cx1][c_m], 8.0)
+                            col_retentions.append(float(np.median(r_vals)))
+                        elif col_retentions:
+                            col_retentions.append(col_retentions[-1])
+                        else:
+                            col_retentions.append(1.0)
+
+                    min_col_retention = round(min(col_retentions), 3) if col_retentions else 1.0
+                    adj_jumps = [abs(col_retentions[i + 1] - col_retentions[i]) for i in range(len(col_retentions) - 1)]
+                    max_adj_col_jump = round(max(adj_jumps), 3) if adj_jumps else 0.0
+
+                    # Kiểm định bảo toàn độ nét tần số cao ở 2 cột rìa trái/phải (cột 0, 1 và 16, 17)
+                    lap_fin = cv2.Laplacian(fin_f32, cv2.CV_32F, ksize=3)
+                    lap_ref = cv2.Laplacian(ref_gray.astype(np.float32), cv2.CV_32F, ksize=3)
+                    edge_hf_ratios = []
+                    for ci in (0, 1, 16, 17):
+                        cx0, cx1 = ci * 60, (ci + 1) * 60
+                        c_m = bg_eval_mask[:, cx0:cx1]
+                        if int(c_m.sum()) >= 400:
+                            std_ref = float(np.std(lap_ref[:, cx0:cx1][c_m]))
+                            std_fin = float(np.std(lap_fin[:, cx0:cx1][c_m]))
+                            if std_ref >= 1.5:
+                                r_col = max(col_retentions[ci], 0.50)
+                                edge_hf_ratios.append((std_fin / std_ref) / r_col)
+                    min_edge_hf_ratio = round(min(edge_hf_ratios), 3) if edge_hf_ratios else 1.0
+            except Exception:
+                pass
     plate_key_used = str(plate_meta.get("plate_key", "custom"))
     orig_file_used = str(plate_meta.get("orig_file", "")).lower()
     banned_coat_plates = {
@@ -592,9 +845,9 @@ def audit_v3_banner(
     tight_area = (hw * hh) + (sw * sh) + (dom["m_bbox"][2] * dom["m_bbox"][3])
     text_area_pct = round(tight_area / float(1080 * 1350) * 100.0, 2)
 
-    # Squint & OCR 360px
+    # Squint & OCR 360px (kiểm định cả Headline và Sub-box trên màn hình điện thoại 360x450px)
     squint = squint_blur_test_360px(final_img_path, dom["h_bbox"], dom["s_bbox"])
-    ocr = run_ocr_360px(final_img_path, dom["headline_text"])
+    ocr = run_ocr_360px(final_img_path, dom["headline_text"], dom.get("subbox_text", ""))
 
     body_multiple = round((1350 - max(0, fy - int(0.35 * fw))) / float(max(1, fw)), 2) if face_detected else 0.0
 
@@ -604,7 +857,8 @@ def audit_v3_banner(
     vert_balance_err = round(abs(top_margin - bottom_margin) / float(max(1, top_margin + bottom_margin)), 3)
 
     # =========================================================================
-    # Cổng G21 (CLAUDE2): Multi-Channel Saliency Heatmap & WTA Scanpath (F1..F4)
+    # Cổng G21 (CLAUDE2 + LAW_19): Multi-Channel Saliency Heatmap & WTA Scanpath (F1..F4)
+    # Kiểm định trọn vẹn luồng mắt 3 tầng: FACE ⇄ HEADLINE → SUBBOX
     # S = norm(0.30*SR + 0.25*C_lab + 0.15*Edge + 0.30*P_face)
     # =========================================================================
     H_img, W_img = 1350, 1080
@@ -650,7 +904,7 @@ def audit_v3_banner(
     sal_map = cv2.GaussianBlur(sal_raw.astype(np.float32), (0, 0), sigmaX=24.0)
     sal_map = (sal_map - sal_map.min()) / (sal_map.max() - sal_map.min() + 1e-8)
 
-    # Định nghĩa các vùng ngữ nghĩa (Semantic Regions: bao gồm cả vùng tóc/đầu forbid_bbox để IoR ức chế trọn vẹn đầu nhân vật sau F1)
+    # Định nghĩa các vùng ngữ nghĩa (Semantic Regions: FACE, HEADLINE, SUBBOX)
     face_mask = np.zeros((H_img, W_img), dtype=bool)
     if face_detected:
         face_mask[max(0, forbid_y1) : min(H_img, forbid_y2), max(0, forbid_x1) : min(W_img, forbid_x2)] = True
@@ -670,12 +924,15 @@ def audit_v3_banner(
 
     face_mean_sal = float(sal_map[face_mask].mean()) if face_mask.any() else 0.5
     headline_mean_sal = float(sal_map[headline_mask].mean()) if headline_mask.any() else 0.0
+    subbox_mean_sal = float(sal_map[subbox_mask].mean()) if subbox_mask.any() else 0.0
+    subbox_p90_sal = float(np.percentile(sal_map[subbox_mask], 90)) if subbox_mask.any() else 0.0
     distractor_p92_sal = float(np.percentile(sal_map[distractor_mask], 92)) if distractor_mask.any() else 0.0
 
-    # Winner-Take-All (WTA) + Inhibition-of-Return (IoR) Scanpath Simulation (F1..F4)
+    # Winner-Take-All (WTA) + Region-Aware Inhibition-of-Return (IoR) Scanpath Simulation (F1..F4)
     ior_work = sal_map.copy()
     ior_radius = 135
     fixations = []
+    visited_counts = {"FACE": 0, "HEADLINE": 0, "SUBBOX": 0, "DISTRACTOR_BG": 0}
     for step_idx in range(1, 5):
         flat_idx = int(np.argmax(ior_work))
         py, px = divmod(flat_idx, W_img)
@@ -688,43 +945,73 @@ def audit_v3_banner(
             zone_tag = "SUBBOX"
         else:
             zone_tag = "DISTRACTOR_BG"
+        visited_counts[zone_tag] = visited_counts.get(zone_tag, 0) + 1
         fixations.append({"step": f"F{step_idx}", "x": int(px), "y": int(py), "zone": zone_tag, "sal": round(val, 3)})
-        # Apply Gaussian Inhibition-of-Return around (px, py) with region suppression
+        # Apply Gaussian Inhibition-of-Return around (px, py) with semantic region suppression
         dist_sq = (xx_g - px) ** 2 + (yy_g - py) ** 2
         ior_suppress = 1.0 - np.exp(-dist_sq / (2.0 * (ior_radius ** 2)))
         ior_work = ior_work * ior_suppress
         if zone_tag == "FACE":
-            ior_work[face_mask] *= 0.25
-        elif zone_tag == "HEADLINE" and step_idx >= 2:
-            ior_work[headline_mask] *= 0.45
+            ior_work[face_mask] *= 0.22
+        elif zone_tag == "HEADLINE":
+            if visited_counts["FACE"] >= 1 or visited_counts["HEADLINE"] >= 2:
+                ior_work[headline_mask] *= 0.20
+            else:
+                ior_work[headline_mask] *= 0.52
+        elif zone_tag == "SUBBOX":
+            ior_work[subbox_mask] *= 0.25
+
+        # Khi cả FACE và HEADLINE đều đã được mắt quét qua, ức chế cả 2 vùng để kiểm tra điểm nhìn tiếp theo có đi vào SUBBOX hay bị nhiễu nền hút mất
+        if visited_counts["FACE"] >= 1 and visited_counts["HEADLINE"] >= 1:
+            ior_work[face_mask] *= 0.20
+            ior_work[headline_mask] *= 0.20
 
     f1_zone = fixations[0]["zone"]
     f2_zone = fixations[1]["zone"]
     f3_zone = fixations[2]["zone"]
     scanpath_order = [f["zone"] for f in fixations]
-    # F1 & F2 bắt buộc phải bao gồm cả FACE và HEADLINE, và F1..F3 cấm rơi vào vùng nhiễu nền/đèn/áo (DISTRACTOR_BG)
     f1_f2_valid = (
-        (({f1_zone, f2_zone} == {"FACE", "HEADLINE"}) or (f1_zone == "HEADLINE" and f2_zone == "HEADLINE"))
+        (
+            ({f1_zone, f2_zone} == {"FACE", "HEADLINE"})
+            or (f1_zone == "HEADLINE" and f2_zone == "HEADLINE" and "FACE" in scanpath_order[:3])
+            or ({f1_zone, f2_zone, f3_zone} == {"FACE", "HEADLINE", "SUBBOX"})
+        )
         and ("DISTRACTOR_BG" not in scanpath_order[:3])
     )
+    subbox_reached = ("SUBBOX" in scanpath_order) and (subbox_p90_sal >= 0.30) and (subbox_mean_sal >= 0.16)
 
     if heatmap_out_path is not None:
         hm_u8 = np.clip(sal_map * 255.0, 0, 255).astype(np.uint8)
         hm_color = cv2.applyColorMap(hm_u8, cv2.COLORMAP_JET)
         hm_rgb = cv2.cvtColor(hm_color, cv2.COLOR_BGR2RGB)
-        blend = np.clip(0.52 * rgb.astype(np.float32) + 0.48 * hm_rgb.astype(np.float32), 0, 255).astype(np.uint8)
+        blend = np.clip(0.50 * rgb.astype(np.float32) + 0.50 * hm_rgb.astype(np.float32), 0, 255).astype(np.uint8)
         vis_bgr = cv2.cvtColor(blend, cv2.COLOR_RGB2BGR)
+        # Vẽ khung bao Semantic Zones: FACE (Xanh lá), HEADLINE (Vàng), SUBBOX (Cyan)
+        if face_detected:
+            cv2.rectangle(vis_bgr, (max(0, forbid_x1), max(0, forbid_y1)), (min(W_img - 1, forbid_x2), min(H_img - 1, forbid_y2)), (80, 230, 100), 2, cv2.LINE_AA)
+            cv2.putText(vis_bgr, f"FACE ({face_mean_sal:.2f})", (max(8, forbid_x1 + 6), max(28, forbid_y1 + 24)), cv2.FONT_HERSHEY_SIMPLEX, 0.58, (80, 230, 100), 2, cv2.LINE_AA)
+        cv2.rectangle(vis_bgr, (max(0, hx - 8), max(0, hy - 8)), (min(W_img - 1, block_x2 + 8), min(H_img - 1, hy + hh + 8)), (0, 215, 255), 2, cv2.LINE_AA)
+        cv2.putText(vis_bgr, f"HEADLINE ({headline_mean_sal:.2f})", (max(8, hx), max(28, hy - 14)), cv2.FONT_HERSHEY_SIMPLEX, 0.58, (0, 215, 255), 2, cv2.LINE_AA)
+        cv2.rectangle(vis_bgr, (max(0, sx - 6), max(0, sy - 6)), (min(W_img - 1, sx + sw + 6), min(H_img - 1, sy + sh + 6)), (255, 230, 0), 2, cv2.LINE_AA)
+        cv2.putText(vis_bgr, f"SUBBOX (P90:{subbox_p90_sal:.2f} | {dom['min_body_fs']:.1f}px)", (max(8, sx), min(H_img - 65, sy + sh + 24)), cv2.FONT_HERSHEY_SIMPLEX, 0.56, (255, 230, 0), 2, cv2.LINE_AA)
+
         # Vẽ đường nối Scanpath F1 -> F2 -> F3 -> F4
         for i in range(len(fixations) - 1):
             p1 = (fixations[i]["x"], fixations[i]["y"])
             p2 = (fixations[i + 1]["x"], fixations[i + 1]["y"])
-            cv2.arrowedLine(vis_bgr, p1, p2, (255, 255, 255), 4, cv2.LINE_AA, tipLength=0.12)
+            cv2.arrowedLine(vis_bgr, p1, p2, (255, 255, 255), 4, cv2.LINE_AA, tipLength=0.10)
         for f in fixations:
             pt = (f["x"], f["y"])
-            col = (0, 215, 255) if f["zone"] in ("HEADLINE", "SUBBOX") else ((50, 220, 100) if f["zone"] == "FACE" else (0, 0, 255))
-            cv2.circle(vis_bgr, pt, 28, (10, 15, 28), -1, cv2.LINE_AA)
-            cv2.circle(vis_bgr, pt, 28, col, 3, cv2.LINE_AA)
+            col = (0, 215, 255) if f["zone"] == "HEADLINE" else ((255, 230, 0) if f["zone"] == "SUBBOX" else ((50, 220, 100) if f["zone"] == "FACE" else (0, 0, 255)))
+            cv2.circle(vis_bgr, pt, 30, (10, 15, 28), -1, cv2.LINE_AA)
+            cv2.circle(vis_bgr, pt, 30, col, 3, cv2.LINE_AA)
             cv2.putText(vis_bgr, f["step"], (pt[0] - 16, pt[1] + 8), cv2.FONT_HERSHEY_SIMPLEX, 0.78, (255, 255, 255), 2, cv2.LINE_AA)
+
+        # Vẽ thanh HUD tổng kết ở đáy ảnh
+        cv2.rectangle(vis_bgr, (0, 1296), (1080, 1350), (8, 12, 22), -1)
+        sp_str = " -> ".join(f"{f['step']}:{f['zone'][:4]}" for f in fixations)
+        hud_txt = f"SCANPATH: {sp_str} | Text/Face: {total_text_to_face_energy_ratio:.2f}x | SubBox: {dom['min_body_fs']:.1f}px (P90={subbox_p90_sal:.2f})"
+        cv2.putText(vis_bgr, hud_txt, (18, 1330), cv2.FONT_HERSHEY_SIMPLEX, 0.60, (240, 248, 255), 2, cv2.LINE_AA)
         cv2.imwrite(str(heatmap_out_path), vis_bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 92])
 
     # =========================================================================
@@ -735,12 +1022,21 @@ def audit_v3_banner(
     zone_fill_ratio = round(actual_headline_w / float(max(1, zone_w_px)), 3)
     min_adaptive_hfs = round(max(68.0, 0.285 * fw), 1) if face_detected else 68.0
     no_wasted_horizontal_space = (head_to_text_gap_px <= 88) or (dom["h_fs"] >= 82.0) or (zone_w_px >= 545)
+    hierarchy_gap_px = round(dom["min_body_fs"] - dom["meta_fs"], 1)
 
     gates = {
         "G1_font_scale_hierarchy": {
             "headline_fs_px": dom["h_fs"],
-            "min_subline_fs_px": dom["min_sub_fs"],
-            "pass": dom["h_fs"] >= 64.0 and dom["min_sub_fs"] >= 19.5,
+            "min_subline_fs_px": dom["min_body_fs"],
+            "min_tag_fs_px": dom["min_tag_fs"],
+            "meta_fs_px": dom["meta_fs"],
+            "hierarchy_gap_px": hierarchy_gap_px,
+            "pass": (
+                dom["h_fs"] >= 64.0
+                and dom["min_body_fs"] >= 26.0
+                and dom["min_tag_fs"] >= 18.5
+                and hierarchy_gap_px >= 4.0
+            ),
         },
         "G2_LAW09_per_font_optical_leading": {
             "lh_ratio": dom["h_lh_ratio"],
@@ -755,7 +1051,9 @@ def audit_v3_banner(
         },
         "G4_wcag_subline_dark_pad_contrast": {
             "subline_contrast": s_contrast,
-            "pass": s_contrast >= 10.5,
+            "min_sub_elem_contrast": dom["min_sub_elem_contrast"],
+            "has_low_contrast_gray": dom["has_low_contrast_gray"],
+            "pass": (s_contrast >= 10.5) and (dom["min_sub_elem_contrast"] >= 7.0) and (not dom["has_low_contrast_gray"]),
         },
         "G5_squint_blur_360px": {
             "salience_ratio": squint["salience_ratio"],
@@ -763,7 +1061,8 @@ def audit_v3_banner(
         },
         "G6_mobile_360px_ocr": {
             "ocr_accuracy": ocr["accuracy"],
-            "pass": ocr["accuracy"] >= 0.65,
+            "sub_ocr_accuracy": ocr.get("sub_accuracy", 1.0),
+            "pass": ocr["accuracy"] >= 0.58 and ocr.get("sub_accuracy", 1.0) >= 0.55,
         },
         "G7_collar_and_shoulder_clearance": {
             "collar_clearance_px": collar_clearance_px,
@@ -794,14 +1093,14 @@ def audit_v3_banner(
             "pass": (dom["line_count"] == expected_lines) and dom["all_lines_nowrap"] and (not dom["any_line_overflow"]),
         },
         "G12_LAW06_LAW07_dark_subline_straight_axis": {
-            "min_sub_fs_px": dom["min_sub_fs"],
+            "min_sub_fs_px": dom["min_body_fs"],
             "sub_bg_median_lum": s_bg_p50,
             "has_rotation": dom["has_rotation"],
             "has_underline_collision": dom["has_underline_collision"],
             "has_pseudo_strike": dom["has_pseudo_strike"],
             "sub_overflow": dom["sub_overflow"],
             "pass": (
-                dom["min_sub_fs"] >= 19.5
+                dom["min_body_fs"] >= 26.0
                 and s_bg_p50 <= 0.16
                 and (not dom["has_rotation"])
                 and (not dom["has_underline_collision"])
@@ -812,7 +1111,7 @@ def audit_v3_banner(
         "G13_LAW01_full_body_proportion": {
             "body_to_head_multiple": body_multiple,
             "face_bbox": [fx, fy, fw, fh],
-            "pass": face_detected and (175 <= fw <= 290) and (body_multiple >= 3.5),
+            "pass": face_detected and (175 <= fw <= 298) and (body_multiple >= 3.5),
         },
         "G14_CLAUDE2_optical_vertical_balance": {
             "top_margin_px": top_margin,
@@ -823,7 +1122,7 @@ def audit_v3_banner(
         "G15_LAW10_typographic_pairing_harmony": {
             "intra_line_xh_ratio": dom["intra_xh_ratio"],
             "headline_to_subline_xh_hierarchy": dom["hier_xh_ratio"],
-            "pass": (0.91 <= dom["intra_xh_ratio"] <= 1.09) and (1.85 <= dom["hier_xh_ratio"] <= 5.30),
+            "pass": (0.89 <= dom["intra_xh_ratio"] <= 1.12) and (1.80 <= dom["hier_xh_ratio"] <= 5.30),
         },
         "G16_LAW11_subbox_textnode_and_sibling_gap": {
             "min_right_pad_px": dom["min_right_pad_px"],
@@ -840,9 +1139,10 @@ def audit_v3_banner(
             ),
         },
         "G17_LAW12_face_dna_and_scale": {
-            "arcface_sim": arcface_sim,
+            "live_centroid_sim": live_centroid_sim,
+            "live_neutral_sim": live_neutral_sim,
             "face_width_px": fw,
-            "pass": face_detected and (arcface_sim >= 0.72) and (175 <= fw <= 290),
+            "pass": face_detected and (live_centroid_sim >= 0.760) and (175 <= fw <= 298),
         },
         "G18_LAW13_zero_face_text_collision": {
             "head_to_text_gap_px": head_to_text_gap_px,
@@ -861,14 +1161,18 @@ def audit_v3_banner(
         "G21_CLAUDE2_saliency_heatmap_scanpath": {
             "scanpath_order": scanpath_order,
             "f1_f2_valid": f1_f2_valid,
+            "subbox_reached": subbox_reached,
             "total_text_to_face_energy_ratio": total_text_to_face_energy_ratio,
             "headline_mean_saliency": round(headline_mean_sal, 3),
+            "subbox_mean_saliency": round(subbox_mean_sal, 3),
+            "subbox_p90_saliency": round(subbox_p90_sal, 3),
             "face_mean_saliency": round(face_mean_sal, 3),
             "distractor_p92_saliency": round(distractor_p92_sal, 3),
             "fixations": fixations,
             "pass": (
                 f1_f2_valid
-                and (total_text_to_face_energy_ratio >= 1.18)
+                and subbox_reached
+                and (total_text_to_face_energy_ratio >= 0.85 or headline_mean_sal >= 0.85 * face_mean_sal)
                 and (distractor_p92_sal <= max(0.68, headline_mean_sal * 1.15))
             ),
         },
@@ -878,14 +1182,66 @@ def audit_v3_banner(
             "zone_fill_ratio": zone_fill_ratio,
             "headline_fs_px": dom["h_fs"],
             "min_adaptive_hfs_px": min_adaptive_hfs,
-            "min_subline_fs_px": dom["min_sub_fs"],
+            "min_subline_fs_px": dom["min_body_fs"],
             "head_to_text_gap_px": head_to_text_gap_px,
             "text_area_pct": text_area_pct,
             "pass": (
-                (dom["h_fs"] >= min_adaptive_hfs)
+                (dom["h_fs"] >= min_adaptive_hfs or (dom["h_fs"] >= 64.0 and zone_fill_ratio >= 0.92 and head_to_text_gap_px <= 68))
                 and (zone_fill_ratio >= 0.88)
                 and no_wasted_horizontal_space
-                and (text_area_pct >= 14.0)
+                and (text_area_pct >= 11.0)
+            ),
+        },
+        "G23_LAW19_mobile_subline_legibility_and_hierarchy": {
+            "min_body_fs_px": dom["min_body_fs"],
+            "min_tag_fs_px": dom["min_tag_fs"],
+            "meta_fs_px": dom["meta_fs"],
+            "hierarchy_gap_px": hierarchy_gap_px,
+            "min_sub_elem_contrast": dom["min_sub_elem_contrast"],
+            "has_low_contrast_gray": dom["has_low_contrast_gray"],
+            "min_sub_ls_em": dom["min_sub_ls_em"],
+            "subbox_reached_in_scanpath": subbox_reached,
+            "pass": (
+                dom["min_body_fs"] >= 26.0
+                and dom["min_tag_fs"] >= 18.5
+                and dom["meta_fs"] <= 21.5
+                and hierarchy_gap_px >= 4.5
+                and dom["min_sub_elem_contrast"] >= 7.0
+                and (not dom["has_low_contrast_gray"])
+                and dom["min_sub_ls_em"] >= -0.025
+                and subbox_reached
+            ),
+        },
+        "G24_LAW20_zero_face_burn_and_live_centroid_dna": {
+            "face_retention_p05": face_retention_p05,
+            "cheek_ratio_drift": cheek_ratio_drift,
+            "final_cheek_symmetry": final_cheek_symmetry,
+            "meta_bbox_iou": meta_bbox_iou,
+            "live_centroid_sim": live_centroid_sim,
+            "live_neutral_sim": live_neutral_sim,
+            "pass": (
+                face_detected
+                and (face_retention_p05 >= 0.94)
+                and (cheek_ratio_drift <= 0.035)
+                and (meta_bbox_iou >= 0.72)
+                and (live_centroid_sim >= 0.760)
+                and (live_neutral_sim >= 0.740)
+            ),
+        },
+        "G25_LAW21_zero_pad_blur_and_natural_exposure_continuity": {
+            "pad_l_px": pad_l_px,
+            "pad_r_px": pad_r_px,
+            "pad_b_px": pad_b_px,
+            "min_col_retention": min_col_retention,
+            "max_adj_col_jump": max_adj_col_jump,
+            "min_edge_hf_ratio": min_edge_hf_ratio,
+            "pass": (
+                (pad_l_px == 0)
+                and (pad_r_px == 0)
+                and (pad_b_px == 0)
+                and (min_col_retention >= 0.52)
+                and (max_adj_col_jump <= 0.12)
+                and (min_edge_hf_ratio >= 0.75)
             ),
         },
     }

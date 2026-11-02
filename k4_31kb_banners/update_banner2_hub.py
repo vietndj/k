@@ -179,6 +179,8 @@ def build_card_html(c: Dict[str, Any]) -> str:
     audit = c.get("claude2_audit", {})
     h1 = c.get("hook_1", {})
     h2 = c.get("hook_2", {})
+    h3 = c.get("hook_3", {})
+    h4 = c.get("hook_4", {})
     ad1 = c.get("ad_copy_1", {})
     ad2 = c.get("ad_copy_2", {})
     ad3 = c.get("ad_copy_3", {})
@@ -189,6 +191,8 @@ def build_card_html(c: Dict[str, Any]) -> str:
     h2_plain = h2.get("headline_plain") or " / ".join(
         ln.replace('<span class="hl">', "").replace("</span>", "") for ln in h2.get("headline_lines", [])
     )
+    h3_plain = h3.get("headline_plain") or h1_plain
+    h4_plain = h4.get("headline_plain") or h2_plain
 
     default_fb_hl = "Lớp Offline 2 Ngày 07–08/11 Tại Hà Nội · Học Phí 4.000.000đ (Hoàn 100% Sau Ngày 1)"
     ad1_headline = _esc(ad1.get("fb_headline", default_fb_hl))
@@ -210,21 +214,38 @@ def build_card_html(c: Dict[str, Any]) -> str:
           <div class="c2-audit-item"><strong>💰 Phân cấp Giá V3 ({meta_code}):</strong> <code>{_esc(meta_note_display)}</code> — Đã xóa URL trần để giữ 100% <code>utm_content={{{{ad.name}}}}</code>.</div>
         </div>
 
-        <div class="hooks-compare-grid three-cols">
+        <div class="hooks-compare-grid four-cols" style="grid-template-columns: repeat(2, 1fr);">
           <div class="hk-box hk-box-3" onclick="switchCardImg('{kb_id}', '{v3_src}', this.closest('.vault-card').querySelector('.btn-v3'))">
-            <div class="hk-badge hk-b3">💰 ẢNH 3 • PHIÊN BẢN V3 LỌC GIÁ 4TR ({style_code} × {meta_code})</div>
+            <div class="hk-badge hk-b3" style="display:flex;justify-content:space-between;align-items:center;">
+              <span>✅ PA1 (ĐANG TRÊN ẢNH CHÍNH V3) • EM × ANH VIỆT</span>
+              <span style="background:#22C55E;color:#052E16;padding:1px 6px;border-radius:4px;font-size:9.5px;">ĐANG DÙNG</span>
+            </div>
             <div class="hk-head">“{_esc(h1_plain)}”</div>
             <div class="hk-sub">× {_esc(h1.get("sub_old", ""))}<br/>✓ <strong>{_esc(h1.get("sub_new", ""))}</strong><br/><span style="color:#4ADE80;font-family:var(--font-mono);font-size:11px;font-weight:700;">⎯ 07–08/11 · Long Biên, HN | 4.000.000đ</span></div>
           </div>
-          <div class="hk-box hk-box-1" onclick="switchCardImg('{kb_id}', '{color_src}', this.closest('.vault-card').querySelector('.btn-color'))">
-            <div class="hk-badge hk-b1">🎨 ẢNH 1 • PHƯƠNG ÁN HOOK 1 ({style_code})</div>
-            <div class="hk-head">“{_esc(h1_plain)}”</div>
-            <div class="hk-sub">× {_esc(h1.get("sub_old", ""))}<br/>✓ <strong>{_esc(h1.get("sub_new", ""))}</strong></div>
-          </div>
           <div class="hk-box hk-box-2" onclick="switchCardImg('{kb_id}', '{alt_src}', this.closest('.vault-card').querySelector('.btn-hook2'))">
-            <div class="hk-badge hk-b2">⚡ ẢNH 2 • PHƯƠNG ÁN HOOK 2 MỚI ({alt_code})</div>
+            <div class="hk-badge hk-b2" style="display:flex;justify-content:space-between;align-items:center;">
+              <span>⚡ PA2 (EM × ANH VIỆT • ĐỐI CHỨNG)</span>
+              <button class="copy-ad-btn" style="padding:2px 7px;font-size:10px;" onclick="event.stopPropagation();navigator.clipboard.writeText('SUA BANNER {kb_id} PA2');this.textContent='✓ Đã Copy 0.20s'">📋 Lệnh 0.20s</button>
+            </div>
             <div class="hk-head">“{_esc(h2_plain)}”</div>
             <div class="hk-sub">× {_esc(h2.get("sub_old", ""))}<br/>✓ <strong>{_esc(h2.get("sub_new", ""))}</strong></div>
+          </div>
+          <div class="hk-box hk-box-1" style="border-top:3px solid #38BDF8;">
+            <div class="hk-badge hk-b1" style="display:flex;justify-content:space-between;align-items:center;">
+              <span>🧠 PA3 (GIÁO SƯ CLAUDE2 • GÓC HIỆN TRƯỜNG)</span>
+              <button class="copy-ad-btn" style="padding:2px 7px;font-size:10px;border-color:#38BDF8;color:#38BDF8;" onclick="event.stopPropagation();navigator.clipboard.writeText('SUA BANNER {kb_id} PA3');this.textContent='✓ Đã Copy 0.20s'">📋 Lệnh 0.20s</button>
+            </div>
+            <div class="hk-head">“{_esc(h3_plain)}”</div>
+            <div class="hk-sub">× {_esc(h3.get("sub_old", h1.get("sub_old", "")))}<br/>✓ <strong>{_esc(h3.get("sub_new", h1.get("sub_new", "")))}</strong></div>
+          </div>
+          <div class="hk-box hk-box-1" style="border-top:3px solid #A855F7;">
+            <div class="hk-badge" style="color:#C084FC;display:flex;justify-content:space-between;align-items:center;">
+              <span>🧠 PA4 (GIÁO SƯ CLAUDE2 • GÓC ĐỐI CHIẾU)</span>
+              <button class="copy-ad-btn" style="padding:2px 7px;font-size:10px;border-color:#A855F7;color:#C084FC;" onclick="event.stopPropagation();navigator.clipboard.writeText('SUA BANNER {kb_id} PA4');this.textContent='✓ Đã Copy 0.20s'">📋 Lệnh 0.20s</button>
+            </div>
+            <div class="hk-head">“{_esc(h4_plain)}”</div>
+            <div class="hk-sub">× {_esc(h4.get("sub_old", h2.get("sub_old", "")))}<br/>✓ <strong>{_esc(h4.get("sub_new", h2.get("sub_new", "")))}</strong></div>
           </div>
         </div>
 
