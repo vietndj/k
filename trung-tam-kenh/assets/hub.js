@@ -76,17 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Mục lục "Trên trang này" bên phải
+    // Thanh mục lục nhanh đặt gọn ngay dưới tiêu đề (bỏ cột phải để mở rộng không gian xem ảnh)
     const heads = [...tmp.querySelectorAll('h2')];
     heads.forEach((h, i) => { if (!h.id) h.id = 'sec-' + (i + 1); });
     const formatTocTitle = (h) => {
         const clone = h.cloneNode(true);
         const num = clone.querySelector('.num');
-        if (num) num.textContent = num.textContent.trim() + ' — ';
+        if (num) num.textContent = num.textContent.trim() + ' · ';
         return clone.textContent.trim();
     };
     const tocHtml = heads.length > 1
-        ? `<h6>Trên trang này</h6><nav class="otp">${heads.map(h => `<a href="#${h.id}">${formatTocTitle(h)}</a>`).join('')}</nav>`
+        ? `<nav class="sec-jump" aria-label="Mục lục nhanh">${heads.map(h => `<a href="#${h.id}">${formatTocTitle(h)}</a>`).join('')}</nav>`
         : '';
 
     // Pager chuyển trang
@@ -169,14 +169,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 ${menuHtml}
             </aside>
-            <main class="main${tocHtml ? '' : ' wide'}" style="--stage:var(--c-${page.stage})">
+            <main class="main wide" style="--stage:var(--c-${page.stage})">
                 <article class="content">
                     <div class="kicker">${page.q}</div>
                     <h1 class="title">${titleText}</h1>
+                    ${tocHtml}
                     ${tmp.innerHTML}
                     ${pagerHtml}
                 </article>
-                ${tocHtml ? `<aside class="rail">${tocHtml}</aside>` : ''}
             </main>
         </div>
     `;
