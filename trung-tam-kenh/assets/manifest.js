@@ -1,13 +1,14 @@
 /* =========================================================
-   MANIFEST — Cây điều hướng 1 trục duy nhất của kenh.fedu.vn
-   Đã loại bỏ nhánh 1.0 trùng lặp, trang Giáo án rỗng & trang Sale nội bộ.
+   MANIFEST — Cây điều hướng của kenh.fedu.vn
+   Bao gồm: Hành trình cốt lõi, Kênh thật & Tài nguyên, và Bản chuyên khảo cũ (Logic 1.0) ở menu trái.
    ========================================================= */
 window.HUB = {
   name: "Trung tâm Logic Xây Kênh",
   sub: "Từ tư duy → định dạng → thực hành",
   groups: [
     { id: "flow", title: "Hành trình cốt lõi" },
-    { id: "ref",  title: "Kênh thật & Tài nguyên" }
+    { id: "ref",  title: "Kênh thật & Tài nguyên" },
+    { id: "v1",   title: "Bản cũ (Logic 1.0)" }
   ],
   pages: [
     { id: "index",       file: "index.html",               group: "flow", n: "00", title: "Trung Tâm Logic Xây Kênh", short: "Trang chủ", stage: "ink", icon: "🧭", q: "— TRUNG TÂM TRI THỨC XÂY KÊNH & BẢN CHẤT NIỀM TIN • NGUYỄN ĐỨC VIỆT" },
@@ -16,7 +17,7 @@ window.HUB = {
     { id: "logic-kenh",  file: "03-logic-kenh.html",       group: "flow", n: "03", title: "Logic xây kênh", short: "Logic kênh", stage: "logic", icon: "🧩", q: "View → niềm tin → khách tự chốt vận hành thế nào?" },
     { id: "niem-tin",    file: "04-niem-tin.html",         group: "flow", n: "04", title: "Logic niềm tin & storytelling vi mô", short: "Niềm tin", stage: "niemtin", icon: "🤝", q: "Nói thế nào để người xem tin ngay?" },
 
-    // Chặng 05 duy nhất (Bản chuẩn mới nhất)
+    // Chặng 05 (Bản 2.0 chuẩn mới nhất)
     { id: "dinh-dang-2",     file: "05-dinh-dang-2.0.html",          group: "flow", n: "05", title: "4 định dạng video, chuyển cảnh & bố cục", short: "Định dạng", stage: "dinhdang", icon: "🎬", v2: true, q: "Hệ thống 4 Định dạng chủ lực, Chuyển cảnh tự nhiên & Bố cục cảnh quay chỉn chu" },
     { id: "voice-over-2",    file: "dinh-dang/voiceover3.0.html",    group: "flow", parent: "dinh-dang-2", sub: true, n: "5.1", title: "Voice-Over & thao tác tay", short: "Voice-Over", stage: "dinhdang", icon: "🎙️", v2: true, q: "Dựng hình trước, lồng tiếng sau + Thực hành cảnh trám 3 lớp" },
     { id: "walk-and-talk-2", file: "dinh-dang/walkntalk2.0.html",    group: "flow", parent: "dinh-dang-2", sub: true, n: "5.2", title: "Walk & Talk (Vừa đi vừa nói)", short: "Walk & Talk", stage: "dinhdang", icon: "🚶", v2: true, q: "Quy tắc 3 trục 45° & Giải phẫu video mẫu thực chiến" },
@@ -36,7 +37,18 @@ window.HUB = {
     { id: "aieditskill", file: "aieditskill.html",   group: "flow", parent: "ky-nang", sub: true, n: "6.1", title: "Hệ thống AI Video Edit & 35 Mẫu MFX", short: "AI Edit Skill", stage: "kynang", icon: "🎞️", v2: true, q: "Hệ thống 10 cụm skill dựng AI, 35 mẫu chữ & bản vẽ 2D" },
     { id: "thuc-hanh",   file: "07-thuc-hanh.html",  group: "flow", n: "07", title: "Lộ trình thực hành 4 tuần", short: "Thực hành", stage: "thuchanh", icon: "🏋️", q: "Tuần 1 đến tuần 4 làm chính xác việc gì?" },
 
+    // Kênh thật & Tài nguyên
     { id: "case",        file: "09-case.html",       group: "ref", n: "08", title: "Hồ sơ kênh thật đã kiểm chứng", short: "Kênh thật", stage: "case", icon: "📚", q: "Giải phẫu các kênh có video thật & hàng trăm nghìn đến hàng triệu lượt xem" },
-    { id: "tai-nguyen",  file: "08-tai-nguyen.html", group: "ref", n: "09", title: "Tài nguyên hệ thống & link mở ngay", short: "Tài nguyên", stage: "tainguyen", icon: "🔗", q: "Công cụ nào hỗ trợ bước nào? Bấm vào là ra." }
+    { id: "tai-nguyen",  file: "08-tai-nguyen.html", group: "ref", n: "09", title: "Tài nguyên hệ thống & link mở ngay", short: "Tài nguyên", stage: "tainguyen", icon: "🔗", q: "Công cụ nào hỗ trợ bước nào? Bấm vào là ra." },
+
+    // 2 trang cũ về Logic 1.0 ở Menu bên trái (+ nhánh Định dạng 1.0 lưu trữ)
+    { id: "cu",          file: "cu/index.html",          group: "v1", n: "1.0", title: "Logic Storytelling & Niềm tin (1.0)", short: "Logic Niềm Tin 1.0", stage: "ink", icon: "📜", q: "Bản chuyên khảo gốc 1.0: Hàng giá rẻ bán bằng View, hàng giá cao bán bằng Niềm tin (90-9-1, Lurker, 3 tầng)" },
+    { id: "cu-xay-kenh", file: "cu/logic-xay-kenh.html", group: "v1", n: "1.0", title: "Logic Xây Kênh: 0 → Tự chốt (1.0)", short: "Logic Xây Kênh 1.0", stage: "ink", icon: "🏗️", q: "Bản chuyên khảo gốc 1.0: Lộ trình từ 0 → Khách tự chốt trong im lặng & 5 câu hỏi thực hành" },
+    { id: "dinh-dang",   file: "05-dinh-dang.html",      group: "v1", hiddenFromMenu: true, n: "05", title: "4 định dạng video + chuyển cảnh (1.0)", short: "Định dạng 1.0", stage: "dinhdang", icon: "🎬", q: "Quay kiểu nào trước, kiểu nào sau? (Bản 1.0 gốc)" },
+    { id: "voice-over",   file: "dinh-dang/voice-over.html",    group: "v1", parent: "dinh-dang", sub: true, hiddenFromMenu: true, n: "5.1", title: "Voice-Over & thao tác tay (1.0)", short: "Voice-Over", stage: "dinhdang", icon: "🎙️", q: "Chưa dám lộ mặt?" },
+    { id: "walk-and-talk",file: "dinh-dang/walk-and-talk.html", group: "v1", parent: "dinh-dang", sub: true, hiddenFromMenu: true, n: "5.2", title: "Walk & Talk (1.0)", short: "Walk & Talk", stage: "dinhdang", icon: "🚶", q: "Nói cứng, cần tự nhiên?" },
+    { id: "talking-head", file: "dinh-dang/talking-head.html",  group: "v1", parent: "dinh-dang", sub: true, hiddenFromMenu: true, n: "5.3", title: "Talking Head (1.0)", short: "Talking Head", stage: "dinhdang", icon: "🗣️", q: "Cần dựng uy tín chuyên gia?" },
+    { id: "storytelling", file: "dinh-dang/storytelling.html",  group: "v1", parent: "dinh-dang", sub: true, hiddenFromMenu: true, n: "5.4", title: "Storytelling 2.5 (1.0)", short: "Storytelling", stage: "dinhdang", icon: "📖", q: "Chạm đúng chỗ đau giấu kín?" },
+    { id: "chuyen-canh",  file: "dinh-dang/chuyen-canh.html",   group: "v1", parent: "dinh-dang", sub: true, hiddenFromMenu: true, n: "5.5", title: "Chuyển cảnh (chất keo 1.0)", short: "Chuyển cảnh", stage: "dinhdang", icon: "⚡", q: "Video giật, mất người xem?" }
   ]
 };

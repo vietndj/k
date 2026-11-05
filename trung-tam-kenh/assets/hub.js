@@ -189,14 +189,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
 
                         <div class="eco-group">
-                            <div class="eco-gh">🌐 KÊNH &amp; AGENCY</div>
+                            <div class="eco-gh">🌐 KÊNH &amp; PROFILE</div>
                             <a href="https://fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
-                                <span class="eco-name">FEDU Agency</span>
-                                <span class="eco-desc">fedu.vn · Giải pháp video &amp; Kênh</span>
-                            </a>
-                            <a href="https://vietndj.github.io" target="_blank" rel="noopener noreferrer" class="eco-item">
-                                <span class="eco-name">Profile Thầy Việt</span>
-                                <span class="eco-desc">vietndj.github.io · Triết lý &amp; Kết nối</span>
+                                <span class="eco-name">Profile Nguyễn Đức Việt</span>
+                                <span class="eco-desc">fedu.vn · Hồ sơ cá nhân &amp; Kết nối</span>
                             </a>
                             <a href="https://kenh.fedu.vn" target="_blank" rel="noopener noreferrer" class="eco-item">
                                 <span class="eco-name">Trung Tâm Kênh</span>
