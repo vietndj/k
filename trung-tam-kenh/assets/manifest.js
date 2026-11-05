@@ -43,7 +43,8 @@ window.HUB = {
     { id: "thuc-hanh", file: "07-thuc-hanh.html", group: "flow", n: "06", title: "Lộ trình 4 tuần & 4 kỹ năng",   short: "Thực hành", stage: "thuchanh", icon: "06", v2: true, q: "CHẶNG 06 • LỘ TRÌNH 4 TUẦN CHO NGƯỜI CHỈ CÓ 2–3 GIỜ BẤM MÁY MỖI TUẦN" },
     { id: "case",      file: "09-case.html",      group: "ref",  n: "07", title: "3 kênh thật đã kiểm chứng",     short: "Kênh thật", stage: "case",     icon: "07", v2: true, q: "BẰNG CHỨNG SỐ LIỆU • 3 KÊNH HỌC VIÊN CÓ VIDEO THẬT TỪ TRĂM NGHÌN ĐẾN TRIỆU VIEW" },
 
-    // IV. BẢN CHUYÊN KHẢO GỐC 1.0 (2 trang giữ nguyên theo chỉ định)
+    // IV. BẢN CHUYÊN KHẢO TỔNG HỢP 2.0 & GỐC 1.0
+    { id: "logic-tong-hop", file: "logic-tong-hop.html",    group: "v1", n: "2.0", title: "Logic Xây Kênh Tổng Hợp (Mới)",      short: "Tổng hợp 2.0", stage: "ink", icon: "2.0", q: "Bản tổng hợp mới: Việc thật, tâm thế món quà, bảo kê đầu ra & đo hai pha" },
     { id: "cu",          file: "cu/index.html",          group: "v1", n: "1.0", title: "Logic Storytelling & Niềm tin (1.0)", short: "Niềm tin 1.0",  stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Hàng giá rẻ bán bằng View, hàng giá cao bán bằng Niềm tin" },
     { id: "cu-xay-kenh", file: "cu/logic-xay-kenh.html", group: "v1", n: "1.0", title: "Logic Xây Kênh: 0 → Tự chốt (1.0)",   short: "Xây kênh 1.0", stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Lộ trình từ 0 → Khách tự chốt trong im lặng" }
   ]
