@@ -88,8 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mục lục "Trên trang này" cho cột phải: gán id cho h2/h3
     const heads = [...tmp.querySelectorAll('h2')];
     heads.forEach((h, i) => { if (!h.id) h.id = 'sec-' + (i + 1); });
+    const formatTocTitle = (h) => {
+        const clone = h.cloneNode(true);
+        const num = clone.querySelector('.num');
+        if (num) num.textContent = num.textContent.trim() + ' — ';
+        return clone.textContent.trim();
+    };
     const tocHtml = heads.length > 1
-        ? `<h6>Trên trang này</h6><nav class="otp">${heads.map(h => `<a href="#${h.id}">${h.textContent.trim()}</a>`).join('')}</nav>`
+        ? `<h6>Trên trang này</h6><nav class="otp">${heads.map(h => `<a href="#${h.id}">${formatTocTitle(h)}</a>`).join('')}</nav>`
         : '';
 
     // Pager
