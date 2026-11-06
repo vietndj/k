@@ -17,7 +17,7 @@ window.HUB = {
   sub: "Từ 0 → đủ 7 giờ → khách tự chốt",
   groups: [
     { id: "flow", title: "Trục logic & định dạng" },
-    { id: "ref",  title: "Bằng chứng kênh thật" },
+    { id: "ref",  title: "Bàn mổ kênh mẫu" },
     { id: "v1",   title: "Chuyên khảo gốc (1.0)" }
   ],
   pages: [
@@ -41,7 +41,7 @@ window.HUB = {
 
     // III. THỰC THI & KÊNH THẬT (2 trang)
     { id: "thuc-hanh", file: "07-thuc-hanh.html", group: "flow", n: "06", title: "Lộ trình 4 tuần & 4 kỹ năng",   short: "Thực hành", stage: "thuchanh", icon: "06", v2: true, q: "CHẶNG 06 • LỘ TRÌNH 4 TUẦN CHO NGƯỜI CHỈ CÓ 2–3 GIỜ BẤM MÁY MỖI TUẦN" },
-    { id: "case",      file: "09-case.html",      group: "ref",  n: "07", title: "3 kênh thật đã kiểm chứng",     short: "Kênh thật", stage: "case",     icon: "07", v2: true, q: "BẰNG CHỨNG SỐ LIỆU • 3 KÊNH HỌC VIÊN CÓ VIDEO THẬT TỪ TRĂM NGHÌN ĐẾN TRIỆU VIEW" },
+    { id: "case",      file: "09-case.html",      group: "ref",  n: "07", title: "Giải phẫu 7 kênh mẫu",          short: "Kênh mẫu",  stage: "case",     icon: "07", v2: true, q: "BÀN MỔ KÊNH MẪU • 7 KÊNH NGOÀI ĐỜI HỌC VIÊN GỬI VỀ: CHỖ RA KHÁCH, CHỖ ĐỨT MẠCH" },
 
     // IV. BẢN CHUYÊN KHẢO TỔNG HỢP 2.0 & GỐC 1.0
     { id: "logic-tong-hop", file: "logic-tong-hop.html",    group: "v1", n: "2.0", title: "Logic Xây Kênh Tổng Hợp (Mới)",      short: "Tổng hợp 2.0", stage: "ink", icon: "2.0", q: "Bản tổng hợp mới: Việc thật, tâm thế món quà, bảo kê đầu ra & đo hai pha" },
