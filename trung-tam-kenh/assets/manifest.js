@@ -23,7 +23,7 @@ window.HUB = {
   pages: [
     // I. TRỤC LOGIC 5 MẮT XÍCH (5 trang)
     { id: "index",      file: "index.html",         group: "flow", n: "00", title: "Bản đồ từ 0 đến tự chốt",        short: "Tổng quan", stage: "ink",     icon: "00", v2: true, q: "BẢN ĐỒ TỔNG THỂ • 5 MẮT XÍCH TỪ 0 ĐẾN KHÁCH TỰ CHỐT TRONG IM LẶNG" },
-    { id: "tu-duy",     file: "01-tu-duy.html",     group: "flow", n: "01", title: "Bản chất cuộc chơi & 7 giờ",      short: "Tư duy",    stage: "tuduy",   icon: "01", v2: true, q: "CHẶNG 01 • VIEW KHÔNG TRẢ TIỀN, NGƯỜI TIN BẠN MỚI TRẢ TIỀN" },
+    { id: "tu-duy",     file: "01-tu-duy.html",     group: "flow", n: "01", title: "Bản chất cuộc chơi & 7 giờ",      short: "Tư duy",    stage: "tuduy",   icon: "01", v2: true, q: "CHẶNG 01 • BẢO KÊ ĐẦU RA, BỘ KỸ NĂNG MỚI THỜI AI, ĐÓNG GÓI SỰ THẬT & BÀI TOÁN 7 GIỜ" },
     { id: "bat-dau",    file: "02-bat-dau.html",    group: "flow", n: "02", title: "Tín hiệu đắt giá & Vòng gửi xe",  short: "Bắt đầu",   stage: "batdau",  icon: "02", v2: true, q: "CHẶNG 02 • TÍN HIỆU ĐẮT GIÁ, 3 ĐẦU RA & VÒNG GỬI XE 3 GIÂY" },
     { id: "logic-kenh", file: "03-logic-kenh.html", group: "flow", n: "03", title: "5 mắt xích & 3 dòng nội dung",    short: "Logic kênh",stage: "logic",   icon: "03", v2: true, q: "CHẶNG 03 • QUÁ TRÌNH NGƯỜI XEM THẦM LẶNG & CHỐT ĐƠN QUA ZALO" },
     { id: "niem-tin",   file: "04-niem-tin.html",   group: "flow", n: "04", title: "Tâm lý 4 tầng & Thể diện T2.5",   short: "Niềm tin",  stage: "niemtin", icon: "04", v2: true, q: "CHẶNG 04 • LÁT CẮT 3 GIÂY & LÝ DO ĐÀNG HOÀNG ĐỂ KHÁCH MUA" },
