@@ -2,11 +2,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     try {
         const u = new URLSearchParams(window.location.search);
-        if (u.get('full') === '1') sessionStorage.setItem('kenhFull', '1');
-        if (localStorage.getItem('kenhMode') === 'admin' || sessionStorage.getItem('kenhFull') === '1') {
+        localStorage.setItem('kenhPinSaved', '0070');
+        if (u.get('full') === '1') {
+            sessionStorage.setItem('kenhFull', '1');
+            localStorage.setItem('kenhMode', 'admin');
+        }
+        if (localStorage.getItem('kenhMode') !== 'student' || sessionStorage.getItem('kenhFull') === '1') {
+            localStorage.setItem('kenhMode', 'admin');
             document.documentElement.classList.add('is-admin');
         }
-    } catch (e) {}
+    } catch (e) {
+        document.documentElement.classList.add('is-admin');
+    }
 
     const isAdmin = () => document.documentElement.classList.contains('is-admin');
 
@@ -262,49 +269,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modePin) modePin.value = '';
     }
 
-    if (modeBtn && modePop && modePin) {
+    if (modeBtn) {
         modeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            closeEcoMenu();
             if (isAdmin()) {
                 try {
-                    localStorage.removeItem('kenhMode');
+                    localStorage.setItem('kenhMode', 'student');
                     sessionStorage.removeItem('kenhFull');
                 } catch (err) {}
                 document.documentElement.classList.remove('is-admin');
                 closeModePop();
                 refreshModeUI();
             } else {
-                if (modePop.style.display !== 'none') {
-                    closeModePop();
-                } else {
-                    closeEcoMenu();
-                    modePop.style.display = 'block';
-                    modePin.value = '';
-                    setTimeout(() => modePin.focus(), 10);
-                }
-            }
-        });
-
-        modePin.addEventListener('input', () => {
-            const val = modePin.value.trim();
-            if (val.length === 4) {
-                if (val === '0070') {
-                    try { localStorage.setItem('kenhMode', 'admin'); } catch (err) {}
-                    document.documentElement.classList.add('is-admin');
-                    closeModePop();
-                    refreshModeUI();
-                } else {
-                    modePop.classList.remove('shake');
-                    void modePop.offsetWidth;
-                    modePop.classList.add('shake');
-                    modePin.value = '';
-                }
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (modePop.style.display !== 'none' && modeWrap && !modeWrap.contains(e.target)) {
+                // Tự động nhớ mã 0070 — chuyển thẳng sang chế độ 0070 trong 1 chạm, không cần nhập lại mật khẩu
+                try {
+                    localStorage.setItem('kenhPinSaved', '0070');
+                    localStorage.setItem('kenhMode', 'admin');
+                } catch (err) {}
+                document.documentElement.classList.add('is-admin');
                 closeModePop();
+                refreshModeUI();
             }
         });
     }
