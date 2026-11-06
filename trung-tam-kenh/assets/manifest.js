@@ -18,7 +18,7 @@ window.HUB = {
   groups: [
     { id: "flow", title: "Trục logic & định dạng" },
     { id: "ref",  title: "Bàn mổ kênh mẫu" },
-    { id: "v1",   title: "Chuyên khảo gốc (1.0)" }
+    { id: "v1",   title: "Bản đọc tổng hợp" }
   ],
   pages: [
     // I. TRỤC LOGIC 5 MẮT XÍCH (5 trang)
@@ -36,7 +36,7 @@ window.HUB = {
     { id: "storytelling-2",  file: "dinh-dang/storytelling2.0.html", group: "flow", parent: "dinh-dang-2", sub: true, n: "5.4", title: "Storytelling (Lát cắt 5 giây)",     short: "Storytelling", stage: "dinhdang", icon: "5.4", v2: true, q: "ĐỊNH DẠNG 04 • KỂ 1 LÁT CẮT 5 GIÂY & NỐI SANG QUY LUẬT NGHỀ" },
     { id: "chuyen-canh-2",   file: "dinh-dang/chuyencanh2.0.html",   group: "flow", parent: "dinh-dang-2", sub: true, n: "5.5", title: "Chuyển cảnh trong chuyển động",     short: "Chuyển cảnh",  stage: "dinhdang", icon: "5.5", v2: true, q: "KỸ THUẬT NỐI • CẮT Ở 70% ĐÀ CHUYỂN ĐỘNG ĐỂ MẮT KHÔNG THẤY VẾT CẮT" },
     { id: "bo-cuc-quay-2",   file: "dinh-dang/bocucquay.html",       group: "flow", parent: "dinh-dang-2", sub: true, n: "5.6", title: "Bố cục khung hình sạch",            short: "Bố cục",       stage: "dinhdang", icon: "5.6", v2: true, q: "KỸ THUẬT HÌNH • 6 TRỤ CỘT KHUNG HÌNH SẠCH LÀ LỜI KHEN KHÔNG CẦN NÓI" },
-    { id: "vo-boc-31",       file: "dinh-dang/vo-boc-31.html",       group: "flow", parent: "dinh-dang-2", sub: true, n: "5.7", title: "31 vỏ bọc video tạo khách",         short: "31 vỏ bọc",    stage: "dinhdang", icon: "5.7", v2: true, q: "ĐA DẠNG HÓA • MƯỢN CHUYỆN ĐỜI THƯỜNG ĐỂ ĐƯA LÕI TAY NGHỀ VÀO VIDEO" },
+    { id: "vo-boc-31",       file: "dinh-dang/vo-boc-31.html",       group: "flow", parent: "dinh-dang-2", sub: true, n: "5.7", title: "31 vỏ bọc video tạo khách",         short: "31 vỏ bọc",    stage: "dinhdang", icon: "5.7", v2: true, q: "ĐA DẠNG HÓA • MƯỢN CHUYỆN ĐỜI THƯỜNG ĐỂ ĐƯA LÕI TAY NGHỀ VÀO VIDEO", adminOnly: true },
     { id: "megaprompt-2",    file: "dinh-dang/megaprompt2.0.html",   group: "flow", parent: "dinh-dang-2", sub: true, n: "5.8", title: "Bộ câu lệnh AI (4 định dạng)",      short: "Câu lệnh AI",  stage: "dinhdang", icon: "5.8", v2: true, q: "CÔNG CỤ AI • BỘ CÂU LỆNH VIẾT KỊCH BẢN KHỚP TỪNG CÁCH ĐẶT MÁY QUAY" },
 
     // III. THỰC THI & KÊNH THẬT (2 trang)
@@ -45,7 +45,7 @@ window.HUB = {
 
     // IV. BẢN CHUYÊN KHẢO TỔNG HỢP 2.0 & GỐC 1.0
     { id: "logic-tong-hop", file: "logic-tong-hop.html",    group: "v1", n: "2.0", title: "Logic Xây Kênh Tổng Hợp (Mới)",      short: "Tổng hợp 2.0", stage: "ink", icon: "2.0", q: "Bản tổng hợp mới: Việc thật, tâm thế món quà, bảo kê đầu ra & đo hai pha" },
-    { id: "cu",          file: "cu/index.html",          group: "v1", n: "1.0", title: "Logic Storytelling & Niềm tin (1.0)", short: "Niềm tin 1.0",  stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Hàng giá rẻ bán bằng View, hàng giá cao bán bằng Niềm tin" },
-    { id: "cu-xay-kenh", file: "cu/logic-xay-kenh.html", group: "v1", n: "1.0", title: "Logic Xây Kênh: 0 → Tự chốt (1.0)",   short: "Xây kênh 1.0", stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Lộ trình từ 0 → Khách tự chốt trong im lặng" }
+    { id: "cu",          file: "cu/index.html",          group: "v1", n: "1.0", title: "Logic Storytelling & Niềm tin (1.0)", short: "Niềm tin 1.0",  stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Hàng giá rẻ bán bằng View, hàng giá cao bán bằng Niềm tin", adminOnly: true },
+    { id: "cu-xay-kenh", file: "cu/logic-xay-kenh.html", group: "v1", n: "1.0", title: "Logic Xây Kênh: 0 → Tự chốt (1.0)",   short: "Xây kênh 1.0", stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Lộ trình từ 0 → Khách tự chốt trong im lặng", adminOnly: true }
   ]
 };

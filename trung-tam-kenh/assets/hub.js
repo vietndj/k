@@ -1,5 +1,15 @@
-// hub.js — Render shell điều hướng, TOC, tìm kiếm ⌘K và Lightbox xem ảnh Timeline
+// hub.js — Render shell điều hướng, Chế độ Học viên / Admin 0070, TOC, tìm kiếm ⌘K và Lightbox
 document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const u = new URLSearchParams(window.location.search);
+        if (u.get('full') === '1') sessionStorage.setItem('kenhFull', '1');
+        if (localStorage.getItem('kenhMode') === 'admin' || sessionStorage.getItem('kenhFull') === '1') {
+            document.documentElement.classList.add('is-admin');
+        }
+    } catch (e) {}
+
+    const isAdmin = () => document.documentElement.classList.contains('is-admin');
+
     const pageId = document.body.getAttribute('data-page');
     if (!window.HUB || !window.HUB.pages) return;
     const page = window.HUB.pages.find(p => p.id === pageId);
@@ -22,21 +32,52 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }).join('');
 
-    // Sidebar menu
-    let menuHtml = '';
-    for (const g of window.HUB.groups) {
-        menuHtml += `<h6>${g.title}</h6>`;
-        const gPages = window.HUB.pages.filter(p => p.group === g.id && !p.hiddenFromMenu);
-        menuHtml += gPages.map(p => {
-            const isSub = !!p.parent || !!p.sub;
-            const isOn = (p.id === pageId) || (page.activeMenuId === p.id);
-            return `
-                <a href="${rel}${p.file}" class="pg ${isSub ? 'pg-sub' : ''} ${isOn ? 'on' : ''}">
-                    <span class="n">${p.n}</span>
-                    <span class="t">${p.title}</span>
-                </a>
-            `;
-        }).join('');
+    function buildMenuHtml() {
+        let html = '';
+        for (const g of window.HUB.groups) {
+            const gPages = window.HUB.pages.filter(p =>
+                p.group === g.id &&
+                !p.hiddenFromMenu &&
+                (isAdmin() || !p.adminOnly || p.id === pageId)
+            );
+            if (!gPages.length) continue;
+            html += `<h6>${g.title}</h6>`;
+            html += gPages.map(p => {
+                const isSub = !!p.parent || !!p.sub;
+                const isOn = (p.id === pageId) || (page.activeMenuId === p.id);
+                const badge = p.adminOnly ? `<span class="pg-admin-badge">0070</span>` : '';
+                return `
+                    <a href="${rel}${p.file}" class="pg ${isSub ? 'pg-sub' : ''} ${isOn ? 'on' : ''}">
+                        <span class="n">${p.n}</span>
+                        <span class="t">${p.title}</span>
+                        ${badge}
+                    </a>
+                `;
+            }).join('');
+        }
+        return html;
+    }
+
+    function buildPagerHtml() {
+        const navPages = window.HUB.pages.filter(p =>
+            !p.hiddenFromMenu &&
+            p.group !== 'v1' &&
+            (isAdmin() || !p.adminOnly)
+        );
+        const curNavId = (page.hiddenFromMenu || (page.adminOnly && !isAdmin()))
+            ? (page.activeMenuId || page.parent || pageId)
+            : pageId;
+        const curIdx = navPages.findIndex(p => p.id === curNavId);
+        let html = '';
+        if (curIdx > 0) {
+            const prev = navPages[curIdx - 1];
+            html += `<a href="${rel}${prev.file}" class="pv"><small>← Trang trước</small><b>${prev.title}</b></a>`;
+        } else { html += `<span></span>`; }
+        if (curIdx >= 0 && curIdx < navPages.length - 1) {
+            const nx = navPages[curIdx + 1];
+            html += `<a href="${rel}${nx.file}" class="nx"><small>Trang tiếp →</small><b>${nx.title}</b></a>`;
+        } else { html += `<span></span>`; }
+        return html;
     }
 
     // Tách nội dung bài viết
@@ -76,33 +117,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Thanh mục lục nhanh đặt gọn ngay dưới tiêu đề (bỏ cột phải để mở rộng không gian xem ảnh)
-    const heads = [...tmp.querySelectorAll('h2')];
-    heads.forEach((h, i) => { if (!h.id) h.id = 'sec-' + (i + 1); });
+    const allHeads = [...tmp.querySelectorAll('h2')];
+    allHeads.forEach((h, i) => { if (!h.id) h.id = 'sec-' + (i + 1); });
     const formatTocTitle = (h) => {
         const clone = h.cloneNode(true);
         const num = clone.querySelector('.num');
         if (num) num.textContent = num.textContent.trim() + ' · ';
         return clone.textContent.trim();
     };
-    const tocHtml = heads.length > 1
-        ? `<nav class="sec-jump" aria-label="Mục lục nhanh">${heads.map(h => `<a href="#${h.id}">${formatTocTitle(h)}</a>`).join('')}</nav>`
-        : '';
 
-    // Pager chuyển trang
-    const navPages = window.HUB.pages.filter(p => !p.hiddenFromMenu && p.group !== 'v1');
-    const curNavId = page.hiddenFromMenu ? (page.activeMenuId || page.parent || pageId) : pageId;
-    const curIdx = navPages.findIndex(p => p.id === curNavId);
-    let pagerHtml = '<nav class="pager" aria-label="Chuyển trang">';
-    if (curIdx > 0) {
-        const prev = navPages[curIdx - 1];
-        pagerHtml += `<a href="${rel}${prev.file}" class="pv"><small>← Trang trước</small><b>${prev.title}</b></a>`;
-    } else { pagerHtml += `<span></span>`; }
-    if (curIdx >= 0 && curIdx < navPages.length - 1) {
-        const nx = navPages[curIdx + 1];
-        pagerHtml += `<a href="${rel}${nx.file}" class="nx"><small>Trang tiếp →</small><b>${nx.title}</b></a>`;
-    } else { pagerHtml += `<span></span>`; }
-    pagerHtml += '</nav>';
+    function buildTocInnerHtml(container) {
+        const rootNode = container || document.querySelector('.content') || tmp;
+        const visibleHeads = [...rootNode.querySelectorAll('h2')].filter(h => isAdmin() || !h.closest('[data-admin]'));
+        if (visibleHeads.length <= 1) return '';
+        return visibleHeads.map(h => `<a href="#${h.id}">${formatTocTitle(h)}</a>`).join('');
+    }
+
+    function modeBtnInnerHtml() {
+        return isAdmin()
+            ? `<span class="mode-ico">🔓</span><span class="mode-lbl">0070</span>`
+            : `<span class="mode-ico">👁</span><span class="mode-lbl">Học viên</span>`;
+    }
+
+    const initialTocInner = buildTocInnerHtml(tmp);
 
     document.body.innerHTML = `
         <div class="topbar">
@@ -158,6 +195,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             </div>
+            <div class="mode-wrap" id="mode-wrap">
+                <button type="button" class="mode-btn" id="mode-btn" title="Chuyển chế độ xem Học viên / Đầy đủ (0070)">
+                    ${modeBtnInnerHtml()}
+                </button>
+                <div class="mode-pop" id="mode-pop" style="display:none;">
+                    <label for="mode-pin">Mã mở rộng (4 số)</label>
+                    <input type="password" id="mode-pin" class="mode-pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" autocomplete="off">
+                </div>
+            </div>
             <div class="searchbtn">TÌM KIẾM <kbd>⌘K</kbd></div>
             <div class="menubtn" aria-label="Mở danh mục">☰</div>
         </div>
@@ -167,15 +213,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <b>${window.HUB.name}</b>
                     <p>${window.HUB.sub}</p>
                 </div>
-                ${menuHtml}
+                <div id="side-menu-list">${buildMenuHtml()}</div>
             </aside>
             <main class="main wide" style="--stage:var(--c-${page.stage})">
                 <article class="content">
                     <div class="kicker">${page.q}</div>
                     <h1 class="title">${titleText}</h1>
-                    ${tocHtml}
+                    <nav class="sec-jump" id="sec-jump" aria-label="Mục lục nhanh" style="${initialTocInner ? '' : 'display:none;'}">${initialTocInner}</nav>
                     ${tmp.innerHTML}
-                    ${pagerHtml}
+                    <nav class="pager" id="pager-nav" aria-label="Chuyển trang">${buildPagerHtml()}</nav>
                 </article>
             </main>
         </div>
@@ -188,6 +234,80 @@ document.addEventListener('DOMContentLoaded', () => {
         newScript.textContent = oldScript.textContent;
         oldScript.parentNode.replaceChild(newScript, oldScript);
     });
+
+    // Nút chuyển chế độ Học viên <-> 0070
+    const modeBtn = document.getElementById('mode-btn');
+    const modePop = document.getElementById('mode-pop');
+    const modePin = document.getElementById('mode-pin');
+    const modeWrap = document.getElementById('mode-wrap');
+
+    function refreshModeUI() {
+        if (modeBtn) modeBtn.innerHTML = modeBtnInnerHtml();
+        const sideList = document.getElementById('side-menu-list');
+        if (sideList) sideList.innerHTML = buildMenuHtml();
+        const secJump = document.getElementById('sec-jump');
+        if (secJump) {
+            const tocInner = buildTocInnerHtml(document.querySelector('.content'));
+            secJump.innerHTML = tocInner;
+            secJump.style.display = tocInner ? '' : 'none';
+        }
+        const pagerNav = document.getElementById('pager-nav');
+        if (pagerNav) pagerNav.innerHTML = buildPagerHtml();
+    }
+
+    function closeModePop() {
+        if (!modePop) return;
+        modePop.style.display = 'none';
+        modePop.classList.remove('shake');
+        if (modePin) modePin.value = '';
+    }
+
+    if (modeBtn && modePop && modePin) {
+        modeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isAdmin()) {
+                try {
+                    localStorage.removeItem('kenhMode');
+                    sessionStorage.removeItem('kenhFull');
+                } catch (err) {}
+                document.documentElement.classList.remove('is-admin');
+                closeModePop();
+                refreshModeUI();
+            } else {
+                if (modePop.style.display !== 'none') {
+                    closeModePop();
+                } else {
+                    closeEcoMenu();
+                    modePop.style.display = 'block';
+                    modePin.value = '';
+                    setTimeout(() => modePin.focus(), 10);
+                }
+            }
+        });
+
+        modePin.addEventListener('input', () => {
+            const val = modePin.value.trim();
+            if (val.length === 4) {
+                if (val === '0070') {
+                    try { localStorage.setItem('kenhMode', 'admin'); } catch (err) {}
+                    document.documentElement.classList.add('is-admin');
+                    closeModePop();
+                    refreshModeUI();
+                } else {
+                    modePop.classList.remove('shake');
+                    void modePop.offsetWidth;
+                    modePop.classList.add('shake');
+                    modePin.value = '';
+                }
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (modePop.style.display !== 'none' && modeWrap && !modeWrap.contains(e.target)) {
+                closeModePop();
+            }
+        });
+    }
 
     // Menu Drawer trên điện thoại
     const menuBtn = document.querySelector('.menubtn');
@@ -218,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function openEcoMenu() {
         if (!ecoMenu) return;
         if (modal && modal.style.display !== 'none') modal.style.display = 'none';
+        closeModePop();
         ecoMenu.style.display = 'block';
         if (ecoBtn) {
             ecoBtn.classList.add('active');
@@ -268,6 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleModal() {
         if (modal.style.display === 'none') {
             closeEcoMenu();
+            closeModePop();
             modal.style.display = 'flex';
             smInput.value = '';
             smResults.innerHTML = '';
@@ -288,6 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleModal();
         }
         if (e.key === 'Escape') {
+            if (modePop && modePop.style.display !== 'none') closeModePop();
             if (modal.style.display !== 'none') toggleModal();
             if (lb && lb.style.display !== 'none') lb.style.display = 'none';
         }
@@ -313,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!q) { smResults.innerHTML = ''; return; }
         resultsData = [];
         window.HUB.pages.forEach(p => {
+            if (!isAdmin() && p.adminOnly) return;
             if (p.title.toLowerCase().includes(q) || (p.q && p.q.toLowerCase().includes(q))) {
                 resultsData.push({ title: `${p.n} · ${p.title}`, url: rel + p.file, context: p.q || '' });
             }
