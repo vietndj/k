@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionStorage.setItem('kenhFull', '1');
             localStorage.setItem('kenhMode', 'admin');
         }
-        if (localStorage.getItem('kenhMode') !== 'student' || sessionStorage.getItem('kenhFull') === '1') {
+        if (u.get('mode') !== 'student' || sessionStorage.getItem('kenhFull') === '1') {
             localStorage.setItem('kenhMode', 'admin');
             document.documentElement.classList.add('is-admin');
         }
