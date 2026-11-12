@@ -1,6 +1,6 @@
-# 📁 HỒ SƠ KIẾN THỨC & SẢN PHẨM CỐT LÕI: NGUYỄN ĐỨC VIỆT & HỆ SINH THÁI FEDU (`boicanh2` • `kenh.fedu.vn` • `thcn`)
+# 📁 HỒ SƠ KIẾN THỨC & SẢN PHẨM CỐT LÕI: NGUYỄN ĐỨC VIỆT
 
-> **Mục đích tài liệu:** Đóng gói trọn vẹn hệ thống kiến thức nền tảng, các lớp học và khóa học hiện có, giáo trình 4 định dạng video chủ lực, hệ thống tư duy Thương hiệu cá nhân (`thcn`) và toàn bộ nội dung Trung tâm Logic Xây Kênh (`kenh.fedu.vn`) của **anh Nguyễn Đức Việt (FEDU)**.
+> **Mục đích tài liệu:** Đóng gói trọn vẹn hệ thống kiến thức nền tảng, các lớp học và khóa học hiện có, giáo trình 4 định dạng video chủ lực, hệ thống tư duy Thương hiệu cá nhân (`thcn`) và toàn bộ nội dung Trung tâm Logic Xây Kênh (`Trung Tâm Logic Xây Kênh`) của **anh Nguyễn Đức Việt**.
 >
 > Tài liệu này được thiết kế tinh gọn, đi thẳng vào bản chất, **không chứa nhật ký việc vặt hàng ngày**, giúp Gemini Web (`gemini.google.com`), Google Docs và các trợ lý AI hiểu đúng 100% công việc giảng dạy, sản phẩm và hệ tư tưởng của anh Việt mà không cần phải tự đọc các trang web rời rạc.
 
@@ -12,7 +12,7 @@
 2. [Phần 2: Hệ Thống Các Lớp Học, Khóa Học & Giáo Trình Đào Tạo Hiện Có](#phần-2-hệ-thống-các-lớp-học-khóa-học--giáo-trình-đào-tạo-hiện-có)
 3. [Phần 3: Giáo Trình Chi Tiết 4 Định Dạng Video Chủ Lực & Kỹ Thuật Bổ Trợ](#phần-3-giáo-trình-chi-tiết-4-định-dạng-video-chủ-lực--kỹ-thuật-bổ-trợ)
 4. [Phần 4: Hệ Thống Tư Duy & Logic Thương Hiệu Cá Nhân (`thcn`)](#phần-4-hệ-thống-tư-duy--logic-thương-hiệu-cá-nhân-thcn)
-5. [Phần 5: Trung Tâm Logic Xây Kênh & Bản Chất Niềm Tin (`kenh.fedu.vn`)](#phần-5-trung-tâm-logic-xây-kênh--bản-chất-niềm-tin-kenhfeduvn)
+5. [Phần 5: Trung Tâm Logic Xây Kênh & Bản Chất Niềm Tin (`Trung Tâm Logic Xây Kênh`)](#phần-5-trung-tâm-logic-xây-kênh--bản-chất-niềm-tin-logic_xay_kenh)
 6. [Phần 6: Hồ Sơ Giải Phẫu 9+ Case Studies Học Viên Thực Chiến Đa Ngành](#phần-6-hồ-sơ-giải-phẫu-9-case-studies-học-viên-thực-chiến-đa-ngành)
 7. [Phần 7: Bộ Công Cụ AI, Mạng Lưới Tài Nguyên Số & Quy Tắc Thực Thi](#phần-7-bộ-công-cụ-ai-mạng-lưới-tài-nguyên-số--quy-tắc-thực-thi)
 
@@ -23,7 +23,7 @@
 ### 1. Xuất Thân & Học Vấn Nền Tảng
 - **Học vấn kỹ thuật & nghệ thuật:** Tốt nghiệp **Đại học Bách Khoa TP.HCM** và đào tạo chuyên sâu về **Đạo diễn hình ảnh**. Sự kết hợp giữa tư duy kỹ thuật logic, mạch lạc của dân kỹ sư với mỹ cảm hình ảnh thực tế tạo nên phương pháp giảng dạy rõ ràng, dễ làm theo.
 - **Bề dày giảng dạy:** **15+ năm kinh nghiệm trực tiếp giảng dạy tại Đại học FPT** và hệ thống đào tạo đa phương tiện (FPT Arena Multimedia). Điểm mạnh cốt lõi là bóc tách những kỹ thuật phức tạp thành các bước bấm máy đơn giản mà người lớn tuổi hay người không rành công nghệ cũng làm được ngay tại lớp.
-- **Vai trò hiện tại:** Người sáng lập hệ sinh thái đào tạo Video Marketing thực chiến **FEDU**, trực tiếp đứng lớp huấn luyện, nghiên cứu tâm lý người xem và xây dựng hệ thống công cụ AI hỗ trợ học viên làm video.
+- **Vai trò hiện tại:** Người sáng lập hệ sinh thái đào tạo Video Marketing thực chiến, trực tiếp đứng lớp huấn luyện, nghiên cứu tâm lý người xem và xây dựng hệ thống công cụ AI hỗ trợ học viên làm video.
 
 ### 2. Xác Lập Bản Sắc & Văn Phong "Chất Nguyễn Việt × Độ Sắc Claude"
 - **Mộc mạc – Đời thực – Chuyên môn thật:** Nói không với diễn xuất màu mè, kịch bản sáo rỗng hay ekip 4–5 người cồng kềnh.
@@ -51,17 +51,17 @@
 
 ```
 [ KHÓA HỌC ONLINE TRÊN SKOOL (LỐI DẪN ĐẦU VÀO) ]
-├── 1. video.fedu.vn — Khóa Làm Video CapCut Từ Cơ Bản Đến Nâng Cao (599.000đ)
-└── 2. 30ngayviral.fedu.vn — Khóa Thử Thách 30 Ngày Xây Kênh Viral (999.000đ)
+├── 1. Khóa Video CapCut — Khóa Làm Video CapCut Từ Cơ Bản Đến Nâng Cao (599.000đ)
+└── 2. Khóa 30 Ngày Viral — Khóa Thử Thách 30 Ngày Xây Kênh Viral (999.000đ)
                     │
                     ▼
 [ LỚP HỌC OFFLINE THỰC CHIẾN & HUẤN LUYỆN CHUYÊN SÂU ]
-├── 3. offline.fedu.vn — Lớp Offline Thực Chiến 2 Ngày Cầm Tay Chỉ Việc (4M – 6M, tặng kèm 2 khóa Online)
-├── 4. k3.fedu.vn / kenh.fedu.vn — Hệ Thống Giáo Trình 5 Buổi & Lộ Trình Rèn Luyện 4 Tuần
-└── 5. ai.fedu.vn / aioffline.fedu.vn — Các Lớp Ứng Dụng AI Trong Sáng Tạo Nội Dung & Làm Web Hứng Khách
+├── 3. Lớp Offline Thực Chiến 2 Ngày — Lớp Offline Thực Chiến 2 Ngày Cầm Tay Chỉ Việc (4M – 6M, tặng kèm 2 khóa Online)
+├── 4. Cổng Giáo Trình Thực Hành / Trung Tâm Logic Xây Kênh — Hệ Thống Giáo Trình 5 Buổi & Lộ Trình Rèn Luyện 4 Tuần
+└── 5. Lớp Ứng Dụng AI / aiLớp Offline Thực Chiến 2 Ngày — Các Lớp Ứng Dụng AI Trong Sáng Tạo Nội Dung & Làm Web Hứng Khách
 ```
 
-### 1. Lớp Học Offline Thực Chiến 2 Ngày (`offline.fedu.vn`) — Sản Phẩm Chủ Lực
+### 1. Lớp Học Offline Thực Chiến 2 Ngày (`Lớp Offline Thực Chiến 2 Ngày`) — Sản Phẩm Chủ Lực
 - **Mục tiêu:** Giúp người làm nghề, chủ tiệm, chủ doanh nghiệp tự tay quay dựng hoàn chỉnh video ngay tại lớp, xóa bỏ nỗi sợ ống kính và nắm vững các bước làm sản xuất 1 video trong 30 phút.
 - **Tần suất & Sĩ số:** Tổ chức tại Hà Nội và TP.HCM; giới hạn **35 – 40 học viên/lớp** để thầy Việt và đội ngũ trợ giảng kèm sát từng người.
 - **4 Cam kết thực tế:**
@@ -74,7 +74,7 @@
   - Đăng ký sớm (Early Bird): **5.000.000đ**
   - Đăng ký nhóm 2 người: **4.500.000đ / người**
   - Đăng ký nhóm từ 3 người trở lên: **4.000.000đ / người**
-  - **Quyền lợi đi kèm:** Tặng trọn đời cả 2 khóa học Online trên nền tảng Skool (`video.fedu.vn` và `30ngayviral.fedu.vn`) để xem lại bất cứ lúc nào.
+  - **Quyền lợi đi kèm:** Tặng trọn đời cả 2 khóa học Online trên nền tảng Skool (`Khóa Video CapCut` và `Khóa 30 Ngày Viral`) để xem lại bất cứ lúc nào.
 
 #### Giáo Trình Chi Tiết 2 Ngày Học Offline (24 Module):
 - **NGÀY 1: KỊCH BẢN TRÚNG TÂM LÝ & DỰNG VIDEO TRÊN ĐIỆN THOẠI (09:00 – 17:00)**
@@ -103,29 +103,29 @@
   - *Buổi Chiều (13:30 – 17:00) — Giữ nhịp cuốn hút & Ứng dụng bộ công cụ AI:*
     1. Quy tắc giữ nhịp 3 giây: Cứ 2–3 giây đổi cỡ cảnh, chèn B-roll hoặc điểm xuyết chữ để mắt người xem không bị mỏi.
     2. Phối âm thanh 3 lớp: Giọng nói chính (-3dB đến -6dB), nhạc nền (-20dB đến -25dB) và tiếng động hiệu ứng (SFX) vừa đủ.
-    3. Cài đặt và sử dụng Bộ Trợ lý AI viết kịch bản của FEDU (Miss Idea, Miss Vlog, Miss Video Ads, Storytelling).
+    3. Cài đặt và sử dụng Bộ Trợ lý AI viết kịch bản của  (Miss Idea, Miss Vlog, Miss Video Ads, Storytelling).
     4. Các bước làm dùng AI tìm ý tưởng và lên khung kịch bản trong 5 phút.
     5. Chiếu video của học viên lên màn hình lớn để thầy Việt nhận xét, chỉnh sửa trực tiếp từng lỗi nhỏ.
     6. Đóng gói các bước làm "1 sải tay" tại bàn làm việc để 1 người tự sản xuất video hoàn chỉnh chỉ trong 30 phút/ngày.
 
 ---
 
-### 2. Hai Khóa Học Online Trên Nền Tảng Skool (`video.fedu.vn` & `30ngayviral.fedu.vn`)
-1. **Khóa Học Làm Video CapCut (`video.fedu.vn` — 599.000đ):**
+### 2. Hai Khóa Học Online Trên Nền Tảng Skool (`Khóa Video CapCut` & `Khóa 30 Ngày Viral`)
+1. **Khóa Học Làm Video CapCut (`Khóa Video CapCut` — 599.000đ):**
    - Bao gồm **9 module bài bản** hướng dẫn từ cách cầm điện thoại quay đúng bố cục, lấy nét, khóa sáng, đến toàn bộ thao tác cắt ghép, chèn B-roll, chỉnh âm thanh, làm phụ đề và hiệu ứng chuyển cảnh thực용 trên CapCut.
    - Có sẵn nguyên liệu video mẫu để học viên tải về thực hành theo từng bài.
-2. **Khóa Thử Thách 30 Ngày Xây Kênh (`30ngayviral.fedu.vn` — 999.000đ):**
+2. **Khóa Thử Thách 30 Ngày Xây Kênh (`Khóa 30 Ngày Viral` — 999.000đ):**
    - Chương trình rèn luyện kỷ luật làm video liên tục trong 30 ngày, đi kèm kho kịch bản mẫu, hướng dẫn phân tích video thực tế và sửa bài trong cộng đồng Skool để học viên duy trì thói quen xuất bản nội dung đều đặn.
 
 ---
 
-### 3. Giáo Trình 5 Buổi Huấn Luyện Thực Chiến (`kenh.fedu.vn` & `k3.fedu.vn`)
+### 3. Giáo Trình 5 Buổi Huấn Luyện Thực Chiến (`Trung Tâm Logic Xây Kênh` & `Cổng Giáo Trình Thực Hành`)
 Ngoài lớp Offline 2 ngày nén gọn, chương trình huấn luyện theo lộ trình **5 Buổi** được thiết kế theo **2 phương án linh hoạt** tùy theo xuất phát điểm của học viên:
 
 #### Phương Án 1: Cuốn Chiếu Theo Từng Định Dạng (Dành cho người mới bắt đầu, còn ngại ống kính)
 - **Buổi 1 — Phá Băng Ống Kính & Video Voice-Over (Không cần lộ mặt):** Hiểu quy tắc 90-9-1 và Vòng gửi xe 3 giây đầu; học lau ống kính, căn sáng, quay thao tác tay nghề cận cảnh và thu âm giọng đọc đè lên hình. *Đầu ra: 1 video Voice-Over 30–45s giới thiệu tay nghề.*
 - **Buổi 2 — Xây Dựng Độ Tin Cậy Với Định Dạng Talking Head (Ngồi nói tại bàn):** Rèn nhịp nói điềm tĩnh 120–140 từ/phút; thiết lập góc quay 1 sải tay với đèn 45 độ; nói từng câu ngắn từ các gạch đầu dòng ý chính mà không cần học vẹt. *Đầu ra: 1 video Talking Head 45–60s giải quyết 1 thắc mắc phổ biến của khách hàng.*
-- **Buổi 3 — Dòng Chảy Đời Thường Với Walk & Talk & Giữ Nhịp 3 Giây:** Kỹ thuật cầm máy bước đi chống rung, đổi dáng theo từng câu nói; kết hợp lấy B-roll từ `brollbank.fedu.vn`, nhạc nền từ `nhac.fedu.vn` và tiếng động từ `sfx.fedu.vn`. *Đầu ra: 1 video Walk & Talk 45s dẫn khách dạo quanh cơ sở làm việc.*
+- **Buổi 3 — Dòng Chảy Đời Thường Với Walk & Talk & Giữ Nhịp 3 Giây:** Kỹ thuật cầm máy bước đi chống rung, đổi dáng theo từng câu nói; kết hợp lấy B-roll từ `Kho B-Roll`, nhạc nền từ `Kho Nhạc` và tiếng động từ `Kho Tiếng Động SFX`. *Đầu ra: 1 video Walk & Talk 45s dẫn khách dạo quanh cơ sở làm việc.*
 - **Buổi 4 — Đi Đúng Tâm Lý Với Storytelling Lát Cắt Vi Mô & 31 Vỏ Bọc:** Bóc tách tâm lý 3 tầng và Nấc Thể Diện; bỏ các tính từ chung chung để thay bằng danh từ và động từ cụ thể; áp dụng 1 trong 31 vỏ bọc video để đưa kiến thức làm nghề vào câu chuyện đời thường. *Đầu ra: 1 video Storytelling vi mô khiến khách xem tự chia sẻ vào nhóm chat riêng.*
 - **Buổi 5 — Đóng Gói Điểm Đón Khách Bằng Website AI Cá Nhân:** Vì mạng xã hội là đất thuê, học viên cần một trang web riêng gắn ở phần tiểu sử (Bio) để 90% người xem thầm lặng vào xem kỹ thông tin và bấm nút liên hệ Zalo. Học viên thực hành dùng công cụ AI (Lovable / Bolt / Framer / Gamma) tạo ngay 1 trang giới thiệu dịch vụ và nhúng các video đã quay trong 20 phút.
 
@@ -138,7 +138,7 @@ Ngoài lớp Offline 2 ngày nén gọn, chương trình huấn luyện theo l�
 
 ---
 
-### 4. Lộ Trình Thực Hành 4 Tuần Rèn Thói Quen Làm Video (`kenh.fedu.vn/07-thuc-hanh.html`)
+### 4. Lộ Trình Thực Hành 4 Tuần Rèn Thói Quen Làm Video (`Trung Tâm Logic Xây Kênh/07-thuc-hanh.html`)
 - **Tuần 1 (Phá băng & Vượt vòng gửi xe hình ảnh):** Quay 1 video ngồi nói giới thiệu dưới 60s và 1 video quay thao tác làm việc không lộ mặt. Yêu cầu đạt chuẩn: hình sáng nét, âm thanh rõ (-3dB), cắt sạch khoảng ngập ngừng.
 - **Tuần 2 (Mài giũa kịch bản & Lát cắt vi mô):** Viết 3 kịch bản bóc tách tâm lý từ một hành động cụ thể của khách hàng (ví dụ: khoảnh khắc khách thở dài, nhíu mày hay chần chừ khi nghe báo giá), chọn 1 kịch bản quay dựng hoàn chỉnh.
 - **Tuần 3 (Làm chủ nhịp điệu & Đa dạng hóa không gian):** Thực hành quay Walk & Talk kết hợp chèn B-roll (không để khung hình tĩnh quá 15 giây) và điều tiết âm nhạc/SFX.
@@ -146,7 +146,7 @@ Ngoài lớp Offline 2 ngày nén gọn, chương trình huấn luyện theo l�
 
 ---
 
-### 5. Chân Dung Học Viên Của FEDU & 3 Điểm Vướng Thực Tế
+### 5. Chân Dung Học Viên Của  & 3 Điểm Vướng Thực Tế
 - **4 Nhóm học viên chính:**
   1. *Người làm nghề có chuyên môn sâu:* Bác sĩ, dược sĩ, luật sư, kỹ sư nông nghiệp, người làm tư vấn tài chính, bảo hiểm, bất động sản, đào tạo...
   2. *Chủ doanh nghiệp nhỏ & vừa (SME) / Chủ xưởng:* Muốn trực tiếp xuất hiện để tạo uy tín cho thương hiệu, giảm phụ thuộc vào tiền chạy quảng cáo.
@@ -161,7 +161,7 @@ Ngoài lớp Offline 2 ngày nén gọn, chương trình huấn luyện theo l�
 
 ## PHẦN 3: GIÁO TRÌNH CHI TIẾT 4 ĐỊNH DẠNG VIDEO CHỦ LỰC & KỸ THUẬT BỔ TRỢ
 
-*(Tổng hợp toàn văn từ `kenh.fedu.vn/05-dinh-dang.html`, `kenh.fedu.vn/dinh-dang/*` và `k3.fedu.vn`)*
+*(Tổng hợp toàn văn từ `Trung Tâm Logic Xây Kênh/05-dinh-dang.html`, `Trung Tâm Logic Xây Kênh/dinh-dang/*` và `Cổng Giáo Trình Thực Hành`)*
 
 ### 1. Bảng Đối Chiếu Tổng Quan & Cách Chọn Định Dạng Theo Tâm Lý Người Xem
 
@@ -170,7 +170,7 @@ Ngoài lớp Offline 2 ngày nén gọn, chương trình huấn luyện theo l�
 | **01. Voice-Over & Thao Tác Tay** | **0%** (Không lộ mặt) | Quay cận cảnh đôi bàn tay làm nghề / sản phẩm (10–15 cảnh ngắn 2–3s), thu âm giọng nói mộc mạc trong phòng tĩnh rồi ghép hình đè lên tiếng. | Xóa 100% áp lực ngoại hình, không cần trang điểm, không sợ ngập ngừng mặt trước ống kính, nói sai câu nào thu lại ngay câu đó. | **Khi khách cần bằng chứng tay nghề:** Cho khách nhìn tận mắt sự tỉ mỉ, các bước làm làm việc thật và chất lượng sản phẩm. |
 | **02. Walk & Talk (Vừa đi vừa nói)** | **50% – 70%** (Di chuyển trong không gian thật) | Vừa bước đi trong tiệm/xưởng/công trình vừa trò chuyện, mỗi câu nói đổi một dáng hoặc chỉ tay vào việc thật. | Vận động bước đi giúp cơ thể thả lỏng, hết cảm giác bị soi xét khi ngồi im một chỗ; khoe khéo cơ sở vật chất tự nhiên. | **Khi khách cần sự gần gũi & làm quen:** Dẫn khách đi dạo một vòng cơ sở để tạo cảm giác thân thuộc trước khi đến nơi. |
 | **03. Talking Head (Ngồi nói 2 góc máy)** | **20% – 30% A-Roll** (+ 70–80% B-Roll minh họa) | Ngồi tại bàn làm việc (góc quay 1 sải tay), nhìn thẳng ống kính đối thoại 1-1. Dùng 2 góc máy (Chính diện & Cận 45°) và nói từng câu ngắn 5–7 chữ. | Không phải học thuộc lòng cả bài dài; nói từng câu đơn theo nhịp thở, cắt ghép đổi góc máy che sạch vết cắt. | **Khi khách cần điểm tựa tin cậy:** Khẳng định bản lĩnh người đứng đầu dám xuất hiện chịu trách nhiệm trực tiếp về dịch vụ. |
-| **04. Storytelling 3 Tầng (Nấc Thể Diện)** | **30% – 50%** (Kết hợp cảnh đời thường & thao tác vi mô) | Mở đầu bằng chi tiết vật lý vi mô (Tầng 2), gọi tên đúng cái cớ giữ mặt mũi (Nấc Thể Diện) để đi vào nỗi lo giấu kín (Tầng 3). | Không cần diễn kịch sến súa hay chèo kéo mua hàng ở cuối video; người xem tự thấy hình ảnh của mình và chủ động nhắn tin. | **Khi khách đang giấu nỗi lo thầm kín:** Bắt đúng bệnh ngầm để khách hàng tin tưởng tuyệt đối rằng bạn có thuốc giải. |
+| **04. Storytelling 3 Tầng (Nấc Thể Diện)** | **30% – 50%** (Kết hợp cảnh đời thường & thao tác vi mô) | Mở đầu bằng chi tiết vật lý vi mô (Tầng 2), gọi tên đúng cái cớ giữ mặt mũi (Nấc Thể Diện) để đi vào nỗi lo giấu kín (Tầng 3). | Không cần cố gồng mình hay chèo kéo mua hàng ở cuối video; người xem tự thấy hình ảnh của mình và chủ động nhắn tin. | **Khi khách đang giấu nỗi lo thầm kín:** Bắt đúng bệnh ngầm để khách hàng tin tưởng tuyệt đối rằng bạn có thuốc giải. |
 
 ---
 
@@ -260,7 +260,7 @@ Ngoài lớp Offline 2 ngày nén gọn, chương trình huấn luyện theo l�
 
 ### 7. Kỹ Thuật Bổ Trợ 2: 31 Vỏ Bọc Video Thực Chiến ("Vỏ Là Trend – Lõi Là Chuyên Môn")
 
-*(Trích xuất từ `kenh.fedu.vn/dinh-dang/vo-boc-31.html` & `k3_fedu`)*
+*(Trích xuất từ `Trung Tâm Logic Xây Kênh/dinh-dang/vo-boc-31.html` & `k3_giao_trinh`)*
 
 - **Nguyên lý "Ngựa gỗ thành Troy":** Thuật toán mạng xã hội ưu tiên sự tò mò và tính giải trí, trong khi khách hàng có tiền chỉ trả tiền cho chuyên môn thật. Nếu chỉ đứng giảng lý thuyết khô khan thì trượt ngay từ 3 giây đầu; nếu chỉ Nội dung giải trí theo xu hướng bắt trend thì có view nhưng không ai mua hàng. Giải pháp là **mượn một "Vỏ bọc" tình huống đời thường hoặc kịch tính ở 3 giây đầu để giữ chân người xem, sau đó đưa thẳng "Lõi chuyên môn" vào tháo gỡ khó khăn**.
 - **Danh mục các Vỏ bọc tiêu biểu học viên áp dụng ngay:**
@@ -342,9 +342,9 @@ Lộ trình làm video được phân định rõ thành **3 tầng**:
 
 ---
 
-## PHẦN 5: TRUNG TÂM LOGIC XÂY KÊNH & BẢN CHẤT NIỀM TIN (`kenh.fedu.vn`)
+## PHẦN 5: TRUNG TÂM LOGIC XÂY KÊNH & BẢN CHẤT NIỀM TIN (`Trung Tâm Logic Xây Kênh`)
 
-*(Tổng hợp đầy đủ từ 11 chuyên mục trên `kenh.fedu.vn` & `kenh_fedu.md`)*
+*(Tổng hợp đầy đủ từ 11 chuyên mục trên `Trung Tâm Logic Xây Kênh` & `kenh_.md`)*
 
 ### 1. Luật Chơi Cốt Lõi: Hàng Giá Rẻ Bán Bằng View – Hàng Giá Cao Bán Bằng Niềm Tin
 - Bạn có thể bán đồ ăn vặt, phụ kiện vài chục nghìn bằng video tấu hài, Nội dung giải trí theo xu hướng triệu view. Nhưng với sản phẩm và dịch vụ giá trị cao (khóa học, bất động sản, bảo hiểm, spa trị liệu, nha khoa, nội thất, tư vấn pháp lý...), **view giải trí không chuyển thành đơn hàng**.
@@ -398,11 +398,11 @@ Lộ trình làm video được phân định rõ thành **3 tầng**:
 
 ## PHẦN 6: HỒ SƠ GIẢI PHẪU 9+ CASE STUDIES HỌC VIÊN THỰC CHIẾN ĐA NGÀNH
 
-*(Tổng hợp từ `kenh.fedu.vn/09-case.html` và kho hồ sơ học viên `k3.fedu.vn`)*
+*(Tổng hợp từ `Trung Tâm Logic Xây Kênh/09-case.html` và kho hồ sơ học viên `Cổng Giáo Trình Thực Hành`)*
 
 ### 1. Bảng phân loại Đối Chiếu: Lời Tự Khen Rẻ Tiền (Cheap Talk) vs. Tín Hiệu Đắt Giá (Costly Signaling)
 
-| Ngành nghề & Học viên tiêu biểu | Cách làm cũ (Cheap Talk — Khách nghi ngờ) | Cách làm chuẩn FEDU (Costly Signaling — Khách tin ngay) | Định dạng chủ đạo |
+| Ngành nghề & Học viên tiêu biểu | Cách làm cũ (Cheap Talk — Khách nghi ngờ) | Cách làm chuẩn  (Costly Signaling — Khách tin ngay) | Định dạng chủ đạo |
 |---|---|---|---|
 | **1. Bảo Hiểm Nhân Thọ** *(Chị Liên)* | Khoe thu nhập, khoe xe, nói lý thuyết chung chung về tình yêu gia đình. | Giải phẫu 8 màn điều khoản loại trừ; chỉ thẳng trường hợp nào **tuyệt đối không nên mua** kẻo mất tiền oan. | Talking Head 2 góc máy + Cận cảnh giấy tờ hợp đồng. |
 | **2. Gia Dụng Cao Cấp Châu Âu** *(Lê Quỳnh Anh - Bếp Đức)* | Hô hào "hàng chuẩn Đức", giảm giá 50% giục khách chốt đơn. | Quay cận cảnh (Macro) độ khít nắp vung, men gốm và âm thanh thật (ASMR); từ chối bán nồi 15tr nếu bếp cũ của khách không tương thích. | Voice-Over + Thao tác tay cận cảnh & Âm thanh hiện trường. |
@@ -419,28 +419,28 @@ Lộ trình làm video được phân định rõ thành **3 tầng**:
 
 ## PHẦN 7: BỘ CÔNG CỤ AI, MẠNG LƯỚI TÀI NGUYÊN SỐ & QUY TẮC THỰC THI
 
-### 1. Bộ 4 Trợ Lý AI Viết Kịch Bản Chuẩn Văn Phong Thực Chiến (`k3.fedu.vn` / `3congcu.md`)
-Để học viên không bao giờ rơi vào cảnh bí ý tưởng mỗi sáng, hệ sinh thái FEDU trang bị sẵn 4 trợ lý AI đã được nạp sẵn bộ lọc ngôn từ mộc mạc của anh Việt:
+### 1. Bộ 4 Trợ Lý AI Viết Kịch Bản Chuẩn Văn Phong Thực Chiến (`Cổng Giáo Trình Thực Hành` / `3congcu.md`)
+Để học viên không bao giờ rơi vào cảnh bí ý tưởng mỗi sáng, hệ thống đào tạo của anh Việt trang bị sẵn 4 trợ lý AI đã được nạp sẵn bộ lọc ngôn từ mộc mạc của anh Việt:
 1. **Miss Idea (Cố vấn kịch bản Talking Head):** Hỏi 3 thông tin (Ngành nghề & mức giá, Điều khách hay e ngại nhất, Thời lượng giây), sau đó đưa ra 4 góc nhìn thực tế (2 góc nhìn thú nhận từ người bán + 2 góc nhìn đọc vị nỗi lo của người mua) và xuất kịch bản 7 câu khớp đúng số giây theo tốc độ nói 3 từ/giây.
 2. **Miss Vlog (Cố vấn kịch bản Xây kênh 7 giờ tiếp xúc):** Chuyển hóa các câu chuyện đời thường, công việc hàng ngày thành kịch bản Vlog gần gũi kèm 3 phương án mở đầu 3 giây đầu tiên.
 3. **Miss Video Ads (Biên kịch Video Quảng cáo dưới 60s):** Đi thẳng từ điểm mạnh thật của sản phẩm, ngắt sẵn nhịp cắt cảnh `[//]` và 5 câu mở đầu giữ chân người xem.
 4. **Trợ lý Storytelling 3 Tầng:** Bóc tách từ một hành động nhỏ ngoài đời thực thành kịch bản 7 nhịp đi trúng Nấc Thể Diện của người xem.
 
-### 2. Bản Đồ Các Website & Kho Tài Nguyên Trong Hệ Sinh Thái FEDU (`08-tai-nguyen.html`)
+### 2. Bản Đồ Các Website & Kho Tài Nguyên Trong Hệ Sinh Thái  (`08-tai-nguyen.html`)
 - **Nhóm Đào Tạo & Giáo Trình:**
-  - `fedu.vn`: Trang chủ tổng hợp hệ sinh thái đào tạo FEDU.
-  - `offline.fedu.vn`: Trang thông tin chính thức khóa học Offline 2 ngày thực chiến (kèm `offline.fedu.vn/research` lưu trữ nghiên cứu tâm lý học viên).
-  - `kenh.fedu.vn` (`k.fedu.vn/trung-tam-kenh/`): Trung tâm Logic Xây Kênh & Bản chất Niềm tin (11 chuyên đề + 4 Định dạng + 31 Vỏ bọc + 9 Case studies).
-  - `k3.fedu.vn`: Cổng giáo trình, bài tập và công cụ thực hành dành cho học viên lớp K3.
-  - `video.fedu.vn`: Khóa học Online làm chủ CapCut trên điện thoại (599.000đ).
-  - `30ngayviral.fedu.vn`: Khóa học Online thử thách 30 ngày làm video (999.000đ).
-  - `ai.fedu.vn` & `aioffline.fedu.vn`: Các chương trình đào tạo ứng dụng AI thực chiến.
+  - `anh Việt.vn`: Trang chủ tổng hợp hệ sinh thái đào tạo .
+  - `Lớp Offline Thực Chiến 2 Ngày`: Trang thông tin chính thức khóa học Offline 2 ngày thực chiến (kèm `Lớp Offline Thực Chiến 2 Ngày/research` lưu trữ nghiên cứu tâm lý học viên).
+  - `Trung Tâm Logic Xây Kênh` (`Trung Tâm Kiến Thức/trung-tam-kenh/`): Trung tâm Logic Xây Kênh & Bản chất Niềm tin (11 chuyên đề + 4 Định dạng + 31 Vỏ bọc + 9 Case studies).
+  - `Cổng Giáo Trình Thực Hành`: Cổng giáo trình, bài tập và công cụ thực hành dành cho học viên lớp K3.
+  - `Khóa Video CapCut`: Khóa học Online làm chủ CapCut trên điện thoại (599.000đ).
+  - `Khóa 30 Ngày Viral`: Khóa học Online thử thách 30 ngày làm video (999.000đ).
+  - `Lớp Ứng Dụng AI` & `aiLớp Offline Thực Chiến 2 Ngày`: Các chương trình đào tạo ứng dụng AI thực chiến.
 - **Nhóm Kho Tài Nguyên Sản Xuất Video Cho Học Viên:**
-  - `ytuong.fedu.vn`: Kho hơn 184+ mẫu video phân tích bố cục, góc máy và kịch bản đa ngành.
-  - `brollbank.fedu.vn`: Thư viện cảnh quay phụ họa (B-Roll) chất lượng cao hỗ trợ giữ nhịp 3 giây.
-  - `nhac.fedu.vn`: Kho nhạc nền không bản quyền phân loại theo cảm xúc và nhịp độ.
-  - `sfx.fedu.vn`: Kho hiệu ứng âm thanh (SFX) và bộ phối âm thanh chuẩn cho video ngắn.
-  - `kho.fedu.vn`: Kho lưu trữ các cẩm nang đúc kết logic chuyên sâu.
+  - `Kho Ý Tưởng`: Kho hơn 184+ mẫu video phân tích bố cục, góc máy và kịch bản đa ngành.
+  - `Kho B-Roll`: Thư viện cảnh quay phụ họa (B-Roll) chất lượng cao hỗ trợ giữ nhịp 3 giây.
+  - `Kho Nhạc`: Kho nhạc nền không bản quyền phân loại theo cảm xúc và nhịp độ.
+  - `Kho Tiếng Động SFX`: Kho hiệu ứng âm thanh (SFX) và bộ phối âm thanh chuẩn cho video ngắn.
+  - `Kho Logic`: Kho lưu trữ các cẩm nang đúc kết logic chuyên sâu.
 
 ### 3. Bộ Quy Tắc Chuẩn Khi AI Hỗ Trợ Anh Nguyễn Đức Việt
 1. **Xưng hô & Giọng điệu:** Luôn xưng **"em - anh Việt"** tự nhiên, chuẩn mực. Khi viết bài, soạn giáo án hoặc viết kịch bản cho anh Việt, luôn giữ văn phong **Mộc mạc – Đời thực – Điềm tĩnh – Sắc bén**, dùng từ ngữ đời thường của người làm nghề, không dùng văn mẫu sáo rỗng hay từ ngữ khoa trương.
@@ -450,4 +450,4 @@ Lộ trình làm video được phân định rõ thành **3 tầng**:
    - Luôn giữ thể diện cho người nghe, không phán xét, không hù dọa và không dùng văn quảng cáo chèo kéo rẻ tiền.
 
 ---
-*Hồ sơ kiến thức cốt lõi được chuẩn hóa và đồng bộ thống nhất giữa Máy Mac của anh Việt (`MASTER_CONTEXT_FEDU.md`), Web (`boicanh2.html`), Google Docs trên Google Drive và Gemini Web (`gemini.google.com`).*
+*Hồ sơ kiến thức cốt lõi được chuẩn hóa và đồng bộ thống nhất giữa Máy Mac của anh Việt (`MASTER_CONTEXT_.md`), Web (`boicanh2.html`), Google Docs trên Google Drive và Gemini Web (`gemini.google.com`).*
