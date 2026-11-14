@@ -73,20 +73,30 @@ def populate_hook_spec(base_spec: Dict[str, Any], hook_data: Dict[str, Any]) -> 
     sp["k08"] = {"l1": old_s, "l2_pre": "→ ", "l2_ul": new_s}
     sp["k09"] = {"meta": "Khách hàng · vừa nhắn", "msg1": "“Xem bài giải mã này,", "msg2": new_s.lower() + "!”"}
     sp["k10"] = {"lbl1": "Cách làm cũ", "val1": "10% nhớ", "lbl2": "Chuẩn nghề K4", "val2": "95% nhắn"}
-    sp["k11"] = {"q": old_s + "?", "a": new_s}
+    sp["k11"] = {"q": old_s, "a": new_s}
     sp["k12"] = {"l1": old_s, "l2": new_s}
     sp["k13"] = {"t1": old_s, "t2": new_s}
     sp["k14"] = {"old": old_s, "new": new_s}
     sp["k15"] = {"caption": new_s}
     sp["k16"] = {"l1": old_s, "l2": new_s}
 
-    p_old = old_s.split(":") if ":" in old_s else [old_s[:14], "khách lướt"]
-    p_new = new_s.split(":") if ":" in new_s else [new_s[:14], "khách nhắn"]
+    def split_phrase_clean(txt: str):
+        if ":" in txt:
+            pts = txt.split(":", 1)
+            return pts[0].strip(), pts[1].strip()
+        w = txt.split()
+        if len(w) >= 4:
+            mid = len(w) // 2
+            return " ".join(w[:mid]), " ".join(w[mid:])
+        return txt, "hiệu quả"
+
+    l_old, r_old = split_phrase_clean(old_s)
+    l_new, r_new = split_phrase_clean(new_s)
     sp["k17"] = {
-        "l_old": p_old[0].strip(),
-        "r_old": p_old[1].strip(),
-        "l_new": p_new[0].strip(),
-        "r_new": p_new[1].strip(),
+        "l_old": l_old,
+        "r_old": r_old,
+        "l_new": l_new,
+        "r_new": r_new,
     }
     sp["k18"] = {"p1": "Đúng nỗi đau", "p2": "Chất nghề thật", "res": new_s}
     sp["k19"] = {"c1": old_s, "c2": new_s}

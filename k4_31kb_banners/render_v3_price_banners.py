@@ -45,6 +45,62 @@ from zero_blur_dual_pipeline import (
 from apply_claude2_stage import populate_hook_spec, ensure_default_spec_for_new_kb
 
 
+APPROVED_SERIF_H_CODES = ("H01", "H02", "H03", "H04", "H05", "H06", "H07", "H08", "H09")
+
+H_CODE_SAFE_MAP: Dict[str, str] = {
+    "H10": "H01",
+    "H11": "H09",
+    "H12": "H04",
+    "H13": "H03",
+    "H14": "H01",
+    "H15": "H08",
+    "H16": "H05",
+    "H17": "H09",
+    "H18": "H02",
+    "H19": "H07",
+    "H20": "H02",
+}
+
+LEGACY_FONT_FILE_REPLACEMENTS: Dict[str, str] = {
+    "FDEpiceneDisplay-Bold.woff2": "FDDomaineDisplay-Bold.woff2",
+    "FDEpiceneDisplay-BoldItalic.woff2": "FDDomaineDisplay-BoldItalic.woff2",
+    "GRSectraDisplay-Bold.woff2": "GRSuperDisplay-Bold.woff2",
+    "GRSectraDisplay-BoldItalic.woff2": "GRSuperDisplay-Bold.woff2",
+    "GRAlpinaFine-Bold.woff2": "FDLockSerif-Bold.woff2",
+    "GRAlpinaFine-BoldItalic.woff2": "FDLockSerifStencil-Bold.woff2",
+    "FDUntitledSerif-Bold.woff2": "FDTiemposHeadline-Bold.woff2",
+    "FDUntitledSerif-BoldItalic.woff2": "FDTiemposHeadline-BoldItalic.woff2",
+    "FDHeldaneDisplay-Bold.woff2": "FDNoeDisplay-Bold.ttf",
+    "FDHeldaneDisplay-BoldItalic.woff2": "FDNoeDisplay-BoldItalic.ttf",
+    "FDSignifier-Bold.woff2": "FDFeijoa-Bold.woff2",
+    "FDSignifier-BoldItalic.woff2": "FDFeijoa-Bold.woff2",
+    "FDFinancierDisplay-Bold.woff2": "FDDomaineDisplay-Bold.woff2",
+    "FDFinancierDisplay-BoldItalic.woff2": "FDDomaineDisplay-BoldItalic.woff2",
+    "FDAddingtonCF-Bold.otf": "FDOrlando-Bold.woff2",
+    "FDNewzald-Bold.woff2": "FDActa-ExtraBold.woff2",
+    "FDNewzald-BoldItalic.woff2": "FDActa-ExtraBoldItalic.woff2",
+    "FDFinancierText-Bold.woff2": "FDOrlando-Bold.woff2",
+    "FDFinancierText-BoldItalic.woff2": "FDOrlando-BoldItalic.woff2",
+}
+
+
+def normalize_serif_h_code(h_code: Optional[str]) -> str:
+    """
+    LAW_30: Ánh xạ tự động mọi h_code thuộc nhóm xRatio < 0.50 hoặc lỗi glyph (H11..H40)
+    về nhóm 9 font Serif chuẩn có xRatio >= 0.50 và glyph tiếng Việt hoàn hảo: H01..H09.
+    """
+    code = (h_code or "H01").strip().upper()
+    if code in APPROVED_SERIF_H_CODES:
+        return code
+    if code in H_CODE_SAFE_MAP:
+        return H_CODE_SAFE_MAP[code]
+    if code.startswith("H") and code[1:].isdigit():
+        num = int(code[1:])
+        if num >= 10:
+            return APPROVED_SERIF_H_CODES[(num - 1) % len(APPROVED_SERIF_H_CODES)]
+    return "H01"
+
+
 def clean_sub_emoji(s: str) -> str:
     if not s:
         return ""
@@ -67,8 +123,12 @@ def render_v3_overlay_with_cfg(
 ) -> Dict[str, Any]:
     """
     Gọi `render_overlay_png_on_page` chuẩn và áp dụng tinh chỉnh động `dyn_zone_w` / `dyn_zone_left`
-    + căn tâm dọc 50/50 chuẩn G14/G22/G7/G18 ngay trên cùng `page`.
+    + căn tâm dọc 50/50 chuẩn G14/G22/G7/G18/G26 (LAW_28/LAW_29/LAW_30) ngay trên cùng `page`.
     """
+    for old_f, new_f in LEGACY_FONT_FILE_REPLACEMENTS.items():
+        if old_f in html_str:
+            html_str = html_str.replace(old_f, new_f)
+
     # Bước 1: Chạy render_overlay_png_on_page gốc theo đúng hợp đồng
     render_overlay_png_on_page(
         page,
@@ -95,11 +155,11 @@ def render_v3_overlay_with_cfg(
     dyn_zone_left = override_zone_left
     if dyn_zone_w is None:
         if forbid_x1 > 0 and side == "right":
-            avail_w = int(round(forbid_x1 - target_gap_px - 40))
-            dyn_zone_w = max(476, min(598, avail_w))
+            avail_w = int(round(forbid_x1 - target_gap_px - 36))
+            dyn_zone_w = max(464, min(598, avail_w))
         elif forbid_x2 > 0 and side == "left":
-            avail_w = int(round(1080 - 40 - (forbid_x2 + target_gap_px)))
-            dyn_zone_w = max(476, min(598, avail_w))
+            avail_w = int(round(1044 - (forbid_x2 + target_gap_px)))
+            dyn_zone_w = max(464, min(598, avail_w))
         else:
             dyn_zone_w = 512
 
@@ -121,8 +181,69 @@ def render_v3_overlay_with_cfg(
                 }
             }
 
+            // LAW_28: Đo xRatio thực tế của font hiện tại trên Canvas 2D trước khi fit chữ
+            const hStyle = window.getComputedStyle(h);
+            const c = document.createElement('canvas');
+            c.width = 700; c.height = 260;
+            const ctx = c.getContext('2d');
+            const base = 170;
+
+            function measureXRatio(testFs) {
+                const fontSpec = hStyle.fontWeight + ' ' + testFs + 'px ' + hStyle.fontFamily;
+                ctx.clearRect(0, 0, 700, 260);
+                ctx.font = fontSpec;
+                ctx.fillStyle = '#fff';
+                ctx.textBaseline = 'alphabetic';
+                ctx.fillText('x', 20, base);
+                const d = ctx.getImageData(0, 0, 200, 260).data;
+                let minY = 260, maxY = 0;
+                for (let y = 0; y < 260; y++) {
+                    for (let x = 0; x < 200; x++) {
+                        if (d[(y * 200 + x) * 4 + 3] > 25) {
+                            if (y < minY) minY = y;
+                            if (y > maxY) maxY = y;
+                        }
+                    }
+                }
+                return (maxY > minY) ? +((maxY - minY) / testFs).toFixed(3) : 0.515;
+            }
+
+            const xRatio = measureXRatio(100);
+            let minFs = Math.ceil(35.0 / Math.max(0.48, xRatio));
+            while (Math.round(minFs * measureXRatio(minFs)) < 35) {
+                minFs += 1;
+            }
+
+            // LAW_29: Tính idealLeft và maxAllowedW (hộp an toàn 36px..1044px, cách mặt >= 28px)
             let curZoneW = cfg.dyn_zone_w || 512;
+            let idealLeft = 40;
+            let maxAllowedW = curZoneW;
+
+            if (cfg.dyn_zone_left !== null && cfg.dyn_zone_left !== undefined) {
+                idealLeft = Math.max(36, cfg.dyn_zone_left);
+                if (cfg.side === 'right' && cfg.forbid_x1 > 0) {
+                    maxAllowedW = cfg.forbid_x1 - 28 - idealLeft;
+                } else if (cfg.side === 'left' && cfg.forbid_x2 > 0) {
+                    idealLeft = Math.max(cfg.forbid_x2 + 28, idealLeft);
+                    maxAllowedW = 1044 - idealLeft;
+                } else {
+                    maxAllowedW = 1044 - idealLeft;
+                }
+            } else if (cfg.side === 'right' && cfg.forbid_x1 > 0) {
+                idealLeft = Math.max(36, Math.min(72, Math.round(cfg.forbid_x1 - cfg.target_gap_px - curZoneW)));
+                maxAllowedW = cfg.forbid_x1 - 28 - idealLeft;
+            } else if (cfg.side === 'left' && cfg.forbid_x2 > 0) {
+                idealLeft = Math.max(cfg.forbid_x2 + 28, Math.round(cfg.forbid_x2 + cfg.target_gap_px));
+                maxAllowedW = 1044 - idealLeft;
+            } else {
+                idealLeft = cfg.side === 'right' ? 40 : 532;
+                maxAllowedW = 1044 - idealLeft;
+            }
+
+            curZoneW = Math.min(curZoneW, maxAllowedW);
             if (zone) {
+                zone.style.left = idealLeft + 'px';
+                zone.style.right = 'auto';
                 zone.style.width = curZoneW + 'px';
             }
             if (subBox) {
@@ -144,36 +265,42 @@ def render_v3_overlay_with_cfg(
                 lines.forEach(l => { l.style.letterSpacing = '-0.02em'; });
                 let fs = 104;
                 h.style.fontSize = fs + 'px';
-                while (fs > 67) {
+                while (fs > minFs) {
                     const maxW = Math.max(...lines.map(l => Math.max(l.scrollWidth, l.getBoundingClientRect().width)));
                     if (maxW <= maxLineW) break;
-                    fs -= 0.5;
+                    fs = Math.max(minFs, +(fs - 0.5).toFixed(1));
                     h.style.fontSize = fs + 'px';
                 }
                 let curMaxW = Math.max(...lines.map(l => Math.max(l.scrollWidth, l.getBoundingClientRect().width)));
                 if (curMaxW > maxLineW) {
-                    h.style.letterSpacing = '-0.028em';
-                    lines.forEach(l => { l.style.letterSpacing = '-0.028em'; });
-                    while (fs > 64) {
+                    const lsSteps = ['-0.025em', '-0.028em', '-0.032em', '-0.035em', '-0.038em'];
+                    for (const lsVal of lsSteps) {
+                        h.style.letterSpacing = lsVal;
+                        lines.forEach(l => { l.style.letterSpacing = lsVal; });
                         curMaxW = Math.max(...lines.map(l => Math.max(l.scrollWidth, l.getBoundingClientRect().width)));
                         if (curMaxW <= maxLineW) break;
-                        fs -= 0.5;
-                        h.style.fontSize = fs + 'px';
                     }
-                }
-                curMaxW = Math.max(...lines.map(l => Math.max(l.scrollWidth, l.getBoundingClientRect().width)));
-                if (curMaxW > maxLineW) {
-                    h.style.letterSpacing = '-0.036em';
-                    lines.forEach(l => { l.style.letterSpacing = '-0.036em'; });
                 }
                 return fs;
             }
 
             let fs = fitHeadlineForWidth(curZoneW);
             let actualHeadW = Math.ceil(Math.max(...lines.map(l => Math.max(l.scrollWidth, l.getBoundingClientRect().width))));
+
+            // Nếu ở minFs và -0.038em mà actualHeadW vẫn nhỉnh hơn curZoneW, ưu tiên dịch nhẹ idealLeft trong biên an toàn [36..1044]
             if (actualHeadW > curZoneW) {
-                curZoneW = actualHeadW + 4;
-                if (zone) zone.style.width = curZoneW + 'px';
+                if (cfg.side === 'right' && cfg.forbid_x1 > 0) {
+                    idealLeft = Math.max(36, Math.min(idealLeft, cfg.forbid_x1 - 28 - actualHeadW));
+                    maxAllowedW = cfg.forbid_x1 - 28 - idealLeft;
+                } else if (cfg.side === 'left' && cfg.forbid_x2 > 0) {
+                    idealLeft = Math.max(cfg.forbid_x2 + 28, Math.min(idealLeft, 1044 - actualHeadW));
+                    maxAllowedW = 1044 - idealLeft;
+                }
+                curZoneW = Math.min(maxAllowedW, Math.max(curZoneW, actualHeadW));
+                if (zone) {
+                    zone.style.left = idealLeft + 'px';
+                    zone.style.width = curZoneW + 'px';
+                }
                 if (subBox) { subBox.style.width = curZoneW + 'px'; subBox.style.maxWidth = curZoneW + 'px'; }
                 if (metaV3) { metaV3.style.width = curZoneW + 'px'; metaV3.style.maxWidth = curZoneW + 'px'; }
             }
@@ -194,69 +321,51 @@ def render_v3_overlay_with_cfg(
                 actualHeadW = Math.ceil(Math.max(...lines.map(l => l.getBoundingClientRect().width)));
             }
 
-            // Đặt zone.style.left để head_to_text_gap_px rơi đúng vào [34..58]px (G7, G18, G22)
+            // Khóa lại vị trí zone.style.left trong biên an toàn [36px .. 1044px] & cách mặt >= 28px (LAW_29 / G26)
+            const reqZoneW = Math.max(curZoneW, actualHeadW);
             if (cfg.dyn_zone_left !== null && cfg.dyn_zone_left !== undefined) {
-                zone.style.left = cfg.dyn_zone_left + 'px';
+                idealLeft = Math.max(36, Math.min(1044 - reqZoneW, cfg.dyn_zone_left));
+                if (cfg.side === 'left' && cfg.forbid_x2 > 0) {
+                    idealLeft = Math.max(cfg.forbid_x2 + 28, idealLeft);
+                } else if (cfg.side === 'right' && cfg.forbid_x1 > 0) {
+                    idealLeft = Math.max(36, Math.min(idealLeft, cfg.forbid_x1 - 28 - reqZoneW));
+                }
+                curZoneW = reqZoneW;
+                zone.style.width = curZoneW + 'px';
+                zone.style.left = idealLeft + 'px';
                 zone.style.right = 'auto';
             } else if (cfg.side === 'right' && cfg.forbid_x1 > 0) {
-                let idealLeft = Math.round(cfg.forbid_x1 - cfg.target_gap_px - curZoneW);
-                if (idealLeft < 28) {
-                    idealLeft = 28;
-                    const maxAllowedW = Math.max(448, cfg.forbid_x1 - cfg.target_gap_px - idealLeft);
-                    if (curZoneW > maxAllowedW) {
-                        curZoneW = maxAllowedW;
-                        zone.style.width = curZoneW + 'px';
-                        if (subBox) { subBox.style.width = curZoneW + 'px'; subBox.style.maxWidth = curZoneW + 'px'; }
-                        if (metaV3) { metaV3.style.width = curZoneW + 'px'; metaV3.style.maxWidth = curZoneW + 'px'; }
-                        fs = fitHeadlineForWidth(curZoneW);
-                    }
-                } else if (idealLeft > 88) {
-                    idealLeft = 88;
+                idealLeft = Math.max(36, Math.min(72, Math.round(cfg.forbid_x1 - cfg.target_gap_px - reqZoneW)));
+                if (idealLeft + reqZoneW > cfg.forbid_x1 - 28) {
+                    idealLeft = Math.max(36, cfg.forbid_x1 - 28 - reqZoneW);
                 }
+                maxAllowedW = cfg.forbid_x1 - 28 - idealLeft;
+                curZoneW = Math.min(maxAllowedW, reqZoneW);
+                zone.style.width = curZoneW + 'px';
+                if (subBox) { subBox.style.width = curZoneW + 'px'; subBox.style.maxWidth = curZoneW + 'px'; }
+                if (metaV3) { metaV3.style.width = curZoneW + 'px'; metaV3.style.maxWidth = curZoneW + 'px'; }
+                fs = fitHeadlineForWidth(curZoneW);
                 zone.style.left = idealLeft + 'px';
                 zone.style.right = 'auto';
             } else if (cfg.side === 'left' && cfg.forbid_x2 > 0) {
-                let idealLeft = Math.round(cfg.forbid_x2 + cfg.target_gap_px);
-                if (idealLeft + curZoneW > 1080 - 28) {
-                    const maxAllowedW = Math.max(448, 1080 - 28 - idealLeft);
-                    if (curZoneW > maxAllowedW) {
-                        curZoneW = maxAllowedW;
-                        zone.style.width = curZoneW + 'px';
-                        if (subBox) { subBox.style.width = curZoneW + 'px'; subBox.style.maxWidth = curZoneW + 'px'; }
-                        if (metaV3) { metaV3.style.width = curZoneW + 'px'; metaV3.style.maxWidth = curZoneW + 'px'; }
-                        fs = fitHeadlineForWidth(curZoneW);
-                    }
-                    idealLeft = Math.min(idealLeft, 1080 - 24 - curZoneW);
+                idealLeft = Math.max(cfg.forbid_x2 + 28, Math.round(cfg.forbid_x2 + cfg.target_gap_px));
+                if (idealLeft + reqZoneW > 1044) {
+                    idealLeft = Math.max(cfg.forbid_x2 + 28, 1044 - reqZoneW);
                 }
+                maxAllowedW = 1044 - idealLeft;
+                curZoneW = Math.min(maxAllowedW, reqZoneW);
+                zone.style.width = curZoneW + 'px';
+                if (subBox) { subBox.style.width = curZoneW + 'px'; subBox.style.maxWidth = curZoneW + 'px'; }
+                if (metaV3) { metaV3.style.width = curZoneW + 'px'; metaV3.style.maxWidth = curZoneW + 'px'; }
+                fs = fitHeadlineForWidth(curZoneW);
                 zone.style.left = idealLeft + 'px';
                 zone.style.right = 'auto';
             }
 
             // Giải LAW_09 Optical Leading cho cỡ fs mới
-            const hStyle = window.getComputedStyle(h);
-            const c = document.createElement('canvas');
-            c.width = 700; c.height = 260;
-            const ctx = c.getContext('2d');
-            const base = 170;
-
             function solveLaw09(curFs) {
                 const fontSpec = hStyle.fontWeight + ' ' + curFs + 'px ' + hStyle.fontFamily;
-                ctx.clearRect(0, 0, 700, 260);
-                ctx.font = fontSpec;
-                ctx.fillStyle = '#fff';
-                ctx.textBaseline = 'alphabetic';
-                ctx.fillText('x', 20, base);
-                const d = ctx.getImageData(0, 0, 200, 260).data;
-                let minY = 260, maxY = 0;
-                for (let y = 0; y < 260; y++) {
-                    for (let x = 0; x < 200; x++) {
-                        if (d[(y * 200 + x) * 4 + 3] > 25) {
-                            if (y < minY) minY = y;
-                            if (y > maxY) maxY = y;
-                        }
-                    }
-                }
-                const xRatio = (maxY > minY) ? +((maxY - minY) / curFs).toFixed(3) : 0.48;
+                const curXRatio = measureXRatio(curFs);
 
                 function profile(str) {
                     ctx.clearRect(0, 0, 700, 260);
@@ -294,8 +403,8 @@ def render_v3_overlay_with_cfg(
                 }
                 const reqDistPx = maxOverlap + 13.5;
                 const reqLh = reqDistPx / curFs;
-                const minLhW = 2.18 * xRatio;
-                const maxLhW = 2.57 * xRatio;
+                const minLhW = 2.18 * curXRatio;
+                const maxLhW = 2.57 * curXRatio;
                 let targetLh = Math.max(minLhW, reqLh);
                 if (targetLh > maxLhW) targetLh = maxLhW;
                 targetLh = Math.max(0.99, Math.min(1.26, +targetLh.toFixed(3)));
@@ -471,6 +580,7 @@ def prepare_kb_v3_spec(
     spec = populate_hook_spec(base_spec, hook_obj)
     if card_data.get("h_code"):
         spec["h_code"] = card_data["h_code"]
+    spec["h_code"] = normalize_serif_h_code(spec.get("h_code", "H01"))
     if card_data.get("person_side"):
         spec["side"] = card_data["person_side"]
 
@@ -669,8 +779,8 @@ def process_kb_chunk(
                     override_zone_left = live_forbid_x2 + 52
                     override_zone_w = max(476, min(512, 1080 - 40 - override_zone_left))
 
-            # 5) Nếu G7, G18, G22 trượt -> tinh chỉnh dyn_zone_w & dyn_zone_left dựa trên live_forbid_x1/x2
-            if any(k.startswith(("G7_", "G18_", "G22_")) for k in failed_keys):
+            # 5) Nếu G7, G18, G22, G26 trượt -> tinh chỉnh dyn_zone_w & dyn_zone_left dựa trên live_forbid_x1/x2
+            if any(k.startswith(("G7_", "G18_", "G22_", "G26_", "g26_")) for k in failed_keys):
                 cur_zw = int(g22.get("zone_width_px", 500))
                 cur_hw = int(g22.get("headline_width_px", 460))
                 cur_gap = int(g22.get("head_to_text_gap_px", 40))
@@ -686,19 +796,19 @@ def process_kb_chunk(
                 if cur_hfs < min_adap:
                     # Cần tăng cỡ chữ tiêu đề hoặc đạt zone_fill_ratio >= 0.92 & head_to_text_gap_px <= 68
                     if live_forbid_x1 and side == "right":
-                        avail_max = live_forbid_x1 - 34 - 28
+                        avail_max = live_forbid_x1 - 36 - 28
                         override_zone_w = max(468, min(585, avail_max if heal_attempt == 1 else int(cur_hw / 0.945)))
-                        override_zone_left = max(24, live_forbid_x1 - 38 - override_zone_w)
+                        override_zone_left = max(36, live_forbid_x1 - 38 - override_zone_w)
                     elif live_forbid_x2 and side == "left":
-                        avail_max = 1080 - 28 - (live_forbid_x2 + 34)
+                        avail_max = 1044 - (live_forbid_x2 + 34)
                         override_zone_w = max(468, min(585, avail_max if heal_attempt == 1 else int(cur_hw / 0.945)))
-                        override_zone_left = live_forbid_x2 + 38
+                        override_zone_left = max(live_forbid_x2 + 28, live_forbid_x2 + 38)
                 elif cur_fill < 0.92:
                     override_zone_w = max(456, int(cur_hw / 0.95))
                     if live_forbid_x1 and side == "right":
-                        override_zone_left = max(28, min(92, live_forbid_x1 - 42 - override_zone_w))
+                        override_zone_left = max(36, min(72, live_forbid_x1 - 42 - override_zone_w))
                     elif live_forbid_x2 and side == "left":
-                        override_zone_left = live_forbid_x2 + 42
+                        override_zone_left = max(live_forbid_x2 + 28, min(1044 - override_zone_w, live_forbid_x2 + 42))
 
                 if cur_area_pct < 11.0:
                     override_zone_w = max(override_zone_w or cur_zw, 535)

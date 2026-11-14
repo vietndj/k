@@ -560,13 +560,23 @@ def audit_v3_banner(
                   return td.includes('line-through');
                 });
 
-                const maxLineRight = lines.length ? Math.round(Math.max(...lines.map(el => el.getBoundingClientRect().right))) : Math.round(hRect.right);
+                const lineRects = lines.map(el => el.getBoundingClientRect());
+                const activeRects = [
+                  ...lineRects,
+                  ...(subBox ? [sRect] : []),
+                  ...(metaEl ? [mRect] : [])
+                ].filter(r => r.width > 0 && r.height > 0);
+                const minLineLeft = activeRects.length ? Math.round(Math.min(...activeRects.map(r => r.left))) : Math.round(hRect.left);
+                const maxLineRight = activeRects.length ? Math.round(Math.max(...activeRects.map(r => r.right))) : Math.round(hRect.right);
+                const maxLineW = lineRects.length ? Math.round(Math.max(...lineRects.map(r => r.width))) : Math.round(hRect.width);
+                const xHeightPx = Math.round(hFs * xRatio);
 
                 return {
                     headline_text: headlineText,
                     h_fs: hFs,
                     h_lh_ratio: Number(hLh.toFixed(3)),
                     x_height_ratio: xRatio,
+                    x_height_px: xHeightPx,
                     hl_x_height_ratio: hlXRatio,
                     sub_x_height_ratio: subXRatio,
                     intra_xh_ratio: intraXhRatio,
@@ -574,7 +584,9 @@ def audit_v3_banner(
                     optical_whitespace_w: opticalW,
                     min_2d_ink_gap_px: min2dGapPx,
                     has_pseudo_strike: hasPseudoStrike,
+                    min_line_left_x: minLineLeft,
                     max_line_right_x: maxLineRight,
+                    max_line_w_px: maxLineW,
                     h_bbox: [Math.round(hRect.left), Math.round(hRect.top), Math.round(hRect.width), Math.round(hRect.height)],
                     s_bbox: [Math.round(sRect.left), Math.round(sRect.top), Math.round(sRect.width), Math.round(sRect.height)],
                     m_bbox: [Math.round(mRect.left), Math.round(mRect.top), Math.round(mRect.width), Math.round(mRect.height)],
@@ -825,10 +837,10 @@ def audit_v3_banner(
     s_contrast = round(wcag_contrast(float(np.percentile(s_lum, 99)), float(np.percentile(s_lum, 10))), 2) if s_lum.size else 12.0
     s_bg_p50 = round(float(np.percentile(s_lum, 50)), 3) if s_lum.size else 0.05
 
-    # Khoảng thở thực tế từ khối chữ tới vùng đầu/tai/cổ (CLAUDE2 G18_LAW13: bắt buộc >= 28px cho cả left và right)
-    block_x1 = min(hx, sx)
+    # Khoảng thở thực tế từ khối chữ tới vùng đầu/tai/cổ (CLAUDE2 G18_LAW13 & G26_LAW29: bắt buộc >= 28px cho cả left và right)
+    block_x1 = int(dom.get("min_line_left_x", min(hx, sx)))
     block_y1 = min(hy, sy)
-    block_x2 = max(dom["max_line_right_x"], sx + sw)
+    block_x2 = int(dom.get("max_line_right_x", max(hx + hw, sx + sw)))
     block_y2 = max(hy + hh, sy + sh, dom["m_bbox"][1] + dom["m_bbox"][3])
     dx = max(0, forbid_x1 - block_x2, block_x1 - forbid_x2)
     dy = max(0, forbid_y1 - block_y2, block_y1 - forbid_y2)
@@ -1018,7 +1030,7 @@ def audit_v3_banner(
     # Cổng G22 (CLAUDE2 LAW_18): Adaptive Space-Filling Typography Scale
     # =========================================================================
     zone_w_px = dom["z_bbox"][2]
-    actual_headline_w = dom["max_line_right_x"] - hx
+    actual_headline_w = int(dom.get("max_line_w_px", dom["max_line_right_x"] - hx))
     zone_fill_ratio = round(actual_headline_w / float(max(1, zone_w_px)), 3)
     min_adaptive_hfs = round(max(68.0, 0.285 * fw), 1) if face_detected else 68.0
     no_wasted_horizontal_space = (head_to_text_gap_px <= 88) or (dom["h_fs"] >= 82.0) or (zone_w_px >= 545)
@@ -1244,8 +1256,27 @@ def audit_v3_banner(
                 and (min_edge_hf_ratio >= 0.75)
             ),
         },
+        "G26_LAW28_LAW29_strict_bounds_and_xheight": {
+            "min_line_left_px": int(dom.get("min_line_left_x", hx)),
+            "max_line_right_px": int(dom.get("max_line_right_x", hx + hw)),
+            "max_line_w_px": int(dom.get("max_line_w_px", actual_headline_w)),
+            "zone_width_px": zone_w_px,
+            "gap_to_face_px": head_to_text_gap_px,
+            "headline_fs_px": dom["h_fs"],
+            "x_ratio": dom["x_height_ratio"],
+            "x_height_px": float(dom.get("x_height_px", round(dom["h_fs"] * dom["x_height_ratio"]))),
+            "pass": (
+                int(dom.get("min_line_left_x", hx)) >= 36
+                and int(dom.get("max_line_right_x", hx + hw)) <= 1044
+                and int(dom.get("max_line_w_px", actual_headline_w)) <= zone_w_px + 2
+                and face_detected
+                and head_to_text_gap_px >= 28
+                and float(dom.get("x_height_px", round(dom["h_fs"] * dom["x_height_ratio"]))) >= 35.0
+            ),
+        },
     }
 
+    g26_strict_bounds_and_xheight = gates["G26_LAW28_LAW29_strict_bounds_and_xheight"]
     passed = sum(1 for v in gates.values() if v["pass"])
     total = len(gates)
     return {
@@ -1255,6 +1286,7 @@ def audit_v3_banner(
         "image_path": str(final_img_path),
         "all_13_pass": passed == total,
         "score": f"{passed}/{total}",
+        "g26_strict_bounds_and_xheight": g26_strict_bounds_and_xheight,
         "gates": gates,
     }
 

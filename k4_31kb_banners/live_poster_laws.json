@@ -1,0 +1,389 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-11-03T09:15:37.350511+07:00",
+  "description": "Sổ Cái Tự Học Quy Chuẩn Thiết Kế, Định Tuyến 2 Trục & Kiểm Toán 7 Cổng Live Poster V2 (1080x1350, 30fps, 6.0s) — Gemini 4 Argon High × Thư ký CLAUDE2 (Opus 5.5).",
+  "defaults": {
+    "timeline": {
+      "hold": [
+        0.0,
+        0.85
+      ],
+      "flip": [
+        0.85,
+        1.7
+      ],
+      "rim": [
+        1.7,
+        2.2
+      ],
+      "bloom": [
+        1.9,
+        2.6
+      ],
+      "breath": [
+        2.4,
+        5.92
+      ],
+      "fallback_date_roll": [
+        2.8,
+        3.25
+      ],
+      "loop_reset": [
+        5.55,
+        6.0
+      ]
+    },
+    "head_protect_expand": {
+      "dx": 0.15,
+      "dy_top": 0.3,
+      "w": 1.3,
+      "h": 1.4,
+      "margin_px": 24
+    },
+    "text_dilate_px": 16
+  },
+  "archetype_priors": {
+    "POINT_BOKEH": {
+      "n_pass": 2,
+      "delta_core": 22.0,
+      "delta_halo": 8.5,
+      "sigma_core": [
+        16.5,
+        22.0
+      ],
+      "sigma_halo": 42.0,
+      "from": [
+        "KB_12",
+        "KB_05"
+      ]
+    },
+    "WALL_SCONCE": {
+      "n_pass": 2,
+      "delta_core": 20.0,
+      "delta_halo": 12.0,
+      "sigma_core": [
+        22.0,
+        26.0
+      ],
+      "sigma_halo": 64.0,
+      "from": [
+        "KB_02",
+        "KB_03"
+      ]
+    },
+    "COVE_STRIP": {
+      "n_pass": 2,
+      "delta_core": 14.0,
+      "delta_halo": 15.0,
+      "sigma_core": [
+        65.0,
+        32.0
+      ],
+      "sigma_halo": 95.0,
+      "from": [
+        "KB_01",
+        "KB_04"
+      ]
+    },
+    "LIGHT_NONE": {
+      "n_pass": 0,
+      "fallback": "META_DATE_ROLL",
+      "from": []
+    }
+  },
+  "laws": [
+    {
+      "id": "LP_LAW_01",
+      "rule": "Thở bằng Δ tương đối (out >= in tại mọi pixel), với pixel có base >= 230 thì giảm cộng lõi và dồn năng lượng sang quầng loang ấm xung quanh.",
+      "why": "Nền sáng (p95 = 205..226 như KB_01, KB_04, KB_05) nếu áp trần cứng 200 của KB_12 sẽ làm vùng đèn bị tối đi khi thở.",
+      "evidence": [
+        "KB_12",
+        "probe_KB_01_04_05"
+      ],
+      "status": "active",
+      "scope": "all"
+    },
+    {
+      "id": "LP_LAW_02",
+      "rule": "Luật Toàn Vẹn Nguồn Sáng & Bảo Vệ Tóc/Đầu (head_protect = [fx-0.15w, fy-0.30h, 1.30w, 1.40h] + 24px): Lõi đèn không được đè vào head_protect hoặc text_union (+16px); quầng sáng được phép suy giảm mượt theo hàm cosine trước ranh giới.",
+      "why": "face_bbox chỉ ôm trán đến cằm, không gồm tóc; cần mở rộng lên đỉnh tóc 0.30h để không làm đổi màu tóc nhân vật.",
+      "evidence": [
+        "CLAUDE2_job_3d336850"
+      ],
+      "status": "active",
+      "scope": "all"
+    },
+    {
+      "id": "LP_LAW_03",
+      "rule": "Đích của Specular Rim đặt trực tiếp vào phần tử LỜI GIẢI (dòng ✓ / .l2 / cột phải .col-stat / .vf-hl), đi theo vạch nhấn sẵn có hoặc gạch chân ánh sáng chạy qua 1 lần rồi dịu xuống, 0 pixel lem vào thân chữ.",
+      "why": "Quét cả hộp lớn làm loãng điểm nhìn F3 hoặc kéo mắt ngược lên dòng eyebrow phía trên.",
+      "evidence": [
+        "CLAUDE2_job_3d336850"
+      ],
+      "status": "active",
+      "scope": "all"
+    },
+    {
+      "id": "LP_LAW_04",
+      "rule": "Cổng Đủ Thấy (G_LP4 Perceptual Visibility): ΔLuma có trọng số mask tại đỉnh thở 4.20s bắt buộc >= 6.0 mức (và p90 ΔLuma >= 10.0 mức). Nếu không đạt thì tự động tăng hệ số quầng hoặc kích hoạt thêm cuộn ngày ở 2.80s.",
+      "why": "Tránh trường hợp đèn thở quá yếu trên nền sáng khiến mắt người xem không cảm nhận được sự sống động của Live Poster.",
+      "evidence": [
+        "CLAUDE2_job_3d336850"
+      ],
+      "status": "active",
+      "scope": "all"
+    },
+    {
+      "id": "LP_LAW_05",
+      "name": "47-Frame Playwright Deduplication & 4-Archetype Calibration (KB_01..KB_05)",
+      "source": "Thực nghiệm lô 5 bài KB_01..KB_05",
+      "rule": "Khi hộp chữ đứng yên ở pha thở nền (frame 57..179 = 1.90s..6.00s), chỉ chụp Playwright 47 frames đầu (0.00s..1.90s) và tái sử dụng frame tĩnh đã khóa cho 133 frames sau: giảm 74% thời gian render (~13.5s/video) và khóa text_body_diff == 0 tuyệt đối trên cả 4 kiểu đèn (COVE_STRIP, WALL_SCONCE, POINT_BOKEH, WINDOW_SHAFT)."
+    },
+    {
+      "id": "LP_LAW_06",
+      "name": "Cấm Chạy Ads Độc Lập Bằng Live Poster / GIF (Bẫy Giá Video - Sức Kéo Ảnh)",
+      "source": "Phản biện của anh Việt & Phán quyết Thư ký CLAUDE2 (job_id=c80a6f15) trên số liệu thật K4",
+      "rule": "KHÔNG dùng Live Poster (.mp4/.gif 6s không lời) để chạy Meta Ads độc lập thay ảnh tĩnh. Lý do: Meta xử lý cả GIF lẫn MP4 như Video (CPM đắt gấp 3-4 lần ảnh tĩnh: 162k-271k so với 35k-70k), nhưng người xem chỉ đọc lướt 1-1.5s như ảnh tĩnh rồi đi, làm tín hiệu giữ chân thua video nói thật -> Giá mỗi lượt mở web (Cost/LPV) đội lên gấp 3. Chiến lược chuẩn: (1) Bộ 31 bài banner2.html giữ nguyên 100% ẢNH TĨNH (.png/.jpg) để quăng lưới rộng giá rẻ (5.5k-6.3k/LPV). (2) Ngân sách Video chỉ dành cho Video có anh Việt nói thật (hoặc Motion 15-30s có giọng nói). (3) Live Poster chỉ dùng làm Thẻ Chốt Cuối (End-Card 2-3s cuối) của video nói thật."
+    }
+  ],
+  "runs": [
+    {
+      "kb": "KB_12",
+      "date": "2026-11-03",
+      "route": {
+        "light_archetype": "POINT_BOKEH",
+        "text_motion": "VERTICAL_ROW_FLIP",
+        "rim_mode": "BOX_EXTERIOR_RIM",
+        "rim_target": ".vf-hl"
+      },
+      "gates": {
+        "all_7_pass": true,
+        "G_LP1": "PASS",
+        "G_LP2": "PASS",
+        "G_LP3": "PASS",
+        "G_LP4": "PASS",
+        "G_LP5": "PASS",
+        "G_LP6": "PASS",
+        "G_LP7": "PASS"
+      },
+      "verdict": "PASS",
+      "links": {
+        "cdn_mp4": "https://media.fedu.vn/banner2/kb_12_live_v2.mp4",
+        "drive": "https://drive.google.com/file/d/15GEtK2i-Vm1vq00Bgpm6pNhfAuSJAlkX/view?usp=sharing"
+      },
+      "lessons": [
+        "Nội suy tuyến tính giữa ảnh gốc và ảnh đỉnh theo trọng số w giúp khóa loop_diff = 0 tuyệt đối tại frame 179."
+      ]
+    },
+    {
+      "kb": "KB_01",
+      "date": "2026-11-03",
+      "probe_summary": {
+        "side": "right",
+        "head_protect_guard": [
+          591,
+          75,
+          988,
+          638
+        ],
+        "headline_top": 409,
+        "zone_p95_luma": 214.8
+      },
+      "route": {
+        "light_archetype": "COVE_STRIP",
+        "text_motion": "VERTICAL_ROW_FLIP",
+        "rim_mode": "LEFT_ACCENT_TO_ROW2_SWEEP",
+        "rim_bbox": [
+          36,
+          676,
+          557,
+          789
+        ]
+      },
+      "gates": {
+        "all_7_pass": true,
+        "weighted_delta_luma": 16.27,
+        "crf28_grad_p95": 7.0
+      },
+      "fix_rounds": 0,
+      "verdict": "PASS",
+      "links": {
+        "local_mp4": "/Users/vietmac/Documents/CODE/k/k4_31kb_banners/v2_pilots/motion_out/kb_01_live_v2.mp4",
+        "cdn_mp4": "https://media.fedu.vn/banner2/kb_01_live_v2.mp4",
+        "drive": "https://drive.google.com/file/d/1ZEHeAI2RYj-90p7ul7Gb_n73NMs5RPRI/view?usp=sharing",
+        "web": "https://media.fedu.vn/banner2/banner2.html?v=v13_uniqlo_g26#card-KB_01"
+      },
+      "lessons": [
+        "KB_01 (K01 · side=right): Ánh sáng COVE_STRIP (2 cụm, p95 nền=214.8) đạt ΔLuma=+16.27 mức; Chữ VERTICAL_ROW_FLIP kết hợp LEFT_ACCENT_TO_ROW2_SWEEP giữ 0% diff thân chữ và giữ vững Scanpath F1→F3."
+      ]
+    },
+    {
+      "kb": "KB_02",
+      "date": "2026-11-03",
+      "probe_summary": {
+        "side": "left",
+        "head_protect_guard": [
+          100,
+          207,
+          488,
+          748
+        ],
+        "headline_top": 392,
+        "zone_p95_luma": 145.0
+      },
+      "route": {
+        "light_archetype": "WALL_SCONCE",
+        "text_motion": "VERTICAL_ROW_FLIP",
+        "rim_mode": "SOLUTION_UNDERLINE_SWEEP",
+        "rim_bbox": [
+          537,
+          788,
+          968,
+          825
+        ]
+      },
+      "gates": {
+        "all_7_pass": true,
+        "weighted_delta_luma": 15.28,
+        "crf28_grad_p95": 7.0
+      },
+      "fix_rounds": 0,
+      "verdict": "PASS",
+      "links": {
+        "local_mp4": "/Users/vietmac/Documents/CODE/k/k4_31kb_banners/v2_pilots/motion_out/kb_02_live_v2.mp4",
+        "cdn_mp4": "https://media.fedu.vn/banner2/kb_02_live_v2.mp4",
+        "drive": "https://drive.google.com/file/d/10SJxmQFChg1LzPNBSrGQ2GePcOc8o-pn/view?usp=sharing",
+        "web": "https://media.fedu.vn/banner2/banner2.html?v=v13_uniqlo_g26#card-KB_02"
+      },
+      "lessons": [
+        "KB_02 (K02 · side=left): Ánh sáng WALL_SCONCE (3 cụm, p95 nền=145.0) đạt ΔLuma=+15.28 mức; Chữ VERTICAL_ROW_FLIP kết hợp SOLUTION_UNDERLINE_SWEEP giữ 0% diff thân chữ và giữ vững Scanpath F1→F3."
+      ]
+    },
+    {
+      "kb": "KB_03",
+      "date": "2026-11-03",
+      "probe_summary": {
+        "side": "right",
+        "head_protect_guard": [
+          593,
+          143,
+          952,
+          644
+        ],
+        "headline_top": 376,
+        "zone_p95_luma": 92.2
+      },
+      "route": {
+        "light_archetype": "WALL_SCONCE",
+        "text_motion": "HORIZONTAL_STAT_FLIP",
+        "rim_mode": "RIGHT_STAT_BOX_RIM",
+        "rim_bbox": [
+          319,
+          680,
+          552,
+          806
+        ]
+      },
+      "gates": {
+        "all_7_pass": true,
+        "weighted_delta_luma": 15.63,
+        "crf28_grad_p95": 4.0
+      },
+      "fix_rounds": 0,
+      "verdict": "PASS",
+      "links": {
+        "local_mp4": "/Users/vietmac/Documents/CODE/k/k4_31kb_banners/v2_pilots/motion_out/kb_03_live_v2.mp4",
+        "cdn_mp4": "https://media.fedu.vn/banner2/kb_03_live_v2.mp4",
+        "drive": "https://drive.google.com/file/d/1z7n6k8W9N8a2WQvdx8wJeX79kKbagIBw/view?usp=sharing",
+        "web": "https://media.fedu.vn/banner2/banner2.html?v=v13_uniqlo_g26#card-KB_03"
+      },
+      "lessons": [
+        "KB_03 (K03 · side=right): Ánh sáng WALL_SCONCE (3 cụm, p95 nền=92.2) đạt ΔLuma=+15.63 mức; Chữ HORIZONTAL_STAT_FLIP kết hợp RIGHT_STAT_BOX_RIM giữ 0% diff thân chữ và giữ vững Scanpath F1→F3."
+      ]
+    },
+    {
+      "kb": "KB_04",
+      "date": "2026-11-03",
+      "probe_summary": {
+        "side": "left",
+        "head_protect_guard": [
+          74,
+          62,
+          503,
+          666
+        ],
+        "headline_top": 407,
+        "zone_p95_luma": 232.8
+      },
+      "route": {
+        "light_archetype": "COVE_STRIP",
+        "text_motion": "VERTICAL_ROW_FLIP",
+        "rim_mode": "SOLUTION_UNDERLINE_SWEEP",
+        "rim_bbox": [
+          552,
+          753,
+          928,
+          790
+        ]
+      },
+      "gates": {
+        "all_7_pass": true,
+        "weighted_delta_luma": 15.92,
+        "crf28_grad_p95": 6.0
+      },
+      "fix_rounds": 0,
+      "verdict": "PASS",
+      "links": {
+        "local_mp4": "/Users/vietmac/Documents/CODE/k/k4_31kb_banners/v2_pilots/motion_out/kb_04_live_v2.mp4",
+        "cdn_mp4": "https://media.fedu.vn/banner2/kb_04_live_v2.mp4",
+        "drive": "https://drive.google.com/file/d/167v4g2QAelUGOwKq6uAJxCuKmE3D704c/view?usp=sharing",
+        "web": "https://media.fedu.vn/banner2/banner2.html?v=v13_uniqlo_g26#card-KB_04"
+      },
+      "lessons": [
+        "KB_04 (K04 · side=left): Ánh sáng COVE_STRIP (2 cụm, p95 nền=232.8) đạt ΔLuma=+15.92 mức; Chữ VERTICAL_ROW_FLIP kết hợp SOLUTION_UNDERLINE_SWEEP giữ 0% diff thân chữ và giữ vững Scanpath F1→F3."
+      ]
+    },
+    {
+      "kb": "KB_05",
+      "date": "2026-11-03",
+      "probe_summary": {
+        "side": "right",
+        "head_protect_guard": [
+          693,
+          290,
+          1025,
+          761
+        ],
+        "headline_top": 416,
+        "zone_p95_luma": 177.9
+      },
+      "route": {
+        "light_archetype": "POINT_BOKEH",
+        "text_motion": "VERTICAL_ROW_FLIP",
+        "rim_mode": "SOLUTION_UNDERLINE_SWEEP",
+        "rim_bbox": [
+          91,
+          765,
+          519,
+          802
+        ]
+      },
+      "gates": {
+        "all_7_pass": true,
+        "weighted_delta_luma": 18.14,
+        "crf28_grad_p95": 5.0
+      },
+      "fix_rounds": 0,
+      "verdict": "PASS",
+      "links": {
+        "local_mp4": "/Users/vietmac/Documents/CODE/k/k4_31kb_banners/v2_pilots/motion_out/kb_05_live_v2.mp4",
+        "cdn_mp4": "https://media.fedu.vn/banner2/kb_05_live_v2.mp4",
+        "drive": "https://drive.google.com/file/d/1wta9kpMPcYV--jwtIEfTZGSutPVpdbHz/view?usp=sharing",
+        "web": "https://media.fedu.vn/banner2/banner2.html?v=v13_uniqlo_g26#card-KB_05"
+      },
+      "lessons": [
+        "KB_05 (K05 · side=right): Ánh sáng POINT_BOKEH (4 cụm, p95 nền=177.9) đạt ΔLuma=+18.14 mức; Chữ VERTICAL_ROW_FLIP kết hợp SOLUTION_UNDERLINE_SWEEP giữ 0% diff thân chữ và giữ vững Scanpath F1→F3."
+      ]
+    }
+  ]
+}

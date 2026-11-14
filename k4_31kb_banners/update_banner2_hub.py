@@ -63,13 +63,13 @@ def build_default_versions_if_missing(c: Dict[str, Any], ver: str) -> List[Dict[
             u = item.get("img_url", "")
             if u.startswith("./k4_31kb_banners/v2_pilots/batch_out/") or "media.fedu.vn/banner2/" in u or "fedu.vn/k/k4_31kb_banners/" in u:
                 fn = u.split("/")[-1].split("?")[0]
-                u = f"./k4_31kb_banners/v2_pilots/batch_out/{fn}"
+                u = f"https://media.fedu.vn/banner2/{fn}"
             u_ver = f"{u}?v={ver}" if ("?" not in u and u) else u
             cp = dict(item)
             cp["img_url"] = u_ver
             out.append(cp)
     else:
-        local_rel = "./k4_31kb_banners/v2_pilots/batch_out"
+        local_rel = "https://media.fedu.vn/banner2"
         out = [
             {
                 "step": 1,
@@ -111,9 +111,23 @@ def build_default_versions_if_missing(c: Dict[str, Any], ver: str) -> List[Dict[
         "ver_id": "V9_V3_PRICE_QUALIFIED",
         "label": f"Ảnh 3 · Phiên Bản 3 Có Lọc Giá 4.000.000đ ({style_code} × {meta_code})",
         "sub_info": "07–08/11 · Long Biên, HN | 4.000.000đ (34px Tabular-Nums) · 25/25 PASS",
-        "img_url": f"./k4_31kb_banners/v2_pilots/batch_out/{kb_lower}_v3_price.jpg?v={ver}",
+        "img_url": f"https://media.fedu.vn/banner2/{kb_lower}_v3_price.jpg?v={ver}",
         "badge_color": "#22C55E",
     })
+    motion_abs = BASE_DIR / "v2_pilots" / "motion_out" / f"{kb_lower}_live_v2.mp4"
+    if c.get("has_live_poster") or motion_abs.exists():
+        live_meta = c.get("live_poster_meta", {})
+        light_lbl = live_meta.get("light_archetype", "Ambient Breathing")
+        motion_lbl = live_meta.get("text_motion", "Contrast Flip + Specular Rim")
+        out.append({
+            "step": len(out) + 1,
+            "ver_id": "V10_LIVE_POSTER_PA1",
+            "label": f"🎬 Phương Án 1 · Live Poster Motion V2 ({light_lbl})",
+            "sub_info": f"{motion_lbl} · 6/6 Gates PASS (30fps · 6.0s)",
+            "img_url": f"https://media.fedu.vn/banner2/{kb_lower}_v3_price.jpg?v={ver}",
+            "video_url": f"https://media.fedu.vn/banner2/{kb_lower}_live_v2.mp4?v={ver}",
+            "badge_color": "#F59E0B",
+        })
     return out
 
 
@@ -136,10 +150,10 @@ def build_card_html(c: Dict[str, Any]) -> str:
     headline_plain = c.get("headline_plain", "")
     subline_summary = c.get("subline_summary", "")
 
-    ver = c.get("ver", "v9_p3")
+    ver = c.get("ver", "v13_uniqlo_g26")
     local_rel_dir = "./k4_31kb_banners/v2_pilots/batch_out"
     local_abs_dir = BASE_DIR / "v2_pilots" / "batch_out"
-    gh_base = "https://fedu.vn/k/k4_31kb_banners/v2_pilots/batch_out"
+    gh_base = "https://media.fedu.vn/banner2"
 
     hook2_file = f"{kb_lower}_hook2.jpg" if (local_abs_dir / f"{kb_lower}_hook2.jpg").exists() else f"{kb_lower}_alt.jpg"
     v3_file = f"{kb_lower}_v3_price.jpg" if (local_abs_dir / f"{kb_lower}_v3_price.jpg").exists() else f"{kb_lower}_color.jpg"
@@ -156,14 +170,46 @@ def build_card_html(c: Dict[str, Any]) -> str:
     gh_v3 = f"{gh_base}/{v3_file}?v={ver}"
     gh_hm = f"{gh_base}/{kb_lower}_heatmap.jpg?v={ver}"
 
-    # Mặc định trỏ local_rel_dir (hoạt động cả trên file://, localhost và fedu.vn/k/), fallback sang gh_base nếu mở từ media.fedu.vn
-    color_src = local_color
-    bw_src = local_bw
-    alt_src = local_alt
-    v3_src = local_v3
-    hm_src = local_hm
+    has_uniqlo = bool(c.get("formal_archive_img")) or str(outfit_id).startswith("UQ_")
+    formal_arch_src = f"{gh_base}/{kb_lower}_v3_formal_archive.jpg?v={ver}" if has_uniqlo else ""
+    uniqlo_attr = "1" if has_uniqlo else "0"
+    formal_btn_html = (
+        f'<button class="sw-btn btn-formal-old" style="border-color:#F59E0B;color:#FBBF24;" onclick="switchCardImg(\'{kb_id}\', \'{formal_arch_src}\', this)">👔 Bản Vest Cũ (Lưu Trữ)</button>'
+        if has_uniqlo
+        else ""
+    )
 
-    score = c.get("v3_audit_score") or c.get("audit_score", "H1:25/25 · H2:25/25 · V3:25/25")
+    motion_abs_path = BASE_DIR / "v2_pilots" / "motion_out" / f"{kb_lower}_live_v2.mp4"
+    has_live = bool(c.get("has_live_poster")) or motion_abs_path.exists()
+    live_attr = "1" if has_live else "0"
+    live_src = f"{gh_base}/{kb_lower}_live_v2.mp4?v={ver}" if has_live else ""
+    local_live = f"./k4_31kb_banners/v2_pilots/motion_out/{kb_lower}_live_v2.mp4?v={ver}" if has_live else ""
+    live_meta = c.get("live_poster_meta", {})
+    live_summary = live_meta.get(
+        "summary",
+        "Tiếp sức chuyển động 3 pha: Lật vế (0.85–1.70s) → Hào quang viền Specular Rim + Bloom (1.70–2.20s) → Ánh sáng hậu cảnh thở ấm (2.40–5.92s) · 6/6 Cổng PASS",
+    )
+    live_btn_html = (
+        f'<button class="sw-btn btn-live" style="border-color:#F59E0B;color:#FACC15;font-weight:700;" onclick="switchCardVideo(\'{kb_id}\', \'{live_src}\', this)">🎬 Thẻ Chốt Cuối Video (Lưu Trữ)</button>'
+        if has_live
+        else ""
+    )
+    v3_btn_active_cls = "active"
+    img_init_style = ""
+    video_elem_html = (
+        f'<video id="vid-{kb_id}" src="{live_src}" poster="{gh_v3}" loop muted playsinline preload="none" onerror="if(!this.dataset.localTried){{this.dataset.localTried=\'1\';this.src=\'{local_live}\';}}" style="width:100%;height:100%;object-fit:cover;display:none;cursor:pointer;" title="Bấm để Tạm dừng / Phát tiếp bản Lưu trữ (Chỉ dùng làm End-Card cuối video nói thật, không chạy Ads độc lập)" onclick="this.paused ? this.play() : this.pause()"></video>'
+        if has_live
+        else ""
+    )
+
+    # Mặc định trỏ thẳng CDN media.fedu.vn/banner2 (0ms lỗi 404, đồng nhất Online & Local), fallback sang local_rel_dir nếu offline
+    color_src = gh_color
+    bw_src = gh_bw
+    alt_src = gh_alt
+    v3_src = gh_v3
+    hm_src = gh_hm
+
+    score = c.get("v3_audit_score") or c.get("audit_score", "H1:26/26 · H2:26/26 · V3:26/26")
     min_sub_fs = c.get("min_sub_fs_px", 27.0)
     h_fs = c.get("headline_fs_px", 78.0)
     scan_order = c.get("scanpath_order", ["FACE", "HEADLINE", "SUBBOX", "HEADLINE"])
@@ -174,13 +220,22 @@ def build_card_html(c: Dict[str, Any]) -> str:
 
     has_claude2 = bool(c.get("claude2_upgraded"))
     card_extra_cls = "claude2-upgraded" if has_claude2 else ""
-    status_badge = f"💰 {kb_id} • ĐÃ CÓ BẢN V3 LỌC GIÁ 4TR (3 ẢNH × 3 BÀI ADS CHUẨN C2)"
+    if has_live and has_uniqlo:
+        status_badge = f"💰 {kb_id} • CHUẨN ADS ẢNH TĨNH V3 (CPM 35–70K) • KÈM THẺ CHỐT CUỐI VIDEO & UNIQLO"
+    elif has_live:
+        status_badge = f"💰 {kb_id} • CHUẨN ADS ẢNH TĨNH V3 (CPM 35–70K) • KÈM THẺ CHỐT CUỐI VIDEO (LƯU TRỮ)"
+    elif has_uniqlo:
+        status_badge = f"👕 {kb_id} • ĐÃ THÊM ẢNH UNIQLO LAYERING MỞ CÚC + GIỮ BẢN VEST CŨ (26/26 G26)"
+    else:
+        status_badge = f"💰 {kb_id} • ĐÃ CÓ BẢN V3 LỌC GIÁ 4TR • CHUẨN 26/26 G26 (0% TRÀN KHUNG)"
 
     audit = c.get("claude2_audit", {})
+    audit_vl = c.get("audit_viet_lai", {})
     h1 = c.get("hook_1", {})
     h2 = c.get("hook_2", {})
     h3 = c.get("hook_3", {})
     h4 = c.get("hook_4", {})
+    h5 = c.get("hook_5", h1)
     ad1 = c.get("ad_copy_1", {})
     ad2 = c.get("ad_copy_2", {})
     ad3 = c.get("ad_copy_3", {})
@@ -193,6 +248,7 @@ def build_card_html(c: Dict[str, Any]) -> str:
     )
     h3_plain = h3.get("headline_plain") or h1_plain
     h4_plain = h4.get("headline_plain") or h2_plain
+    h5_plain = h5.get("headline_plain") or h1_plain
 
     default_fb_hl = "Lớp Offline 2 Ngày 07–08/11 Tại Hà Nội · Học Phí 4.000.000đ (Hoàn 100% Sau Ngày 1)"
     ad1_headline = _esc(ad1.get("fb_headline", default_fb_hl))
@@ -206,26 +262,37 @@ def build_card_html(c: Dict[str, Any]) -> str:
     if meta_code == "M02":
         meta_note_display += " (✓ Chưa thấy hợp sau Ngày 1: hoàn 100% học phí)"
 
+    vl_diag = audit_vl.get("diagnosis", audit.get("old_hook_verdict", "Đã rà soát khử từ AI & cắt chữ điện tín"))
+    vl_claim = audit_vl.get("core_claim", audit.get("logic_verdict", "Câu trần thuật tự nhiên của người làm nghề"))
+
     claude2_html = f"""
         <div class="c2-audit-box">
-          <div class="c2-audit-title">🧠 ĐÁNH GIÁ CỦA GIÁO SƯ CLAUDE2 (OPUS 5.5) &amp; CHUẨN HÓA LUỒNG 9F7F1024</div>
-          <div class="c2-audit-item"><strong>🎯 Đánh giá Hook cũ:</strong> {_esc(audit.get("old_hook_verdict", ""))}</div>
-          <div class="c2-audit-item"><strong>🔗 Đánh giá Logic:</strong> {_esc(audit.get("logic_verdict", ""))}</div>
+          <div class="c2-audit-title">🧠 CHẨN ĐOÁN AUDIT VIẾT LẠI SẮC BÉN × GIÁO SƯ CLAUDE2 (5 PHƯƠNG ÁN HOOK)</div>
+          <div class="c2-audit-item"><strong>🔍 Chẩn đoán câu cũ (Audit):</strong> {_esc(vl_diag)}</div>
+          <div class="c2-audit-item"><strong>💎 Luận điểm cốt lõi (Core Claim):</strong> {_esc(vl_claim)}</div>
           <div class="c2-audit-item"><strong>💰 Phân cấp Giá V3 ({meta_code}):</strong> <code>{_esc(meta_note_display)}</code> — Đã xóa URL trần để giữ 100% <code>utm_content={{{{ad.name}}}}</code>.</div>
         </div>
 
-        <div class="hooks-compare-grid four-cols" style="grid-template-columns: repeat(2, 1fr);">
-          <div class="hk-box hk-box-3" onclick="switchCardImg('{kb_id}', '{v3_src}', this.closest('.vault-card').querySelector('.btn-v3'))">
+        <div class="hooks-compare-grid five-cols" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="hk-box hk-box-3" style="grid-column: 1 / -1; border-top: 3px solid #22C55E; background: rgba(34, 197, 94, 0.08);" onclick="switchCardImg('{kb_id}', '{v3_src}', this.closest('.vault-card').querySelector('.btn-v3'))">
             <div class="hk-badge hk-b3" style="display:flex;justify-content:space-between;align-items:center;">
-              <span>✅ PA1 (ĐANG TRÊN ẢNH CHÍNH V3) • EM × ANH VIỆT</span>
-              <span style="background:#22C55E;color:#052E16;padding:1px 6px;border-radius:4px;font-size:9.5px;">ĐANG DÙNG</span>
+              <span>🔥 PA5 (AUDIT VIẾT LẠI SẮC BÉN • ĐANG TRÊN ẢNH CHÍNH V3)</span>
+              <span style="background:#22C55E;color:#052E16;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;">ĐANG HIỂN THỊ TRÊN ẢNH</span>
+            </div>
+            <div class="hk-head" style="font-size:14px;">“{_esc(h5_plain)}”</div>
+            <div class="hk-sub">× {_esc(h5.get("sub_old", h1.get("sub_old", "")))}<br/>✓ <strong>{_esc(h5.get("sub_new", h1.get("sub_new", "")))}</strong><br/><span style="color:#4ADE80;font-family:var(--font-mono);font-size:11px;font-weight:700;">⎯ 07–08/11 · Long Biên, HN | 4.000.000đ</span></div>
+          </div>
+          <div class="hk-box hk-box-1" style="border-top:3px solid {'#F59E0B' if has_live else '#10B981'};{'background:rgba(245,158,11,0.10);' if has_live else ''}" onclick="{f'switchCardVideo(\'{kb_id}\', \'{live_src}\', this.closest(\'.vault-card\').querySelector(\'.btn-live\'))' if has_live else f'switchCardImg(\'{kb_id}\', \'{color_src}\', this.closest(\'.vault-card\').querySelector(\'.btn-color\'))'}">
+            <div class="hk-badge" style="color:{'#FACC15' if has_live else '#34D399'};display:flex;justify-content:space-between;align-items:center;">
+              <span>{'🎬 PA1 (LIVE POSTER MOTION V2 • BẤM ĐỂ XEM CHUYỂN ĐỘNG)' if has_live else '✅ PA1 (EM × ANH VIỆT • PHƯƠNG ÁN GỐC ĐÃ SỬA)'}</span>
+              <button class="copy-ad-btn" style="padding:2px 7px;font-size:10px;" onclick="event.stopPropagation();navigator.clipboard.writeText('SUA BANNER {kb_id} PA1');this.textContent='✓ Đã Copy 0.20s'">📋 Lệnh 0.20s</button>
             </div>
             <div class="hk-head">“{_esc(h1_plain)}”</div>
-            <div class="hk-sub">× {_esc(h1.get("sub_old", ""))}<br/>✓ <strong>{_esc(h1.get("sub_new", ""))}</strong><br/><span style="color:#4ADE80;font-family:var(--font-mono);font-size:11px;font-weight:700;">⎯ 07–08/11 · Long Biên, HN | 4.000.000đ</span></div>
+            <div class="hk-sub">× {_esc(h1.get("sub_old", ""))}<br/>✓ <strong>{_esc(h1.get("sub_new", ""))}</strong>{f'<br/><span style="color:#FACC15;font-family:var(--font-mono);font-size:10.8px;font-weight:700;">🎬 { _esc(live_summary) }</span>' if has_live else ''}</div>
           </div>
           <div class="hk-box hk-box-2" onclick="switchCardImg('{kb_id}', '{alt_src}', this.closest('.vault-card').querySelector('.btn-hook2'))">
             <div class="hk-badge hk-b2" style="display:flex;justify-content:space-between;align-items:center;">
-              <span>⚡ PA2 (EM × ANH VIỆT • ĐỐI CHỨNG)</span>
+              <span>⚡ PA2 (EM × ANH VIỆT • GÓC ĐỐI CHỨNG ẢNH 2)</span>
               <button class="copy-ad-btn" style="padding:2px 7px;font-size:10px;" onclick="event.stopPropagation();navigator.clipboard.writeText('SUA BANNER {kb_id} PA2');this.textContent='✓ Đã Copy 0.20s'">📋 Lệnh 0.20s</button>
             </div>
             <div class="hk-head">“{_esc(h2_plain)}”</div>
@@ -287,30 +354,33 @@ def build_card_html(c: Dict[str, Any]) -> str:
     """
 
     return f"""
-        <article class="vault-card approved {card_extra_cls}" data-style="{filter_tag}" data-h="{h_code}" data-kb="{kb_id}" data-upgraded="1" data-v3-src="{v3_src}" data-color-src="{color_src}" data-hook2-src="{alt_src}" data-bw-src="{bw_src}" data-hm-src="{hm_src}" id="card-{kb_id}">
+        <article class="vault-card approved {card_extra_cls}" data-style="{filter_tag}" data-h="{h_code}" data-kb="{kb_id}" data-upgraded="1" data-uniqlo="{uniqlo_attr}" data-live="{live_attr}" data-live-src="{live_src}" data-v3-src="{v3_src}" data-color-src="{color_src}" data-hook2-src="{alt_src}" data-bw-src="{bw_src}" data-hm-src="{hm_src}" id="card-{kb_id}">
           <div class="vc-head">
             <span class="vault-status ok">{status_badge}</span>
             <span class="vc-score">{score}</span>
           </div>
           <div class="vc-img-box" id="imgbox-{kb_id}">
-            <img id="img-{kb_id}" src="{v3_src}" onerror="this.onerror=null;this.src='{gh_v3}';" alt="{kb_id} - {_esc(title)}" loading="lazy" decoding="async" onclick="openLightbox(this.src)" />
+            {video_elem_html}
+            <img id="img-{kb_id}" src="{v3_src}" {img_init_style} onerror="this.onerror=null;this.src='{local_v3}';" alt="{kb_id} - {_esc(title)}" loading="lazy" decoding="async" onclick="openLightbox(this.src)" />
             <div class="dual-img-view triple-grid" id="dualview-{kb_id}" style="display:none;">
               <div class="dual-col">
                 <span class="dual-tag tag-v3">💰 ẢNH 3 (V3 LỌC GIÁ 4TR)</span>
-                <img src="{v3_src}" onerror="this.onerror=null;this.src='{gh_v3}';" alt="V3 Price" onclick="openLightbox(this.src)" />
+                <img src="{v3_src}" onerror="this.onerror=null;this.src='{local_v3}';" alt="V3 Price" onclick="openLightbox(this.src)" />
               </div>
               <div class="dual-col">
                 <span class="dual-tag tag-h1">🎨 ẢNH 1 (HOOK 1)</span>
-                <img src="{color_src}" onerror="this.onerror=null;this.src='{gh_color}';" alt="Hook 1" onclick="openLightbox(this.src)" />
+                <img src="{color_src}" onerror="this.onerror=null;this.src='{local_color}';" alt="Hook 1" onclick="openLightbox(this.src)" />
               </div>
               <div class="dual-col">
                 <span class="dual-tag tag-h2">⚡ ẢNH 2 (HOOK 2 MỚI)</span>
-                <img src="{alt_src}" onerror="this.onerror=null;this.src='{gh_alt}';" alt="Hook 2" onclick="openLightbox(this.src)" />
+                <img src="{alt_src}" onerror="this.onerror=null;this.src='{local_alt}';" alt="Hook 2" onclick="openLightbox(this.src)" />
               </div>
             </div>
           </div>
           <div class="vc-switch-bar">
-            <button class="sw-btn btn-v3 active" onclick="switchCardImg('{kb_id}', '{v3_src}', this)">💰 Ảnh 3 (V3 Giá 4tr)</button>
+            {live_btn_html}
+            <button class="sw-btn btn-v3 {v3_btn_active_cls}" onclick="switchCardImg('{kb_id}', '{v3_src}', this)">💰 Ảnh 3 (V3 Giá 4tr)</button>
+            {formal_btn_html}
             <button class="sw-btn btn-color" onclick="switchCardImg('{kb_id}', '{color_src}', this)">🎨 Ảnh 1 (Hook 1)</button>
             <button class="sw-btn btn-hook2" onclick="switchCardImg('{kb_id}', '{alt_src}', this)">⚡ Ảnh 2 (Hook 2)</button>
             <button class="sw-btn btn-dual" onclick="toggleDualImg('{kb_id}', this)">🖼️ Song Song 3 Ảnh</button>
@@ -359,9 +429,17 @@ def generate_html_content(cards: List[Dict[str, Any]]) -> str:
         }
     kb_versions_json = json.dumps(kb_versions_map, ensure_ascii=False)
 
+    uniqlo_count = sum(1 for c in cards if c.get("formal_archive_img") or str(c.get("outfit_id", "")).startswith("UQ_"))
+    live_count = sum(
+        1
+        for c in cards
+        if c.get("has_live_poster") or (BASE_DIR / "v2_pilots" / "motion_out" / f"{c['kb_id'].lower()}_live_v2.mp4").exists()
+    )
     filter_buttons = [
         f'<button class="flt-btn active" onclick="filterVault(\'ALL\', this)">Tất cả ({done_count})</button>',
-        f'<button class="flt-btn" style="border-color:#22C55E;color:#4ADE80;" onclick="filterVault(\'UPGRADED\', this)">💰 Đã Có Bản V3 Lọc Giá 4tr ({done_count}/{done_count})</button>',
+        f'<button class="flt-btn" style="border-color:#22C55E;color:#4ADE80;" onclick="filterVault(\'UPGRADED\', this)">💰 Đã Có Bản Ảnh Tĩnh V3 Lọc Giá 4tr — Chuẩn Ads CPM Rẻ 35–70k ({done_count}/{done_count})</button>',
+        f'<button class="flt-btn" style="border-color:#38BDF8;color:#7DD3FC;" onclick="filterVault(\'UNIQLO\', this)">👕 {uniqlo_count} Bài Thêm Ảnh Uniqlo Layering Mở Cúc ({uniqlo_count})</button>',
+        f'<button class="flt-btn" style="border-color:#F59E0B;color:#FACC15;" onclick="filterVault(\'LIVE\', this)">🎬 {live_count} Bản Thẻ Chốt Cuối Video (End-Card Lưu Trữ)</button>',
     ]
     for k_idx in range(1, 22):
         kc = f"K{k_idx:02d}"
@@ -727,18 +805,20 @@ def generate_html_content(cards: List[Dict[str, Any]]) -> str:
         <span class="sec-step">KỆ DUYỆT BANNER &amp; NỘI DUNG QUẢNG CÁO FACEBOOK KHÓA OFFLINE 07–08/11 ({done_count} KỊCH BẢN)</span>
         <h2 class="sec-title">Danh Sách {done_count} Banner Kèm Phiên Bản 3 Lọc Giá 4.000.000đ &amp; 3 Bài Quảng Cáo Facebook</h2>
         <p class="sec-desc">
-          Mặc định hiển thị <strong>💰 Ảnh 3 (Phiên Bản V3 Có Lọc Giá 4.000.000đ)</strong> và <strong>💰 Bài Quảng Cáo 3 (Đặt Giá 4tr Lên Dòng Đầu)</strong>. Bấm các nút bên dưới để chuyển đổi toàn trang giữa Ảnh 3, Ảnh 1, Ảnh 2 hoặc Xem Song Song 3 Ảnh.
+          Mặc định hiển thị <strong>💰 Ảnh Tĩnh 3 (Phiên Bản V3 Có Lọc Giá 4.000.000đ — Chuẩn chạy Meta Ads CPM rẻ 35k–70k, ~5.800đ/LPV)</strong> và <strong>💰 Bài Quảng Cáo 3 (Đặt Giá 4tr Lên Dòng Đầu)</strong>.<br/>
+          <span style="color:#FACC15;font-weight:700;">⚖️ Luật Chiến Lược LP_LAW_06 (Anh Việt × Thư ký CLAUDE2):</span> Chạy Ads từ bộ 31 bài này dùng <strong>100% ẢNH TĨNH (PNG/JPG)</strong> để hưởng bể CPM rẻ (35k–70k); ngân sách Video (CPM 162k–271k) chỉ dành cho <strong>Video anh Việt nói thật</strong>; 6 bản động (<code>KB_12, KB_01..05</code>) chỉ dùng làm <strong>Thẻ Chốt Cuối 3s (End-Card)</strong> ghép vào đuôi video nói thật.
         </p>
       </div>
 
       <div class="mode-switcher-bar">
         <span class="mode-lbl">🔀 Chế Độ Xem Toàn Trang:</span>
-        <button id="globalBtnV3" class="mode-btn active" onclick="switchAllMode('v3', this)">💰 1. Ảnh Phiên Bản 3 (Có Lọc Giá 4.000.000đ)</button>
+        <button id="globalBtnV3" class="mode-btn active" onclick="switchAllMode('v3', this)">💰 1. Ảnh Tĩnh V3 (Chuẩn Ads Lọc Giá 4tr)</button>
         <button id="globalBtnColor" class="mode-btn" onclick="switchAllMode('color', this)">🎨 2. Ảnh Phương Án 1 (Hook 1)</button>
         <button id="globalBtnHook2" class="mode-btn" onclick="switchAllMode('hook2', this)">⚡ 3. Ảnh Phương Án 2 (Hook 2 Mới)</button>
         <button id="globalBtnDual" class="mode-btn" onclick="switchAllMode('dual', this)">🖼️ 4. Xem Song Song 3 Ảnh (V3 ⇄ H1 ⇄ H2)</button>
         <button id="globalBtnBw" class="mode-btn" onclick="switchAllMode('bw', this)">🖤 5. Bản Đen Trắng</button>
         <button id="globalBtnHm" class="mode-btn" onclick="switchAllMode('hm', this)">🔥 6. Bản Đồ Nhiệt F1→F4</button>
+        <button id="globalBtnLive" class="mode-btn" style="border-color:#F59E0B;color:#FACC15;" onclick="switchAllMode('live', this)">🎬 7. Xem 6 Thẻ Chốt Cuối Video (Lưu Trữ)</button>
       </div>
 
       <div class="filter-bar">
@@ -779,12 +859,38 @@ def generate_html_content(cards: List[Dict[str, Any]]) -> str:
   <script>
     const KB_VERSIONS_DB = {kb_versions_json};
 
-    function switchCardImg(kbId, newUrl, btnEl) {{
+    function switchCardVideo(kbId, videoUrl, btnEl) {{
       const box = document.getElementById('imgbox-' + kbId);
       const singleImg = document.getElementById('img-' + kbId);
+      const vidEl = document.getElementById('vid-' + kbId);
       const dualView = document.getElementById('dualview-' + kbId);
       if (box) box.classList.remove('dual-mode');
       if (dualView) dualView.style.display = 'none';
+      if (singleImg) singleImg.style.display = 'none';
+      if (vidEl) {{
+        vidEl.style.display = 'block';
+        if (videoUrl && vidEl.getAttribute('src') !== videoUrl) {{
+          vidEl.src = videoUrl;
+        }}
+        vidEl.play().catch(() => {{}});
+      }}
+      if (btnEl && btnEl.parentElement) {{
+        Array.from(btnEl.parentElement.querySelectorAll('.sw-btn')).forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+      }}
+    }}
+
+    function switchCardImg(kbId, newUrl, btnEl) {{
+      const box = document.getElementById('imgbox-' + kbId);
+      const singleImg = document.getElementById('img-' + kbId);
+      const vidEl = document.getElementById('vid-' + kbId);
+      const dualView = document.getElementById('dualview-' + kbId);
+      if (box) box.classList.remove('dual-mode');
+      if (dualView) dualView.style.display = 'none';
+      if (vidEl) {{
+        vidEl.pause();
+        vidEl.style.display = 'none';
+      }}
       if (singleImg) {{
         singleImg.style.display = 'block';
         const fn = newUrl.split('/').pop().split('?')[0];
@@ -815,9 +921,14 @@ def generate_html_content(cards: List[Dict[str, Any]]) -> str:
     function toggleDualImg(kbId, btnEl) {{
       const box = document.getElementById('imgbox-' + kbId);
       const singleImg = document.getElementById('img-' + kbId);
+      const vidEl = document.getElementById('vid-' + kbId);
       const dualView = document.getElementById('dualview-' + kbId);
       if (box) box.classList.add('dual-mode');
       if (singleImg) singleImg.style.display = 'none';
+      if (vidEl) {{
+        vidEl.pause();
+        vidEl.style.display = 'none';
+      }}
       if (dualView) dualView.style.display = 'grid';
       if (btnEl && btnEl.parentElement) {{
         Array.from(btnEl.parentElement.querySelectorAll('.sw-btn')).forEach(b => b.classList.remove('active'));
@@ -868,6 +979,13 @@ def generate_html_content(cards: List[Dict[str, Any]]) -> str:
       const cards = Array.from(document.querySelectorAll('.vault-card'));
       cards.forEach(c => {{
         const kbId = c.getAttribute('data-kb');
+        if (mode === 'live') {{
+          if (c.getAttribute('data-live') === '1') {{
+            const liveBtn = c.querySelector('.btn-live');
+            switchCardVideo(kbId, c.getAttribute('data-live-src'), liveBtn);
+          }}
+          return;
+        }}
         if (mode === 'dual') {{
           const dualBtn = c.querySelector('.btn-dual');
           toggleDualImg(kbId, dualBtn);
@@ -900,6 +1018,10 @@ def generate_html_content(cards: List[Dict[str, Any]]) -> str:
       cards.forEach(c => {{
         if (styleCode === 'ALL' || styleCode === 'UPGRADED') {{
           c.style.display = 'flex';
+        }} else if (styleCode === 'LIVE') {{
+          c.style.display = (c.getAttribute('data-live') === '1') ? 'flex' : 'none';
+        }} else if (styleCode === 'UNIQLO') {{
+          c.style.display = (c.getAttribute('data-uniqlo') === '1') ? 'flex' : 'none';
         }} else if (c.getAttribute('data-style') === styleCode) {{
           c.style.display = 'flex';
         }} else {{

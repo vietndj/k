@@ -645,8 +645,8 @@ def _build_raw_style_html(
 <body><div class="zone">
   <h1 class="headline">{lines_html}</h1>
   <div class="sub-box">
-    <div class="qa-row"><span class="q-tag p-tag">HỎI</span><span class="q-txt auto-sub">{d["q"]}</span></div>
-    <div class="qa-row"><span class="a-tag p-tag">ĐÁP</span><span class="a-txt auto-sub">{d["a"]}</span></div>
+    <div class="qa-row"><span class="q-tag p-tag">CŨ</span><span class="q-txt auto-sub">{d["q"]}</span></div>
+    <div class="qa-row"><span class="a-tag p-tag">MỚI</span><span class="a-txt auto-sub">{d["a"]}</span></div>
   </div>
   <div class="meta"><span class="dot"></span><span>Offline Hà Nội · 07–08/11</span></div>
 </div></body></html>"""
