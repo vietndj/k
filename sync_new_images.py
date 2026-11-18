@@ -60,10 +60,16 @@ for poem in poems:
 print(f"Found {len(new_entries)} new entries to sync.")
 
 if new_entries:
-    # 3. Upload to R2
-    print("Uploading to R2...")
-    rclone_cmd = ["rclone", "copy", "/tmp/k_covers_webp", "r2:vietndjmedia/k_covers", "--progress"]
-    subprocess.run(rclone_cmd)
+    # 3. Upload to R2 qua Cầu Chì r2_manager.py (tự chọn đúng tài khoản & giữ public_url)
+    print("Uploading to R2 via r2_manager...")
+    import sys
+    sys.path.insert(0, "/Users/vietmac/Documents/CODE/Quản gia")
+    from r2_manager import put_with_guard
+    put_res = put_with_guard("/tmp/k_covers_webp", "k_covers")
+    pub_base = put_res["public_url"].rstrip("/")
+    for ent in new_entries:
+        fname = os.path.basename(ent["image"])
+        ent["image"] = f"{pub_base}/{fname}"
     
     # 4. Update database.json
     db["posters"] = new_entries + db["posters"]
