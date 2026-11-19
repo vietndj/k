@@ -1,5 +1,5 @@
 /* =========================================================
-   MANIFEST — Cây điều hướng chuẩn https://kenh.fedu.vn (18 trang)
+   MANIFEST — Cây điều hướng chuẩn https://kenh.fedu.vn (20 trang)
    Gồm: Trục Logic 5 Mắt Xích · 4 Định Dạng & Kỹ Thuật · Thực Thi & Kênh Thật · Chuyên Khảo 1.0
    ========================================================= */
 window.LINKS = {
@@ -23,6 +23,7 @@ window.HUB = {
   pages: [
     // I. TRỤC LOGIC 5 MẮT XÍCH (5 trang)
     { id: "index",      file: "index.html",         group: "flow", n: "00", title: "Bản đồ từ 0 đến tự chốt",        short: "Tổng quan", stage: "ink",     icon: "00", v2: true, q: "BẢN ĐỒ TỔNG THỂ • 5 MẮT XÍCH TỪ 0 ĐẾN KHÁCH TỰ CHỐT TRONG IM LẶNG" },
+    { id: "goc-re",     file: "00-goc-re.html",     group: "flow", n: "0.1", title: "Gốc rễ: vì sao phải lên hình",   short: "Gốc rễ",    stage: "ink",     icon: "0.1", v2: true, q: "GỐC RỄ • MÁY LÀM PHẦN RẺ, NGƯỜI GIỮ PHẦN ĐẮT · MẶT × TÊN × MẮT · VIDEO LÀ MÓN QUÀ · 7–11–4" },
     { id: "tu-duy",     file: "01-tu-duy.html",     group: "flow", n: "01", title: "Bản chất cuộc chơi & 7 giờ",      short: "Tư duy",    stage: "tuduy",   icon: "01", v2: true, q: "CHẶNG 01 • BẢO KÊ ĐẦU RA, BỘ KỸ NĂNG MỚI THỜI AI, ĐÓNG GÓI SỰ THẬT & BÀI TOÁN 7 GIỜ" },
     { id: "bat-dau",    file: "02-bat-dau.html",    group: "flow", n: "02", title: "Tín hiệu đắt giá & Vòng gửi xe",  short: "Bắt đầu",   stage: "batdau",  icon: "02", v2: true, q: "CHẶNG 02 • TÍN HIỆU ĐẮT GIÁ, 3 ĐẦU RA & VÒNG GỬI XE 3 GIÂY" },
     { id: "logic-kenh", file: "03-logic-kenh.html", group: "flow", n: "03", title: "5 mắt xích & 3 dòng nội dung",    short: "Logic kênh",stage: "logic",   icon: "03", v2: true, q: "CHẶNG 03 • QUÁ TRÌNH NGƯỜI XEM THẦM LẶNG & CHỐT ĐƠN QUA ZALO" },
@@ -41,6 +42,7 @@ window.HUB = {
 
     // III. THỰC THI & KÊNH THẬT (2 trang)
     { id: "thuc-hanh", file: "07-thuc-hanh.html", group: "flow", n: "06", title: "Lộ trình 4 tuần & 4 kỹ năng",   short: "Thực hành", stage: "thuchanh", icon: "06", v2: true, q: "CHẶNG 06 • LỘ TRÌNH 4 TUẦN CHO NGƯỜI CHỈ CÓ 2–3 GIỜ BẤM MÁY MỖI TUẦN" },
+    { id: "day-thoi-ai", file: "08-day-thoi-ai.html", group: "flow", n: "6.1", title: "Dạy và học thời AI",           short: "Thời AI",   stage: "thuchanh", icon: "6.1", v2: true, q: "THỜI AI • CAPCUT CẮT THÔ, MÁY DỰNG, NGƯỜI CHẤM · 4 PHA · 2 LÀN · VIDEO DẠY NÀO CÒN SỐNG" },
     { id: "case",      file: "09-case.html",      group: "ref",  n: "07", title: "Giải phẫu 7 kênh mẫu",          short: "Kênh mẫu",  stage: "case",     icon: "07", v2: true, q: "BÀN MỔ KÊNH MẪU • 7 KÊNH NGOÀI ĐỜI HỌC VIÊN GỬI VỀ: CHỖ RA KHÁCH, CHỖ ĐỨT MẠCH" },
 
     // IV. BẢN CHUYÊN KHẢO TỔNG HỢP 2.0 & GỐC 1.0
