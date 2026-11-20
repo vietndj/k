@@ -1,5 +1,5 @@
 /* =========================================================
-   MANIFEST — Cây điều hướng chuẩn https://kenh.fedu.vn (20 trang)
+   MANIFEST — Cây điều hướng chuẩn https://kenh.fedu.vn (21 trang)
    Gồm: Trục Logic 5 Mắt Xích · 4 Định Dạng & Kỹ Thuật · Thực Thi & Kênh Thật · Chuyên Khảo 1.0
    ========================================================= */
 window.LINKS = {
@@ -46,6 +46,7 @@ window.HUB = {
     { id: "case",      file: "09-case.html",      group: "ref",  n: "07", title: "Giải phẫu 7 kênh mẫu",          short: "Kênh mẫu",  stage: "case",     icon: "07", v2: true, q: "BÀN MỔ KÊNH MẪU • 7 KÊNH NGOÀI ĐỜI HỌC VIÊN GỬI VỀ: CHỖ RA KHÁCH, CHỖ ĐỨT MẠCH" },
 
     // IV. BẢN CHUYÊN KHẢO TỔNG HỢP 2.0 & GỐC 1.0
+    { id: "cu01",        file: "cu01/index.html",       group: "v1", n: "1.0", title: "Trang kênh bản 1.0 (trước 20/11/2026)", short: "Bản 1.0", stage: "ink", icon: "1.0", q: "Bản lưu nguyên trạng trang kênh trước khi thêm tầng Gốc rễ và trang Dạy và học thời AI" },
     { id: "logic-tong-hop", file: "logic-tong-hop.html",    group: "v1", n: "2.0", title: "Logic Xây Kênh Tổng Hợp (Mới)",      short: "Tổng hợp 2.0", stage: "ink", icon: "2.0", q: "Bản tổng hợp mới: Việc thật, tâm thế món quà, bảo kê đầu ra & đo hai pha" },
     { id: "cu",          file: "cu/index.html",          group: "v1", n: "1.0", title: "Logic Storytelling & Niềm tin (1.0)", short: "Niềm tin 1.0",  stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Hàng giá rẻ bán bằng View, hàng giá cao bán bằng Niềm tin", adminOnly: true },
     { id: "cu-xay-kenh", file: "cu/logic-xay-kenh.html", group: "v1", n: "1.0", title: "Logic Xây Kênh: 0 → Tự chốt (1.0)",   short: "Xây kênh 1.0", stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Lộ trình từ 0 → Khách tự chốt trong im lặng", adminOnly: true }
