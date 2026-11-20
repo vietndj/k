@@ -181,13 +181,13 @@ def _build_raw_style_html(
 <style>
   @font-face {{
     font-family: "HeadSerif";
-    src: url("file:///Users/vietmac/Documents/CODE/fedu-font/fonts/{font_file}");
+    src: url("file:///Users/vietmac/Documents/FD_Local_Design_Vault/fonts/{font_file}");
     font-weight: 700;
     font-style: normal;
   }}
   @font-face {{
     font-family: "HeadFocal";
-    src: url("file:///Users/vietmac/Documents/CODE/fedu-font/fonts/{focal_file}");
+    src: url("file:///Users/vietmac/Documents/FD_Local_Design_Vault/fonts/{focal_file}");
     font-weight: 700;
     font-style: {focal_style};
   }}
@@ -203,7 +203,7 @@ def _build_raw_style_html(
   }}
   @font-face {{
     font-family: "MetaMono";
-    src: url("file:///Users/vietmac/Documents/CODE/fedu-font/fonts/FDMonumentGroteskMono-Bold.woff2");
+    src: url("file:///Users/vietmac/Documents/FD_Local_Design_Vault/fonts/FDMonumentGroteskMono-Bold.woff2");
     font-weight: 700;
   }}
   * {{ box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }}

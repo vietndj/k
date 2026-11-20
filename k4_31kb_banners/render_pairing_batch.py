@@ -31,7 +31,7 @@ from uiux_auditor import audit_v3_banner
 
 PILOT_DIR = Path("/Users/vietmac/Documents/CODE/k/k4_31kb_banners/v2_pilots")
 BG_PATH = PILOT_DIR / "kb_15_v22_bg.png"
-FONT_DIR = "/Users/vietmac/Documents/CODE/fedu-font/fonts"
+FONT_DIR = "/Users/vietmac/Documents/FD_Local_Design_Vault/fonts"
 
 PAIRING_SPECS: List[Dict[str, Any]] = [
     # ==================== BATCH A: L1 (P01, P02) & L2 (P03, P04) ====================

@@ -30,7 +30,7 @@ from playwright.sync_api import sync_playwright
 
 BASE_DIR = Path("/Users/vietmac/Documents/CODE/k/k4_31kb_banners")
 PILOT_DIR = BASE_DIR / "v2_pilots"
-FONT_DIR = Path("/Users/vietmac/Documents/CODE/fedu-font/fonts")
+FONT_DIR = Path("/Users/vietmac/Documents/FD_Local_Design_Vault/fonts")
 VN_OCR_BIN = BASE_DIR / "vn_ocr"
 
 

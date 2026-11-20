@@ -3,7 +3,7 @@
 """
 P0.1 - FONT REGISTRY & VIETNAMESE GLYPH METRICS ENGINE
 ======================================================
-Quét toàn bộ kho font `/Users/vietmac/Documents/CODE/fedu-font/fonts/` và các thư mục font hệ thống:
+Quét toàn bộ kho font `/Users/vietmac/Documents/FD_Local_Design_Vault/fonts/` và các thư mục font hệ thống:
 1. Kiểm tra độ phủ 134 ký tự tiếng Việt có dấu (67 thường + 67 HOA) bằng `fontTools` (loại bỏ font thiếu glyph hoặc trỏ về `.notdef`).
 2. Đo chính xác bằng đơn vị font (Font Units) và chuẩn hóa theo `UPM`:
    - `upm` (Units Per Em)
@@ -34,7 +34,7 @@ STACKED_UPPER_CHARS = [unicodedata.normalize("NFC", c) for c in ["Ặ", "Ẫ", "
 DESCENDER_LOWER_CHARS = [unicodedata.normalize("NFC", c) for c in ["ặ", "ỵ", "ỹ", "ự", "ộ", "ệ", "ậ", "g", "p", "q", "y"]]
 
 FONT_SEARCH_DIRS = [
-    Path("/Users/vietmac/Documents/CODE/fedu-font/fonts"),
+    Path("/Users/vietmac/Documents/FD_Local_Design_Vault/fonts"),
     Path("/Users/vietmac/Documents/CODE/Quản gia/auto-edit-tuquay/fonts"),
     Path("/Users/vietmac/.gemini/config/skills/auto-edit-video/remotion-studio/public/fonts"),
 ]

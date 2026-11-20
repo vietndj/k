@@ -19,7 +19,7 @@ from uiux_auditor import audit_v3_banner
 
 PILOT_DIR = Path("/Users/vietmac/Documents/CODE/k/k4_31kb_banners/v2_pilots")
 BG_PATH = PILOT_DIR / "kb_15_v22_bg.png"
-FONT_DIR = "/Users/vietmac/Documents/CODE/fedu-font/fonts"
+FONT_DIR = "/Users/vietmac/Documents/FD_Local_Design_Vault/fonts"
 BRAIN_DIR = Path("/Users/vietmac/.gemini/antigravity/brain/d0674648-f186-46ae-a77c-066e17e36fb5")
 
 # ==================== 8 NEW SUBLINE BOX ARCHETYPES (K23 -> K30) ====================

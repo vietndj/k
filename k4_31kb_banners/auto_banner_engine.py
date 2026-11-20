@@ -25,7 +25,7 @@ from uiux_auditor import audit_v3_banner, load_banner_laws, LAWS_PATH
 
 BASE_DIR = Path("/Users/vietmac/Documents/CODE/k/k4_31kb_banners")
 PILOT_DIR = BASE_DIR / "v2_pilots"
-FONT_DIR = Path("/Users/vietmac/Documents/CODE/fedu-font/fonts")
+FONT_DIR = Path("/Users/vietmac/Documents/FD_Local_Design_Vault/fonts")
 AEONIK_DIR = Path("/Users/vietmac/.gemini/config/skills/auto-edit-video/remotion-studio/public/fonts")
 
 

@@ -18,7 +18,7 @@ from playwright.sync_api import sync_playwright
 sys.path.insert(0, "/Users/vietmac/Documents/CODE/k/k4_31kb_banners")
 from uiux_auditor import audit_v3_banner
 
-FONT_DIR = Path("/Users/vietmac/Documents/CODE/fedu-font/fonts")
+FONT_DIR = Path("/Users/vietmac/Documents/FD_Local_Design_Vault/fonts")
 PILOT_DIR = Path("/Users/vietmac/Documents/CODE/k/k4_31kb_banners/v2_pilots")
 BG_PATH = PILOT_DIR / "kb_15_v22_bg.png"
 BRAIN_DIR = Path("/Users/vietmac/.gemini/antigravity/brain/d0674648-f186-46ae-a77c-066e17e36fb5")

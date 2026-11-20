@@ -22,7 +22,7 @@ from playwright.sync_api import sync_playwright
 BASE_DIR = Path("/Users/vietmac/Documents/CODE/k/k4_31kb_banners")
 PILOT_DIR = BASE_DIR / "v2_pilots"
 BG_PATH = PILOT_DIR / "kb_15_v22_bg.png"
-FONTS_DIR = Path("/Users/vietmac/Documents/CODE/fedu-font/fonts")
+FONTS_DIR = Path("/Users/vietmac/Documents/FD_Local_Design_Vault/fonts")
 CAMPAIGN_CFG_PATH = BASE_DIR / "campaign_config.json"
 REPORT_JSON = Path("/tmp/report_m06_layer4.json")
 
