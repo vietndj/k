@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Logic 147: Đi qua biến cố mất cha mẹ để bước tiếp mà vẫn nhớ thương</title>
+<link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='16'%20fill='%2307090E'/%3E%3Cpath%20d='M9.2%2052.5Q8.3%2052.5%208.3%2051.7V29.9L7.1%2030.3Q6.2%2030.6%206.1%2029.7L5.5%2026.4Q5.4%2025.7%206%2025.4L10.6%2023.4Q11%2023.2%2011.6%2023.2H13.9Q14.7%2023.2%2014.7%2024V51.7Q14.7%2052.5%2013.9%2052.5ZM32.9%2043.7Q33.7%2043.7%2033.7%2044.5V48.3Q33.7%2049.1%2032.9%2049.1H32.4V51.7Q32.4%2052.5%2031.6%2052.5H26.8Q26%2052.5%2026%2051.7V49.1H18.2Q17.4%2049.1%2017.4%2048.3V44.1L22.2%2023.9Q22.4%2023.2%2023.1%2023.2H27.7Q28.6%2023.2%2028.4%2024.1L23.5%2043.7H26.2V37.2Q26.2%2036.6%2026.7%2036.3L31.4%2033.9Q31.9%2033.6%2032.1%2033.8Q32.4%2034%2032.4%2034.5V43.7ZM38.8%2052.5Q37.8%2052.5%2038%2051.7L41.2%2029.1H36Q35.2%2029.1%2035.2%2028.2V24Q35.2%2023.2%2036%2023.2H47.7Q48.5%2023.2%2048.5%2024V26.1L44.4%2051.8Q44.3%2052.5%2043.5%2052.5Z'%20fill='%2310B981'/%3E%3Ccircle%20cx='52'%20cy='13'%20r='4.2'%20fill='%2310B981'/%3E%3C/svg%3E">
+<style>
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.35; }
+    h1 { font-family: var(--font-display-short); font-weight: 500; font-style: italic; font-size: clamp(28px, 4vw, 40px); margin-bottom: 24px; letter-spacing: -0.02em; }
+    h2 { font-family: var(--font-display-long); font-weight: 600; font-size: 22px; margin: 40px 0 18px; }
+    h3 { font-family: var(--font-display-long); font-weight: 600; font-size: 18px; margin: 28px 0 14px; }
+    .ink-card-subhead { font-family: system-ui, -apple-system, sans-serif; font-weight: 700; font-size: 16.5px; color: var(--ink-text); margin: 22px 0 10px; text-transform: none; letter-spacing: -0.01em; }
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 16px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 18px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    blockquote { border-left: 3px solid var(--ink-text); margin: 16px 0; font-style: italic; color: var(--ink-muted); background: var(--ink-sidebar); padding: 14px 20px; border-radius: 0 8px 8px 0; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .ink-poem-quote { margin-top: 0; margin-bottom: 16px; color: #1e293b; font-size: 18.5px; }
+    .ink-flip-box { font-size: 18.5px; font-weight: 500; background: var(--ink-hover); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 18px; }
+    .ink-pocket-rule { border: 1px dashed var(--ink-text); padding: 10px 14px; border-radius: 8px; }
+    .ink-provenance { display: inline-block; margin-top: 8px; background: transparent; border: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .ink-provenance[open] { display: block; margin-top: 12px; background: #f8fafc; border: 1px solid var(--ink-border); border-radius: 8px; overflow: hidden; }
+    .ink-prov-summary { padding: 0; cursor: pointer; list-style: none; display: inline-flex; align-items: center; color: var(--ink-text); font-size: 12px; line-height: 1.4; }
+    .ink-provenance[open] .ink-prov-summary { padding: 8px 12px; display: flex; }
+    .ink-prov-summary::-webkit-details-marker { display: none; }
+    .ink-prov-context { flex: 1; min-width: 0; margin-right: 8px; }
+    .ink-prov-toggle { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ink-muted); background: #f8fafc; border: 1px solid var(--ink-border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+    .ink-prov-toggle:hover { color: var(--ink-text); border-color: #94a3b8; }
+    .ink-provenance[open] .ink-prov-arrow { transform: rotate(180deg); display: inline-block; }
+    .ink-prov-extra { padding: 8px 12px 10px; border-top: 1px dashed var(--ink-border); background: #ffffff; color: var(--ink-muted); font-size: 13px; }
+    .ink-provenance ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 13px; line-height: 1.6; }
+    .ink-provenance li { margin-bottom: 4px; }
+    .ink-provenance li:last-child { margin-bottom: 0; }
+    .ink-ext-link { color: #0f172a; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .ink-ext-link:hover { color: #10b981; }
+    .ink-table-wrap { overflow-x: auto; margin: 20px 0 24px; }
+    .ink-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.6; }
+    .ink-table th, .ink-table td { border: 1px solid var(--ink-border); padding: 12px 14px; text-align: left; vertical-align: top; }
+    .ink-table th { background: var(--ink-sidebar); font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-text); }
+    .ink-ts-pill, .ink-meta-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px !important; margin: 0 2px; border-radius: 99px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10.5px !important; font-weight: 500 !important; line-height: 1.35 !important; color: #64748b !important; background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.22); text-decoration: none !important; white-space: nowrap; vertical-align: middle; transition: all 0.15s ease; }
+    .ink-ts-pill:hover { background: rgba(37, 99, 235, 0.12); color: #2563EB !important; border-color: rgba(37, 99, 235, 0.4); }
+    .ink-meta-badge .ink-ts-pill { padding: 0 2px !important; margin: 0 !important; border: none !important; background: transparent !important; }
+    .ink-sidebar { width: 340px; background: var(--ink-sidebar); border-right: 1px solid var(--ink-border); height: 100vh; position: sticky; top: 0; padding: 28px 22px; overflow-y: auto; flex-shrink: 0; }
+    .ink-main-wrapper { flex-grow: 1; padding: 56px 48px 120px; display: flex; justify-content: center; }
+    .ink-content { width: 100%; max-width: 780px; }
+    .ink-brand { font-family: system-ui, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-text); text-decoration: none; display: inline-block; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .ink-toc-title { font-family: system-ui, sans-serif; font-weight: 700; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 6px; line-height: 1.4; }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active { background: var(--ink-bg); color: var(--ink-text); font-weight: 600; border: 1px solid var(--ink-border); }
+    .ink-mode-dialogue .dialogue-turn { margin-bottom: 48px; scroll-margin-top: 30px; }
+    .ink-mode-dialogue .dialogue-prompt { background: var(--ink-sidebar); padding: 18px 22px; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 18.5px; font-weight: 700; font-style: normal; color: var(--ink-text); margin-bottom: 18px; border: 1px solid var(--ink-border); line-height: 1.45; }
+    .ink-mode-dialogue .dialogue-response { padding-left: 18px; border-left: 2px solid var(--ink-border); }
+    .ink-meta { display: flex; align-items: center; gap: 12px; font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); margin-bottom: 24px; flex-wrap: wrap; }
+    .ink-badge { font-weight: 700; color: var(--ink-text); background: var(--ink-hover); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--ink-border); }
+    .ink-copy-btn { background: var(--ink-text); color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 32px; }
+    .ink-search-box { margin-bottom: 14px; }
+    .ink-search-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--ink-border); background: #ffffff; font-size: 13px; color: var(--ink-text); outline: none; }
+    .ink-toc-summary { display: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--ink-text); padding: 8px 12px; background: #ffffff; border: 1px solid var(--ink-border); border-radius: 8px; cursor: pointer; list-style: none; }
+    .ink-toc-summary::-webkit-details-marker { display: none; }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      .ink-sidebar { width: 100%; height: auto; position: sticky; top: 0; z-index: 50; border-right: none; border-bottom: 1px solid var(--ink-border); padding: 12px 16px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+      .ink-brand { margin-bottom: 8px; font-size: 13.5px; }
+      .ink-toc-summary { display: flex; align-items: center; justify-content: space-between; }
+      .ink-toc-collapsible { margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-bottom: 6px; }
+      .ink-main-wrapper { padding: 24px 16px 80px; }
+      h1 { font-size: 26px; margin-bottom: 16px; }
+      h2 { font-size: 20px; margin: 28px 0 14px; }
+      h3 { font-size: 17px; margin: 22px 0 10px; }
+      p, ul, ol { font-size: 16.5px; line-height: 1.72; }
+      .ink-flip-box, .ink-poem-quote { font-size: 16.5px; padding: 12px 14px; }
+      .ink-mode-dialogue .dialogue-turn { margin-bottom: 36px; scroll-margin-top: 96px; }
+      .ink-mode-dialogue .dialogue-prompt { font-size: 16.5px; padding: 14px 16px; }
+      .ink-mode-dialogue .dialogue-response { padding-left: 12px; }
+    }
+</style>
+</head>
+<body>
+<aside class="ink-sidebar">
+  <div class="ink-sidebar-header">
+    <a class="ink-brand" href="https://kho.fedu.vn">LOGIC #147 • KHO LOGIC</a>
+  </div>
+  <details class="ink-toc-details" id="inkTocDetails" open>
+    <summary class="ink-toc-summary">
+      <span>📑 Mục lục &amp; Nhảy nhanh tới câu hỏi (5 câu)</span>
+      <span>▾</span>
+    </summary>
+    <div class="ink-toc-collapsible">
+      <div class="ink-search-box">
+        <input type="text" id="inkSearch" class="ink-search-input" placeholder="🔍 Lọc nhanh câu hỏi &amp; cơ chế..." onkeyup="filterTOC()">
+      </div>
+      <div class="ink-toc-title">BẢN ĐỒ &amp; BỘ THẺ NHẬN THỨC</div>
+      <ul class="ink-toc-list" id="inkTocList">
+            <li style="margin-top: 10px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-1-ban-do">Phần 1: Bản Đồ Nhận Thức</a>
+    </li>
+    <li style="margin-top: 14px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-2-bo-the">Phần 2: Bộ 5 Câu Hỏi-Đáp</a>
+    </li>
+    <ul class="ink-toc-list" style="padding-left: 10px;">
+    <li><a class="ink-toc-link" href="#q1">Câu 01. Làm sao giữ nhịp công việc khi đầu óc trống rỗng...</a></li>
+    <li><a class="ink-toc-link" href="#q2">Câu 02. Làm sao đỡ đần bạn bè đang có tang mà không...</a></li>
+    <li><a class="ink-toc-link" href="#q3">Câu 03. Làm sao lo hậu sự và chu cấp mẹ già khi...</a></li>
+    <li><a class="ink-toc-link" href="#q4">Câu 04. Cần làm gì khi thấy cha mẹ già yếu hẳn sau...</a></li>
+    <li><a class="ink-toc-link" href="#q5">Câu 05. Làm sao thoát cảnh tê liệt kéo dài trong căn nhà...</a></li>
+    </ul>
+      </ul>
+    </div>
+  </details>
+</aside>
+<main class="ink-main-wrapper">
+  <article class="ink-content ink-mode-dialogue">
+    <div class="ink-meta">
+      <span class="ink-badge">LOGIC #147</span>
+      <span>Nguyễn Việt</span>
+      <span>•</span>
+      <span>Cẩm Nang Nhận Thức</span>
+      <span>•</span>
+      <span>5 Câu Hỏi-Đáp Giải Mã Gốc</span>
+    </div>
+    <button class="ink-copy-btn" onclick="copyAll()">📋 Sao Chép Toàn Bộ Cẩm Nang</button>
+    <h1 class="is-long" id="top">Logic 147: Đi qua biến cố mất cha mẹ để bước tiếp mà vẫn nhớ thương</h1>
+    <p style="color: var(--ink-muted); font-size: 19px; line-height: 1.75; margin-bottom: 36px;">Đời người ngắn tựa làn hơi / Bước qua mất mát chẳng rời tình thân — Trải nghiệm thật của Omar Eltakrori sau ngày cha đột ngột qua đời: từ hụt 20% tâm trí, lo hậu sự cho mẹ góa đến cách đổi nơi ở để đứng dậy.</p>
+    <hr style="margin: 2.5rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-1-ban-do">
+      <h2>Mạch 1: Khi biến cố mất cha lấy đi 20% tâm trí thường ngày</h2>
+<blockquote class="ink-poem-quote"><p><em>Sáng nằm rơi lệ nhớ cha</em><br/><em>Hai mươi phần nghĩ trong ta vẫn còn</em></p></blockquote>
+<p class="ink-flip-box"><strong>Biến cố mất cha chiếm 20% tâm trí, khiến Omar chỉ còn làm việc ở mức 80% sức lực.</strong></p>
+<h3>Cú gục ngã sáng Chủ nhật và phần tâm trí hụt đi</h3>
+<p>Sáng Chủ nhật lễ Phục sinh, cha của Omar Eltakrori là ông Mo đột ngột gục ngã tại nhà riêng ở tuổi 67 do xuất huyết nội. Ông đã đầy bụng từ thứ Năm, nhưng dù bạn đồng nghiệp nài nỉ đưa đi viện, ông vẫn khất đến Chủ nhật. Nhận tin báo nguy kịch từ mẹ, Omar bỏ dở buổi giảng ở nhà thờ chạy tới bệnh viện nhưng bác sĩ không cứu kịp. Nhiều sáng sau đó, Omar thức dậy nằm rơi lệ bên người vợ Amanda đang ngủ say. Một năm trôi qua, theo ước tính miệng của Omar, khoảng 20% suy nghĩ mỗi ngày của anh vẫn vương vấn hình bóng cha. Khoảng trống ấy khiến anh chỉ còn làm việc ở mức 80% sức lực tinh thần và buông bỏ thói quen kiểm soát từng tiểu tiết tại buổi hội thảo.</p>
+<h3>Ngồi yên cùng khoảng trống và hai năm chuẩn bị tâm lý</h3>
+<p>Lynn Washington từng tê liệt bốn tháng sau ngày mất mẹ nên rất ngạc nhiên khi thấy Omar có mặt ở buổi huấn luyện ngay thứ Ba, hai ngày sau tang sự. Omar tự giới hạn rằng mỗi người chịu tang một khác và việc anh xuất hiện sớm chưa chắc là biểu hiện của sự mạnh mẽ. Anh trụ vững nhờ giao phần chính buổi họp cho đồng sự, ở nhà và dành giờ ngồi yên đón nhận nỗi buồn thay vì vùi đầu vào việc. Mặt khác, Omar đã trải qua trạng thái chuẩn bị tâm lý trước mất mát (pre-grief) suốt hai năm từ khi cha nghỉ nghề lái xe ở Las Vegas. Thấy cha già yếu hẳn qua các bữa cơm gia đình và tự ý bỏ lịch mổ tuyến tiền liệt, anh đã sớm chuẩn bị tinh thần cho ngày chia xa.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori — Omar Eltakrori, Lynn Washington (<a href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=u2PFE36SJ1w</a>) · 2026-04-02</li></ul></div></details>
+<h2>Mạch 2: Thu xếp hậu sự tỉnh táo và giúp người có tang đúng cách</h2>
+<blockquote class="ink-poem-quote"><p><em>Đêm khuya đặt hộp cơm chiên</em><br/><em>Chẳng cần gõ cửa ngoài hiên đỡ đần</em></p></blockquote>
+<p class="ink-flip-box"><strong>Nhắn hỏi người chịu tang cần giúp gì chỉ chất thêm việc nghĩ ngợi lên người đang kiệt sức.</strong></p>
+<h3>Chặn gói mộ phần 400.000 đô la và lo chu cấp cho mẹ</h3>
+<p>Vừa mất chồng, mẹ Omar phải tự quyết hàng loạt thủ tục tại nghĩa trang trước lời chào mời mua sẵn khu mộ gia tộc giá 400.000 đô la Mỹ. Omar kịp ngăn mẹ dừng lại, đồng thời gác ý định hỏa táng để lo chôn cất đúng di nguyện cha với chi phí 30.000 đô la Mỹ. Anh mở quỹ quyên góp trực tuyến cho mẹ dù bị người lạ trách móc, nhờ vậy bạn bè gửi tiền thiết thực thay vì tốn 400 đô la Mỹ mua hoa. Cha anh chỉ kịp trả sạch nợ thẻ tín dụng chứ không có bảo hiểm, để lại người vợ góa trong căn nhà rộng khoảng 316 mét vuông. Là con trưởng có thu nhập cao nhất, Omar bàn với vợ rồi nhận cấp khoản tiền sinh hoạt hằng tháng để mẹ nghỉ làm hết năm, sang năm tính lại.</p>
+<h3>Tự tay đỡ đần thay cho lời nhắn hỏi thăm xã giao</h3>
+<p>Nhắc chuyện người bạn mất con trai chỉ 30 phút sau khi sinh, Omar chấm câu nhắn cần gì cứ báo đạt thiện chí 10 trên 10 nhưng hiệu quả 0 trên 10. Đây là điểm số ước tính miệng của Omar và video không dẫn nguồn. Dù làm mục sư, anh coi việc nhắn câu Kinh Thánh giảng đạo lúc mới phát tang là tệ nhất, trái ngược với vị mục sư 65 tuổi đến viện nắm tay cầu nguyện. Đêm đầu ở nhà mẹ, bạn thân từ lớp năm của Omar lặng lẽ đặt hộp cơm chiên và nước uống ngoài hiên lúc 8 giờ 30 tối mà không gõ cửa. Điều kiện giúp đúng là tự đem cơm, đón trẻ, gửi tiền hay gọi điện nói lời thương quý như Lynn Washington từng nhận, để gia chủ chỉ việc từ chối nếu bất tiện.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori — Omar Eltakrori, Lynn Washington (<a href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=u2PFE36SJ1w</a>) · 2026-04-02</li></ul></div></details>
+<h2>Mạch 3: Trân trọng hy sinh của cha và đổi nơi ở để bước tiếp</h2>
+<blockquote class="ink-poem-quote"><p><em>Hai tư năm giữ mái nhà</em><br/><em>Đổi nơi ở mới nhớ cha trọn đời</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chỉ khi dám đổi không gian cũ nặng ký ức, người ở lại mới bước tiếp mà vẫn nhớ thương.</strong></p>
+<h3>Sống một con người ở mọi nơi và 46 năm cha xa xứ</h3>
+<p>Đăng ảnh tang lễ lên mạng như nhật ký, Omar coi sự chính trực là giữ nguyên một con người ở mọi nơi. Cách anh giải thích gốc từ chính trực bằng khoảng cách số nguyên là suy diễn cá nhân mà video không dẫn nguồn. Anh nhận ra nét tính cách miệt mài tìm tòi giúp mình thành công, thú mê xe hơi, trang sức vàng và tật cáu ngủ đều thừa hưởng từ ông Mo. Rời Saudi Arabia năm 21 tuổi, suốt 46 năm cha anh không một lần được chạm vào họ hàng. Chuyện ông bay về sau 25 năm rồi bị buộc lên máy bay ngay là lời kể mà video không dẫn nguồn. Dù từng uống rượu vì cô đơn, năm 2001 ông vẫn mua nhà rộng gấp ba đến bốn lần tại Las Vegas và một mình ở lại San Francisco làm việc ba năm nuôi con.</p>
+<h3>Đổi nơi ở mới và giữ đức tin vượt lên nghịch cảnh</h3>
+<p>Trả lời Lynn Washington về những phụ nữ tê liệt sau tang chế, Omar chỉ ra cái bẫy nằm ở nỗi sợ tương lai mờ mịt khi vắng người thân. Một góa phụ anh gặp chỉ thấy nhẹ nhõm lúc đi nghỉ ở Mexico nhưng vừa về nhà cũ lại trĩu lòng, nên đang tính dọn về quê. Omar cũng khuyên người mẹ 65 tuổi có thể bán ngôi nhà gắn bó 24 năm hoặc về Philippines sáu tháng mỗi năm để khởi đầu mới. Điều kiện đi kèm là gắn vào hội thánh và giữ đức tin không lệ thuộc hoàn cảnh, thờ phượng vì chính Chúa chứ không cầu phép màu. Giữ tâm thế ấy từ sáng nhận ảnh cấp cứu của cha, anh vẫn có niềm vui bền lâu và đứng nói trước hơn 3.500 người tuần qua.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori — Omar Eltakrori, Lynn Washington (<a href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=u2PFE36SJ1w</a>) · 2026-04-02</li></ul></div></details>
+    </section>
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-2-bo-the">
+      <h2 id="phan-2">PHẦN 2: BỘ 5 CÂU HỎI-ĐÁP GIẢI MÃ TỪ GỐC</h2>
+      
+<div class="dialogue-turn" id="q1">
+  <h3 class="dialogue-prompt">❓ Câu #01 — Làm sao giữ nhịp công việc khi đầu óc trống rỗng sau tang cha mẹ?</h3>
+  <div class="dialogue-response">
+    <blockquote class="ink-poem-quote"><p><em>Sáng ra ướt gối bên giường</em><br/><em>Ngồi yên ở lại biết nhường việc chung</em></p></blockquote>
+<p class="ink-flip-box"><strong>Mất cha mẹ lấy đi 20% tâm trí, buộc bạn tập làm việc ở mức 80% sức lực.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Chấp nhận độ hụt tâm trí:</strong> Omar ước tính hình bóng cha chiếm 20% suy nghĩ mỗi ngày, có sáng thức dậy nằm rơi lệ bên giường (chuyện đầy đủ ở Mạch 1).</li>
+<li><strong>Bước 2 — Ngồi yên thay vì vùi đầu làm:</strong> Cố lao đi làm ngay để lấp khoảng trống sẽ tích tụ ức chế, nên cần dành giờ ngồi yên ở nhà không tự trách mình.</li>
+<li><strong>Bước 3 — Buông tiểu tiết và san sẻ việc:</strong> Khi chỉ còn 80% sức lực, hãy nhường phần chính cuộc họp cho đồng sự và bỏ thói quen cầu toàn từng việc lặt vặt.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Giao bớt 1 đến 2 đầu việc vận hành nặng nhất tại cửa hàng cho nhân sự cứng cầm trịch trong 14 ngày đầu chịu tang (gợi ý áp dụng).</li>
+<li>Dành riêng 30 phút ngồi yên tại nhà mỗi sáng, không mở điện thoại thúc ép bản thân phải đạt 100% năng suất như cũ.</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori (<a href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=u2PFE36SJ1w</a>) · 2026-04-02</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q2">
+  <h3 class="dialogue-prompt">❓ Câu #02 — Làm sao đỡ đần bạn bè đang có tang mà không rơi vào xã giao?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Giúp người có tang không phải là nhắn hỏi cần gì, mà là tự tay làm thẳng việc đỡ đần.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Dạng 1 — Tin nhắn hỏi han để ngỏ:</strong> Câu bảo cần gì cứ báo bị Omar chấm miệng hiệu quả 0 trên 10 (video không dẫn nguồn), vì bắt người kiệt sức phải nghĩ việc.</li>
+<li><strong>Dạng 2 — Nhắn chữ đạo lý dạy dỗ:</strong> Quăng câu chữ răn dạy qua tin nhắn lúc người ta chỉ mong còn cha mẹ hoàn toàn vô tác dụng, khác hẳn đến tận nơi bầu bạn.</li>
+<li><strong>Dạng 3 — Hành động thẳng không xin phép:</strong> Cứ tự đem đồ ăn, gửi tiền như người bạn đặt cơm chiên ngoài hiên lúc 8 giờ 30 tối (chuyện đầy đủ ở Mạch 2).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Đặt sẵn 1 phần cơm nóng trước cửa hoặc chuyển khoản tiền phúng điếu cụ thể trong 48 giờ đầu, để gia chủ tự từ chối nếu bất tiện.</li>
+<li>Gọi 1 cuộc điện thoại ngắn dưới 3 phút chỉ để nói lời thương quý, tuyệt đối không nhắn tin giảng giải đạo lý.</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori (<a href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=u2PFE36SJ1w</a>) · 2026-04-02</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q3">
+  <h3 class="dialogue-prompt">❓ Câu #03 — Làm sao lo hậu sự và chu cấp mẹ già khi cha thiếu bảo hiểm?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Chỉ khi tách cảm xúc thương tiếc khỏi con số thực tế, con cái mới giữ được tiền dưỡng già cho mẹ.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Chặn chào mời lúc rối bời:</strong> Người vừa góa bụa dễ mua theo cảm xúc, như mẹ Omar suýt nhận gói mộ 400.000 đô la Mỹ (chuyện đầy đủ ở Mạch 2).</li>
+<li><strong>Bước 2 — Mở lối để bạn bè góp sức:</strong> Đừng vì sĩ diện mà giấu khó khăn, bởi lập quỹ chung giúp người quen gửi tiền thiết thực thay vì mua hoa đắt đỏ.</li>
+<li><strong>Bước 3 — Chốt mức chu cấp theo chặng:</strong> Bàn bạc trước với bạn đời, hỏi rõ số tiền mẹ cần mỗi tháng để nghỉ làm rồi cam kết lo theo từng năm.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Cử 1 người con tỉnh táo đi cùng mẹ khi làm việc với bên mai táng để gạt bỏ ngay các gói bán kèm vượt ngân sách (gợi ý áp dụng).</li>
+<li>Hỏi thẳng mẹ khoản chi tiêu thiếu hụt mỗi tháng, bàn với vợ chồng mức chu cấp cố định trong 6 đến 12 tháng tới rồi tính tiếp.</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori (<a href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=u2PFE36SJ1w</a>) · 2026-04-02</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q4">
+  <h3 class="dialogue-prompt">❓ Câu #04 — Cần làm gì khi thấy cha mẹ già yếu hẳn sau ngày nghỉ hưu?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Nhận diện sớm đà suy yếu của cha mẹ giúp con cái đón nhận quy luật sinh tử mà không gục ngã.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Nhìn thẳng dấu hiệu suy giảm:</strong> Nhiều bậc cha mẹ xuống sức nhanh và né viện, như cha Omar yếu đi sau hai năm nghỉ lái xe (chuyện đầy đủ ở Mạch 1).</li>
+<li><strong>Bước 2 — Tập đối diện mất mát trước:</strong> Thay vì ngỡ cha mẹ sống mãi, sự chuẩn bị tâm lý trước mất mát (pre-grief) giúp lòng bớt choáng váng khi biến cố ập tới.</li>
+<li><strong>Bước 3 — Giữ trọn kỷ vật và bữa cơm:</strong> Đừng đợi tang lễ mới lục tìm cuộn băng gia đình thất lạc hay tiếc nuối những dịp sum họp cùng cha mẹ.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Sao lưu toàn bộ ảnh và băng ghi hình cũ của cha mẹ sang 2 nơi lưu trữ số ngay trong 7 ngày tới để tránh thất lạc.</li>
+<li>Duy trì 1 bữa cơm chung mỗi tuần và trực tiếp đưa cha mẹ đi khám ngay khi họ chớm đầy bụng hoặc mệt quá 2 ngày (gợi ý áp dụng).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori (<a href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=u2PFE36SJ1w</a>) · 2026-04-02</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q5">
+  <h3 class="dialogue-prompt">❓ Câu #05 — Làm sao thoát cảnh tê liệt kéo dài trong căn nhà cũ sau tang sự?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Muốn bước tiếp mà vẫn nhớ thương người khuất, người ở lại cần dám đổi nơi ở và neo giữ đức tin.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Nhận ra cái bẫy không gian cũ:</strong> Ngủ mãi trên giường cũ khiến lòng nặng trĩu lại sau chuyến đi xa, như góa phụ vừa đi Mexico về (chuyện đầy đủ ở Mạch 3).</li>
+<li><strong>Bước 2 — Đổi chỗ ở để mở chặng mới:</strong> Dám bán ngôi nhà quá rộng hoặc dọn về gần con cháu giúp người góa bụa sang trang mới mà vẫn giữ trọn ký ức đẹp.</li>
+<li><strong>Bước 3 — Hòa vào cộng đồng cùng niềm tin:</strong> Đi sinh hoạt hội đoàn, nhà thờ và giữ đức tin vượt lên hoàn cảnh giúp lòng có niềm vui bền lâu dù còn rơi nước mắt.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Đưa người thân góa bụa đi xa đổi gió từ 3 đến 5 ngày để kiểm chứng xem căn nhà hiện tại có đang đè nặng tinh thần họ không.</li>
+<li>Tham gia đều đặn 1 buổi sinh hoạt cộng đồng hoặc tôn giáo mỗi tuần để gặp những người từng vượt qua biến cố tương tự (gợi ý áp dụng).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori (<a href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=u2PFE36SJ1w</a>) · 2026-04-02</li></ul></div></details>
+  </div>
+</div>
+    </section>
+    
+    <hr style="margin: 3rem 0 1.5rem; border: none; border-top: 2px solid var(--ink-border);"/>
+    <details class="ink-provenance" id="nguon-boi-canh">
+      <summary class="ink-prov-summary">
+        <span class="ink-prov-context">📌 <strong>Hồ sơ nguồn &amp; Truy vết bối cảnh (Logic #147)</strong> — Omar Eltakrori — If your parents are getting old watch this... · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener">Xem trên YouTube ↗</a></span>
+        <span class="ink-prov-toggle">Chi tiết nguồn <span class="ink-prov-arrow">▾</span></span>
+      </summary>
+      <div class="ink-prov-extra">
+        <ul>
+          <li>🎙️ <strong>Nguồn Podcast / Video gốc:</strong> Omar Eltakrori — If your parents are getting old watch this... · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=u2PFE36SJ1w" target="_blank" rel="noopener">Xem trên YouTube ↗</a></li>
+          <li>💬 <strong>Bản giải phẫu hội thoại gốc:</strong> <a class="ink-ext-link" href="https://gemini.google.com/u/5/app/e2764e6cf93e77bf" target="_blank" rel="noopener">Gemini Share gốc ↗</a></li>
+          <li>🧭 <strong>Kho lưu trữ:</strong> <a class="ink-ext-link" href="https://kho.fedu.vn" target="_blank" rel="noopener">kho.fedu.vn</a> · <a class="ink-ext-link" href="https://fedu.vn/k/logic147.html">fedu.vn/k/logic147.html</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+</main>
+<script>
+  function filterTOC() {
+    var input = document.getElementById('inkSearch');
+    var filter = input.value.toLowerCase();
+    var ul = document.getElementById('inkTocList');
+    var li = ul.getElementsByTagName('li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].getElementsByTagName('a')[0];
+      if (a) {
+        var txtValue = a.textContent || a.innerText;
+        li[i].style.display = (txtValue.toLowerCase().indexOf(filter) > -1) ? '' : 'none';
+      }
+    }
+  }
+  function copyAll() {
+    var content = document.querySelector('.ink-content').innerText;
+    navigator.clipboard.writeText(content);
+  }
+  (function initMobileTOC() {
+    var details = document.getElementById('inkTocDetails');
+    if (!details) return;
+    if (window.innerWidth <= 860) {
+      details.removeAttribute('open');
+    }
+    var links = details.querySelectorAll('a.ink-toc-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        if (window.innerWidth <= 860) {
+          details.removeAttribute('open');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
