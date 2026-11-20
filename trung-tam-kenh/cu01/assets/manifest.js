@@ -45,7 +45,7 @@ window.HUB = {
 
     // IV. BẢN CHUYÊN KHẢO TỔNG HỢP 2.0 & GỐC 1.0
     { id: "logic-tong-hop", file: "logic-tong-hop.html",    group: "v1", n: "2.0", title: "Logic Xây Kênh Tổng Hợp (Mới)",      short: "Tổng hợp 2.0", stage: "ink", icon: "2.0", q: "Bản tổng hợp mới: Việc thật, tâm thế món quà, bảo kê đầu ra & đo hai pha" },
-    { id: "cu",          file: "cu/index.html",          group: "v1", n: "1.0", title: "Logic Storytelling & Niềm tin (1.0)", short: "Niềm tin 1.0",  stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Hàng giá rẻ bán bằng View, hàng giá cao bán bằng Niềm tin", adminOnly: true },
-    { id: "cu-xay-kenh", file: "cu/logic-xay-kenh.html", group: "v1", n: "1.0", title: "Logic Xây Kênh: 0 → Tự chốt (1.0)",   short: "Xây kênh 1.0", stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Lộ trình từ 0 → Khách tự chốt trong im lặng", adminOnly: true }
+    { id: "cu",          file: "../cu/index.html",          group: "v1", n: "1.0", title: "Logic Storytelling & Niềm tin (1.0)", short: "Niềm tin 1.0",  stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Hàng giá rẻ bán bằng View, hàng giá cao bán bằng Niềm tin", adminOnly: true },
+    { id: "cu-xay-kenh", file: "../cu/logic-xay-kenh.html", group: "v1", n: "1.0", title: "Logic Xây Kênh: 0 → Tự chốt (1.0)",   short: "Xây kênh 1.0", stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Lộ trình từ 0 → Khách tự chốt trong im lặng", adminOnly: true }
   ]
 };

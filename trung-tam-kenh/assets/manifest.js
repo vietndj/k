@@ -1,5 +1,5 @@
 /* =========================================================
-   MANIFEST — Cây điều hướng chuẩn https://kenh.fedu.vn (21 trang)
+   MANIFEST — Cây điều hướng chuẩn https://kenh.fedu.vn (18 trang)
    Gồm: Trục Logic 5 Mắt Xích · 4 Định Dạng & Kỹ Thuật · Thực Thi & Kênh Thật · Chuyên Khảo 1.0
    ========================================================= */
 window.LINKS = {
@@ -17,8 +17,7 @@ window.HUB = {
   sub: "Từ 0 → đủ 7 giờ → khách tự chốt",
   groups: [
     { id: "flow", title: "Trục logic & định dạng" },
-    { id: "ref",  title: "Bàn mổ kênh mẫu" },
-    { id: "v1",   title: "Bản đọc tổng hợp" }
+        { id: "v1",   title: "Bản cũ" }
   ],
   pages: [
     // I. TRỤC LOGIC 5 MẮT XÍCH (5 trang)
@@ -43,12 +42,8 @@ window.HUB = {
     // III. THỰC THI & KÊNH THẬT (2 trang)
     { id: "thuc-hanh", file: "07-thuc-hanh.html", group: "flow", n: "06", title: "Lộ trình 4 tuần & 4 kỹ năng",   short: "Thực hành", stage: "thuchanh", icon: "06", v2: true, q: "CHẶNG 06 • LỘ TRÌNH 4 TUẦN CHO NGƯỜI CHỈ CÓ 2–3 GIỜ BẤM MÁY MỖI TUẦN" },
     { id: "day-thoi-ai", file: "08-day-thoi-ai.html", group: "flow", n: "6.1", title: "Dạy và học thời AI",           short: "Thời AI",   stage: "thuchanh", icon: "6.1", v2: true, q: "THỜI AI • CAPCUT CẮT THÔ, MÁY DỰNG, NGƯỜI CHẤM · 4 PHA · 2 LÀN · VIDEO DẠY NÀO CÒN SỐNG" },
-    { id: "case",      file: "09-case.html",      group: "ref",  n: "07", title: "Giải phẫu 7 kênh mẫu",          short: "Kênh mẫu",  stage: "case",     icon: "07", v2: true, q: "BÀN MỔ KÊNH MẪU • 7 KÊNH NGOÀI ĐỜI HỌC VIÊN GỬI VỀ: CHỖ RA KHÁCH, CHỖ ĐỨT MẠCH" },
 
     // IV. BẢN CHUYÊN KHẢO TỔNG HỢP 2.0 & GỐC 1.0
-    { id: "cu01",        file: "cu01/index.html",       group: "v1", n: "1.0", title: "Trang kênh bản 1.0 (trước 20/11/2026)", short: "Bản 1.0", stage: "ink", icon: "1.0", q: "Bản lưu nguyên trạng trang kênh trước khi thêm tầng Gốc rễ và trang Dạy và học thời AI" },
-    { id: "logic-tong-hop", file: "logic-tong-hop.html",    group: "v1", n: "2.0", title: "Logic Xây Kênh Tổng Hợp (Mới)",      short: "Tổng hợp 2.0", stage: "ink", icon: "2.0", q: "Bản tổng hợp mới: Việc thật, tâm thế món quà, bảo kê đầu ra & đo hai pha" },
-    { id: "cu",          file: "cu/index.html",          group: "v1", n: "1.0", title: "Logic Storytelling & Niềm tin (1.0)", short: "Niềm tin 1.0",  stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Hàng giá rẻ bán bằng View, hàng giá cao bán bằng Niềm tin", adminOnly: true },
-    { id: "cu-xay-kenh", file: "cu/logic-xay-kenh.html", group: "v1", n: "1.0", title: "Logic Xây Kênh: 0 → Tự chốt (1.0)",   short: "Xây kênh 1.0", stage: "ink", icon: "1.0", q: "Chuyên khảo gốc 1.0: Lộ trình từ 0 → Khách tự chốt trong im lặng", adminOnly: true }
+    { id: "cu01",        file: "cu01/index.html",       group: "v1", n: "1.0", title: "Bản 1.0 · 7 kênh mẫu, logic tổng hợp, chuyên khảo cũ", short: "Bản 1.0", stage: "ink", icon: "1.0", q: "Bản lưu nguyên trạng trang kênh trước khi thêm tầng Gốc rễ và trang Dạy và học thời AI" },
   ]
 };
