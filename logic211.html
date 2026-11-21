@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Logic 211: Đóng gói và đấu giá công ty để thu khoản tiền đổi đời</title>
+<link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='16'%20fill='%2307090E'/%3E%3Cpath%20d='M7.5%2052.5Q6.6%2052.5%206.6%2051.6V48.3L10.6%2040.6Q11.5%2038.9%2012.4%2037.1Q13.3%2035.3%2014.1%2033.5Q14.9%2031.7%2015.4%2030.1Q15.9%2028.4%2015.9%2026.9Q15.9%2026%2015.6%2025.7Q15.2%2025.3%2014.6%2025.3Q14%2025.3%2013.6%2025.7Q13.3%2026%2013.3%2026.9V30.2Q13.3%2031.1%2012.4%2031.1H7.2Q6.3%2031.1%206.3%2030.2V27.4Q6.3%2025.9%206.6%2024.5Q7%2023.1%207.9%2022Q8.8%2020.9%2010.5%2020.2Q12.1%2019.5%2014.6%2019.5Q17.2%2019.5%2018.8%2020.2Q20.4%2020.9%2021.3%2022Q22.2%2023.1%2022.6%2024.5Q22.9%2025.9%2022.9%2027.4Q22.9%2029.1%2022.5%2030.9Q22%2032.7%2021.3%2034.6Q20.6%2036.4%2019.7%2038.2Q18.8%2040%2018%2041.6L15.5%2046H22Q22.9%2046%2022.9%2046.9V51.6Q22.9%2052.5%2022%2052.5ZM28.8%2052.5Q27.9%2052.5%2027.9%2051.6V27.3L26.6%2027.8Q25.6%2028.2%2025.5%2027.2L24.8%2023.5Q24.6%2022.7%2025.4%2022.4L30.4%2020.2Q30.9%2019.9%2031.6%2019.9H34.1Q35%2019.9%2035%2020.8V51.6Q35%2052.5%2034.1%2052.5ZM41.5%2052.5Q40.6%2052.5%2040.6%2051.6V27.3L39.3%2027.8Q38.3%2028.2%2038.2%2027.2L37.5%2023.5Q37.4%2022.7%2038.1%2022.4L43.2%2020.2Q43.6%2019.9%2044.3%2019.9H46.8Q47.7%2019.9%2047.7%2020.8V51.6Q47.7%2052.5%2046.8%2052.5Z'%20fill='%2310B981'/%3E%3Ccircle%20cx='52'%20cy='13'%20r='4.2'%20fill='%2310B981'/%3E%3C/svg%3E">
+<style>
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.35; }
+    h1 { font-family: var(--font-display-short); font-weight: 500; font-style: italic; font-size: clamp(28px, 4vw, 40px); margin-bottom: 24px; letter-spacing: -0.02em; }
+    h2 { font-family: var(--font-display-long); font-weight: 600; font-size: 22px; margin: 40px 0 18px; }
+    h3 { font-family: var(--font-display-long); font-weight: 600; font-size: 18px; margin: 28px 0 14px; }
+    .ink-card-subhead { font-family: system-ui, -apple-system, sans-serif; font-weight: 700; font-size: 16.5px; color: var(--ink-text); margin: 22px 0 10px; text-transform: none; letter-spacing: -0.01em; }
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 16px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 18px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    blockquote { border-left: 3px solid var(--ink-text); margin: 16px 0; font-style: italic; color: var(--ink-muted); background: var(--ink-sidebar); padding: 14px 20px; border-radius: 0 8px 8px 0; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .ink-poem-quote { margin-top: 0; margin-bottom: 16px; color: #1e293b; font-size: 18.5px; }
+    .ink-flip-box { font-size: 18.5px; font-weight: 500; background: var(--ink-hover); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 18px; }
+    .ink-pocket-rule { border: 1px dashed var(--ink-text); padding: 10px 14px; border-radius: 8px; }
+    .ink-provenance { display: inline-block; margin-top: 8px; background: transparent; border: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .ink-provenance[open] { display: block; margin-top: 12px; background: #f8fafc; border: 1px solid var(--ink-border); border-radius: 8px; overflow: hidden; }
+    .ink-prov-summary { padding: 0; cursor: pointer; list-style: none; display: inline-flex; align-items: center; color: var(--ink-text); font-size: 12px; line-height: 1.4; }
+    .ink-provenance[open] .ink-prov-summary { padding: 8px 12px; display: flex; }
+    .ink-prov-summary::-webkit-details-marker { display: none; }
+    .ink-prov-context { flex: 1; min-width: 0; margin-right: 8px; }
+    .ink-prov-toggle { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ink-muted); background: #f8fafc; border: 1px solid var(--ink-border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+    .ink-prov-toggle:hover { color: var(--ink-text); border-color: #94a3b8; }
+    .ink-provenance[open] .ink-prov-arrow { transform: rotate(180deg); display: inline-block; }
+    .ink-prov-extra { padding: 8px 12px 10px; border-top: 1px dashed var(--ink-border); background: #ffffff; color: var(--ink-muted); font-size: 13px; }
+    .ink-provenance ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 13px; line-height: 1.6; }
+    .ink-provenance li { margin-bottom: 4px; }
+    .ink-provenance li:last-child { margin-bottom: 0; }
+    .ink-ext-link { color: #0f172a; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .ink-ext-link:hover { color: #10b981; }
+    .ink-table-wrap { overflow-x: auto; margin: 20px 0 24px; }
+    .ink-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.6; }
+    .ink-table th, .ink-table td { border: 1px solid var(--ink-border); padding: 12px 14px; text-align: left; vertical-align: top; }
+    .ink-table th { background: var(--ink-sidebar); font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-text); }
+    .ink-ts-pill, .ink-meta-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px !important; margin: 0 2px; border-radius: 99px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10.5px !important; font-weight: 500 !important; line-height: 1.35 !important; color: #64748b !important; background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.22); text-decoration: none !important; white-space: nowrap; vertical-align: middle; transition: all 0.15s ease; }
+    .ink-ts-pill:hover { background: rgba(37, 99, 235, 0.12); color: #2563EB !important; border-color: rgba(37, 99, 235, 0.4); }
+    .ink-meta-badge .ink-ts-pill { padding: 0 2px !important; margin: 0 !important; border: none !important; background: transparent !important; }
+    .ink-sidebar { width: 340px; background: var(--ink-sidebar); border-right: 1px solid var(--ink-border); height: 100vh; position: sticky; top: 0; padding: 28px 22px; overflow-y: auto; flex-shrink: 0; }
+    .ink-main-wrapper { flex-grow: 1; padding: 56px 48px 120px; display: flex; justify-content: center; }
+    .ink-content { width: 100%; max-width: 780px; }
+    .ink-brand { font-family: system-ui, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-text); text-decoration: none; display: inline-block; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .ink-toc-title { font-family: system-ui, sans-serif; font-weight: 700; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 6px; line-height: 1.4; }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active { background: var(--ink-bg); color: var(--ink-text); font-weight: 600; border: 1px solid var(--ink-border); }
+    .ink-mode-dialogue .dialogue-turn { margin-bottom: 48px; scroll-margin-top: 30px; }
+    .ink-mode-dialogue .dialogue-prompt { background: var(--ink-sidebar); padding: 18px 22px; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 18.5px; font-weight: 700; font-style: normal; color: var(--ink-text); margin-bottom: 18px; border: 1px solid var(--ink-border); line-height: 1.45; }
+    .ink-mode-dialogue .dialogue-response { padding-left: 18px; border-left: 2px solid var(--ink-border); }
+    .ink-meta { display: flex; align-items: center; gap: 12px; font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); margin-bottom: 24px; flex-wrap: wrap; }
+    .ink-badge { font-weight: 700; color: var(--ink-text); background: var(--ink-hover); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--ink-border); }
+    .ink-copy-btn { background: var(--ink-text); color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 32px; }
+    .ink-search-box { margin-bottom: 14px; }
+    .ink-search-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--ink-border); background: #ffffff; font-size: 13px; color: var(--ink-text); outline: none; }
+    .ink-toc-summary { display: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--ink-text); padding: 8px 12px; background: #ffffff; border: 1px solid var(--ink-border); border-radius: 8px; cursor: pointer; list-style: none; }
+    .ink-toc-summary::-webkit-details-marker { display: none; }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      .ink-sidebar { width: 100%; height: auto; position: sticky; top: 0; z-index: 50; border-right: none; border-bottom: 1px solid var(--ink-border); padding: 12px 16px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+      .ink-brand { margin-bottom: 8px; font-size: 13.5px; }
+      .ink-toc-summary { display: flex; align-items: center; justify-content: space-between; }
+      .ink-toc-collapsible { margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-bottom: 6px; }
+      .ink-main-wrapper { padding: 24px 16px 80px; }
+      h1 { font-size: 26px; margin-bottom: 16px; }
+      h2 { font-size: 20px; margin: 28px 0 14px; }
+      h3 { font-size: 17px; margin: 22px 0 10px; }
+      p, ul, ol { font-size: 16.5px; line-height: 1.72; }
+      .ink-flip-box, .ink-poem-quote { font-size: 16.5px; padding: 12px 14px; }
+      .ink-mode-dialogue .dialogue-turn { margin-bottom: 36px; scroll-margin-top: 96px; }
+      .ink-mode-dialogue .dialogue-prompt { font-size: 16.5px; padding: 14px 16px; }
+      .ink-mode-dialogue .dialogue-response { padding-left: 12px; }
+    }
+</style>
+</head>
+<body>
+<aside class="ink-sidebar">
+  <div class="ink-sidebar-header">
+    <a class="ink-brand" href="https://kho.fedu.vn">LOGIC #211 • KHO LOGIC</a>
+  </div>
+  <details class="ink-toc-details" id="inkTocDetails" open>
+    <summary class="ink-toc-summary">
+      <span>📑 Mục lục &amp; Nhảy nhanh tới câu hỏi (5 câu)</span>
+      <span>▾</span>
+    </summary>
+    <div class="ink-toc-collapsible">
+      <div class="ink-search-box">
+        <input type="text" id="inkSearch" class="ink-search-input" placeholder="🔍 Lọc nhanh câu hỏi &amp; cơ chế..." onkeyup="filterTOC()">
+      </div>
+      <div class="ink-toc-title">BẢN ĐỒ &amp; BỘ THẺ NHẬN THỨC</div>
+      <ul class="ink-toc-list" id="inkTocList">
+            <li style="margin-top: 10px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-1-ban-do">Phần 1: Bản Đồ Nhận Thức</a>
+    </li>
+    <li style="margin-top: 14px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-2-bo-the">Phần 2: Bộ 5 Câu Hỏi-Đáp</a>
+    </li>
+    <ul class="ink-toc-list" style="padding-left: 10px;">
+    <li><a class="ink-toc-link" href="#q1">Câu 01. Làm sao giúp người mua thấy rõ giá trị công ty...</a></li>
+    <li><a class="ink-toc-link" href="#q2">Câu 02. Làm sao tránh bị ép giá khi đem công ty đi...</a></li>
+    <li><a class="ink-toc-link" href="#q3">Câu 03. Chào bán công ty ở đâu để được giá mà không...</a></li>
+    <li><a class="ink-toc-link" href="#q4">Câu 04. Làm sao bán được giá cao khi người mua không trả...</a></li>
+    <li><a class="ink-toc-link" href="#q5">Câu 05. Cần phòng ngừa rủi ro gì ngay trong hợp đồng và...</a></li>
+    </ul>
+      </ul>
+    </div>
+  </details>
+</aside>
+<main class="ink-main-wrapper">
+  <article class="ink-content ink-mode-dialogue">
+    <div class="ink-meta">
+      <span class="ink-badge">LOGIC #211</span>
+      <span>Nguyễn Việt</span>
+      <span>•</span>
+      <span>Cẩm Nang Nhận Thức</span>
+      <span>•</span>
+      <span>5 Câu Hỏi-Đáp Giải Mã Gốc</span>
+    </div>
+    <button class="ink-copy-btn" onclick="copyAll()">📋 Sao Chép Toàn Bộ Cẩm Nang</button>
+    <h1 class="is-long" id="top">Logic 211: Đóng gói và đấu giá công ty để thu khoản tiền đổi đời</h1>
+    <p style="color: var(--ink-muted); font-size: 19px; line-height: 1.75; margin-bottom: 36px;">Đóng hồ sơ đẹp chào mời / Nhiều bên trả giá thu lời gấp đôi — Cách Daniel Priestley đóng gói hồ sơ, mở phiên đấu giá và nhận trả góp có thế chấp sau lần trượt mất 14 triệu đô la tuổi 23.</p>
+    <hr style="margin: 2.5rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-1-ban-do">
+      <h2>Mạch 1: Đóng gói công ty vô hình thành sản phẩm bán lúc đang đà tăng trưởng</h2>
+<blockquote class="ink-poem-quote"><p><em>Hồ sơ in bóng rõ ràng</em><br/><em>Năm năm dự báo sẵn sàng trao tay</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chỉ khi đóng gói công ty lúc đà tăng năm năm sáng nhất, người mua mới trả tiền cho tương lai.</strong></p>
+<h3>Cú trượt mất 14 triệu đô la tuổi 23 và nguyên lý khép vòng lặp</h3>
+<p>Năm 23 tuổi, theo lời ước chừng lúc nói là 23–24 tuổi, Daniel Priestley làm hỏng lần bán đầu tiên và hụt mất 14 triệu đô la Mỹ. Ông ví người không bán công ty giống vận động viên chạy đường dài chẳng bao giờ cán đích để nghỉ ngơi và làm lớn hơn. Richard Branson bán Virgin Records lấy 510 triệu bảng Anh đầu thập niên 1990 mới mở sang hãng bay, tàu du lịch, thẻ tín dụng và viễn thông. Elon Musk cũng bán Zip2 ở tuổi đôi mươi rồi bán tiếp PayPal để gom tiền, thời gian và sức lực làm tên lửa, xe hơi, người máy.</p>
+<h3>Bộ hồ sơ in bóng đi kèm phòng dữ liệu và thời điểm bán</h3>
+<p>Doanh nghiệp vốn vô hình với người ngoài, nhưng nhiều chủ công ty triệu đô lại đi chào bán bằng bảng tính Excel và trang chiếu tẻ nhạt. Như chủ đầu tư bán tòa cao tầng từ bản vẽ, bạn cần in tập giới thiệu giấy bóng kèm phim dài chừng 4–5 phút theo gợi ý của ông. Tập này gồm dự báo doanh thu, lợi nhuận, nhân sự 5 năm tới và danh mục tài sản từ dữ liệu khách, kho phim, quy trình chuẩn, giải thưởng 5 năm, bằng sáng chế đến sổ văn hóa. Kế đó là sơ đồ tổ chức kèm ảnh, tiểu sử các quản lý chủ chốt và mức chi tiêu suốt 6 năm của nhóm khách hàng lớn. Phía sau tập giới thiệu đẹp mắt là phòng dữ liệu lưu hợp đồng, khảo sát ý định mua tiếp của khách và báo cáo độc lập kiểm chứng lợi nhuận. Điều kiện tiên quyết là chỉ bán ngay lúc dự báo 5 năm sáng sủa khiến chính bạn tiếc không muốn bán, nếu không bên mua sẽ ép giá theo hiện tại.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Daniel Priestley — diễn giả Daniel Priestley (<a href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=WqhKesG91hY</a>) · 2026-07-18</li></ul></div></details>
+<h2>Mạch 2: Mở phiên đấu giá giữa các bên mua ghép mảnh và ưu tiên khách Mỹ</h2>
+<blockquote class="ink-poem-quote"><p><em>Hai bên sợ mất tranh giành</em><br/><em>Một ngày giá vọt tăng nhanh bất ngờ</em></p></blockquote>
+<p class="ink-flip-box"><strong>Giá bán nhảy vọt không phải nhờ ngồi cò kè một chỗ, mà là nhờ kéo nhiều bên cùng giành mua.</strong></p>
+<h3>Cú nhảy giá thêm 100 triệu đô la trong 24 giờ cuối</h3>
+<p>Đàm phán đơn lẻ với một người mua khiến chủ doanh nghiệp dễ bị ép giá. Một người bạn của Daniel Priestley mất 15 năm xây công ty 140 triệu đô la Mỹ nhưng kiếm thêm 100 triệu chỉ trong 24 giờ chót (video không dẫn nguồn). Hai bên mua sợ đối thủ giành mất nên trả giá nhích từ 140, 160, 180, 200, 220 lên 240 triệu đô la Mỹ. Để kéo 2–4 bên cùng đặt giá rồi đàm phán phút cuối, bạn cần giám đốc tài chính thuê ngoài, bên môi giới, hoặc ngân hàng đầu tư cho thương vụ hàng chục triệu đô la trở lên.</p>
+<h3>Chọn bên mua cộng hưởng và tiếp cận doanh nghiệp Mỹ</h3>
+<p>Quỹ đầu tư tư nhân mua thuần tài chính chỉ trả vài triệu đô la cho công ty lãi vài trăm nghìn mỗi năm theo ước tính miệng để đủ trả nợ vay. Trái lại, bên mua ghép mảnh kinh doanh trả cao hơn nhiều vì ghép hai bên tạo phép cộng một với một thành mười một. Họ có thể bán 10 triệu đô la hàng qua kênh của bạn, hoặc gửi thư giới thiệu 40.000 khách sẵn có sang mua sản phẩm của bạn. Bạn có thể ước tính khung giá qua ChatGPT, Claude hay trang định giá trực tuyến dựa trên lợi nhuận, doanh thu hoặc bằng sáng chế. Khi chào bán, đừng đăng công khai lên mạng như bán nhà mà hãy gửi bản tóm tắt giấu tên cho lãnh đạo các công ty mục tiêu. Ông khuyên luôn mời doanh nghiệp Mỹ vì họ giàu vốn và trả gấp 1–3 lần doanh thu, còn nơi khác thường chỉ trả 3–5 lần lợi nhuận (video không dẫn nguồn).</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Daniel Priestley — diễn giả Daniel Priestley (<a href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=WqhKesG91hY</a>) · 2026-07-18</li></ul></div></details>
+<h2>Mạch 3: Đóng vai ngân hàng cho trả chậm và gài điều khoản mua lại giá rẻ</h2>
+<blockquote class="ink-poem-quote"><p><em>Cho người trả góp tính lời</em><br/><em>Họ làm trật hướng kịp thời mua ngay</em></p></blockquote>
+<p class="ink-flip-box"><strong>Cho trả chậm 18 tháng có thế chấp rồi nghỉ trọn 100 ngày giúp bạn thu giá cao mà giữ được tiền.</strong></p>
+<h3>Đóng vai ngân hàng cho trả góp và hưởng thêm phần tăng trưởng</h3>
+<p>Chuyện người mua chuyển gọn 10 triệu đô la Mỹ một lần rồi bạn rút lui gần như không bao giờ xảy ra. Daniel Priestley cho biết người đòi trả đứt một cục thường chỉ thu 3–4 triệu đô la, còn chịu cho trả chậm thu được 3 triệu trả ngay cộng 3 triệu trong 18 tháng (video không dẫn nguồn). Với gói 10 triệu đô la trả trước một nửa, 5 triệu góp trong 1–3 năm sẽ được tính lãi và thế chấp bằng chính công ty đó nếu bên mua trễ hẹn. Theo gợi ý từ một người bạn cùng nghề của ông, việc linh hoạt gộp tiền mặt, cổ phần, trái phiếu và phí cố vấn giúp nâng tổng tiền thu về. Có người quen của ông nhận thêm 5.000 đô la Mỹ mỗi ngày cho 10 ngày làm nội dung suốt năm đầu (video không dẫn nguồn). Người khác thu đậm nhờ thưởng theo kết quả sau bán (earnout) trong 12–24 tháng hoặc khi quỹ bán lại sau 6 năm, miễn tiền nhận đầu đã đủ ưng ý.</p>
+<h3>Điều khoản mua lại giá rẻ và cam kết 100 ngày nghỉ ngơi</h3>
+<p>Nhiều vụ mua lại bị điều hành trật đường ray (video không dẫn nguồn), nên hãy gài điều khoản ưu tiên mua lại công ty giá rẻ. Chính Daniel Priestley từng bán công ty cho một doanh nghiệp niêm yết, mua lại giá rất rẻ khi họ chán, dựng lại rồi bán lần hai. Khác với ông luôn sẵn khoảng 25 việc mỗi tuần, người chỉ có một công ty khi bán xong sẽ thấy hệ thần kinh hẫng hụt. Hãy nghỉ 90–100 ngày và cam kết 100 ngày đầu không quyết định lớn, chỉ đi Lake Como chứ đừng mua biệt thự, thuê xe Ferrari chứ đừng mua đứt.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Daniel Priestley — diễn giả Daniel Priestley (<a href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=WqhKesG91hY</a>) · 2026-07-18</li></ul></div></details>
+    </section>
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-2-bo-the">
+      <h2 id="phan-2">PHẦN 2: BỘ 5 CÂU HỎI-ĐÁP GIẢI MÃ TỪ GỐC</h2>
+      
+<div class="dialogue-turn" id="q1">
+  <h3 class="dialogue-prompt">❓ Câu #01 — Làm sao giúp người mua thấy rõ giá trị công ty của mình?</h3>
+  <div class="dialogue-response">
+    <blockquote class="ink-poem-quote"><p><em>Bỏ trang bảng tính thường ngày</em><br/><em>In tờ giấy bóng trao tay khách nhìn</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chỉ khi đóng gói công ty lúc đà tăng năm năm sáng nhất, người mua mới trả tiền cho tiềm năng.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Chọn điểm bán:</strong> Lập dự báo thu chi 5 năm thật sáng để bán ngay lúc tiếc chưa muốn bán, tránh hụt 14 triệu đô la như ông (chuyện đầy đủ ở Mạch 1).</li>
+<li><strong>Bước 2 — Làm tập giấy bóng:</strong> Thay trang bảng tính khô khan bằng tập giới thiệu in giấy bóng và phim 4–5 phút nêu rõ tài sản, sơ đồ nhân sự cùng khách quen 6 năm.</li>
+<li><strong>Bước 3 — Dựng phòng dữ liệu (data room):</strong> Lưu hợp đồng, khảo sát ý định mua tiếp của khách và báo cáo kiểm chứng lợi nhuận độc lập phía sau để bên mua đối chiếu.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Đóng 1 tập hồ sơ in màu 5 trang trình bày dự báo thu chi, danh mục tài sản, quy trình làm việc và ảnh nhân sự chính (gợi ý áp dụng cho chủ tiệm Việt).</li>
+<li>Quay 1 đoạn phim dài 4 phút dẫn người mua đi xem không gian làm việc, tệp khách hàng và cách đội ngũ tự vận hành mỗi ngày (gợi ý áp dụng).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Daniel Priestley (<a href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=WqhKesG91hY</a>) · 2026-07-18</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q2">
+  <h3 class="dialogue-prompt">❓ Câu #02 — Làm sao tránh bị ép giá khi đem công ty đi đàm phán bán?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Được giá cao không phải nhờ tài cò kè với một người, mà là nhờ kéo nhiều bên cùng giành mua.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Dạng 1 — Bên mua thuần tài chính:</strong> Các quỹ đầu tư tư nhân chỉ tính sức trả nợ vay, nên công ty lãi vài trăm nghìn đô la mỗi năm chỉ bán được vài triệu.</li>
+<li><strong>Dạng 2 — Bên mua ghép mảnh kinh doanh:</strong> Họ trả cao gấp bội vì ghép sản phẩm của bạn vào 40.000 khách sẵn có giúp một cộng một thành mười một.</li>
+<li><strong>Cách xử lý — Mở phiên đấu giá (bidding war):</strong> Kéo 2–4 bên ghép mảnh cùng trả giá đến phút cuối, như bạn ông thêm 100 triệu đô la sau 24 giờ (chuyện đầy đủ ở Mạch 2).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Lập danh sách ít nhất 3 đơn vị lớn cùng ngành đang thiếu đúng tệp khách bạn sẵn có để mời xem hồ sơ cùng 1 tuần (gợi ý áp dụng cho chủ tiệm Việt).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Daniel Priestley (<a href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=WqhKesG91hY</a>) · 2026-07-18</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q3">
+  <h3 class="dialogue-prompt">❓ Câu #03 — Chào bán công ty ở đâu để được giá mà không lộ tin ra ngoài?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Chủ động gửi thư giấu tên đến đúng lãnh đạo tập đoàn giúp giữ kín tin và nâng mức định giá.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Ước tính khung giá trước:</strong> Đưa số liệu lợi nhuận, tốc độ tăng doanh thu hoặc bằng sáng chế vào công cụ trí tuệ nhân tạo để biết khoảng giá và điều kiện cần đạt.</li>
+<li><strong>Bước 2 — Gửi bản giấu tên (teaser sheet):</strong> Đừng rao lên mạng như bán nhà, hãy gửi bản tóm tắt ẩn danh cho lãnh đạo công ty mục tiêu trước khi mở tên thật.</li>
+<li><strong>Bước 3 — Ưu tiên doanh nghiệp Mỹ:</strong> Họ giàu vốn nên có thể mua gấp 1–3 lần doanh thu thay vì 3–5 lần lợi nhuận như nơi khác (chuyện đầy đủ ở Mạch 2).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Nhập doanh thu, lợi nhuận ròng 12 tháng gần nhất và danh mục tài sản vào Claude để hỏi khung định giá tham khảo trước khi đi gặp người mua.</li>
+<li>Soạn 1 trang tóm tắt ẩn tên cửa hàng, chỉ ghi khu vực, doanh thu và lượng khách quen để thăm dò trước khi ký cam kết bảo mật (gợi ý áp dụng).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Daniel Priestley (<a href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=WqhKesG91hY</a>) · 2026-07-18</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q4">
+  <h3 class="dialogue-prompt">❓ Câu #04 — Làm sao bán được giá cao khi người mua không trả đủ tiền một lần?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Thu đủ tiền mặt đợt đầu rồi cho góp tiếp 1 đến 3 năm có thế chấp giúp nâng tổng giá.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Lớp 1 — Đóng vai ngân hàng:</strong> Nhận khoản đầu đủ lớn, cho góp phần sau có lãi và thế chấp; nhờ vậy thu 6 triệu đô la thay vì 3–4 triệu (chuyện đầy đủ ở Mạch 3).</li>
+<li><strong>Lớp 2 — Nhận thưởng sau bán (earnout):</strong> Chỉ ký khi đã ưng khoản tiền đầu, rồi hỗ trợ nhẹ nhàng suốt 12–24 tháng để hưởng thêm phần tăng trưởng mới.</li>
+<li><strong>Lớp 3 — Gộp phí cố vấn và cổ phần:</strong> Linh hoạt nhận thêm cổ phần bên mua hoặc thù lao làm nội dung, cố vấn hội đồng tính theo ngày làm việc thực tế.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Thu tiền đợt 1 bằng đúng mức thấp nhất bạn chịu bán, phần góp 12–18 tháng phải ghi điều khoản thu hồi cơ sở nếu bên mua trễ hạn (gợi ý áp dụng).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Daniel Priestley (<a href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=WqhKesG91hY</a>) · 2026-07-18</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q5">
+  <h3 class="dialogue-prompt">❓ Câu #05 — Cần phòng ngừa rủi ro gì ngay trong hợp đồng và sau ngày bán?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Khóa chặt 100 ngày không tiêu lớn và cài quyền mua lại giúp bạn giữ trọn thành quả.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Rủi ro 1 — Bên mua làm hỏng:</strong> Chủ mới dễ làm trật hướng, nên hãy gài quyền mua lại giá rẻ; ông từng mua lại rồi bán lần hai (chuyện đầy đủ ở Mạch 3).</li>
+<li><strong>Rủi ro 2 — Hẫng hụt tâm lý sau bán:</strong> Người chỉ có một công ty khi bàn giao xong thường thấy trống trải, dễ vội vã vung tiền mua đứt biệt thự nghỉ dưỡng hoặc siêu xe.</li>
+<li><strong>Cách xử lý — Quy tắc nghỉ 90–100 ngày:</strong> Tự thỏa thuận với bản thân không ra bất kỳ quyết định lớn nào suốt 100 ngày đầu, thích trải nghiệm chỉ nên đi thuê vài hôm.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Ghi thêm 1 điều khoản quyền ưu tiên mua lại cơ sở giá rẻ vào hợp đồng sang nhượng phòng khi chủ mới muốn thanh lý sớm (gợi ý áp dụng cho chủ tiệm Việt).</li>
+<li>Gửi khoản tiền bán tiệm vào kỳ hạn ngắn 3 tháng để giữ mình khỏi mọi quyết định mua sắm lớn trong 90–100 ngày đầu (gợi ý áp dụng).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Daniel Priestley (<a href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=WqhKesG91hY</a>) · 2026-07-18</li></ul></div></details>
+  </div>
+</div>
+    </section>
+    
+    <hr style="margin: 3rem 0 1.5rem; border: none; border-top: 2px solid var(--ink-border);"/>
+    <details class="ink-provenance" id="nguon-boi-canh">
+      <summary class="ink-prov-summary">
+        <span class="ink-prov-context">📌 <strong>Hồ sơ nguồn &amp; Truy vết bối cảnh (Logic #211)</strong> — Daniel Priestley — Sell Your Business For A Life-changing Amount of Money - My Playbook in 22 Minutes · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener">Xem trên YouTube ↗</a></span>
+        <span class="ink-prov-toggle">Chi tiết nguồn <span class="ink-prov-arrow">▾</span></span>
+      </summary>
+      <div class="ink-prov-extra">
+        <ul>
+          <li>🎙️ <strong>Nguồn Podcast / Video gốc:</strong> Daniel Priestley — Sell Your Business For A Life-changing Amount of Money - My Playbook in 22 Minutes · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=WqhKesG91hY" target="_blank" rel="noopener">Xem trên YouTube ↗</a></li>
+          <li>💬 <strong>Bản giải phẫu hội thoại gốc:</strong> <a class="ink-ext-link" href="https://gemini.google.com/u/6/app/ef77843409e19dc9" target="_blank" rel="noopener">Gemini Share gốc ↗</a></li>
+          <li>🧭 <strong>Kho lưu trữ:</strong> <a class="ink-ext-link" href="https://kho.fedu.vn" target="_blank" rel="noopener">kho.fedu.vn</a> · <a class="ink-ext-link" href="https://fedu.vn/k/logic211.html">fedu.vn/k/logic211.html</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+</main>
+<script>
+  function filterTOC() {
+    var input = document.getElementById('inkSearch');
+    var filter = input.value.toLowerCase();
+    var ul = document.getElementById('inkTocList');
+    var li = ul.getElementsByTagName('li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].getElementsByTagName('a')[0];
+      if (a) {
+        var txtValue = a.textContent || a.innerText;
+        li[i].style.display = (txtValue.toLowerCase().indexOf(filter) > -1) ? '' : 'none';
+      }
+    }
+  }
+  function copyAll() {
+    var content = document.querySelector('.ink-content').innerText;
+    navigator.clipboard.writeText(content);
+  }
+  (function initMobileTOC() {
+    var details = document.getElementById('inkTocDetails');
+    if (!details) return;
+    if (window.innerWidth <= 860) {
+      details.removeAttribute('open');
+    }
+    var links = details.querySelectorAll('a.ink-toc-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        if (window.innerWidth <= 860) {
+          details.removeAttribute('open');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
