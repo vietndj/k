@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Logic 191: Bán giá cao bằng kết quả thật thay vì nhìn ví tiền của mình</title>
+<link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='16'%20fill='%2307090E'/%3E%3Cpath%20d='M9.9%2052.1Q9%2052.1%209%2051.2V27.2L7.7%2027.7Q6.7%2028.1%206.6%2027.1L5.9%2023.5Q5.8%2022.7%206.5%2022.4L11.5%2020.2Q11.9%2019.9%2012.6%2019.9H15.1Q16%2019.9%2016%2020.8V51.2Q16%2052.1%2015.1%2052.1ZM27.6%2052.5Q25.1%2052.5%2023.5%2051.8Q21.9%2051.1%2021%2050Q20%2049%2019.7%2047.6Q19.3%2046.2%2019.3%2044.7V44Q19.3%2043.1%2020.2%2043.1H25.4Q26.3%2043.1%2026.3%2044V45.2Q26.3%2046.1%2026.6%2046.4Q26.9%2046.7%2027.6%2046.7Q28.2%2046.7%2028.5%2046.4Q28.8%2046.1%2028.8%2045.2V40.1H28.6Q28.1%2041%2026.9%2041.3Q25.8%2041.7%2024.9%2041.7Q23.3%2041.7%2022.2%2041.1Q21.1%2040.6%2020.5%2039.7Q19.9%2038.8%2019.6%2037.5Q19.3%2036.2%2019.3%2034.6V27.3Q19.3%2025.9%2019.7%2024.5Q20%2023.1%2020.9%2022Q21.8%2020.9%2023.4%2020.2Q25%2019.5%2027.6%2019.5Q30.1%2019.5%2031.7%2020.2Q33.4%2020.9%2034.2%2022Q35.1%2023.1%2035.5%2024.5Q35.8%2025.9%2035.8%2027.3V44.7Q35.8%2046.2%2035.4%2047.6Q35.1%2049%2034.2%2050Q33.3%2051.1%2031.7%2051.8Q30.1%2052.5%2027.6%2052.5ZM27.6%2035.9Q28.2%2035.9%2028.4%2035.5Q28.7%2035.2%2028.8%2034.7V26.8Q28.8%2025.9%2028.5%2025.6Q28.2%2025.3%2027.6%2025.3Q26.9%2025.3%2026.6%2025.6Q26.3%2025.9%2026.3%2026.8V34.3Q26.3%2035.2%2026.6%2035.5Q26.9%2035.9%2027.6%2035.9ZM42%2052.1Q41.1%2052.1%2041.1%2051.2V27.2L39.8%2027.7Q38.8%2028.1%2038.7%2027.1L38%2023.5Q37.9%2022.7%2038.6%2022.4L43.6%2020.2Q44%2019.9%2044.7%2019.9H47.2Q48.1%2019.9%2048.1%2020.8V51.2Q48.1%2052.1%2047.2%2052.1Z'%20fill='%2310B981'/%3E%3Ccircle%20cx='52'%20cy='13'%20r='4.2'%20fill='%2310B981'/%3E%3C/svg%3E">
+<style>
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.35; }
+    h1 { font-family: var(--font-display-short); font-weight: 500; font-style: italic; font-size: clamp(28px, 4vw, 40px); margin-bottom: 24px; letter-spacing: -0.02em; }
+    h2 { font-family: var(--font-display-long); font-weight: 600; font-size: 22px; margin: 40px 0 18px; }
+    h3 { font-family: var(--font-display-long); font-weight: 600; font-size: 18px; margin: 28px 0 14px; }
+    .ink-card-subhead { font-family: system-ui, -apple-system, sans-serif; font-weight: 700; font-size: 16.5px; color: var(--ink-text); margin: 22px 0 10px; text-transform: none; letter-spacing: -0.01em; }
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 16px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 18px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    blockquote { border-left: 3px solid var(--ink-text); margin: 16px 0; font-style: italic; color: var(--ink-muted); background: var(--ink-sidebar); padding: 14px 20px; border-radius: 0 8px 8px 0; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .ink-poem-quote { margin-top: 0; margin-bottom: 16px; color: #1e293b; font-size: 18.5px; }
+    .ink-flip-box { font-size: 18.5px; font-weight: 500; background: var(--ink-hover); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 18px; }
+    .ink-pocket-rule { border: 1px dashed var(--ink-text); padding: 10px 14px; border-radius: 8px; }
+    .ink-provenance { display: inline-block; margin-top: 8px; background: transparent; border: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .ink-provenance[open] { display: block; margin-top: 12px; background: #f8fafc; border: 1px solid var(--ink-border); border-radius: 8px; overflow: hidden; }
+    .ink-prov-summary { padding: 0; cursor: pointer; list-style: none; display: inline-flex; align-items: center; color: var(--ink-text); font-size: 12px; line-height: 1.4; }
+    .ink-provenance[open] .ink-prov-summary { padding: 8px 12px; display: flex; }
+    .ink-prov-summary::-webkit-details-marker { display: none; }
+    .ink-prov-context { flex: 1; min-width: 0; margin-right: 8px; }
+    .ink-prov-toggle { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ink-muted); background: #f8fafc; border: 1px solid var(--ink-border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+    .ink-prov-toggle:hover { color: var(--ink-text); border-color: #94a3b8; }
+    .ink-provenance[open] .ink-prov-arrow { transform: rotate(180deg); display: inline-block; }
+    .ink-prov-extra { padding: 8px 12px 10px; border-top: 1px dashed var(--ink-border); background: #ffffff; color: var(--ink-muted); font-size: 13px; }
+    .ink-provenance ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 13px; line-height: 1.6; }
+    .ink-provenance li { margin-bottom: 4px; }
+    .ink-provenance li:last-child { margin-bottom: 0; }
+    .ink-ext-link { color: #0f172a; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .ink-ext-link:hover { color: #10b981; }
+    .ink-table-wrap { overflow-x: auto; margin: 20px 0 24px; }
+    .ink-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.6; }
+    .ink-table th, .ink-table td { border: 1px solid var(--ink-border); padding: 12px 14px; text-align: left; vertical-align: top; }
+    .ink-table th { background: var(--ink-sidebar); font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-text); }
+    .ink-ts-pill, .ink-meta-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px !important; margin: 0 2px; border-radius: 99px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10.5px !important; font-weight: 500 !important; line-height: 1.35 !important; color: #64748b !important; background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.22); text-decoration: none !important; white-space: nowrap; vertical-align: middle; transition: all 0.15s ease; }
+    .ink-ts-pill:hover { background: rgba(37, 99, 235, 0.12); color: #2563EB !important; border-color: rgba(37, 99, 235, 0.4); }
+    .ink-meta-badge .ink-ts-pill { padding: 0 2px !important; margin: 0 !important; border: none !important; background: transparent !important; }
+    .ink-sidebar { width: 340px; background: var(--ink-sidebar); border-right: 1px solid var(--ink-border); height: 100vh; position: sticky; top: 0; padding: 28px 22px; overflow-y: auto; flex-shrink: 0; }
+    .ink-main-wrapper { flex-grow: 1; padding: 56px 48px 120px; display: flex; justify-content: center; }
+    .ink-content { width: 100%; max-width: 780px; }
+    .ink-brand { font-family: system-ui, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-text); text-decoration: none; display: inline-block; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .ink-toc-title { font-family: system-ui, sans-serif; font-weight: 700; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 6px; line-height: 1.4; }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active { background: var(--ink-bg); color: var(--ink-text); font-weight: 600; border: 1px solid var(--ink-border); }
+    .ink-mode-dialogue .dialogue-turn { margin-bottom: 48px; scroll-margin-top: 30px; }
+    .ink-mode-dialogue .dialogue-prompt { background: var(--ink-sidebar); padding: 18px 22px; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 18.5px; font-weight: 700; font-style: normal; color: var(--ink-text); margin-bottom: 18px; border: 1px solid var(--ink-border); line-height: 1.45; }
+    .ink-mode-dialogue .dialogue-response { padding-left: 18px; border-left: 2px solid var(--ink-border); }
+    .ink-meta { display: flex; align-items: center; gap: 12px; font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); margin-bottom: 24px; flex-wrap: wrap; }
+    .ink-badge { font-weight: 700; color: var(--ink-text); background: var(--ink-hover); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--ink-border); }
+    .ink-copy-btn { background: var(--ink-text); color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 32px; }
+    .ink-search-box { margin-bottom: 14px; }
+    .ink-search-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--ink-border); background: #ffffff; font-size: 13px; color: var(--ink-text); outline: none; }
+    .ink-toc-summary { display: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--ink-text); padding: 8px 12px; background: #ffffff; border: 1px solid var(--ink-border); border-radius: 8px; cursor: pointer; list-style: none; }
+    .ink-toc-summary::-webkit-details-marker { display: none; }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      .ink-sidebar { width: 100%; height: auto; position: sticky; top: 0; z-index: 50; border-right: none; border-bottom: 1px solid var(--ink-border); padding: 12px 16px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+      .ink-brand { margin-bottom: 8px; font-size: 13.5px; }
+      .ink-toc-summary { display: flex; align-items: center; justify-content: space-between; }
+      .ink-toc-collapsible { margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-bottom: 6px; }
+      .ink-main-wrapper { padding: 24px 16px 80px; }
+      h1 { font-size: 26px; margin-bottom: 16px; }
+      h2 { font-size: 20px; margin: 28px 0 14px; }
+      h3 { font-size: 17px; margin: 22px 0 10px; }
+      p, ul, ol { font-size: 16.5px; line-height: 1.72; }
+      .ink-flip-box, .ink-poem-quote { font-size: 16.5px; padding: 12px 14px; }
+      .ink-mode-dialogue .dialogue-turn { margin-bottom: 36px; scroll-margin-top: 96px; }
+      .ink-mode-dialogue .dialogue-prompt { font-size: 16.5px; padding: 14px 16px; }
+      .ink-mode-dialogue .dialogue-response { padding-left: 12px; }
+    }
+</style>
+</head>
+<body>
+<aside class="ink-sidebar">
+  <div class="ink-sidebar-header">
+    <a class="ink-brand" href="https://kho.fedu.vn">LOGIC #191 • KHO LOGIC</a>
+  </div>
+  <details class="ink-toc-details" id="inkTocDetails" open>
+    <summary class="ink-toc-summary">
+      <span>📑 Mục lục &amp; Nhảy nhanh tới câu hỏi (5 câu)</span>
+      <span>▾</span>
+    </summary>
+    <div class="ink-toc-collapsible">
+      <div class="ink-search-box">
+        <input type="text" id="inkSearch" class="ink-search-input" placeholder="🔍 Lọc nhanh câu hỏi &amp; cơ chế..." onkeyup="filterTOC()">
+      </div>
+      <div class="ink-toc-title">BẢN ĐỒ &amp; BỘ THẺ NHẬN THỨC</div>
+      <ul class="ink-toc-list" id="inkTocList">
+            <li style="margin-top: 10px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-1-ban-do">Phần 1: Bản Đồ Nhận Thức</a>
+    </li>
+    <li style="margin-top: 14px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-2-bo-the">Phần 2: Bộ 5 Câu Hỏi-Đáp</a>
+    </li>
+    <ul class="ink-toc-list" style="padding-left: 10px;">
+    <li><a class="ink-toc-link" href="#q1">Câu 01. Tại sao người làm nghề hay ngại miệng khi báo mức...</a></li>
+    <li><a class="ink-toc-link" href="#q2">Câu 02. Làm sao thu phí cao mà không thấy mình tính đắt...</a></li>
+    <li><a class="ink-toc-link" href="#q3">Câu 03. Làm sao bỏ vẻ nài nỉ khi chào hàng lúc mình...</a></li>
+    <li><a class="ink-toc-link" href="#q4">Câu 04. Tại sao chia sẻ trực tuyến cho đông người nghe nhưng...</a></li>
+    <li><a class="ink-toc-link" href="#q5">Câu 05. Làm sao giữ sức nghĩ khỏi việc vặt và thu lời...</a></li>
+    </ul>
+      </ul>
+    </div>
+  </details>
+</aside>
+<main class="ink-main-wrapper">
+  <article class="ink-content ink-mode-dialogue">
+    <div class="ink-meta">
+      <span class="ink-badge">LOGIC #191</span>
+      <span>Nguyễn Việt</span>
+      <span>•</span>
+      <span>Cẩm Nang Nhận Thức</span>
+      <span>•</span>
+      <span>5 Câu Hỏi-Đáp Giải Mã Gốc</span>
+    </div>
+    <button class="ink-copy-btn" onclick="copyAll()">📋 Sao Chép Toàn Bộ Cẩm Nang</button>
+    <h1 class="is-long" id="top">Logic 191: Bán giá cao bằng kết quả thật thay vì nhìn ví tiền của mình</h1>
+    <p style="color: var(--ink-muted); font-size: 19px; line-height: 1.75; margin-bottom: 36px;">Sửa phanh đắt đỏ vẫn trao / Gỡ xong việc khó lẽ nào so đo — Cách Myron Golden và Omar Eltakrori gỡ tâm lý sợ báo giá cao, tách khỏi mong cầu khách mua và biến khoản chi đi lại thành nguồn thu.</p>
+    <hr style="margin: 2.5rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-1-ban-do">
+      <h2>Mạch 1: Đặt giá cao từ kết quả thật thay cho niềm tin cũ</h2>
+<blockquote class="ink-poem-quote"><p><em>Mua giày đỡ cảnh chân không</em><br/><em>Được hơn tiền trả khách chồng đủ ngay</em></p></blockquote>
+<p class="ink-flip-box"><strong>Khách chịu trả giá cao không phải vì mua giờ công lẻ, mà vì kết quả nhận về vượt xa số tiền bỏ ra.</strong></p>
+<h3>Hóa đơn sửa phanh 21.000 đô la và lần tập báo giá đầu tiên</h3>
+<p>Phần lớn người bán sợ đặt giá cao vì mang theo niềm tin thừa kế từ thời rỗng túi. Họ chỉ quen phục vụ người nghèo mà quên người giàu sẵn lòng trả cao để dứt việc ngay. Chiếc Mercedes đời 2021 vừa hết bảo hành bị báo giá sửa phanh 21.000 đô la, hay lúc hỏng máy lạnh phải thuê máy 1.300 đô la một ngày, Myron Golden đều trả ngay. Năm 2004, thấy khách trả người khác 5.000 đô la, ông tập nói giá 3.000 đô la cho lớp 2 ngày để không giật cơ mặt. Có 2 người mua ngay, nên lần sau ông nâng lên 4.000 đô la và thu hút 7 người đăng ký.</p>
+<h3>Đôi giày che chân đất và học phí 135.000 đô la của Omar Eltakrori</h3>
+<p>Đổi 1 đô la lấy 1 đô la suốt 800 lần là vô nghĩa, vì người ta chỉ mua thứ vượt số tiền bỏ ra như mua giày khỏi đi chân đất. Sách 20 đến 30 đô la của ông lãi gấp 10 lần giá in vẫn không ai chê đắt vì tiền chỉ phản ánh giá trị nhận về. Từng kẹt ở 220.000 đô la mỗi năm và sợ mang tiếng giả mạo, từ năm 2023 Omar Eltakrori đóng 135.000 đô la học Myron Golden rồi báo vượt 4,5 triệu đô la doanh thu. Theo quy tắc bán đúng như cách mua, Myron Golden nói từng mua gói 1 triệu đô la trước khi bán gói này 4 lần, dù các số doanh thu trên video không dẫn nguồn.</p>
+<h3>Chứng tự coi nhẹ mình và điều kiện khi thu phí cao</h3>
+<p>Chỗ kẹt cuối cùng của người bán là chứng tự coi nhẹ &quot;tôi chỉ là tôi&quot; (I&#x27;m-just-me-itis), tức xem thường năng lực sẵn có chỉ vì nó là của mình. Điều kiện bắt buộc để thu phí cao là kết quả thay đổi đo đếm được phải vượt xa học phí và khách mua phải tự bắt tay làm thật.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Myron Golden (<a href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=mLKwGV5ij0E</a>) · 2026-08-27</li></ul></div></details>
+<h2>Mạch 2: Tách khỏi mong cầu khách mua bằng toán học và nhịp lùi điềm tĩnh</h2>
+<blockquote class="ink-poem-quote"><p><em>Trăm người trò chuyện mười đơn</em><br/><em>Lùi chân điềm tĩnh chẳng sờn tiếng không</em></p></blockquote>
+<p class="ink-flip-box"><strong>Nắm chắc tỷ lệ 10 người mua trong 100 cuộc gặp giúp người bán lùi lại điềm tĩnh và dứt hẳn vẻ nài nỉ.</strong></p>
+<h3>Phép tính 100 cuộc gặp lấy 10 đơn và mười lần thả rơi ống thu âm</h3>
+<p>Khi đang cần tiền, người bán rất dễ lộ hơi thở mùi hoa hồng khiến khách đối diện muốn tránh xa. Myron Golden gỡ áp lực này bằng quy luật số trung bình: gặp đúng 100 khách phù hợp với tỷ lệ mua 1 phần 10 thì chắc chắn có 10 đơn. Ông tin quy luật vận hành chuẩn xác như thả ống thu âm 10 lần đều rơi xuống đất đủ 10 lần theo trọng lực. Biết chắc đằng nào cũng có người mua, ông dứt hẳn mong cầu xem ai trước mặt sẽ rút ví.</p>
+<h3>Chuyện chàng trai bám riết bị lánh mặt và nhịp lùi trong phòng bán hàng</h3>
+<p>Trong giao dịch luôn có nhịp thu hút rồi rút lui (entice and withdraw): người bán càng nhào tới thì khách càng nghi ngờ động cơ và lùi xa. Myron Golden ví cảnh này giống chàng trai bám theo quá cuồng nhiệt khiến cô gái hoảng sợ. Ngược lại, khi người bán điềm tĩnh lùi lại, khách sẽ sợ vuột mất thứ họ cần và tự bước tới.</p>
+<h3>Phòng họp trực tuyến 3.000 người và ranh giới trách nhiệm khi khách từ chối</h3>
+<p>Khi mở rộng sang nói chuyện cùng lúc với 100 đến 3.000 người qua phòng họp trực tuyến, Omar Eltakrori nêu lỗi thường gặp là người dạy nói quá nhiều. Myron Golden chỉnh lại rằng lỗi nằm ở việc nhầm mục tiêu ép khách mua thay vì dựng môi trường để người nghe tự muốn mua. Cách làm này đòi hỏi khách luôn nhận phần lợi lớn hơn người bán và chỉ hợp với người thực sự cần gói dịch vụ. Đáng chú ý, dù nói để khách tự quyết, Myron Golden vẫn nhận rằng khách đủ khả năng mua mà từ chối thì lỗi thuộc về người bán.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Myron Golden (<a href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=mLKwGV5ij0E</a>) · 2026-08-27</li></ul></div></details>
+<h2>Mạch 3: Mua lại thời gian và biến khoản chi đi lại thành nguồn thu</h2>
+<blockquote class="ink-poem-quote"><p><em>Bỏ luôn việc cắt cỏ sân</em><br/><em>Tiện đường mở hội bù phần phí bay</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chỉ khi ngừng tự làm việc vặt và gắn lời chào bán vào chuyến đi sẵn có, chi phí mới hóa thành lãi ròng.</strong></p>
+<h3>Một giờ cắt cỏ mất 40.000 đô la và chuyến bay riêng 110.000 đô la</h3>
+<p>Người nghèo quý tiền hơn thời gian nên chịu đi xa tiết kiệm vài xu xăng, còn người giàu hiểu thời gian mất là hết hẳn. Myron Golden thuê thợ hồ bơi và không mua máy cắt cỏ vì một giờ tự cắt cỏ làm ông mất 40.000 đô la phí tư vấn (video không dẫn nguồn). Omar Eltakrori gọi đó là chi tiền bảo vệ sức nghĩ khỏi việc vặt. Bay khứ hồi từ Tampa tới California, Myron Golden chi tối thiểu 110.000 đô la thuê máy bay riêng, đắt gấp 100 lần vé thường. Đổi lại phi công chờ ông dù trễ 20 phút, khỏi ra sân bay sớm 2 tiếng chịu xét hỏi an ninh hay hoãn chuyến.</p>
+<h3>Buổi thu âm hủy phút chót tại California và khoản thu bù tại chỗ</h3>
+<p>Để biến chi phí thành nơi sinh lời, Myron Golden gắn lời chào bán tiện thể (anyway offer) vào lịch trình sẵn có. Tháng 11 năm trước, vừa đáp chuyến bay 110.000 đô la xuống California thì buổi ghi hình bị hủy do vợ chủ nhà cấp cứu thai đôi. Nhờ mở sự kiện tại chỗ, ông ước tính thu 70.000 đến 80.000 đô la vé và 700.000 đô la gói huấn luyện bán sau. Chuyến quay lại tháng 3 thu thêm khoảng 40.000 đến 60.000 đô la vé cùng 500.000 đến 600.000 đô la bán sau (video không dẫn nguồn).</p>
+<h3>Bữa tối 15.000 đô la ở Dubai và điều kiện áp dụng</h3>
+<p>Người bạn làm sân vườn của ông cũng biến thú vui thành nguồn thu vài nghìn đô la mỗi tháng nhờ kênh đánh gôn. Nhân chuyến đi Dubai tháng 9, ông gửi thư điện tử mở bữa tối cố vấn 3 giờ giá 15.000 đô la thay vì mức 120.000 đô la gặp riêng. Điều kiện là phải có sẵn tệp độc giả tin cậy và chuyến đi vốn dĩ vẫn diễn ra dù không ai mua.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Myron Golden (<a href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=mLKwGV5ij0E</a>) · 2026-08-27</li></ul></div></details>
+    </section>
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-2-bo-the">
+      <h2 id="phan-2">PHẦN 2: BỘ 5 CÂU HỎI-ĐÁP GIẢI MÃ TỪ GỐC</h2>
+      
+<div class="dialogue-turn" id="q1">
+  <h3 class="dialogue-prompt">❓ Câu #01 — Tại sao người làm nghề hay ngại miệng khi báo mức giá cao?</h3>
+  <div class="dialogue-response">
+    <blockquote class="ink-poem-quote"><p><em>Nhìn quanh túi rỗng ngại chào</em><br/><em>Sửa phanh đắt đỏ khách trao đủ tiền</em></p></blockquote>
+<p class="ink-flip-box"><strong>Lấy ví tiền eo hẹp của mình để đoán khả năng chi trả của khách khiến người bán chỉ dám thu giá rẻ.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Mang thói quen lúc thiếu tiền:</strong> Người bán từng chật vật nên mặc định mức phí vài nghìn đô la là quá sức, rồi chỉ tìm phục vụ nhóm khách ít tiền giống mình.</li>
+<li><strong>Bước 2 — Bỏ sót nhóm khách cần dứt việc:</strong> Người giàu gặp sự cố luôn trả ngay không mặc cả, như hóa đơn sửa phanh 21.000 đô la (chuyện đầy đủ ở Mạch 1).</li>
+<li><strong>Bước 3 — Tập nói giá mới cho quen miệng:</strong> Cách duy nhất gỡ cảm giác ngại là báo thẳng mức phí mới tới khi cơ mặt hết giật, dù ban đầu chưa tin có người mua.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Đứng trước gương đọc to mức giá cao hơn hiện tại 30% đúng 20 lần mỗi sáng tới khi giọng nói bình thản, không tự thêm câu giảm giá.</li>
+<li>Viết ra 1 gói dịch vụ trọn gói làm dứt việc cho khách bận rộn thay vì tính tiền lẻ theo từng giờ công (gợi ý áp dụng cho chủ tiệm Việt).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Myron Golden (<a href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=mLKwGV5ij0E</a>) · 2026-08-27</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q2">
+  <h3 class="dialogue-prompt">❓ Câu #02 — Làm sao thu phí cao mà không thấy mình tính đắt cho khách?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Định giá cao không phải là thu đắt giờ công, mà là trao kết quả đáng giá vượt xa số tiền khách trả.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Tránh giao dịch ngang giá vô ích:</strong> Khách không mua thứ chỉ ngang bằng tiền mặt, giống việc đổi qua lại tờ 1 đô la 800 lần (chuyện đầy đủ ở Mạch 1).</li>
+<li><strong>Bước 2 — Đo bằng chất lượng sống sau mua:</strong> Người bán ngỡ mình bán buổi học lẻ nên rụt rè, nhưng thứ khách mua thật sự là kết quả thay đổi đo đếm được và bền vững.</li>
+<li><strong>Bước 3 — Mua hàng sao thì bán hàng vậy:</strong> Người hay kỳ kèo giá rẻ khó thu hút khách chi lớn; chính người bán phải biết chi tiền xứng đáng để học từ người giỏi hơn.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Ghi rõ 3 kết quả đo bằng tiền hoặc thời gian khách nhận về sao cho lớn gấp 5 lần mức phí thu (gợi ý áp dụng cho chủ tiệm Việt).</li>
+<li>Mua thử 1 dịch vụ giá cao trong ngành ngay tháng này để quan sát cách người bán phục vụ nhóm khách chi lớn.</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Myron Golden (<a href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=mLKwGV5ij0E</a>) · 2026-08-27</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q3">
+  <h3 class="dialogue-prompt">❓ Câu #03 — Làm sao bỏ vẻ nài nỉ khi chào hàng lúc mình đang cần tiền?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Gặp đủ 100 khách phù hợp để cầm chắc 10 đơn hàng giúp người bán dứt hẳn tâm lý mong cầu trước từng người.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Dựa vào quy luật số trung bình:</strong> Khi năng lực ổn định ở mức 10 người hỏi có 1 người mua, trò chuyện đủ 100 người đúng nhu cầu sẽ có 10 đơn.</li>
+<li><strong>Bước 2 — Tắt hẳn mùi hoa hồng trên miệng:</strong> Tin quy luật chắc chắn như thả ống thu âm 10 lần đều rơi (chuyện đầy đủ ở Mạch 2), bạn không còn bận tâm ai từ chối.</li>
+<li><strong>Bước 3 — Thu hút rồi chủ động lùi lại:</strong> Theo nhịp thu hút rồi rút lui (entice and withdraw), bạn càng vồn vã khách càng nghi ngờ, còn điềm tĩnh lùi lại khiến khách tự bước tới.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Ghi sổ kết quả 30 cuộc tư vấn gần nhất để tính đúng tỷ lệ khách mua hiện tại thay vì nản lòng vì 1 người lắc đầu.</li>
+<li>Kết thúc buổi tư vấn bằng 1 câu hỏi mở để khách tự chọn, ngừng nhắn tin giục mua quá 2 lần (gợi ý áp dụng cho chủ tiệm Việt).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Myron Golden (<a href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=mLKwGV5ij0E</a>) · 2026-08-27</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q4">
+  <h3 class="dialogue-prompt">❓ Câu #04 — Tại sao chia sẻ trực tuyến cho đông người nghe nhưng vẫn ít người mua?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Chỉ khi người nghe thấy rõ phần lợi nghiêng về họ và tự muốn mua, buổi chia sẻ đông người mới ra đơn.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Dạng 1 — Tự ti không dám đứng lớp đông:</strong> Nhiều người tin kẻ khác bán được cho hàng trăm người còn mình thì không, thay vì tự hỏi sao người đó lại chẳng phải mình.</li>
+<li><strong>Dạng 2 — Dạy lan man những mẹo vụn vặt:</strong> Trong phòng họp tới 3.000 người (chuyện đầy đủ ở Mạch 2), lỗi không nằm ở dạy nhiều mà là dạy sai thứ giúp khách ra quyết định.</li>
+<li><strong>Dạng 3 — Chăm chăm ép người nghe rút ví:</strong> Không ai thích bị người khác ép làm điều gì; người bán chỉ nghĩ cho túi tiền của mình sẽ khiến người nghe phòng thủ.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Cắt bỏ 50% thao tác kỹ thuật vụn trong bài chia sẻ trực tuyến, thay bằng 3 ví dụ kết quả thật của khách cũ.</li>
+<li>Gom 20 đến 30 người hỏi mua lẻ trong tuần vào 1 buổi chia sẻ trực tuyến để giải đáp chung (gợi ý áp dụng cho chủ tiệm Việt).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Myron Golden (<a href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=mLKwGV5ij0E</a>) · 2026-08-27</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q5">
+  <h3 class="dialogue-prompt">❓ Câu #05 — Làm sao giữ sức nghĩ khỏi việc vặt và thu lời từ chuyến đi xa?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Thuê ngoài việc vặt giúp giữ sức nghĩ, còn gắn gói bán vào chuyến đi sẵn sẽ biến khoản chi thành lãi.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Mua lại thời gian và sức nghĩ:</strong> Tiền tiêu còn kiếm lại được chứ giờ sống mất hẳn, như bỏ máy cắt cỏ giữ 40.000 đô la mỗi giờ (chuyện đầy đủ ở Mạch 3).</li>
+<li><strong>Bước 2 — Mở lời chào bán tiện thể:</strong> Trên lịch trình đằng nào cũng đi, tung lời chào bán tiện thể (anyway offer) không tốn thêm vốn nhưng đem về khoản thu lớn khi có khách nhận.</li>
+<li><strong>Bước 3 — Dựa trên nhóm khách đã tin cậy:</strong> Mở bữa tối cố vấn hay buổi gặp tại nơi đến chỉ sinh lời khi bạn có sẵn người theo dõi và gửi thư báo trước.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Tính thu nhập trung bình 1 giờ làm nghề của bạn, rồi thuê ngoài ngay 2 việc dọn dẹp hoặc giao hàng có phí thấp hơn mức đó.</li>
+<li>Nhắn báo trước 7 ngày cho 15 khách quen ở tỉnh sắp tới công tác để gom lịch tư vấn trực tiếp bù tiền xe (gợi ý áp dụng cho chủ tiệm Việt).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Myron Golden (<a href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=mLKwGV5ij0E</a>) · 2026-08-27</li></ul></div></details>
+  </div>
+</div>
+    </section>
+    
+    <hr style="margin: 3rem 0 1.5rem; border: none; border-top: 2px solid var(--ink-border);"/>
+    <details class="ink-provenance" id="nguon-boi-canh">
+      <summary class="ink-prov-summary">
+        <span class="ink-prov-context">📌 <strong>Hồ sơ nguồn &amp; Truy vết bối cảnh (Logic #191)</strong> — Omar Eltakrori — How To Make Your First Million Dollars (Charge A Premium!) ft. Myron Golden · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener">Xem trên YouTube ↗</a></span>
+        <span class="ink-prov-toggle">Chi tiết nguồn <span class="ink-prov-arrow">▾</span></span>
+      </summary>
+      <div class="ink-prov-extra">
+        <ul>
+          <li>🎙️ <strong>Nguồn Podcast / Video gốc:</strong> Omar Eltakrori — How To Make Your First Million Dollars (Charge A Premium!) ft. Myron Golden · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=mLKwGV5ij0E" target="_blank" rel="noopener">Xem trên YouTube ↗</a></li>
+          <li>💬 <strong>Bản giải phẫu hội thoại gốc:</strong> <a class="ink-ext-link" href="https://gemini.google.com/u/2/app/d738e66003214af3" target="_blank" rel="noopener">Gemini Share gốc ↗</a></li>
+          <li>🧭 <strong>Kho lưu trữ:</strong> <a class="ink-ext-link" href="https://kho.fedu.vn" target="_blank" rel="noopener">kho.fedu.vn</a> · <a class="ink-ext-link" href="https://fedu.vn/k/logic191.html">fedu.vn/k/logic191.html</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+</main>
+<script>
+  function filterTOC() {
+    var input = document.getElementById('inkSearch');
+    var filter = input.value.toLowerCase();
+    var ul = document.getElementById('inkTocList');
+    var li = ul.getElementsByTagName('li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].getElementsByTagName('a')[0];
+      if (a) {
+        var txtValue = a.textContent || a.innerText;
+        li[i].style.display = (txtValue.toLowerCase().indexOf(filter) > -1) ? '' : 'none';
+      }
+    }
+  }
+  function copyAll() {
+    var content = document.querySelector('.ink-content').innerText;
+    navigator.clipboard.writeText(content);
+  }
+  (function initMobileTOC() {
+    var details = document.getElementById('inkTocDetails');
+    if (!details) return;
+    if (window.innerWidth <= 860) {
+      details.removeAttribute('open');
+    }
+    var links = details.querySelectorAll('a.ink-toc-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        if (window.innerWidth <= 860) {
+          details.removeAttribute('open');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
