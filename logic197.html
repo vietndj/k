@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Logic 197: Bán hàng bằng cảm xúc tương lai và trạng thái chắc chắn</title>
+<link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='16'%20fill='%2307090E'/%3E%3Cpath%20d='M9.2%2052.1Q8.3%2052.1%208.3%2051.3V29.3L7.1%2029.8Q6.3%2030.1%206.1%2029.2L5.5%2025.9Q5.4%2025.1%206%2024.8L10.6%2022.8Q11%2022.6%2011.7%2022.6H14Q14.8%2022.6%2014.8%2023.4V51.3Q14.8%2052.1%2014%2052.1ZM25.4%2052.5Q23.1%2052.5%2021.6%2051.9Q20.1%2051.2%2019.3%2050.2Q18.5%2049.3%2018.2%2048Q17.8%2046.7%2017.8%2045.4V44.7Q17.8%2043.8%2018.6%2043.8H23.4Q24.2%2043.8%2024.2%2044.7V45.8Q24.2%2046.6%2024.5%2046.9Q24.8%2047.2%2025.4%2047.2Q26%2047.2%2026.3%2046.9Q26.6%2046.6%2026.6%2045.8V41.1H26.4Q25.9%2041.9%2024.8%2042.2Q23.8%2042.5%2022.9%2042.5Q21.5%2042.5%2020.5%2042.1Q19.5%2041.6%2018.9%2040.7Q18.3%2039.9%2018.1%2038.7Q17.8%2037.5%2017.8%2036V29.4Q17.8%2028%2018.1%2026.8Q18.4%2025.5%2019.3%2024.5Q20.1%2023.5%2021.6%2022.8Q23.1%2022.2%2025.4%2022.2Q27.7%2022.2%2029.2%2022.8Q30.7%2023.5%2031.5%2024.5Q32.3%2025.5%2032.6%2026.8Q32.9%2028%2032.9%2029.4V45.4Q32.9%2046.7%2032.6%2048Q32.3%2049.3%2031.5%2050.2Q30.6%2051.2%2029.2%2051.9Q27.7%2052.5%2025.4%2052.5ZM25.4%2037.2Q26%2037.2%2026.2%2036.9Q26.4%2036.6%2026.6%2036.2V28.9Q26.6%2028.1%2026.3%2027.8Q26%2027.5%2025.4%2027.5Q24.8%2027.5%2024.5%2027.8Q24.2%2028.1%2024.2%2028.9V35.8Q24.2%2036.6%2024.5%2036.9Q24.8%2037.2%2025.4%2037.2ZM38.7%2052.1Q37.8%2052.1%2037.9%2051.2L41.2%2028.5H35.9Q35.1%2028.5%2035.1%2027.7V23.4Q35.1%2022.6%2035.9%2022.6H47.7Q48.5%2022.6%2048.5%2023.4V25.5L44.4%2051.4Q44.2%2052.1%2043.5%2052.1Z'%20fill='%2310B981'/%3E%3Ccircle%20cx='52'%20cy='13'%20r='4.2'%20fill='%2310B981'/%3E%3C/svg%3E">
+<style>
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.35; }
+    h1 { font-family: var(--font-display-short); font-weight: 500; font-style: italic; font-size: clamp(28px, 4vw, 40px); margin-bottom: 24px; letter-spacing: -0.02em; }
+    h2 { font-family: var(--font-display-long); font-weight: 600; font-size: 22px; margin: 40px 0 18px; }
+    h3 { font-family: var(--font-display-long); font-weight: 600; font-size: 18px; margin: 28px 0 14px; }
+    .ink-card-subhead { font-family: system-ui, -apple-system, sans-serif; font-weight: 700; font-size: 16.5px; color: var(--ink-text); margin: 22px 0 10px; text-transform: none; letter-spacing: -0.01em; }
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 16px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 18px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    blockquote { border-left: 3px solid var(--ink-text); margin: 16px 0; font-style: italic; color: var(--ink-muted); background: var(--ink-sidebar); padding: 14px 20px; border-radius: 0 8px 8px 0; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .ink-poem-quote { margin-top: 0; margin-bottom: 16px; color: #1e293b; font-size: 18.5px; }
+    .ink-flip-box { font-size: 18.5px; font-weight: 500; background: var(--ink-hover); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 18px; }
+    .ink-pocket-rule { border: 1px dashed var(--ink-text); padding: 10px 14px; border-radius: 8px; }
+    .ink-provenance { display: inline-block; margin-top: 8px; background: transparent; border: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .ink-provenance[open] { display: block; margin-top: 12px; background: #f8fafc; border: 1px solid var(--ink-border); border-radius: 8px; overflow: hidden; }
+    .ink-prov-summary { padding: 0; cursor: pointer; list-style: none; display: inline-flex; align-items: center; color: var(--ink-text); font-size: 12px; line-height: 1.4; }
+    .ink-provenance[open] .ink-prov-summary { padding: 8px 12px; display: flex; }
+    .ink-prov-summary::-webkit-details-marker { display: none; }
+    .ink-prov-context { flex: 1; min-width: 0; margin-right: 8px; }
+    .ink-prov-toggle { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ink-muted); background: #f8fafc; border: 1px solid var(--ink-border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+    .ink-prov-toggle:hover { color: var(--ink-text); border-color: #94a3b8; }
+    .ink-provenance[open] .ink-prov-arrow { transform: rotate(180deg); display: inline-block; }
+    .ink-prov-extra { padding: 8px 12px 10px; border-top: 1px dashed var(--ink-border); background: #ffffff; color: var(--ink-muted); font-size: 13px; }
+    .ink-provenance ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 13px; line-height: 1.6; }
+    .ink-provenance li { margin-bottom: 4px; }
+    .ink-provenance li:last-child { margin-bottom: 0; }
+    .ink-ext-link { color: #0f172a; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .ink-ext-link:hover { color: #10b981; }
+    .ink-table-wrap { overflow-x: auto; margin: 20px 0 24px; }
+    .ink-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.6; }
+    .ink-table th, .ink-table td { border: 1px solid var(--ink-border); padding: 12px 14px; text-align: left; vertical-align: top; }
+    .ink-table th { background: var(--ink-sidebar); font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-text); }
+    .ink-ts-pill, .ink-meta-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px !important; margin: 0 2px; border-radius: 99px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10.5px !important; font-weight: 500 !important; line-height: 1.35 !important; color: #64748b !important; background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.22); text-decoration: none !important; white-space: nowrap; vertical-align: middle; transition: all 0.15s ease; }
+    .ink-ts-pill:hover { background: rgba(37, 99, 235, 0.12); color: #2563EB !important; border-color: rgba(37, 99, 235, 0.4); }
+    .ink-meta-badge .ink-ts-pill { padding: 0 2px !important; margin: 0 !important; border: none !important; background: transparent !important; }
+    .ink-sidebar { width: 340px; background: var(--ink-sidebar); border-right: 1px solid var(--ink-border); height: 100vh; position: sticky; top: 0; padding: 28px 22px; overflow-y: auto; flex-shrink: 0; }
+    .ink-main-wrapper { flex-grow: 1; padding: 56px 48px 120px; display: flex; justify-content: center; }
+    .ink-content { width: 100%; max-width: 780px; }
+    .ink-brand { font-family: system-ui, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-text); text-decoration: none; display: inline-block; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .ink-toc-title { font-family: system-ui, sans-serif; font-weight: 700; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 6px; line-height: 1.4; }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active { background: var(--ink-bg); color: var(--ink-text); font-weight: 600; border: 1px solid var(--ink-border); }
+    .ink-mode-dialogue .dialogue-turn { margin-bottom: 48px; scroll-margin-top: 30px; }
+    .ink-mode-dialogue .dialogue-prompt { background: var(--ink-sidebar); padding: 18px 22px; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 18.5px; font-weight: 700; font-style: normal; color: var(--ink-text); margin-bottom: 18px; border: 1px solid var(--ink-border); line-height: 1.45; }
+    .ink-mode-dialogue .dialogue-response { padding-left: 18px; border-left: 2px solid var(--ink-border); }
+    .ink-meta { display: flex; align-items: center; gap: 12px; font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); margin-bottom: 24px; flex-wrap: wrap; }
+    .ink-badge { font-weight: 700; color: var(--ink-text); background: var(--ink-hover); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--ink-border); }
+    .ink-copy-btn { background: var(--ink-text); color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 32px; }
+    .ink-search-box { margin-bottom: 14px; }
+    .ink-search-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--ink-border); background: #ffffff; font-size: 13px; color: var(--ink-text); outline: none; }
+    .ink-toc-summary { display: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--ink-text); padding: 8px 12px; background: #ffffff; border: 1px solid var(--ink-border); border-radius: 8px; cursor: pointer; list-style: none; }
+    .ink-toc-summary::-webkit-details-marker { display: none; }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      .ink-sidebar { width: 100%; height: auto; position: sticky; top: 0; z-index: 50; border-right: none; border-bottom: 1px solid var(--ink-border); padding: 12px 16px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+      .ink-brand { margin-bottom: 8px; font-size: 13.5px; }
+      .ink-toc-summary { display: flex; align-items: center; justify-content: space-between; }
+      .ink-toc-collapsible { margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-bottom: 6px; }
+      .ink-main-wrapper { padding: 24px 16px 80px; }
+      h1 { font-size: 26px; margin-bottom: 16px; }
+      h2 { font-size: 20px; margin: 28px 0 14px; }
+      h3 { font-size: 17px; margin: 22px 0 10px; }
+      p, ul, ol { font-size: 16.5px; line-height: 1.72; }
+      .ink-flip-box, .ink-poem-quote { font-size: 16.5px; padding: 12px 14px; }
+      .ink-mode-dialogue .dialogue-turn { margin-bottom: 36px; scroll-margin-top: 96px; }
+      .ink-mode-dialogue .dialogue-prompt { font-size: 16.5px; padding: 14px 16px; }
+      .ink-mode-dialogue .dialogue-response { padding-left: 12px; }
+    }
+</style>
+</head>
+<body>
+<aside class="ink-sidebar">
+  <div class="ink-sidebar-header">
+    <a class="ink-brand" href="https://kho.fedu.vn">LOGIC #197 • KHO LOGIC</a>
+  </div>
+  <details class="ink-toc-details" id="inkTocDetails" open>
+    <summary class="ink-toc-summary">
+      <span>📑 Mục lục &amp; Nhảy nhanh tới câu hỏi (5 câu)</span>
+      <span>▾</span>
+    </summary>
+    <div class="ink-toc-collapsible">
+      <div class="ink-search-box">
+        <input type="text" id="inkSearch" class="ink-search-input" placeholder="🔍 Lọc nhanh câu hỏi &amp; cơ chế..." onkeyup="filterTOC()">
+      </div>
+      <div class="ink-toc-title">BẢN ĐỒ &amp; BỘ THẺ NHẬN THỨC</div>
+      <ul class="ink-toc-list" id="inkTocList">
+            <li style="margin-top: 10px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-1-ban-do">Phần 1: Bản Đồ Nhận Thức</a>
+    </li>
+    <li style="margin-top: 14px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-2-bo-the">Phần 2: Bộ 5 Câu Hỏi-Đáp</a>
+    </li>
+    <ul class="ink-toc-list" style="padding-left: 10px;">
+    <li><a class="ink-toc-link" href="#q1">Câu 01. Tại sao giảng giải chuyên môn càng kỹ thì khách càng...</a></li>
+    <li><a class="ink-toc-link" href="#q2">Câu 02. Tại sao thuộc lòng câu mẫu vẫn lúng túng khi khách...</a></li>
+    <li><a class="ink-toc-link" href="#q3">Câu 03. Làm sao giữ giọng điềm tĩnh khi cuối tháng đang cần...</a></li>
+    <li><a class="ink-toc-link" href="#q4">Câu 04. Làm sao giới thiệu dịch vụ gọn gàng mà khách tỉnh...</a></li>
+    <li><a class="ink-toc-link" href="#q5">Câu 05. Làm sao gỡ suy nghĩ ngầm đang cản khách dù họ...</a></li>
+    </ul>
+      </ul>
+    </div>
+  </details>
+</aside>
+<main class="ink-main-wrapper">
+  <article class="ink-content ink-mode-dialogue">
+    <div class="ink-meta">
+      <span class="ink-badge">LOGIC #197</span>
+      <span>Nguyễn Việt</span>
+      <span>•</span>
+      <span>Cẩm Nang Nhận Thức</span>
+      <span>•</span>
+      <span>5 Câu Hỏi-Đáp Giải Mã Gốc</span>
+    </div>
+    <button class="ink-copy-btn" onclick="copyAll()">📋 Sao Chép Toàn Bộ Cẩm Nang</button>
+    <h1 class="is-long" id="top">Logic 197: Bán hàng bằng cảm xúc tương lai và trạng thái chắc chắn</h1>
+    <p style="color: var(--ink-muted); font-size: 19px; line-height: 1.75; margin-bottom: 36px;">Dắt từng suy nghĩ qua cầu / Bể đầy nước chảy từng câu ra vòi — Cách Macy McNeely ngừng giải thích chuyên môn để gắn kết quả vào đời sống riêng của người mua và rèn độ chắc chắn qua kỷ luật bán hàng mỗi ngày.</p>
+    <hr style="margin: 2.5rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-1-ban-do">
+      <h2>Mạch 1: Ngừng giải thích nghề để gắn kết quả vào tương lai người mua</h2>
+<blockquote class="ink-poem-quote"><p><em>Trên tay một hũ xốt cà</em><br/><em>Bán bàn cơm tối cả nhà ngồi chung</em></p></blockquote>
+<p class="ink-flip-box"><strong>Giữ đúng tỷ lệ một phần lý lẽ đi kèm năm phần cảm xúc mới khiến người nghe muốn trả tiền ngay.</strong></p>
+<h3>Căn bệnh giảng giải làm phẳng cảm xúc người nghe</h3>
+<p>Omar Eltakrori từng mở lớp trực tuyến 400 đến 500 người mà không ai mua vì anh dạy quá nhiều. Macy McNeely chỉ ra chủ mới quá mê nghề nên chỉ thích giải thích. Cô kể phim Grey&#x27;s Anatomy kéo nhiều người học y vì thấy tương lai, nhưng lúc ngồi lớp nghe giảng lý thuyết lại làm họ nản chí (video không dẫn nguồn). Theo cô, gốc Latin của giải thích là làm phẳng, còn quan tâm là sức nặng tâm trí (video không dẫn nguồn). Càng giải thích, cảm xúc càng bị san phẳng.</p>
+<h3>Tỷ lệ một phần sáu và bài tập hũ xốt 50 USD</h3>
+<p>Để ngắt tật nói lan man về mình, Macy McNeely chia lời bán thành 6 phần gồm 1 phần lý tính và 5 phần cảm xúc kết quả. Trước khi sinh con, cô cầm hũ xốt cà chua cay ở tiệm tạp hóa và hình dung từng người thân đổi khác ra sao. Hũ xốt giúp người mới làm mẹ tự tin đãi mẹ chồng hay tiết kiệm bữa tối thứ Ba. Với nhà có con biếng ăn, bữa tối lũ trẻ hào hứng trò chuyện khiến hũ xốt đáng giá 50 USD.</p>
+<h3>Giới hạn với người hoạt ngôn và lời hứa dễ dãi</h3>
+<p>Omar Eltakrori từng tuyển người hoạt ngôn nhưng họ thành gánh nặng vì chỉ áp đảo không khí thay vì điều hướng cảm xúc. Nếu hứa hẹn bấm nút là giàu ngay, khách cũng bỏ cuộc khi gặp chút bất tiện. Điều kiện là phải gieo sự mong đợi kèm tinh thần đón nhận thử thách. Chính Macy McNeely chỉ thấy vững tin sau 3 ngày tự diễn thuyết lúc bầu tuần 37 giữa cảnh hỏng ống nước phải ở nhà bố mẹ 6 tuần.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Macy McNeely (<a href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=yKlXyYI5OGk</a>) · 2026-07-23</li></ul></div></details>
+<h2>Mạch 2: Rèn trạng thái chắc chắn từ cách mua hàng và kỷ luật bán mỗi ngày</h2>
+<blockquote class="ink-poem-quote"><p><em>Vòi kia chỉ dẫn nước thôi</em><br/><em>Bể đầy lo sợ tuôn trôi ra ngoài</em></p></blockquote>
+<p class="ink-flip-box"><strong>Sức thuyết phục không phải là câu chữ học thuộc, mà là trạng thái chắc chắn rèn từ việc bán hàng mỗi ngày.</strong></p>
+<h3>Bể nước trạng thái và tư thế nhà đầu tư</h3>
+<p>Macy McNeely ví miệng nói là vòi nước, còn trạng thái bên trong là bể chứa. Nếu bể đầy lo sợ, câu mẫu nào cũng lộ vẻ bất an. Lời từ chối của khách thực chất lặp lại thói chần chừ lúc mua hàng của chính người bán. Cô từng chi 1 triệu USD đi học và trả cố vấn 60.000 USD qua ứng dụng nhắn tin thoại, coi mỗi tin nhắn đáng trọn 60.000 USD. Với gói 25.000 USD, cô bán tiếp từng chặng sau khi khách quẹt thẻ và giữ giá vé trực tuyến ngang vé trực tiếp dù khách đòi trừ bữa trưa.</p>
+<h3>Sáu tháng che bảng điểm để vượt cơn túng quẫn</h3>
+<p>Khi Omar Eltakrori hỏi về cảnh thiếu tiền trong tháng, Macy McNeely gọi sự túng quẫn là tật khớp tay bóng chày do nhìn kết quả thay vì quy trình. Năm 2025, dù nhà hỏng, vừa sinh con và bạn đời rời đi, công ty cô vẫn lớn nhờ chỉ nghĩ tới kết quả cho khách. Thời mới bán bột đạm, cô làm theo lời bố dạy từ năm 12 tuổi là che bảng điểm và bán suốt 6 tháng liên tục để đạt 10.000 USD mỗi tháng.</p>
+<h3>Dọn bỏ quần áo xuề xòa để giữ sự nhất quán</h3>
+<p>Điều kiện giữ trạng thái này là ngoại hình phải khớp với giá trị chào bán, vì mắt người luôn tránh quả táo thối đen nâu để tìm nơi tươi tỉnh. Cô bỏ quần bò rách và áo nỉ có mũ khỏi tủ đồ để không lùi về vùng quen thuộc cũ trái với mốc 20 triệu USD đã đặt ra. Mỗi ngày cô mặc đồ đồng bộ, đi giày, dưỡng da, thoa son để chớp ngay cảm hứng quay hình hoặc bắt chuyện ở tiệm tạp hóa.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Macy McNeely (<a href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=yKlXyYI5OGk</a>) · 2026-07-23</li></ul></div></details>
+<h2>Mạch 3: Bỏ đại từ xưng tôi và đổi câu chuyện mới để dắt khách qua cầu</h2>
+<blockquote class="ink-poem-quote"><p><em>Món đồ trẻ nắm trong tay</em><br/><em>Đưa con gấu nhỏ đổi thay buông liền</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chỉ khi bỏ chữ tôi để hỏi lý do làm nghề và trao câu chuyện mới, người bán mới gỡ được sức cản ngầm.</strong></p>
+<h3>Màn sửa lời trực tiếp cùng khán giả Abby</h3>
+<p>Khi khán giả Abby làm dịch vụ cắt dựng lại nội dung cũ lên bán thử, cô hỏi ngay lịch đăng bài khiến câu chuyện khô khan. Macy McNeely bảo cô đổi sang hỏi câu chuyện vì sao khách làm nghề để mở cảm xúc thật. Cô dạy ghép 1 sự thật chứng minh trước tòa với lợi ích cho khách và cấm chữ tôi vì nó làm khách ngủ gật. Abby phải sửa thành câu bạn nhận 5 bài mỗi tuần để giữ vững vùng sở trường của bạn.</p>
+<h3>Lấy vướng mắc của một người để bán cho số đông</h3>
+<p>Để đi từ bán lẻ từng người sang bán cho số đông, Macy McNeely kể chuyện một học viên tư vấn dinh dưỡng dạy trực tuyến mãi không ai mua. Khi mời khách gọi riêng, học viên này biết họ ngại mua vì thấy YouTube có sẵn bài miễn phí. Cô giải đáp rào cản đó mỗi ngày trên bản tin âm thanh, thư điện tử và Instagram để phân biệt người kèm có nghề với kênh miễn phí. Theo Macy McNeely ước tính, tuần đó cô thu khoảng 80.000 USD (video không dẫn nguồn).</p>
+<h3>Cây cầu suy nghĩ và giới hạn nhồi niềm tin mới</h3>
+<p>Trả lời Lupe về kiểu hứa tăng thu nhập gấp 10 lần, Macy McNeely nói cảnh cụ thể như đưa con ra sân chơi mới chạm được số đông. Giới hạn là không thể chồng niềm tin mới lên niềm tin cũ đang chắn ngang cây cầu suy nghĩ. Người ngại lộ tật ăn quá đà trước lớp tập chung cần thấy an toàn trước khi nghĩ chuyện mặc váy đẹp. Như lúc gỡ suy nghĩ bán hàng là gây sức ép tại sự kiện của Neil, cô phải đổi câu chuyện tốt hơn hệt cách đưa gấu bông cho trẻ nhả món đồ đang nắm.</p>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Macy McNeely (<a href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=yKlXyYI5OGk</a>) · 2026-07-23</li></ul></div></details>
+    </section>
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-2-bo-the">
+      <h2 id="phan-2">PHẦN 2: BỘ 5 CÂU HỎI-ĐÁP GIẢI MÃ TỪ GỐC</h2>
+      
+<div class="dialogue-turn" id="q1">
+  <h3 class="dialogue-prompt">❓ Câu #01 — Tại sao giảng giải chuyên môn càng kỹ thì khách càng nguội lạnh bỏ đi?</h3>
+  <div class="dialogue-response">
+    <blockquote class="ink-poem-quote"><p><em>Đưa tay nhặt hũ xốt ra</em><br/><em>Bán bàn cơm tối cả nhà đợi mong</em></p></blockquote>
+<p class="ink-flip-box"><strong>Dùng tỷ lệ một phần lý lẽ đi kèm năm phần cảm xúc mới tạo được sức nặng khiến khách mua hàng.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Cảm nhận đi trước:</strong> Khách phải rung động trước khi hiểu, còn giảng giải làm phẳng cảm xúc như lớp 500 người không ai mua (chuyện đầy đủ ở Mạch 1).</li>
+<li><strong>Bước 2 — Kìm lời bằng tỷ lệ một trên năm:</strong> Ngừng nói lan man về mình, chỉ nêu 1 chi tiết nghề rồi bồi 5 phần kết quả vào tương lai của khách.</li>
+<li><strong>Bước 3 — Đặt vào cảnh sống thật:</strong> Gắn sản phẩm với sinh hoạt gia đình như bài tập nhặt hũ xốt tính giá bữa cơm tối 50 USD (chuyện đầy đủ ở Mạch 1).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Cắt bớt lý thuyết trong bài giới thiệu hôm nay, chỉ giữ 1 thông số nghề đi kèm 5 cảnh sinh hoạt cụ thể mà khách nhận được (gợi ý áp dụng cho chủ tiệm).</li>
+<li>Chọn 1 sản phẩm trên kệ và ghi ra 3 cảnh gia đình khách được nhẹ việc để tập nói kết quả thay vì đọc công dụng.</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Macy McNeely (<a href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=yKlXyYI5OGk</a>) · 2026-07-23</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q2">
+  <h3 class="dialogue-prompt">❓ Câu #02 — Tại sao thuộc lòng câu mẫu vẫn lúng túng khi khách buông lời từ chối?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Xử lý từ chối không phải là đọc câu mẫu, mà là giữ trạng thái vững từ trải nghiệm mua thật.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Bể chứa quyết định dòng nước:</strong> Miệng nói chỉ là cái vòi, còn trạng thái trong lòng là bể nước nên sự bất an luôn rò qua giọng nói.</li>
+<li><strong>Bước 2 — Từ chối phản chiếu cách mua:</strong> Người bán hay nghi ngờ và khất lần lúc tự rút ví sẽ vô tình gieo chính câu từ chối đó vào khách.</li>
+<li><strong>Bước 3 — Bán tiếp sau khi quẹt thẻ:</strong> Thu tiền chỉ là khởi đầu, cần dẫn dắt từng chặng như cách Macy McNeely bán gói 25.000 USD (chuyện đầy đủ ở Mạch 2).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Ghi ra 3 lời từ chối hay gặp nhất tuần qua và tự kiểm tra xem bạn có đang nói y hệt vậy lúc đi mua hàng không.</li>
+<li>Nhắn tin chỉ dẫn 1 bước dùng hàng tiếp theo cho 3 khách vừa trả tiền hôm nay để giữ nhịp đồng hành (gợi ý áp dụng cho chủ tiệm).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Macy McNeely (<a href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=yKlXyYI5OGk</a>) · 2026-07-23</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q3">
+  <h3 class="dialogue-prompt">❓ Câu #03 — Làm sao giữ giọng điềm tĩnh khi cuối tháng đang cần tiền trang trải gấp?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Dán mắt vào doanh thu cuối tháng sẽ gây khớp tâm lý làm hỏng ngay cuộc trò chuyện đang diễn ra.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Dạng 1 — Khớp tay vì nhìn bảng điểm:</strong> Túng quẫn gây chứng khớp tay (the yips) do lo kết quả, cần che số thu như 6 tháng bán bột đạm (chuyện đầy đủ ở Mạch 2).</li>
+<li><strong>Dạng 2 — Thiếu chắc chắn do ít bán:</strong> Độ chắc chắn chỉ sinh ra từ việc mở lời bán mỗi ngày và dồn tâm trí tìm lợi ích thật cho khách.</li>
+<li><strong>Dạng 3 — Đồ mặc nhà kéo lùi tâm thế:</strong> Quần áo xuề xòa giữ ta ở vùng quen thuộc cũ, làm lỡ cơ hội bắt chuyện và ngại lên hình ngay khi có hứng.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Tắt màn hình báo doanh thu trong 14 ngày tới và mở lời chào hàng trực tiếp với ít nhất 3 người mỗi ngày (gợi ý áp dụng cho chủ tiệm).</li>
+<li>Loại bỏ 2 bộ đồ nhàu cũ khỏi tủ áo và mặc đồ chỉn chu kèm đi giày mỗi sáng trước giờ mở cửa đón khách.</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Macy McNeely (<a href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=yKlXyYI5OGk</a>) · 2026-07-23</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q4">
+  <h3 class="dialogue-prompt">❓ Câu #04 — Làm sao giới thiệu dịch vụ gọn gàng mà khách tỉnh táo lắng nghe ngay?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Chỉ khi bỏ chữ tôi để gắn sự thật với lợi ích chữ bạn, não người nghe mới mở ra.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Hỏi lý do làm nghề:</strong> Thay vì hỏi quy trình khô khan, hãy hỏi câu chuyện vì sao khách làm nghề để mở cảm xúc và biết điều họ mong mỏi.</li>
+<li><strong>Bước 2 — Xóa đại từ xưng tôi:</strong> Chữ tôi làm người nghe ngủ gật trong đầu, còn chữ bạn đánh thức não bộ vì ai cũng nhẩm tính phần mình nhận.</li>
+<li><strong>Bước 3 — Ráp công cụ chủ lực (workhorse):</strong> Ghép 1 sự thật chứng minh trước tòa với kết quả như câu nhận 5 bài mỗi tuần của Abby (chuyện đầy đủ ở Mạch 3).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Mở đầu 3 cuộc trò chuyện bán hàng hôm nay bằng câu hỏi về lý do khách bắt đầu công việc hiện tại trước khi báo giá.</li>
+<li>Viết lại 1 câu chào hàng theo mẫu bạn nhận được số lượng cụ thể để bạn giữ vững sở trường, xóa sạch chữ tôi (gợi ý áp dụng cho chủ tiệm).</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Macy McNeely (<a href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=yKlXyYI5OGk</a>) · 2026-07-23</li></ul></div></details>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q5">
+  <h3 class="dialogue-prompt">❓ Câu #05 — Làm sao gỡ suy nghĩ ngầm đang cản khách dù họ rất thích kết quả?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Trao một câu chuyện mới hấp dẫn hơn sẽ khiến khách tự buông niềm tin cũ đang chắn ngang đường.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Tìm suy nghĩ chắn ngang cầu:</strong> Khách chần chừ vì ngại rào cản trước mắt như sợ lộ tật ăn uống, nên cần thấy an toàn trước khi nghe kết quả.</li>
+<li><strong>Bước 2 — Đổi chuyện mới thay chuyện cũ:</strong> Không thể đè niềm tin mới lên niềm tin cũ, phải đổi câu chuyện tốt hơn như đưa gấu bông cho trẻ (chuyện đầy đủ ở Mạch 3).</li>
+<li><strong>Bước 3 — Lấy chuyện lẻ giải cho đám đông:</strong> Bóc 1 lời từ chối ở cuộc gọi riêng làm nội dung chung như ca thu 80.000 USD mỗi tuần (chuyện đầy đủ ở Mạch 3).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Gọi điện hỏi thăm 5 khách hỏi giá nhưng chưa mua để chép nguyên văn 1 câu băn khoăn thật sự đang giữ chân họ (gợi ý áp dụng cho chủ tiệm).</li>
+<li>Quay 3 video ngắn trong tuần giải đáp thẳng 1 câu băn khoăn vừa ghi được bằng chuyện thật của khách cũ tại tiệm.</li>
+</ul>
+<details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast Omar Eltakrori · khách mời Macy McNeely (<a href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=yKlXyYI5OGk</a>) · 2026-07-23</li></ul></div></details>
+  </div>
+</div>
+    </section>
+    
+    <hr style="margin: 3rem 0 1.5rem; border: none; border-top: 2px solid var(--ink-border);"/>
+    <details class="ink-provenance" id="nguon-boi-canh">
+      <summary class="ink-prov-summary">
+        <span class="ink-prov-context">📌 <strong>Hồ sơ nguồn &amp; Truy vết bối cảnh (Logic #197)</strong> — Omar Eltakrori — Top Sales Expert: This Simple Sales Trick Will Print You Money! · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener">Xem trên YouTube ↗</a></span>
+        <span class="ink-prov-toggle">Chi tiết nguồn <span class="ink-prov-arrow">▾</span></span>
+      </summary>
+      <div class="ink-prov-extra">
+        <ul>
+          <li>🎙️ <strong>Nguồn Podcast / Video gốc:</strong> Omar Eltakrori — Top Sales Expert: This Simple Sales Trick Will Print You Money! · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=yKlXyYI5OGk" target="_blank" rel="noopener">Xem trên YouTube ↗</a></li>
+          <li>💬 <strong>Bản giải phẫu hội thoại gốc:</strong> <a class="ink-ext-link" href="https://gemini.google.com/u/2/app/9793f89c2bf24dc0" target="_blank" rel="noopener">Gemini Share gốc ↗</a></li>
+          <li>🧭 <strong>Kho lưu trữ:</strong> <a class="ink-ext-link" href="https://kho.fedu.vn" target="_blank" rel="noopener">kho.fedu.vn</a> · <a class="ink-ext-link" href="https://fedu.vn/k/logic197.html">fedu.vn/k/logic197.html</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+</main>
+<script>
+  function filterTOC() {
+    var input = document.getElementById('inkSearch');
+    var filter = input.value.toLowerCase();
+    var ul = document.getElementById('inkTocList');
+    var li = ul.getElementsByTagName('li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].getElementsByTagName('a')[0];
+      if (a) {
+        var txtValue = a.textContent || a.innerText;
+        li[i].style.display = (txtValue.toLowerCase().indexOf(filter) > -1) ? '' : 'none';
+      }
+    }
+  }
+  function copyAll() {
+    var content = document.querySelector('.ink-content').innerText;
+    navigator.clipboard.writeText(content);
+  }
+  (function initMobileTOC() {
+    var details = document.getElementById('inkTocDetails');
+    if (!details) return;
+    if (window.innerWidth <= 860) {
+      details.removeAttribute('open');
+    }
+    var links = details.querySelectorAll('a.ink-toc-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        if (window.innerWidth <= 860) {
+          details.removeAttribute('open');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
