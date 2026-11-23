@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Logic 361: Adam Neumann và bài học mở nóng vượt sức quản tại WeWork</title>
+<link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='27' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='36' letter-spacing='-2px' fill='%2310B981'%3E361%3C/text%3E%3Ccircle cx='52' cy='13' r='4.2' fill='%2310B981'/%3E%3C/svg%3E">
+<style>
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.35; }
+    h1 { font-family: var(--font-display-short); font-weight: 500; font-style: italic; font-size: clamp(28px, 4vw, 40px); margin-bottom: 24px; letter-spacing: -0.02em; }
+    h2 { font-family: var(--font-display-long); font-weight: 600; font-size: 22px; margin: 40px 0 18px; }
+    h3 { font-family: var(--font-display-long); font-weight: 600; font-size: 18px; margin: 28px 0 14px; }
+    .ink-card-subhead { font-family: system-ui, -apple-system, sans-serif; font-weight: 700; font-size: 16.5px; color: var(--ink-text); margin: 22px 0 10px; text-transform: none; letter-spacing: -0.01em; }
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 16px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 18px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    blockquote { border-left: 3px solid var(--ink-text); margin: 16px 0; font-style: italic; color: var(--ink-muted); background: var(--ink-sidebar); padding: 14px 20px; border-radius: 0 8px 8px 0; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .ink-poem-quote { margin-top: 0; margin-bottom: 16px; color: #1e293b; font-size: 18.5px; }
+    .ink-flip-box { font-size: 18.5px; font-weight: 500; background: var(--ink-hover); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 18px; }
+    .ink-pocket-rule { border: 1px dashed var(--ink-text); padding: 10px 14px; border-radius: 8px; }
+    .ink-provenance { display: inline-block; margin-top: 8px; background: transparent; border: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .ink-provenance[open] { display: block; margin-top: 12px; background: #f8fafc; border: 1px solid var(--ink-border); border-radius: 8px; overflow: hidden; }
+    .ink-prov-summary { padding: 0; cursor: pointer; list-style: none; display: inline-flex; align-items: center; color: var(--ink-text); font-size: 12px; line-height: 1.4; }
+    .ink-provenance[open] .ink-prov-summary { padding: 8px 12px; display: flex; }
+    .ink-prov-summary::-webkit-details-marker { display: none; }
+    .ink-prov-context { flex: 1; min-width: 0; margin-right: 8px; }
+    .ink-prov-toggle { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ink-muted); background: #f8fafc; border: 1px solid var(--ink-border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+    .ink-prov-toggle:hover { color: var(--ink-text); border-color: #94a3b8; }
+    .ink-provenance[open] .ink-prov-arrow { transform: rotate(180deg); display: inline-block; }
+    .ink-prov-extra { padding: 8px 12px 10px; border-top: 1px dashed var(--ink-border); background: #ffffff; color: var(--ink-muted); font-size: 13px; }
+    .ink-provenance ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 13px; line-height: 1.6; }
+    .ink-provenance li { margin-bottom: 4px; }
+    .ink-provenance li:last-child { margin-bottom: 0; }
+    .ink-ext-link { color: #0f172a; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .ink-ext-link:hover { color: #10b981; }
+    .ink-table-wrap { overflow-x: auto; margin: 20px 0 24px; }
+    .ink-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.6; }
+    .ink-table th, .ink-table td { border: 1px solid var(--ink-border); padding: 12px 14px; text-align: left; vertical-align: top; }
+    .ink-table th { background: var(--ink-sidebar); font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-text); }
+    .ink-ts-pill, .ink-meta-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px !important; margin: 0 2px; border-radius: 99px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10.5px !important; font-weight: 500 !important; line-height: 1.35 !important; color: #64748b !important; background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.22); text-decoration: none !important; white-space: nowrap; vertical-align: middle; transition: all 0.15s ease; }
+    .ink-ts-pill:hover { background: rgba(37, 99, 235, 0.12); color: #2563EB !important; border-color: rgba(37, 99, 235, 0.4); }
+    .ink-meta-badge .ink-ts-pill { padding: 0 2px !important; margin: 0 !important; border: none !important; background: transparent !important; }
+    .ink-sidebar { width: 340px; background: var(--ink-sidebar); border-right: 1px solid var(--ink-border); height: 100vh; position: sticky; top: 0; padding: 28px 22px; overflow-y: auto; flex-shrink: 0; }
+    .ink-main-wrapper { flex-grow: 1; padding: 56px 48px 120px; display: flex; justify-content: center; }
+    .ink-content { width: 100%; max-width: 780px; }
+    .ink-brand { font-family: system-ui, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-text); text-decoration: none; display: inline-block; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .ink-toc-title { font-family: system-ui, sans-serif; font-weight: 700; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 6px; line-height: 1.4; }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active { background: var(--ink-bg); color: var(--ink-text); font-weight: 600; border: 1px solid var(--ink-border); }
+    .ink-mode-dialogue .dialogue-turn { margin-bottom: 48px; scroll-margin-top: 30px; }
+    .ink-mode-dialogue .dialogue-prompt { background: var(--ink-sidebar); padding: 18px 22px; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 18.5px; font-weight: 700; font-style: normal; color: var(--ink-text); margin-bottom: 18px; border: 1px solid var(--ink-border); line-height: 1.45; }
+    .ink-mode-dialogue .dialogue-response { padding-left: 18px; border-left: 2px solid var(--ink-border); }
+    .ink-meta { display: flex; align-items: center; gap: 12px; font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); margin-bottom: 24px; flex-wrap: wrap; }
+    .ink-badge { font-weight: 700; color: var(--ink-text); background: var(--ink-hover); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--ink-border); }
+    .ink-copy-btn { background: var(--ink-text); color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .ink-top-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 32px; }
+    .ink-yt-hero-btn { background: #dc2626; color: #ffffff; text-decoration: none; padding: 10px 16px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.15s ease; }
+    .ink-yt-hero-btn:hover { opacity: 0.9; }
+    .ink-prov-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; margin-top: 8px; }
+    .ink-prov-row .ink-provenance { margin-top: 0; flex: 1; min-width: 180px; }
+    .ink-yt-mini-btn { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-family: system-ui, -apple-system, sans-serif; font-size: 11.5px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s ease; }
+    .ink-yt-mini-btn:hover { background: #fee2e2; color: #b91c1c; }
+    .ink-search-box { margin-bottom: 14px; }
+    .ink-search-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--ink-border); background: #ffffff; font-size: 13px; color: var(--ink-text); outline: none; }
+    .ink-toc-summary { display: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--ink-text); padding: 8px 12px; background: #ffffff; border: 1px solid var(--ink-border); border-radius: 8px; cursor: pointer; list-style: none; }
+    .ink-toc-summary::-webkit-details-marker { display: none; }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      .ink-sidebar { width: 100%; height: auto; position: sticky; top: 0; z-index: 50; border-right: none; border-bottom: 1px solid var(--ink-border); padding: 12px 16px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+      .ink-brand { margin-bottom: 8px; font-size: 13.5px; }
+      .ink-toc-summary { display: flex; align-items: center; justify-content: space-between; }
+      .ink-toc-collapsible { margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-bottom: 6px; }
+      .ink-main-wrapper { padding: 24px 16px 80px; }
+      h1 { font-size: 26px; margin-bottom: 16px; }
+      h2 { font-size: 20px; margin: 28px 0 14px; }
+      h3 { font-size: 17px; margin: 22px 0 10px; }
+      p, ul, ol { font-size: 16.5px; line-height: 1.72; }
+      .ink-flip-box, .ink-poem-quote { font-size: 16.5px; padding: 12px 14px; }
+      .ink-mode-dialogue .dialogue-turn { margin-bottom: 36px; scroll-margin-top: 96px; }
+      .ink-mode-dialogue .dialogue-prompt { font-size: 16.5px; padding: 14px 16px; }
+      .ink-mode-dialogue .dialogue-response { padding-left: 12px; }
+    }
+</style>
+</head>
+<body>
+<aside class="ink-sidebar">
+  <div class="ink-sidebar-header">
+    <a class="ink-brand" href="https://kho.fedu.vn">LOGIC #361 • KHO LOGIC</a>
+  </div>
+  <details class="ink-toc-details" id="inkTocDetails" open>
+    <summary class="ink-toc-summary">
+      <span>📑 Mục lục &amp; Nhảy nhanh tới câu hỏi (5 câu)</span>
+      <span>▾</span>
+    </summary>
+    <div class="ink-toc-collapsible">
+      <div class="ink-search-box">
+        <input type="text" id="inkSearch" class="ink-search-input" placeholder="🔍 Lọc nhanh câu hỏi &amp; cơ chế..." onkeyup="filterTOC()">
+      </div>
+      <div class="ink-toc-title">BẢN ĐỒ &amp; BỘ THẺ NHẬN THỨC</div>
+      <ul class="ink-toc-list" id="inkTocList">
+            <li style="margin-top: 10px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-1-ban-do">Phần 1: Bản Đồ Nhận Thức</a>
+    </li>
+    <li style="margin-top: 14px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-2-bo-the">Phần 2: Bộ 5 Câu Hỏi-Đáp</a>
+    </li>
+    <ul class="ink-toc-list" style="padding-left: 10px;">
+    <li><a class="ink-toc-link" href="#q1">Câu 01. Tại sao tiệm cũ đông khách mà mở thêm chi nhánh...</a></li>
+    <li><a class="ink-toc-link" href="#q2">Câu 02. Làm sao thương lượng hạ giá thi công mà nhà thầu...</a></li>
+    <li><a class="ink-toc-link" href="#q3">Câu 03. Làm sao kìm tật ôm đồm nhiều mảng mới cùng lúc...</a></li>
+    <li><a class="ink-toc-link" href="#q4">Câu 04. Làm sao ngắt cơn nghiện điện thoại mỗi tuần để nhìn...</a></li>
+    <li><a class="ink-toc-link" href="#q5">Câu 05. Làm sao tránh mất trắng tài sản khi bàn giao quyền...</a></li>
+    </ul>
+      </ul>
+    </div>
+  </details>
+</aside>
+<main class="ink-main-wrapper">
+  <article class="ink-content ink-mode-dialogue">
+    <div class="ink-meta">
+      <span class="ink-badge">LOGIC #361</span>
+      <span>Nguyễn Việt</span>
+      <span>•</span>
+      <span>Cẩm Nang Nhận Thức</span>
+      <span>•</span>
+      <span>5 Câu Hỏi-Đáp Giải Mã Gốc</span>
+    </div>
+    <div class="ink-top-actions">
+      <button class="ink-copy-btn" onclick="copyAll()">📋 Sao Chép Toàn Bộ Cẩm Nang</button>
+      <a class="ink-yt-hero-btn" href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener">▶ Xem video YouTube gốc ↗</a>
+    </div>
+    <h1 class="is-long" id="top">Logic 361: Adam Neumann và bài học mở nóng vượt sức quản tại WeWork</h1>
+    <p style="color: var(--ink-muted); font-size: 19px; line-height: 1.75; margin-bottom: 36px;">Xuống xe đếm bạc dọc đường / Mải nhân con số lạc phương ban đầu — Phân tích chuỗi sai lầm nhận 4,2 tỷ đô la mở nóng, cách bóc giá vốn tới từng chiếc đinh và bài học khóa cam kết trên giấy của nhà sáng lập WeWork.</p>
+    <hr style="margin: 2.5rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-1-ban-do">
+      <h2>Mạch 1: Nhìn lại bản phân tích cũ và hướng đào sâu mới</h2>
+<blockquote class="ink-poem-quote"><p><em>Nửa sau bỏ trắng im nằm,</em><br/><em>Quên tờ giấy nợ cùng trăm đinh sàn.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Bài học thật không phải vài khẩu hiệu quản trị đầu buổi, mà là con số gốc và chuỗi sụp đổ nửa sau.</strong></p>
+<h3>Chỗ bản phân tích cũ còn lướt bề mặt</h3>
+<p>Bản tóm tắt cũ dài 1.262 chữ nhưng chỉ nhặt đúng 9 con số và thay việc thật bằng lời khuyên sách vở. Chuyện bóc giá xây dựng bị gộp thành khẩu hiệu kiểm soát chi phí, làm rơi mất cảnh đếm từng tấm sàn, cây đinh, lọ keo để hạ giá sàn gỗ xuống 12.000 đô la. Chuyện hỏi nhân viên lý do chậm việc cũng thiếu mất ví dụ mua máy tính mới giúp rút ngắn 9 ngày dựng hình xuống còn 2 ngày. Nặng nhất là bài cũ dừng hẳn ở phút 55, bỏ trắng 78 phút cuối giải thích vì sao WeWork sập từ mức định giá 47 tỷ đô la. Người đọc không hề biết tới chuyến xe 16 phút ký nhận 4,2 tỷ đô la từ SoftBank hay tờ giấy nợ 460 triệu đô la ập tới sau 10 phút rời ghế điều hành.</p>
+<h3>Cách đào sâu từ dữ kiện gốc trong video</h3>
+<p>Bản nâng cấp này quét trọn 133 phút trò chuyện giữa người dẫn Steven Bartlett và Adam Neumann để nối liền ba mảng gắn chặt với nhau. Trước hết là bẫy nhận vốn nóng ký thuê mặt bằng dài hạn khi các tòa nhà mới mở còn vướng độ trễ 6 đến 18 tháng mới kịp hòa vốn. Tiếp theo là kỷ luật bóc giá vốn với biên lãi thầu 15%, cất điện thoại 24 giờ mỗi tuần và đặt người giữ tiền bên cạnh tại công ty Flow. Cuối cùng là cách chọn cổ đông cùng bạn đời dựa trên ngày trắng tay, đồng thời đối chiếu sòng phẳng những lời kể một chiều mà video không dẫn nguồn kiểm chứng.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (https://www.youtube.com/watch?v=IQ4JVWdj4Q0) · 2026-09-28</li><li>💬 <strong>Bản giải phẫu gốc:</strong> <a href="https://fedu.vn/k/adam-neumann-empire-collapse-podcast.html" target="_blank" rel="noopener" class="ink-ext-link">Đối chiếu bản phân tích cũ</a></li></ul></div></details></div>
+<h2>Mạch 2: Bẫy nhận vốn nóng mở ồ ạt khi mặt bằng chậm hoàn vốn</h2>
+<blockquote class="ink-poem-quote"><p><em>Phòng thuê chưa kín người ngồi,</em><br/><em>Ký chồng tòa mới tiền trôi theo ngày.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Dùng vốn nóng ký thuê mặt bằng dài hạn khi điểm cũ chưa hoàn vốn sẽ biến đà mở rộng thành lỗ gộp.</strong></p>
+<h3>Từ sàn trống chia 15 phòng đến chuyến xe ký nhận 4,2 tỷ đô la</h3>
+<p>Tuổi thơ bất ổn khi mẹ mắc rối loạn lưỡng cực khiến Adam Neumann năm 21 tuổi mê làm tỷ phú và hỏng ba công ty đầu. Tháng 5 năm 2008, nghe vợ là Rebecca khuyên hướng vào cộng đồng, anh nhận sàn trống 5.000 đô la mỗi tháng rồi chia 15 phòng thu 15.000 đô la. Trừ 2.500 đô la lương lễ tân tại Green Desk, họ lấp đầy 92% sau một tuần và giữ được 300.000 đô la đặt cọc tòa WeWork đầu tiên. Cuối năm 2016, hội đồng quản trị chốt chỉ gọi 300 đến 400 triệu đô la và dừng thuê mới để tiến tới có lãi. Nhưng sáng hôm sau, qua 12 phút ở sảnh và 16 phút đi xe cùng Masa của SoftBank, Adam lại ký nhận 4,2 tỷ đô la.</p>
+<h3>Độ trễ hoàn vốn mặt bằng và cái tôi làm lệch quyết định</h3>
+<p>Đi bộ từ phố 54 về phố 18, Adam nhẩm 25% cổ phần của mức 20 tỷ đô la nên quên sạch mục tiêu gốc. Anh cũng bỏ ngoài tai lời khuyên niêm yết ở mức 5 tỷ đô la từ nhà sáng lập Salesforce. Theo lời Adam ước tính, cái tôi khiến số quyết định đúng mỗi ngày rơi từ 98 trên 100 xuống 90 đến 95. WeWork mở 2 tòa rộng 20.000 mét vuông mỗi ngày ở 130 thành phố bằng hợp đồng thuê dài hạn. Mỗi tòa mới lỗ 6 đến 18 tháng chờ kín khách mà phần mềm không tách nổi lãi lỗ từng tầng, kéo mức lỗ nửa đầu 2019 lên 690 triệu đô la. Adam nói dừng mở mới là dương tiền và nay WeWork đã lãi (video không dẫn nguồn), song điều kiện bắt buộc là tách sổ từng tầng và tránh thuê dài gánh thu ngắn.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (<a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=IQ4JVWdj4Q0</a>) · 2026-09-28</li></ul></div></details></div>
+<h2>Mạch 3: Bóc giá vốn từng chiếc đinh và đặt người cản việc bên cạnh</h2>
+<blockquote class="ink-poem-quote"><p><em>Tấm sàn bóc lẻ keo đinh,</em><br/><em>Cất yên điện thoại giữ mình tỉnh tâm.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Bóc vật tư với biên lãi 15% và ghìm dưới 5 mục tiêu giúp người hay bày việc giữ chặt két tiền.</strong></p>
+<h3>Bóc báo giá sàn gỗ xuống 12.000 đô la và hỏi thẳng chỗ vướng</h3>
+<p>Khi làm tòa WeWork thứ hai chỉ còn 90.000 đô la trước năm báo giá 200.000 đô la mỗi tầng, Adam Neumann không chấp nhận mức 30.000 đến 45.000 đô la riêng phần sàn gỗ. Anh đòi kê từng tấm ván, đinh, keo, cao su và giờ công, chốt biên lãi 15% với ba nhà thầu rồi tự hỏi giá lẻ kéo xuống 12.000 đô la. Steven Bartlett cũng mất 4 năm trả lương cho nhân sự dựng một video hết 9 ngày, tới lúc hỏi thẳng mới biết mua máy tính mới là rút còn 2 ngày. Theo Adam, muốn dám hỏi thẳng người ngoài thì trước hết phải quen tự soi lỗi mình và xếp 30 nhân sự ngồi vòng tròn chia sẻ rào cản cá nhân. Mỗi tuần anh thực hành ngày nghỉ công nghệ (Technology Shabbat), cất điện thoại vào lọ bánh quy 24 giờ để qua 2 giờ đầu bứt rứt và đón ý tưởng lúc cuối ngày.</p>
+<h3>Đặt người giữ tiền bên cạnh người bày việc tại công ty Flow</h3>
+<p>Nhớ lời ông ngoại vợ rằng một sư tử kiếm tiền cần mười con canh giữ, Adam nhận mình chỉ gánh nổi 3 đến 5 việc chứ ôm 10 đến 15 việc sẽ hỏng. Tại Flow có 470 triệu đô la từ a16z và 350 triệu đô la vốn nhà, anh nhờ đối tác tuyển giám đốc công nghệ và ăn tối xin góp ý sau họp. Đàm phán bóc vật tư chỉ bền khi bảo đảm lãi 15% cho thầu và góp ý ngay lúc nhân sự sai thay vì nhịn 90 ngày. Cần thấy rõ Adam tự mâu thuẫn khi vừa khen dẫn dắt từ dưới lên vừa nói công ty lớn đều chỉ huy từ trên xuống, và chê khảo sát nhưng vẫn sửa 10 điểm khách nhắc.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (<a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=IQ4JVWdj4Q0</a>) · 2026-09-28</li></ul></div></details></div>
+<h2>Mạch 4: Chọn người đi cùng ngày trắng tay và khóa thỏa thuận trên giấy</h2>
+<blockquote class="ink-poem-quote"><p><em>Tin lời hứa miệng buông tay,</em><br/><em>Thư ngân hàng gửi biết ngày chọn ai.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Bạn chỉ thoát cảnh mất trắng khi chọn cộng sự theo ngày hoạn nạn và khóa mọi lời hứa bằng văn bản.</strong></p>
+<h3>Vỡ thương vụ 20 tỷ đô la và thư đòi nợ sau 10 phút rời ghế</h3>
+<p>Tháng 3 năm 2018, lúc WeWork lỗ 2 tỷ đô la mỗi năm, Masa đề nghị chi 20 tỷ đô la tiền mặt mua cổ phần và bơm vốn. Ủy ban đặc biệt có người của quỹ Benchmark đòi nâng lên 32 tỷ đô la, kéo tới ngày 24 tháng 12 năm 2018 lúc cổ phiếu SoftBank rớt giá làm vỡ kèo. Nộp hồ sơ lên sàn năm 2019 khi lỗ 219.000 đô la mỗi giờ, Adam rời ghế điều hành vì tin lời ngân hàng hứa miệng thu xếp nợ 460 triệu đô la. Mười phút sau, ngân hàng gửi thư đòi trả trong 15 ngày kèm lãi kép 15% nhằm tước cổ phần biểu quyết gấp 5 lần, buộc Masa phải trả thay.</p>
+<h3>Đêm thú nhận bảo lãnh nợ và hạn thu 1,5 tỷ đô la trước ca sinh</h3>
+<p>Tụt từ 13.000 nhân sự còn 3 cộng sự gánh âm 400 triệu đô la, Adam khóc nhận với Rebecca đã quên cất riêng 100 triệu đô la và ký bảo lãnh nợ. Rebecca bình thản rủ anh về nhà mẹ hoặc đi Costa Rica lướt sóng, giúp anh đứng dậy vững vàng. Sau vụ SoftBank hủy chi 3 tỷ đô la tháng 3 năm 2020, bốn ngày trước ca sinh mổ, Rebecca bác việc cho khất 2 tháng khoản dàn xếp 1,5 tỷ đô la. Cô ép chuyển tiền trước 8 giờ sáng thứ Sáu nếu không sẽ kiện thứ Hai, buộc họ chuyển đủ lúc 4 giờ 30 sáng. Lời phủ nhận chuyện bán nhãn hiệu riêng hay tố ngân hàng hứa miệng đều là lời kể một phía mà video không dẫn nguồn. Nguyên tắc tự vệ là phải ký giấy xóa bảo lãnh trước khi giao quyền và cấm cho bên thất hứa khất nợ lần hai.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (<a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=IQ4JVWdj4Q0</a>) · 2026-09-28</li></ul></div></details></div>
+    </section>
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-2-bo-the">
+      <h2 id="phan-2">PHẦN 2: BỘ 5 CÂU HỎI-ĐÁP GIẢI MÃ TỪ GỐC</h2>
+      
+<div class="dialogue-turn" id="q1">
+  <h3 class="dialogue-prompt">❓ Câu #01 — Tại sao tiệm cũ đông khách mà mở thêm chi nhánh lại cạn tiền?</h3>
+  <div class="dialogue-response">
+    <blockquote class="ink-poem-quote"><p><em>Gộp chung sổ sách hai nhà,</em><br/><em>Lãi xưa chảy sạch nuôi ba mặt bằng.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Hụt tiền khi mở rộng không phải vì thiếu khách, mà là vì mặt bằng mới ngốn lãi điểm cũ suốt nhiều tháng.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Độ trễ lấp đầy khách:</strong> Mỗi mặt bằng mới mở luôn phải chịu lỗ từ 6 đến 18 tháng đầu để kéo khách quen và bù chi phí vận hành cố định.</li>
+<li><strong>Bước 2 — Lệch kỳ hạn thu chi:</strong> Chủ cơ sở ký hợp đồng thuê nhà dài hạn nhiều năm nhưng lại thu tiền khách lẻ theo từng tháng, khiến tiền cọc và tiền thuê rút cạn két.</li>
+<li><strong>Bước 3 — Sổ gộp che mờ điểm lỗ:</strong> Gộp chung doanh thu làm bạn không thấy tầng nào đang âm, như WeWork mở 2 tòa mỗi ngày lỗ 690 triệu đô la (chuyện đầy đủ ở Mạch 2).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Tách riêng sổ thu chi từng điểm; gợi ý cho tiệm nhỏ là cơ sở cũ lãi 40 triệu đồng mỗi tháng không được gộp sổ bù lỗ 55 triệu đồng cho điểm mới.</li>
+<li>Dừng ký thuê mặt bằng thứ 2 dài hạn 3 đến 5 năm cho tới khi điểm đầu tiên tự nuôi sống bộ máy và thu hồi đủ 100% vốn ban đầu.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (<a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=IQ4JVWdj4Q0</a>) · 2026-09-28</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q2">
+  <h3 class="dialogue-prompt">❓ Câu #02 — Làm sao thương lượng hạ giá thi công mà nhà thầu vẫn vui vẻ làm?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Tách lẻ từng món vật tư kèm biên lãi 15% giúp bạn kéo báo giá về sát gốc mà nhà thầu vẫn đồng thuận.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Bóc rã báo giá trọn gói:</strong> Báo giá gộp một cục thường cộng dư phần phòng rủi ro vì chính nhà thầu cũng không tính chi tiết từng món vật tư và giờ công.</li>
+<li><strong>Bước 2 — Chốt trước biên lãi công bằng:</strong> Mở lời bảo đảm nhà thầu hưởng trọn 15% lợi nhuận trên tổng chi phí thật để họ thấy bạn tôn trọng công sức chứ không ép lỗ.</li>
+<li><strong>Bước 3 — Tự khảo giá vật tư lẻ:</strong> Đòi bảng kê từng cây đinh, lọ keo, tấm ván để tự hỏi giá gốc, cách Adam Neumann ép giá sàn xuống 12.000 đô la (chuyện đầy đủ ở Mạch 3).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Yêu cầu 3 đơn vị thi công tách riêng bảng kê vật tư gốc và ngày công thợ thay vì nhận báo giá gộp trọn gói theo mét vuông.</li>
+<li>Cộng thẳng 15% phí quản lý trên hóa đơn thật; gợi ý cho tiệm nhỏ là quầy kệ báo 90 triệu đồng nhưng vật tư công thợ 40 triệu đồng thì trả 46 triệu đồng.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (<a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=IQ4JVWdj4Q0</a>) · 2026-09-28</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q3">
+  <h3 class="dialogue-prompt">❓ Câu #03 — Làm sao kìm tật ôm đồm nhiều mảng mới cùng lúc của người sáng lập?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Người hay nảy ý tưởng chỉ giữ vững công ty khi ghìm dưới 5 việc và đặt người dám cản ngồi cùng bàn.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Phân rõ người mở và người giữ:</strong> Người giỏi khởi sự từ con số 0 thường ham mở mảng mới nhưng lại yếu khâu canh giữ kỷ luật vận hành hàng ngày.</li>
+<li><strong>Bước 2 — Quá tải làm sập chất lượng:</strong> Ngay cả người nhanh nhạy cũng chỉ gánh nổi 3 đến 5 đầu việc; vượt lên 10 đến 15 việc cùng lúc chắc chắn sẽ đổ vỡ.</li>
+<li><strong>Bước 3 — Đặt đối trọng biết nói không:</strong> Trao quyền gạt việc cho cộng sự nói thẳng sau kỳ họp, như Adam Neumann nhờ quỹ a16z kìm tật mở 9 công ty mới (chuyện đầy đủ ở Mạch 3).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Viết toàn bộ dự định ra giấy mỗi đầu quý, giữ lại đúng 3 mục tiêu tạo doanh thu trực tiếp và cất phần còn lại vào ngăn chờ 6 tháng sau.</li>
+<li>Chọn 1 người quản lý sổ quỹ ngồi duyệt cùng và trao quyền gạt bỏ mọi khoản chi thử nghiệm vượt quá 10% lợi nhuận ròng hàng tháng tại tiệm (gợi ý áp dụng).</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (<a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=IQ4JVWdj4Q0</a>) · 2026-09-28</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q4">
+  <h3 class="dialogue-prompt">❓ Câu #04 — Làm sao ngắt cơn nghiện điện thoại mỗi tuần để nhìn rõ việc cần làm?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Cất khuất mọi màn hình suốt 24 giờ mỗi tuần sẽ dập tắt tiếng ồn mạng và trả lại độ sáng suốt cho bạn.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Đối diện phản xạ nghiện:</strong> Khi thực hành ngày nghỉ công nghệ (Technology Shabbat), suốt 2 giờ đầu bàn tay liên tục thọc vào túi tìm máy như người đang cai thuốc.</li>
+<li><strong>Bước 2 — Lấp khoảng trống bằng người thật:</strong> Lên lịch sẵn bữa tối cùng gia đình, gặp gỡ bạn bè hoặc đi dạo ngoài thiên nhiên để tâm trí tách hẳn khỏi guồng công việc.</li>
+<li><strong>Bước 3 — Đón luồng suy nghĩ sáng rõ:</strong> Từ giờ thứ 22 đến 24, đầu óc tự nảy ra hướng đi mới, đúng cách Adam Neumann giữ 24 giờ tắt máy mỗi tuần (chuyện đầy đủ ở Mạch 3).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Cất điện thoại, máy tính bảng và đồng hồ thông minh vào hộp kín hoặc gửi người nhà giữ hộ trọn 24 giờ kể từ tối thứ Bảy hàng tuần.</li>
+<li>Đặt sẵn 1 quyển sổ giấy cùng cây bút trên bàn ăn để ghi nhanh các ý tưởng lóe lên vào cuối ngày nghỉ trước khi mở lại điện thoại.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (<a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=IQ4JVWdj4Q0</a>) · 2026-09-28</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q5">
+  <h3 class="dialogue-prompt">❓ Câu #05 — Làm sao tránh mất trắng tài sản khi bàn giao quyền hoặc bị khất nợ?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Buông quyền bằng lời hứa miệng hoặc cho kẻ thất hứa khất nợ lần hai sẽ đẩy gia đình bạn vào cảnh trắng tay.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Dạng 1 — Bàn giao ghế khi còn nợ:</strong> Rời vị trí sẽ kích hoạt điều khoản đổi quyền kiểm soát, như việc ngân hàng đòi Adam Neumann 460 triệu đô la sau 10 phút (chuyện đầy đủ ở Mạch 4).</li>
+<li><strong>Dạng 2 — Đối tác xin giãn hạn trả:</strong> Ký giấy cho bên từng thất hứa lùi lịch trả tiền lần nữa sẽ làm bạn lỡ ngày ra tòa mà vẫn không thu được đồng nào.</li>
+<li><strong>Dạng 3 — Ký bảo lãnh bằng tài sản chung:</strong> Dùng tài sản gia đình bảo lãnh khoản vay công ty mà giấu người phối ngẫu sẽ cuốn bay cả phần tích lũy phòng thân khi sập tiệm.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Yêu cầu ngân hàng và cổ đông ký văn bản xóa nghĩa vụ bảo lãnh cá nhân trước ít nhất 1 ngày rồi mới đặt bút bàn giao con dấu điều hành (gợi ý áp dụng).</li>
+<li>Ra hạn chót thanh toán tiền mặt trong 48 giờ kèm hồ sơ khởi kiện với đối tác vừa sai hẹn lần đầu, tuyệt đối không ký khất nợ thêm 2 tháng.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Adam Neumann (<a href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=IQ4JVWdj4Q0</a>) · 2026-09-28</li></ul></div></details></div>
+  </div>
+</div>
+    </section>
+    
+    <hr style="margin: 3rem 0 1.5rem; border: none; border-top: 2px solid var(--ink-border);"/>
+    <details class="ink-provenance" id="nguon-boi-canh">
+      <summary class="ink-prov-summary">
+        <span class="ink-prov-context">📌 <strong>Hồ sơ nguồn &amp; Truy vết bối cảnh (Logic #361)</strong> — The Diary Of A CEO — Billionaire&#x27;s WARNING: If You Grow Faster Than You Can Handle, You WILL Crash! | Adam Neumann · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener">Xem trên YouTube ↗</a></span>
+        <span class="ink-prov-toggle">Chi tiết nguồn <span class="ink-prov-arrow">▾</span></span>
+      </summary>
+      <div class="ink-prov-extra">
+        <ul>
+          <li>🎙️ <strong>Nguồn Podcast / Video gốc:</strong> The Diary Of A CEO — Billionaire&#x27;s WARNING: If You Grow Faster Than You Can Handle, You WILL Crash! | Adam Neumann · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=IQ4JVWdj4Q0" target="_blank" rel="noopener">Xem trên YouTube ↗</a></li>
+          <li>💬 <strong>Bản giải phẫu hội thoại gốc:</strong> <a class="ink-ext-link" href="https://gemini.google.com/u/3/app/7f4f0ddf7d0ae999" target="_blank" rel="noopener">Gemini Share gốc ↗</a></li>
+          <li>🧭 <strong>Kho lưu trữ:</strong> <a class="ink-ext-link" href="https://kho.fedu.vn" target="_blank" rel="noopener">kho.fedu.vn</a> · <a class="ink-ext-link" href="https://fedu.vn/k/logic361.html">fedu.vn/k/logic361.html</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+</main>
+<script>
+  function filterTOC() {
+    var input = document.getElementById('inkSearch');
+    var filter = input.value.toLowerCase();
+    var ul = document.getElementById('inkTocList');
+    var li = ul.getElementsByTagName('li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].getElementsByTagName('a')[0];
+      if (a) {
+        var txtValue = a.textContent || a.innerText;
+        li[i].style.display = (txtValue.toLowerCase().indexOf(filter) > -1) ? '' : 'none';
+      }
+    }
+  }
+  function copyAll() {
+    var content = document.querySelector('.ink-content').innerText;
+    navigator.clipboard.writeText(content);
+  }
+  (function initMobileTOC() {
+    var details = document.getElementById('inkTocDetails');
+    if (!details) return;
+    if (window.innerWidth <= 860) {
+      details.removeAttribute('open');
+    }
+    var links = details.querySelectorAll('a.ink-toc-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        if (window.innerWidth <= 860) {
+          details.removeAttribute('open');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
