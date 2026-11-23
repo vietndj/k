@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Logic 375: Thomas Seyfried giải mã gốc ti thể và cách kìm hãm khối u</title>
+<link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090E'/%3E%3Ctext x='27' y='46' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='900' font-size='36' letter-spacing='-2px' fill='%2310B981'%3E375%3C/text%3E%3Ccircle cx='52' cy='13' r='4.2' fill='%2310B981'/%3E%3C/svg%3E">
+<style>
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.35; }
+    h1 { font-family: var(--font-display-short); font-weight: 500; font-style: italic; font-size: clamp(28px, 4vw, 40px); margin-bottom: 24px; letter-spacing: -0.02em; }
+    h2 { font-family: var(--font-display-long); font-weight: 600; font-size: 22px; margin: 40px 0 18px; }
+    h3 { font-family: var(--font-display-long); font-weight: 600; font-size: 18px; margin: 28px 0 14px; }
+    .ink-card-subhead { font-family: system-ui, -apple-system, sans-serif; font-weight: 700; font-size: 16.5px; color: var(--ink-text); margin: 22px 0 10px; text-transform: none; letter-spacing: -0.01em; }
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 16px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 18px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    blockquote { border-left: 3px solid var(--ink-text); margin: 16px 0; font-style: italic; color: var(--ink-muted); background: var(--ink-sidebar); padding: 14px 20px; border-radius: 0 8px 8px 0; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .ink-poem-quote { margin-top: 0; margin-bottom: 16px; color: #1e293b; font-size: 18.5px; }
+    .ink-flip-box { font-size: 18.5px; font-weight: 500; background: var(--ink-hover); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 18px; }
+    .ink-pocket-rule { border: 1px dashed var(--ink-text); padding: 10px 14px; border-radius: 8px; }
+    .ink-provenance { display: inline-block; margin-top: 8px; background: transparent; border: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .ink-provenance[open] { display: block; margin-top: 12px; background: #f8fafc; border: 1px solid var(--ink-border); border-radius: 8px; overflow: hidden; }
+    .ink-prov-summary { padding: 0; cursor: pointer; list-style: none; display: inline-flex; align-items: center; color: var(--ink-text); font-size: 12px; line-height: 1.4; }
+    .ink-provenance[open] .ink-prov-summary { padding: 8px 12px; display: flex; }
+    .ink-prov-summary::-webkit-details-marker { display: none; }
+    .ink-prov-context { flex: 1; min-width: 0; margin-right: 8px; }
+    .ink-prov-toggle { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ink-muted); background: #f8fafc; border: 1px solid var(--ink-border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+    .ink-prov-toggle:hover { color: var(--ink-text); border-color: #94a3b8; }
+    .ink-provenance[open] .ink-prov-arrow { transform: rotate(180deg); display: inline-block; }
+    .ink-prov-extra { padding: 8px 12px 10px; border-top: 1px dashed var(--ink-border); background: #ffffff; color: var(--ink-muted); font-size: 13px; }
+    .ink-provenance ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 13px; line-height: 1.6; }
+    .ink-provenance li { margin-bottom: 4px; }
+    .ink-provenance li:last-child { margin-bottom: 0; }
+    .ink-ext-link { color: #0f172a; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .ink-ext-link:hover { color: #10b981; }
+    .ink-table-wrap { overflow-x: auto; margin: 20px 0 24px; }
+    .ink-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.6; }
+    .ink-table th, .ink-table td { border: 1px solid var(--ink-border); padding: 12px 14px; text-align: left; vertical-align: top; }
+    .ink-table th { background: var(--ink-sidebar); font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-text); }
+    .ink-ts-pill, .ink-meta-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px !important; margin: 0 2px; border-radius: 99px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10.5px !important; font-weight: 500 !important; line-height: 1.35 !important; color: #64748b !important; background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.22); text-decoration: none !important; white-space: nowrap; vertical-align: middle; transition: all 0.15s ease; }
+    .ink-ts-pill:hover { background: rgba(37, 99, 235, 0.12); color: #2563EB !important; border-color: rgba(37, 99, 235, 0.4); }
+    .ink-meta-badge .ink-ts-pill { padding: 0 2px !important; margin: 0 !important; border: none !important; background: transparent !important; }
+    .ink-sidebar { width: 340px; background: var(--ink-sidebar); border-right: 1px solid var(--ink-border); height: 100vh; position: sticky; top: 0; padding: 28px 22px; overflow-y: auto; flex-shrink: 0; }
+    .ink-main-wrapper { flex-grow: 1; padding: 56px 48px 120px; display: flex; justify-content: center; }
+    .ink-content { width: 100%; max-width: 780px; }
+    .ink-brand { font-family: system-ui, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-text); text-decoration: none; display: inline-block; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .ink-toc-title { font-family: system-ui, sans-serif; font-weight: 700; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 6px; line-height: 1.4; }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active { background: var(--ink-bg); color: var(--ink-text); font-weight: 600; border: 1px solid var(--ink-border); }
+    .ink-mode-dialogue .dialogue-turn { margin-bottom: 48px; scroll-margin-top: 30px; }
+    .ink-mode-dialogue .dialogue-prompt { background: var(--ink-sidebar); padding: 18px 22px; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 18.5px; font-weight: 700; font-style: normal; color: var(--ink-text); margin-bottom: 18px; border: 1px solid var(--ink-border); line-height: 1.45; }
+    .ink-mode-dialogue .dialogue-response { padding-left: 18px; border-left: 2px solid var(--ink-border); }
+    .ink-meta { display: flex; align-items: center; gap: 12px; font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); margin-bottom: 24px; flex-wrap: wrap; }
+    .ink-badge { font-weight: 700; color: var(--ink-text); background: var(--ink-hover); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--ink-border); }
+    .ink-copy-btn { background: var(--ink-text); color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .ink-top-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 32px; }
+    .ink-yt-hero-btn { background: #dc2626; color: #ffffff; text-decoration: none; padding: 10px 16px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.15s ease; }
+    .ink-yt-hero-btn:hover { opacity: 0.9; }
+    .ink-prov-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; margin-top: 8px; }
+    .ink-prov-row .ink-provenance { margin-top: 0; flex: 1; min-width: 180px; }
+    .ink-yt-mini-btn { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-family: system-ui, -apple-system, sans-serif; font-size: 11.5px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s ease; }
+    .ink-yt-mini-btn:hover { background: #fee2e2; color: #b91c1c; }
+    .ink-search-box { margin-bottom: 14px; }
+    .ink-search-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--ink-border); background: #ffffff; font-size: 13px; color: var(--ink-text); outline: none; }
+    .ink-toc-summary { display: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--ink-text); padding: 8px 12px; background: #ffffff; border: 1px solid var(--ink-border); border-radius: 8px; cursor: pointer; list-style: none; }
+    .ink-toc-summary::-webkit-details-marker { display: none; }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      .ink-sidebar { width: 100%; height: auto; position: sticky; top: 0; z-index: 50; border-right: none; border-bottom: 1px solid var(--ink-border); padding: 12px 16px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+      .ink-brand { margin-bottom: 8px; font-size: 13.5px; }
+      .ink-toc-summary { display: flex; align-items: center; justify-content: space-between; }
+      .ink-toc-collapsible { margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-bottom: 6px; }
+      .ink-main-wrapper { padding: 24px 16px 80px; }
+      h1 { font-size: 26px; margin-bottom: 16px; }
+      h2 { font-size: 20px; margin: 28px 0 14px; }
+      h3 { font-size: 17px; margin: 22px 0 10px; }
+      p, ul, ol { font-size: 16.5px; line-height: 1.72; }
+      .ink-flip-box, .ink-poem-quote { font-size: 16.5px; padding: 12px 14px; }
+      .ink-mode-dialogue .dialogue-turn { margin-bottom: 36px; scroll-margin-top: 96px; }
+      .ink-mode-dialogue .dialogue-prompt { font-size: 16.5px; padding: 14px 16px; }
+      .ink-mode-dialogue .dialogue-response { padding-left: 12px; }
+    }
+</style>
+</head>
+<body>
+<aside class="ink-sidebar">
+  <div class="ink-sidebar-header">
+    <a class="ink-brand" href="https://kho.fedu.vn">LOGIC #375 • KHO LOGIC</a>
+  </div>
+  <details class="ink-toc-details" id="inkTocDetails" open>
+    <summary class="ink-toc-summary">
+      <span>📑 Mục lục &amp; Nhảy nhanh tới câu hỏi (5 câu)</span>
+      <span>▾</span>
+    </summary>
+    <div class="ink-toc-collapsible">
+      <div class="ink-search-box">
+        <input type="text" id="inkSearch" class="ink-search-input" placeholder="🔍 Lọc nhanh câu hỏi &amp; cơ chế..." onkeyup="filterTOC()">
+      </div>
+      <div class="ink-toc-title">BẢN ĐỒ &amp; BỘ THẺ NHẬN THỨC</div>
+      <ul class="ink-toc-list" id="inkTocList">
+            <li style="margin-top: 10px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-1-ban-do">Phần 1: Bản Đồ Nhận Thức</a>
+    </li>
+    <li style="margin-top: 14px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-2-bo-the">Phần 2: Bộ 5 Câu Hỏi-Đáp</a>
+    </li>
+    <ul class="ink-toc-list" style="padding-left: 10px;">
+    <li><a class="ink-toc-link" href="#q1">Câu 01. Nhà không có gen bệnh, sao thức khuya ăn ngọt vẫn...</a></li>
+    <li><a class="ink-toc-link" href="#q2">Câu 02. Làm sao tự đo tại nhà để biết cơ thể đang...</a></li>
+    <li><a class="ink-toc-link" href="#q3">Câu 03. Người bệnh có nên uống sữa ngọt giữ cân hay cắt...</a></li>
+    <li><a class="ink-toc-link" href="#q4">Câu 04. Sao tự nhịn ăn uống nước dễ kiệt sức hoặc ngất...</a></li>
+    <li><a class="ink-toc-link" href="#q5">Câu 05. Đang hóa xạ trị thì ăn giảm đường giúp chặn di...</a></li>
+    </ul>
+      </ul>
+    </div>
+  </details>
+</aside>
+<main class="ink-main-wrapper">
+  <article class="ink-content ink-mode-dialogue">
+    <div class="ink-meta">
+      <span class="ink-badge">LOGIC #375</span>
+      <span>Nguyễn Việt</span>
+      <span>•</span>
+      <span>Cẩm Nang Nhận Thức</span>
+      <span>•</span>
+      <span>5 Câu Hỏi-Đáp Giải Mã Gốc</span>
+    </div>
+    <div class="ink-top-actions">
+      <button class="ink-copy-btn" onclick="copyAll()">📋 Sao Chép Toàn Bộ Cẩm Nang</button>
+      <a class="ink-yt-hero-btn" href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener">▶ Xem video YouTube gốc ↗</a>
+    </div>
+    <h1 class="is-long" id="top">Logic 375: Thomas Seyfried giải mã gốc ti thể và cách kìm hãm khối u</h1>
+    <p style="color: var(--ink-muted); font-size: 19px; line-height: 1.75; margin-bottom: 36px;">Màng trong ti thể giữ bền, / Bớt đường đốt mỡ dựng nền khỏe lâu. — Giáo sư Thomas Seyfried tại Boston College chỉ ra cách màng trong ti thể bị rách gây ung thư, phép đo đường trên xeton và phác đồ khóa hai nguồn nuôi khối u.</p>
+    <hr style="margin: 2.5rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-1-ban-do">
+      <h2>Mạch 1: Nhìn lại bản phân tích cũ và hướng đào sâu mới</h2>
+<blockquote class="ink-poem-quote"><p><em>Bản ghi cũ lướt bề ngoài,</em><br/><em>Bốn mươi phút cuối bỏ hoài chẳng nêu.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Bản cũ dài 1.275 chữ mới nêu 5 con số lớn, bỏ sót phép toán năng lượng và hơn 40 phút cuối.</strong></p>
+<h3>Chỗ bản phân tích cũ còn lướt bề mặt</h3>
+<p>Bản tóm tắt trước đây dùng nhiều khẩu hiệu sách vở không có trong cuộc trò chuyện của Thomas Seyfried như &quot;la bàn sức khỏe&quot; hay &quot;kẻ thù thầm lặng&quot;. Bài viết cũng sửa lệch lời gốc thành &quot;nguyên lý vật lý&quot;, làm rơi mất chi tiết soi kính hiển vi điện tử thấy các ti thể rỗng ruột và gãy hết nếp gấp màng trong. Đáng tiếc hơn, bài cũ kết luận chỉ cần cắt đường sang đốt xeton là bỏ đói được khối u, bỏ quên nhánh nuôi thứ hai từ đạm glutamin dồi dào trong máu và cơ bắp. Toàn bộ hơn 40 phút cuối bàn về thí nghiệm hoán đổi nhân tế bào, chuyện bệnh viện phát sữa ngọt và cơ chế tế bào lai gây di căn đều bị bỏ trống.</p>
+<h3>Cách đào sâu từ dữ kiện gốc trong video</h3>
+<p>Bản nâng cấp bám sát phép toán năng lượng tế bào: đốt thức ăn bằng oxy sinh ra 34 đến 36 đơn vị năng lượng, còn lên men cổ xưa chỉ thu về 2 đến 4 đơn vị. Bài viết dựng lại ca nữ luật sư người Mỹ vọt đường huyết lên 186 mg/dL lúc tức giận và dự báo 626.000 người Mỹ tử vong do ung thư năm 2026 từ American Cancer Society. Phần thực hành nối thẳng cách tính tỷ số đường trên xeton bằng máy đo cầm tay 20 đến 30 đô la Mỹ với phác đồ khóa kép nhiên liệu kèm điều kiện bác sĩ sàng lọc bệnh nền.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li><li>💬 <strong>Bản giải phẫu gốc:</strong> <a href="https://fedu.vn/k/thomas-seyfried-ung-thu-ti-theo-podcast.html" target="_blank" rel="noopener" class="ink-ext-link">Đối chiếu bản phân tích cũ</a></li></ul></div></details></div>
+<h2>Mạch 2: Ti thể rỗng ruột và cơn đói đường của tế bào ung thư</h2>
+<blockquote class="ink-poem-quote"><p><em>Đặt nhân u giữa chất lành,</em><br/><em>Tế bào yên ổn chẳng thành bướu đâu.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Ung thư không phải khởi phát từ lỗi gen nhân tế bào, mà là hệ quả khi ti thể hỏng cách dùng oxy.</strong></p>
+<h3>Phép đối chiếu chất độc xyanua và hình ảnh ti thể ma</h3>
+<p>Kế thừa nhà nghiên cứu người Đức Otto Warburg từ thập niên 1920, Giáo sư Thomas Seyfried tại Boston College chỉ ra ti thể mới là bộ phận cầm trịch sự phân chia tế bào. Ở người nhồi máu cơ tim ngừng thở, máu tràn ngập hai loại axit thải ra do lên men tạm, nhưng vừa ép tim thở lại là các chất thải này biến mất. Ngược lại, tế bào ung thư đặt giữa 100% oxy hoặc ngâm trong chất độc xyanua vẫn sống và xả axit vì nếp gấp màng trong đã gãy rỗng thành những &quot;ti thể ma&quot;. Mất sức dùng oxy tạo 34 đến 36 đơn vị năng lượng, tế bào lùi về lối lên men thời tiền oxy chỉ thu 2 đến 4 đơn vị nên phải hút lượng lớn đường và đạm glutamin.</p>
+<h3>Thí nghiệm hoán đổi nhân tế bào và vai trò phụ của gen</h3>
+<p>Rà soát hơn một năm tài liệu kính hiển vi điện tử, Thomas Seyfried thấy mọi khối u đều hỏng cấu trúc ti thể, còn oxy hút vào chỉ tạo gốc gỉ sét làm hỏng gen hệ quả. Cấy nhân tế bào u vào tế bào chất lành thì không sinh u, ngược lại cấy nhân lành vào tế bào chất u lại tăng sinh loạn, dù điểm này video không dẫn nguồn. Tổng hợp của cộng sự ông cũng chỉ ra không đột biến di truyền nào gây ung thư 100%, bởi chúng chỉ là yếu tố phụ làm giảm hiệu suất ti thể. Trẻ 6 tháng tuổi mắc u não do hóa chất qua nhau thai, còn nhận định chó nhà chết vì ung thư nhiều hơn sói hoang do đồ ăn sẵn thì video không dẫn nguồn.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li></ul></div></details></div>
+<h2>Mạch 3: Phép đo đường xeton và cách khóa kép nguồn nuôi khối u</h2>
+<blockquote class="ink-poem-quote"><p><em>Lúc đang giận chích đầu tay,</em><br/><em>Đường dâng cao vọt đổi thay bất ngờ.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chỉ khi hạ đường huyết đi kèm thuốc chặn đạm glutamin cùng lúc, khối u mới mất hẳn hai nguồn sống.</strong></p>
+<h3>Cơn giận mất chỗ đỗ xe và chỉ số đường trên xeton</h3>
+<p>Một nữ luật sư người Mỹ mắc u thân não từng áp dụng hướng chuyển hóa của Thomas Seyfried để sống thêm hơn 10 năm dù phải chống gậy. Một hôm bị chiếm chỗ đỗ xe ưu tiên, bà nổi giận lên lầu chích máu thì thấy đường huyết vọt từ 50–65 lên 186 mg/dL, còn xeton vẫn giữ mức 0,9 mmol. Thấy đo rời dễ nhiễu khi căng thẳng, ông lấy đường huyết chia 18 đổi sang mmol rồi chia cho xeton, lập ra chỉ số đường - xeton (Glucose Ketone Index). Đo tại trường quay bằng máy Keto-Mojo, Stephen Bartlett có đường 90 mg/dL và xeton 0,4 mmol, đạt mức 12,5 ở vùng phòng bệnh, khác xa mức 500 ở người ăn vặt 5 bữa mỗi ngày.</p>
+<h3>Ca mổ u não tại Devon và giới hạn không nhận chữa khỏi</h3>
+<p>Khi giảm tinh bột để gan tách mỡ thành xeton, tế bào lành đốt xeton rất khỏe, còn tế bào u hỏng ti thể không đốt được xeton nên bớt sưng viêm. Dù vậy, máu luôn dồi dào đạm glutamin nuôi u, nên khi xuống vùng xanh người bệnh phải dùng kèm thuốc như Mebendazole để khóa cả đường lẫn đạm glutamin cùng lúc. Một bệnh nhân tại vùng Devon nước Anh mắc u não không mổ được đã chọn ăn chuyển hóa, giúp bờ khối u gom gọn để phẫu thuật bóc tách 4 lần và sống suốt 10 năm. Người này mất vì xuất huyết não ở ca mổ thứ tư, và Thomas Seyfried nhấn mạnh ông không bao giờ dùng từ chữa khỏi hẳn mà chỉ giúp kéo dài sự sống.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li></ul></div></details></div>
+<h2>Mạch 4: Hóa trị liều thấp, chặn tế bào lai và điều kiện an toàn</h2>
+<blockquote class="ink-poem-quote"><p><em>Sữa pha đường ngọt đưa vào,</em><br/><em>Giữ cân mà lại bơm trào nuôi u.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Đưa cơ thể sang đốt xeton trước giúp gỡ vỏ axit của khối u, làm hóa trị liều thấp trúng đích hơn.</strong></p>
+<h3>Ly sữa ngọt bệnh viện và cách gỡ vỏ axit diệt tế bào lai</h3>
+<p>Năm 2026, American Cancer Society dự báo Mỹ có 2,11 triệu ca mới và 626.000 ca tử vong vì ung thư, tức 1.700 người mỗi ngày, nhưng bệnh viện vẫn phát sữa pha si-rô ngô để giữ cân. Nhiều bác sĩ sợ ăn giảm đường gây suy mòn, song Thomas Seyfried chỉ rõ suy mòn là do khối u phân hủy cơ bắp lấy đạm glutamin, còn xeton dinh dưỡng khác hẳn mức nhiễm toan 15–20 mmol. Ông cũng phát hiện u gốc không tự lan xa, mà bạch cầu dọn dẹp tưởng u là vết thương nên nhập vào tạo tế bào lai chạy khắp người gây di căn. Nhờ phác đồ ép - xung (press-pulse) gỡ vỏ axit lên men rồi phối hợp hóa trị liều thấp hoặc oxy cao áp, phòng khám ở Istanbul giúp người ung thư tụy sống 4–5 năm thay vì 6 tháng.</p>
+<h3>Bước đệm 7 ngày nhịn ăn và bắt buộc sàng lọc bệnh nền</h3>
+<p>Nhịn ăn uống nước đến ngày thứ 3 dễ gây bồn chồn mất ngủ vì thiếu đường, nên nhóm của ông cho ăn cắt tinh bột 7 ngày làm bước đệm hoặc dùng thực đơn Địa Trung Hải giảm calo. Ông nhận chưa rõ thuốc tiêm giảm cân hay dầu hạt công nghiệp tác động ra sao đến xeton, còn con số thuốc trừ sâu tăng 41% u hạch thì video không dẫn nguồn. Cuối buổi, Stephen Bartlett nhắc chuyện một người chồng tự ép xeton cao rồi ngất xỉu phải đi cấp cứu vì mắc bệnh nền. Do không trực tiếp khám bệnh, Thomas Seyfried dặn người có tiểu đường, cao huyết áp hoặc thiếu chất chuyển mỡ bắt buộc phải có bác sĩ theo dõi và chụp chiếu kiểm tra.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li></ul></div></details></div>
+    </section>
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-2-bo-the">
+      <h2 id="phan-2">PHẦN 2: BỘ 5 CÂU HỎI-ĐÁP GIẢI MÃ TỪ GỐC</h2>
+      
+<div class="dialogue-turn" id="q1">
+  <h3 class="dialogue-prompt">❓ Câu #01 — Nhà không có gen bệnh, sao thức khuya ăn ngọt vẫn sinh u?</h3>
+  <div class="dialogue-response">
+    <blockquote class="ink-poem-quote"><p><em>Ăn khuya lướt máy thâu đêm,</em><br/><em>Màng trong ti thể yếu mềm dần đi.</em></p></blockquote>
+<p class="ink-flip-box"><strong>Ung thư không phải tai họa do gen ngẫu nhiên, mà là hậu quả khi ti thể bị bào mòn dài ngày.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Quá tải đường và căng thẳng:</strong> Vừa ăn bánh ngọt khuya vừa lướt điện thoại làm tăng tiết chất gây căng thẳng, đẩy đường huyết cao và gây viêm.</li>
+<li><strong>Bước 2 — Rách nếp gấp ti thể:</strong> Mất ngủ ngăn ti thể tự hồi phục, khiến gốc gỉ sét phá màng trong và làm hụt mức 34–36 đơn vị năng lượng.</li>
+<li><strong>Bước 3 — Quay về lối lên men:</strong> Như thí nghiệm đổi nhân tế bào chỉ ra gốc ở ti thể (chuyện đầy đủ ở Mạch 2), tế bào ngạt oxy sẽ hút đường sinh sôi loạn.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Ngừng ăn bánh kẹo ngọt buổi tối và đặt điện thoại ra xa giường trước khi ngủ ít nhất 60 phút để ti thể kịp phục hồi.</li>
+<li>Dành 30 phút đi bộ nhanh kết hợp ngồi thiền thư giãn mỗi ngày để hạ đường huyết tự nhiên với chi phí 0 đồng (gợi ý áp dụng).</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q2">
+  <h3 class="dialogue-prompt">❓ Câu #02 — Làm sao tự đo tại nhà để biết cơ thể đang ở vùng ngừa bệnh?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Giữ tỷ số đường huyết chia xeton ở mức 10 đến 12,5 giúp đưa ti thể vào vùng phòng ngừa bệnh mạn tính.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Bẫy đo đường rời rạc:</strong> Đường huyết nhảy vọt rất nhanh lúc nóng giận, như ca nữ luật sư vọt lên 186 mg/dL dù đang ăn kiêng (chuyện đầy đủ ở Mạch 3).</li>
+<li><strong>Bước 2 — Bù đắp bằng xeton máu:</strong> Khi bớt tinh bột và ngừng ăn vặt 5 bữa mỗi ngày, gan sẽ cắt mỡ dự trữ thành xeton bền vững nuôi não và cơ.</li>
+<li><strong>Bước 3 — Lập tỷ số ổn định:</strong> Đổi đường sang đơn vị mmol rồi chia cho xeton cho ra chỉ số đường - xeton (Glucose Ketone Index) báo sát độ khỏe ti thể.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Sắm 1 máy đo đường và xeton chích máu đầu ngón tay kiểu Keto-Mojo giá khoảng 500.000 đến 760.000 đồng (gợi ý áp dụng quy đổi từ mức 20–30 đô la Mỹ).</li>
+<li>Lấy số đường huyết mg/dL chia 18 rồi chia tiếp cho số xeton mmol để giữ kết quả quanh vùng 10 đến 12,5 thay vì trượt sang vùng đỏ.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q3">
+  <h3 class="dialogue-prompt">❓ Câu #03 — Người bệnh có nên uống sữa ngọt giữ cân hay cắt đường diệt u?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Chỉ khi giảm đường huyết đi đôi với thuốc khóa đạm nuôi u dưới tay bác sĩ, khối bướu mới ngừng bành trướng.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Dạng 1 — Uống sữa ngọt giữ cân:</strong> Sữa lắc pha si-rô ngô và kem ở bệnh viện tuy giữ cân nhưng lại dội thẳng đường kích thích khối u lớn nhanh.</li>
+<li><strong>Dạng 2 — Nhầm với suy mòn cơ:</strong> Chứng suy mòn bệnh lý (cachexia) xảy ra do khối u phân hủy cơ bắp rút đạm nuôi thân, khác hẳn mức giảm mỡ lành mạnh.</li>
+<li><strong>Dạng 3 — Chỉ ăn kiêng đơn độc:</strong> Hạ đường về mức 50–65 mg/dL giúp gom bờ u như ca mổ 4 lần tại Devon (chuyện đầy đủ ở Mạch 3), nhưng vẫn cần thuốc khóa đạm.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Thay các hộp sữa pha đường tinh luyện bằng bữa ăn tươi khoảng 80.000 đến 120.000 đồng gồm cá hồi, cá mòi, quả bơ và dầu ô liu (gợi ý áp dụng).</li>
+<li>Ghi sổ theo dõi đường huyết hướng về vùng 50 đến 65 mg/dL kèm mức xeton mỗi ngày để làm việc cùng bác sĩ điều trị về thuốc phối hợp.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q4">
+  <h3 class="dialogue-prompt">❓ Câu #04 — Sao tự nhịn ăn uống nước dễ kiệt sức hoặc ngất xỉu giữa chừng?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Cắt đường đột ngột khi có bệnh nền hoặc thiếu 7 ngày đệm dễ gây vật vã và ngất xỉu cấp cứu.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Cơn vật đường ngày thứ 3:</strong> Não quen lệ thuộc đường như chất gây nghiện nên nhịn ăn uống nước lọc sau 3 ngày dễ sinh mất ngủ, bồn chồn chân.</li>
+<li><strong>Bước 2 — Đệm trước bằng đạm mỡ:</strong> Ăn thịt cá cắt hẳn tinh bột trong 7 ngày giúp cơ thể quen trạng thái xeton dinh dưỡng (nutritional ketosis) êm ái trước khi nhịn.</li>
+<li><strong>Bước 3 — Rủi ro do bệnh nền:</strong> Người có tiểu đường, cao huyết áp hoặc thiếu chất vận chuyển mỡ tự ép xeton cao dễ ngất xỉu cấp cứu (chuyện đầy đủ ở Mạch 4).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Khám kiểm tra huyết áp, đường máu và bệnh nền tại phòng khám khoảng 300.000 đến 500.000 đồng trước khi thử nhịn ăn dài ngày (gợi ý áp dụng).</li>
+<li>Thực hiện trước 7 ngày ăn thịt, cá, trứng không tinh bột làm bước đệm giảm sốc cho não rồi mới cân nhắc đợt nhịn uống nước lọc.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q5">
+  <h3 class="dialogue-prompt">❓ Câu #05 — Đang hóa xạ trị thì ăn giảm đường giúp chặn di căn thế nào?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Đưa cơ thể sang đốt xeton trước đợt hóa trị liều thấp giúp người ung thư tụy sống 4 đến 5 năm.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Đưa mô lành vào chỗ nấp:</strong> Khi cơ thể đốt xeton và nhịn ăn đúng cách, tế bào khỏe mạnh tự chậm phân chia nên ít bị thuốc hóa trị làm hại.</li>
+<li><strong>Bước 2 — Gỡ lớp vỏ axit của u:</strong> Cắt đường cùng đạm làm cạn hai axit thải từ lên men, khiến u nhạy hẳn với hóa trị liều thấp như tại Istanbul (chuyện đầy đủ ở Mạch 4).</li>
+<li><strong>Bước 3 — Chặn tế bào lai chạy xa:</strong> Phác đồ ép - xung (press-pulse) khóa kép nhiên liệu sẽ triệt đám tế bào lai giữa bạch cầu và khối u đang gây di căn.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Bàn với bác sĩ điều trị chuẩn bị 7 ngày ăn giảm đường đưa cơ thể sang đốt xeton trước buổi truyền hóa chất thay vì tẩm bổ đồ ngọt.</li>
+<li>Chụp kiểm tra định kỳ bằng 2 kỹ thuật cắt lớp hoặc cộng hưởng từ theo lịch bệnh viện để đánh giá độ thu gọn của khối u.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Thomas Seyfried (<a href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=kBm8Ho-_RXM</a>) · 2026-07-16</li></ul></div></details></div>
+  </div>
+</div>
+    </section>
+    
+    <hr style="margin: 3rem 0 1.5rem; border: none; border-top: 2px solid var(--ink-border);"/>
+    <details class="ink-provenance" id="nguon-boi-canh">
+      <summary class="ink-prov-summary">
+        <span class="ink-prov-context">📌 <strong>Hồ sơ nguồn &amp; Truy vết bối cảnh (Logic #375)</strong> — The Diary Of A CEO — Cancer Researcher: The Overlooked Research Cancer Patients Should Know · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener">Xem trên YouTube ↗</a></span>
+        <span class="ink-prov-toggle">Chi tiết nguồn <span class="ink-prov-arrow">▾</span></span>
+      </summary>
+      <div class="ink-prov-extra">
+        <ul>
+          <li>🎙️ <strong>Nguồn Podcast / Video gốc:</strong> The Diary Of A CEO — Cancer Researcher: The Overlooked Research Cancer Patients Should Know · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=kBm8Ho-_RXM" target="_blank" rel="noopener">Xem trên YouTube ↗</a></li>
+          <li>💬 <strong>Bản giải phẫu hội thoại gốc:</strong> <a class="ink-ext-link" href="https://gemini.google.com/u/6/app/673ce35ba6cca08d" target="_blank" rel="noopener">Gemini Share gốc ↗</a></li>
+          <li>🧭 <strong>Kho lưu trữ:</strong> <a class="ink-ext-link" href="https://kho.fedu.vn" target="_blank" rel="noopener">kho.fedu.vn</a> · <a class="ink-ext-link" href="https://fedu.vn/k/logic375.html">fedu.vn/k/logic375.html</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+</main>
+<script>
+  function filterTOC() {
+    var input = document.getElementById('inkSearch');
+    var filter = input.value.toLowerCase();
+    var ul = document.getElementById('inkTocList');
+    var li = ul.getElementsByTagName('li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].getElementsByTagName('a')[0];
+      if (a) {
+        var txtValue = a.textContent || a.innerText;
+        li[i].style.display = (txtValue.toLowerCase().indexOf(filter) > -1) ? '' : 'none';
+      }
+    }
+  }
+  function copyAll() {
+    var content = document.querySelector('.ink-content').innerText;
+    navigator.clipboard.writeText(content);
+  }
+  (function initMobileTOC() {
+    var details = document.getElementById('inkTocDetails');
+    if (!details) return;
+    if (window.innerWidth <= 860) {
+      details.removeAttribute('open');
+    }
+    var links = details.querySelectorAll('a.ink-toc-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        if (window.innerWidth <= 860) {
+          details.removeAttribute('open');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
