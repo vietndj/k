@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Logic 420: Hạ insulin để rút mỡ gan và nuôi não bằng ketone</title>
+<link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='16'%20fill='%2307090E'/%3E%3Cpath%20d='M18.6%2044.7Q19.3%2044.7%2019.3%2045.3V48.6Q19.3%2049.3%2018.6%2049.3H18.1V51.5Q18.1%2052.2%2017.5%2052.2H13.4Q12.7%2052.2%2012.7%2051.5V49.3H6.2Q5.5%2049.3%205.5%2048.6V45L9.5%2027.9Q9.7%2027.3%2010.3%2027.3H14.2Q15%2027.3%2014.8%2028.1L10.6%2044.7H12.9V39.2Q12.9%2038.7%2013.4%2038.5L17.3%2036.4Q17.7%2036.2%2017.9%2036.3Q18.1%2036.5%2018.1%2036.9V44.7ZM21.7%2052.2Q21%2052.2%2021%2051.5V48.9L24%2043.1Q24.7%2041.8%2025.4%2040.4Q26.1%2039.1%2026.7%2037.7Q27.3%2036.3%2027.7%2035Q28.1%2033.8%2028.1%2032.7Q28.1%2031.9%2027.8%2031.7Q27.6%2031.4%2027.1%2031.4Q26.6%2031.4%2026.3%2031.7Q26.1%2031.9%2026.1%2032.7V35.1Q26.1%2035.8%2025.4%2035.8H21.4Q20.7%2035.8%2020.7%2035.1V33Q20.7%2031.9%2021%2030.8Q21.3%2029.7%2022%2028.9Q22.7%2028%2023.9%2027.5Q25.2%2027%2027.1%2027Q29%2027%2030.2%2027.5Q31.5%2028%2032.2%2028.9Q32.9%2029.7%2033.2%2030.8Q33.4%2031.9%2033.4%2033Q33.4%2034.3%2033.1%2035.7Q32.7%2037.1%2032.2%2038.5Q31.6%2039.9%2030.9%2041.3Q30.2%2042.6%2029.6%2043.8L27.8%2047.2H32.7Q33.4%2047.2%2033.4%2047.9V51.5Q33.4%2052.2%2032.7%2052.2ZM42.1%2052.5Q40%2052.5%2038.8%2052Q37.5%2051.4%2036.8%2050.6Q36.1%2049.7%2035.9%2048.6Q35.6%2047.6%2035.6%2046.4V33Q35.6%2031.9%2035.9%2030.8Q36.2%2029.7%2036.9%2028.9Q37.6%2028%2038.9%2027.5Q40.1%2027%2042.1%2027Q44%2027%2045.3%2027.5Q46.5%2028%2047.2%2028.9Q48%2029.7%2048.2%2030.8Q48.5%2031.9%2048.5%2033V46.4Q48.5%2047.6%2048.2%2048.6Q48%2049.7%2047.3%2050.6Q46.6%2051.4%2045.3%2052Q44%2052.5%2042.1%2052.5ZM42.1%2048Q42.5%2048%2042.8%2047.8Q43.1%2047.5%2043.1%2046.8V32.7Q43.1%2031.9%2042.8%2031.7Q42.5%2031.4%2042.1%2031.4Q41.6%2031.4%2041.3%2031.7Q41%2031.9%2041%2032.7V46.8Q41%2047.5%2041.3%2047.8Q41.6%2048%2042.1%2048Z'%20fill='%2310B981'/%3E%3Ccircle%20cx='52'%20cy='13'%20r='4.2'%20fill='%2310B981'/%3E%3C/svg%3E">
+<style>
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.35; }
+    h1 { font-family: var(--font-display-short); font-weight: 500; font-style: italic; font-size: clamp(28px, 4vw, 40px); margin-bottom: 24px; letter-spacing: -0.02em; }
+    h2 { font-family: var(--font-display-long); font-weight: 600; font-size: 22px; margin: 40px 0 18px; }
+    h3 { font-family: var(--font-display-long); font-weight: 600; font-size: 18px; margin: 28px 0 14px; }
+    .ink-card-subhead { font-family: system-ui, -apple-system, sans-serif; font-weight: 700; font-size: 16.5px; color: var(--ink-text); margin: 22px 0 10px; text-transform: none; letter-spacing: -0.01em; }
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 16px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 18px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    blockquote { border-left: 3px solid var(--ink-text); margin: 16px 0; font-style: italic; color: var(--ink-muted); background: var(--ink-sidebar); padding: 14px 20px; border-radius: 0 8px 8px 0; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .ink-poem-quote { margin-top: 0; margin-bottom: 16px; color: #1e293b; font-size: 18.5px; }
+    .ink-flip-box { font-size: 18.5px; font-weight: 500; background: var(--ink-hover); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 18px; }
+    .ink-pocket-rule { border: 1px dashed var(--ink-text); padding: 10px 14px; border-radius: 8px; }
+    .ink-provenance { display: inline-block; margin-top: 8px; background: transparent; border: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .ink-provenance[open] { display: block; margin-top: 12px; background: #f8fafc; border: 1px solid var(--ink-border); border-radius: 8px; overflow: hidden; }
+    .ink-prov-summary { padding: 0; cursor: pointer; list-style: none; display: inline-flex; align-items: center; color: var(--ink-text); font-size: 12px; line-height: 1.4; }
+    .ink-provenance[open] .ink-prov-summary { padding: 8px 12px; display: flex; }
+    .ink-prov-summary::-webkit-details-marker { display: none; }
+    .ink-prov-context { flex: 1; min-width: 0; margin-right: 8px; }
+    .ink-prov-toggle { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ink-muted); background: #f8fafc; border: 1px solid var(--ink-border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+    .ink-prov-toggle:hover { color: var(--ink-text); border-color: #94a3b8; }
+    .ink-provenance[open] .ink-prov-arrow { transform: rotate(180deg); display: inline-block; }
+    .ink-prov-extra { padding: 8px 12px 10px; border-top: 1px dashed var(--ink-border); background: #ffffff; color: var(--ink-muted); font-size: 13px; }
+    .ink-provenance ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 13px; line-height: 1.6; }
+    .ink-provenance li { margin-bottom: 4px; }
+    .ink-provenance li:last-child { margin-bottom: 0; }
+    .ink-ext-link { color: #0f172a; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .ink-ext-link:hover { color: #10b981; }
+    .ink-table-wrap { overflow-x: auto; margin: 20px 0 24px; }
+    .ink-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.6; }
+    .ink-table th, .ink-table td { border: 1px solid var(--ink-border); padding: 12px 14px; text-align: left; vertical-align: top; }
+    .ink-table th { background: var(--ink-sidebar); font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-text); }
+    .ink-ts-pill, .ink-meta-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px !important; margin: 0 2px; border-radius: 99px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10.5px !important; font-weight: 500 !important; line-height: 1.35 !important; color: #64748b !important; background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.22); text-decoration: none !important; white-space: nowrap; vertical-align: middle; transition: all 0.15s ease; }
+    .ink-ts-pill:hover { background: rgba(37, 99, 235, 0.12); color: #2563EB !important; border-color: rgba(37, 99, 235, 0.4); }
+    .ink-meta-badge .ink-ts-pill { padding: 0 2px !important; margin: 0 !important; border: none !important; background: transparent !important; }
+    .ink-sidebar { width: 340px; background: var(--ink-sidebar); border-right: 1px solid var(--ink-border); height: 100vh; position: sticky; top: 0; padding: 28px 22px; overflow-y: auto; flex-shrink: 0; }
+    .ink-main-wrapper { flex-grow: 1; padding: 56px 48px 120px; display: flex; justify-content: center; }
+    .ink-content { width: 100%; max-width: 780px; }
+    .ink-brand { font-family: system-ui, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-text); text-decoration: none; display: inline-block; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .ink-toc-title { font-family: system-ui, sans-serif; font-weight: 700; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 6px; line-height: 1.4; }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active { background: var(--ink-bg); color: var(--ink-text); font-weight: 600; border: 1px solid var(--ink-border); }
+    .ink-mode-dialogue .dialogue-turn { margin-bottom: 48px; scroll-margin-top: 30px; }
+    .ink-mode-dialogue .dialogue-prompt { background: var(--ink-sidebar); padding: 18px 22px; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 18.5px; font-weight: 700; font-style: normal; color: var(--ink-text); margin-bottom: 18px; border: 1px solid var(--ink-border); line-height: 1.45; }
+    .ink-mode-dialogue .dialogue-response { padding-left: 18px; border-left: 2px solid var(--ink-border); }
+    .ink-meta { display: flex; align-items: center; gap: 12px; font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); margin-bottom: 24px; flex-wrap: wrap; }
+    .ink-badge { font-weight: 700; color: var(--ink-text); background: var(--ink-hover); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--ink-border); }
+    .ink-copy-btn { background: var(--ink-text); color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .ink-top-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 32px; }
+    .ink-yt-hero-btn { background: #dc2626; color: #ffffff; text-decoration: none; padding: 10px 16px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.15s ease; }
+    .ink-yt-hero-btn:hover { opacity: 0.9; }
+    .ink-prov-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; margin-top: 8px; }
+    .ink-prov-row .ink-provenance { margin-top: 0; flex: 1; min-width: 180px; }
+    .ink-yt-mini-btn { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-family: system-ui, -apple-system, sans-serif; font-size: 11.5px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s ease; }
+    .ink-yt-mini-btn:hover { background: #fee2e2; color: #b91c1c; }
+    .ink-search-box { margin-bottom: 14px; }
+    .ink-search-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--ink-border); background: #ffffff; font-size: 13px; color: var(--ink-text); outline: none; }
+    .ink-toc-summary { display: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--ink-text); padding: 8px 12px; background: #ffffff; border: 1px solid var(--ink-border); border-radius: 8px; cursor: pointer; list-style: none; }
+    .ink-toc-summary::-webkit-details-marker { display: none; }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      .ink-sidebar { width: 100%; height: auto; position: sticky; top: 0; z-index: 50; border-right: none; border-bottom: 1px solid var(--ink-border); padding: 12px 16px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+      .ink-brand { margin-bottom: 8px; font-size: 13.5px; }
+      .ink-toc-summary { display: flex; align-items: center; justify-content: space-between; }
+      .ink-toc-collapsible { margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-bottom: 6px; }
+      .ink-main-wrapper { padding: 24px 16px 80px; }
+      h1 { font-size: 26px; margin-bottom: 16px; }
+      h2 { font-size: 20px; margin: 28px 0 14px; }
+      h3 { font-size: 17px; margin: 22px 0 10px; }
+      p, ul, ol { font-size: 16.5px; line-height: 1.72; }
+      .ink-flip-box, .ink-poem-quote { font-size: 16.5px; padding: 12px 14px; }
+      .ink-mode-dialogue .dialogue-turn { margin-bottom: 36px; scroll-margin-top: 96px; }
+      .ink-mode-dialogue .dialogue-prompt { font-size: 16.5px; padding: 14px 16px; }
+      .ink-mode-dialogue .dialogue-response { padding-left: 12px; }
+    }
+</style>
+</head>
+<body>
+<aside class="ink-sidebar">
+  <div class="ink-sidebar-header">
+    <a class="ink-brand" href="https://kho.fedu.vn">LOGIC #420 • KHO LOGIC</a>
+  </div>
+  <details class="ink-toc-details" id="inkTocDetails" open>
+    <summary class="ink-toc-summary">
+      <span>📑 Mục lục &amp; Nhảy nhanh tới câu hỏi (5 câu)</span>
+      <span>▾</span>
+    </summary>
+    <div class="ink-toc-collapsible">
+      <div class="ink-search-box">
+        <input type="text" id="inkSearch" class="ink-search-input" placeholder="🔍 Lọc nhanh câu hỏi &amp; cơ chế..." onkeyup="filterTOC()">
+      </div>
+      <div class="ink-toc-title">BẢN ĐỒ &amp; BỘ THẺ NHẬN THỨC</div>
+      <ul class="ink-toc-list" id="inkTocList">
+            <li style="margin-top: 10px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-1-ban-do">Phần 1: Bản Đồ Nhận Thức</a>
+    </li>
+    <li style="margin-top: 14px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-2-bo-the">Phần 2: Bộ 5 Câu Hỏi-Đáp</a>
+    </li>
+    <ul class="ink-toc-list" style="padding-left: 10px;">
+    <li><a class="ink-toc-link" href="#q1">Câu 01. Tại sao nhịn ăn cắt calo lại nhanh đói và dễ...</a></li>
+    <li><a class="ink-toc-link" href="#q2">Câu 02. Làm sao rút bớt mỡ gan và giữ đầu óc tỉnh...</a></li>
+    <li><a class="ink-toc-link" href="#q3">Câu 03. Tại sao ăn vặt hay uống rượu tối lại gây mất...</a></li>
+    <li><a class="ink-toc-link" href="#q4">Câu 04. Tiêm thuốc giảm cân GLP-1 hay ăn đồ đóng gói có...</a></li>
+    <li><a class="ink-toc-link" href="#q5">Câu 05. Thiếu ngủ hay lo giảm trí nhớ thì uống creatine liều...</a></li>
+    </ul>
+      </ul>
+    </div>
+  </details>
+</aside>
+<main class="ink-main-wrapper">
+  <article class="ink-content ink-mode-dialogue">
+    <div class="ink-meta">
+      <span class="ink-badge">LOGIC #420</span>
+      <span>Nguyễn Việt</span>
+      <span>•</span>
+      <span>Cẩm Nang Nhận Thức</span>
+      <span>•</span>
+      <span>5 Câu Hỏi-Đáp Giải Mã Gốc</span>
+    </div>
+    <div class="ink-top-actions">
+      <button class="ink-copy-btn" onclick="copyAll()">📋 Sao Chép Toàn Bộ Cẩm Nang</button>
+      <a class="ink-yt-hero-btn" href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener">▶ Xem video YouTube gốc ↗</a>
+    </div>
+    <h1 class="is-long" id="top">Logic 420: Hạ insulin để rút mỡ gan và nuôi não bằng ketone</h1>
+    <p style="color: var(--ink-muted); font-size: 19px; line-height: 1.75; margin-bottom: 36px;">Bớt đường gan đốt mỡ thừa / Não tim đủ chất sớm trưa nhẹ nhàng — Giáo sư Benjamin Bikman phân tích cơ chế hạ insulin giúp xả mỡ gan, nuôi não bằng ketone và tránh bẫy mất cơ khi dùng thuốc giảm cân.</p>
+    <hr style="margin: 2.5rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-1-ban-do">
+      <h2>Mạch 1: Nhìn lại bản phân tích cũ và hướng đào sâu mới</h2>
+<blockquote class="ink-poem-quote"><p><em>Bản xưa dừng nửa lưng chừng</em><br/><em>Một giờ đoạn cuối chưa từng nhắc qua</em></p></blockquote>
+<p class="ink-flip-box"><strong>Đào sâu bài nói không phải chép vài khẩu hiệu kêu tai, mà là kiểm chứng đủ số liệu đến phút cuối.</strong></p>
+<h3>Chỗ bản phân tích cũ còn lướt bề mặt</h3>
+<p>Bản tóm tắt cũ dài 1.947 chữ nhưng chỉ gắn các nhãn kêu như gọi insulin là chúa tể hay bảo đếm calo là lời nói dối. Trong cuộc trò chuyện, giáo sư Benjamin Bikman tại Đại học Brigham Young vẫn nói rõ calo có liên quan và người ăn thuần thực vật vẫn giảm được cân. Bài cũ còn tự bịa ví dụ so sánh 1.000 calo đường với thịt bò ngoài video và đổi hình ảnh kéo hành lý thành kéo bao tải sắt. Đáng tiếc nhất, cả bài chỉ có 9 con số từ hai chữ số trở lên, thiếu sạch mốc thời gian và bỏ trắng hơn 60 phút cuối.</p>
+<h3>Cách đào sâu từ dữ kiện gốc trong video</h3>
+<p>Bản lưu kho mới nối liền hai giờ đối thoại giữa Steven Bartlett và nhà đồng sáng lập Insulin IQ qua ba cụm bằng chứng liền mạch. Mạch hai mổ xẻ cơ chế hạ insulin giúp rút 60% mỡ gan, đẩy tốc độ đốt năng lượng ở mô mỡ tăng gấp 3 lần và nuôi não, tim bằng ketone. Mạch ba bám sát lịch sinh hoạt từ 5 giờ sáng của Bikman, ca bất tỉnh vì u tuyến tụy, phép tính trộn vitamin B nuôi gia súc và rủi ro mất 40% cơ xương khi tiêm thuốc. Mạch bốn đi thẳng vào liều dùng bốn chất bổ trợ tự nhiên, ngưỡng xét nghiệm insulin lúc đói từ 7 trở xuống và tách bạch những nhận định video không dẫn nguồn.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (https://www.youtube.com/watch?v=C7LL7VwP8Nc) · 2026-01-08</li><li>💬 <strong>Bản giải phẫu gốc:</strong> <a href="https://fedu.vn/k/insulin-la-chua-te-cua-chuyen-hoa.html" target="_blank" rel="noopener" class="ink-ext-link">Đối chiếu bản phân tích cũ</a></li></ul></div></details></div>
+<h2>Mạch 2: Cơ chế hạ insulin để rút mỡ gan và nuôi não tim bằng ketone</h2>
+<blockquote class="ink-poem-quote"><p><em>Giọt hồng bấm thử đầu tay</em><br/><em>Mỡ tan nuôi não chẳng hay đói lòng</em></p></blockquote>
+<p class="ink-flip-box"><strong>Hạ thấp insulin sẽ mở khóa kho mỡ dưới da, buộc lá gan đốt mỡ thừa thành ketone nuôi não và tim.</strong></p>
+<h3>Cơn đói sau bữa giàu đường và giới hạn của việc hút mỡ</h3>
+<p>Theo nghiên cứu hai bữa đồng calo tại Đại học Harvard mà Bikman dẫn, bữa nhiều đường làm vọt insulin khiến máu cạn nguồn nuôi não. Vì não thiếu kho dự trữ, người ăn thấy đói cồn cào sau một đến hai giờ dù mô mỡ căng đầy. Bikman nêu ca hút 9 kg mỡ không hề giảm tiểu đường — video không dẫn nguồn, còn người tiểu đường tuýp 1 lại tăng 4,5 đến 7 kg mỡ sau vài ngày tiêm insulin. Nhờ bớt tinh bột và ăn đạm, mỡ khi đói, anh trai Bartlett đã giảm khoảng 7 kg theo lời Bikman kể.</p>
+<h3>Lá gan xả 60% mỡ và màn bấm máu thử ketone tại chỗ</h3>
+<p>Sau 16 giờ nhịn ăn để vào trạng thái sinh ketone (ketosis), mô mỡ bụng đốt năng lượng gấp 3 lần và giảm khoảng 60% mỡ gan sau một tuần theo Bikman nhớ lại. Tại bàn thu, Bartlett vốn là nhà đầu tư của Ketone-IQ đã uống một liều tiền chất ketone rồi bấm máu thấy chỉ số tăng từ 0,3 lên 0,5 sau 10 phút và đạt 0,9 sau 30 phút. Trên tim lợn, một dạng ketone làm giãn mạch lớn giúp tăng 40% máu bơm mỗi nhịp, giống lần Bikman uống thử thấy huyết áp hạ từ 139/90 xuống 110/70 dù chỉ là ca lẻ.</p>
+<h3>Chu kỳ nội tiết ở phụ nữ khi cắt giảm tinh bột</h3>
+<p>Bartlett kể anh từng đứng trước quầy bánh quế ở Cape Town mà tắt hẳn cơn thèm nhờ ketone cấp năng lượng đều cho não. Ở nửa đầu chu kỳ, phụ nữ có axit béo tự do cao hơn nam 40 đến 50% nên đốt mỡ nhanh hơn, và nghiên cứu 21 ngày tại Anh xác nhận cách ăn này không làm tăng cortisol. Tuy nhiên, sang nửa sau chu kỳ với nội tiết tố nữ tăng gấp 1.000 lần gây đói, phụ nữ nên nới lỏng bữa ăn thay vì ép nhịn.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (<a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=C7LL7VwP8Nc</a>) · 2026-01-08</li></ul></div></details></div>
+<h2>Mạch 3: Lịch sinh hoạt một ngày cùng mặt trái của vitamin B và thuốc tiêm</h2>
+<blockquote class="ink-poem-quote"><p><em>Năm giờ khoác tạ leo đồi</em><br/><em>Chiều vui bữa tối đêm thôi ăn quà</em></p></blockquote>
+<p class="ink-flip-box"><strong>Ngắt ăn vặt sau 18 giờ giúp yên giấc ngủ, còn lạm dụng thuốc tiêm hai năm làm mất 40% khối cơ xương.</strong></p>
+<h3>Nhịp sinh hoạt từ 5 giờ sáng và lệnh cấm ăn đêm</h3>
+<p>Mỗi 5 giờ sáng, Bikman khoác tạ gần 7 kg leo đồi 1,6 km mỗi chiều, ngâm nước đá rồi uống trà lá Nam Mỹ bỏ bữa sáng. Lúc 10 giờ 30, ông tập kháng lực bụng đói trừ trường hợp vận động viên thi đấu cần ăn trước, xông hơi 12 đến 15 phút rồi ăn trưa lớn giàu đạm, mỡ. Tối 17 đến 18 giờ, ông ăn thoải mái cùng nhà để các con gái không ám ảnh kiêng khem, rồi ngắt hẳn ăn vặt và rượu đêm gây mất ngủ, kháng insulin.</p>
+<h3>Nguy kịch vì u tuyến tụy và cơ chế bỏ đói tế bào ung thư</h3>
+<p>Bartlett đọc thư thính giả kể chồng bất tỉnh sau 8 giờ cắt tinh bột vì mắc bệnh u tuyến tụy tiết insulin (insulinoma). Bikman lưu ý người bệnh này cấm cắt tinh bột và có thể nhịn ăn 12 đến 24 giờ đo đường huyết tụt sâu để phát hiện sớm. Ngược lại, khối u thường bị hỏng ty thể nên sống nhờ đường, dù khi bàn chuyện này kênh của Bartlett từng bị đài BBC bắt bẻ 0,001% thời lượng thu âm.</p>
+<h3>Thừa vitamin B gây tích mỡ và cái giá của thuốc tiêm GLP-1</h3>
+<p>Theo ước tính Bikman nghe từ giới chăn nuôi, trộn vitamin B giúp vật nuôi chỉ tốn 2 thay vì 6 phần cám cho 1 phần tăng trọng. Do đó, bột mì đóng gói độn vitamin B gấp 2 đến 4 lần dễ làm người ăn tích mỡ. Bút tiêm GLP-1 giữ thức ăn ở dạ dày 24 giờ thay vì 4 đến 6 giờ, khiến sau hai năm có 70% người bỏ thuốc, tái thèm ngọt và mất 40% cơ xương. Bikman khuyên chỉ dùng liều thấp 90 ngày kèm học giảm tinh bột như phòng khám ở Idaho.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (<a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=C7LL7VwP8Nc</a>) · 2026-01-08</li></ul></div></details></div>
+<h2>Mạch 4: Bốn chất bổ trợ tự nhiên kèm ngưỡng xét nghiệm máu tự theo dõi</h2>
+<blockquote class="ink-poem-quote"><p><em>Nếm nhầm bột nở trên bàn</em><br/><em>Cánh tay dán máy thấy làn đường tăng</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chỉ khi giữ insulin lúc đói dưới mức 7 và uống đủ creatine, bạn mới bảo vệ bền cả cơ lẫn não.</strong></p>
+<h3>Cú nếm nhầm bột nở và cách giữ cơ khi cai thuốc tiêm</h3>
+<p>Tại bàn thu, Bartlett chấm tay nếm lọ bột dán nhãn đường hiếm allulose nhưng nhăn mặt vì ê kíp để nhầm bột nở đắng như thuốc tẩy. Bikman giải thích chất này không sinh calo mà xuống ruột kích thích tự tiết GLP-1 giống đạm collagen, giúp người dùng êm ái cai thuốc tiêm. Ngoài uống ketone để giữ nạc khi giảm cân, ông khuyên dùng dầu cá omega-3 vì cho rằng chất này giúp tăng cơ đáng kể — video không dẫn nguồn.</p>
+<h3>Liều creatine 10 đến 15 gam cho não và chỉ số xét nghiệm thận</h3>
+<p>Theo số liệu hai người trao đổi, uống 5 gam creatine mỗi sáng giúp tăng 10% sức mạnh, 15% công suất và giảm 20 đến 40% hư hại cơ. Tuy nhiên, muốn thấm sâu vào não giúp tỉnh táo khi thiếu ngủ và ngừa bệnh Alzheimer vốn gặp ở nữ gấp 2 đến 3 lần nam, liều cần đạt 10 đến 15 gam. Phụ nữ uống không lo thô cơ, chỉ cần tránh bột pha đường độn, còn creatinine cao ở thận là chất thải vô hại theo nghiên cứu dùng 20 gam suốt 5 năm.</p>
+<h3>Ngưỡng insulin dưới 7 và máy đo đường huyết dán tay 14 ngày</h3>
+<p>Để ngừa mất ngủ gây kháng insulin sau vài giờ, Bikman gợi ý dùng kẹo thảo dược ashwagandha tối và kể chuyện ngâm đá kèm tập giúp tăng gấp đôi testosterone nam — video không dẫn nguồn. Ông khuyên xét nghiệm máu để giữ insulin lúc đói từ 7 vi đơn vị/mililít trở xuống. Dán thêm máy đo đường huyết 14 ngày giá 500.000 đến 750.000 đồng, người đeo sẽ tự thấy món làm vọt đường đêm để sửa giấc ngủ. Cuối buổi, Bikman chọn giữ cuốn kinh thánh hằng ngày để nhắc mình làm chủ cơn nghiện thân xác.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (<a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=C7LL7VwP8Nc</a>) · 2026-01-08</li></ul></div></details></div>
+    </section>
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-2-bo-the">
+      <h2 id="phan-2">PHẦN 2: BỘ 5 CÂU HỎI-ĐÁP GIẢI MÃ TỪ GỐC</h2>
+      
+<div class="dialogue-turn" id="q1">
+  <h3 class="dialogue-prompt">❓ Câu #01 — Tại sao nhịn ăn cắt calo lại nhanh đói và dễ béo lại?</h3>
+  <div class="dialogue-response">
+    <blockquote class="ink-poem-quote"><p><em>Cơm đường vừa nuốt khỏi môi</em><br/><em>Mỡ đầy mà bụng đứng ngồi chẳng yên</em></p></blockquote>
+<p class="ink-flip-box"><strong>Giảm mỡ bền không phải ép xác nhịn đói đếm calo, mà là hạ thấp insulin để mở khóa kho mỡ.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Bữa giàu đường cất sạch năng lượng máu:</strong> Ăn nhiều đường và tinh bột làm insulin vọt lên, dồn năng lượng trong máu cất thẳng vào mô mỡ và gan.</li>
+<li><strong>Bước 2 — Não thiếu chất nên giục ăn sớm:</strong> Vì não không có kho dự trữ riêng và gan bị chặn tạo ketone, người ăn đói cồn cào chỉ sau 1 đến 2 giờ.</li>
+<li><strong>Bước 3 — Hạ insulin để đốt mỡ tự nhiên:</strong> Cắt tinh bột và ăn chất đạm, mỡ giúp hạ insulin, giống anh trai Bartlett giảm nhẹ nhàng 7 kg (chuyện đầy đủ ở Mạch 2).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Cắt bỏ bánh ngọt, nước đường trong 2 bữa sáng và trưa để giữ đường huyết êm suốt ngày làm việc.</li>
+<li>Chuẩn bị 1 suất ăn trưa giàu đạm, mỡ từ thịt, cá, trứng khoảng 50.000 đến 80.000 đồng để no lâu đến chiều (gợi ý áp dụng).</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (<a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=C7LL7VwP8Nc</a>) · 2026-01-08</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q2">
+  <h3 class="dialogue-prompt">❓ Câu #02 — Làm sao rút bớt mỡ gan và giữ đầu óc tỉnh táo buổi chiều?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Nhịn ăn đủ 16 giờ giúp lá gan bắt đầu đốt mỡ tạo ketone và giảm tới 60% mỡ gan sau một tuần.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Tế bào mỡ xả hàng về gan:</strong> Khi ngưng nạp tinh bột hoặc nhịn ăn khoảng 16 giờ, insulin hạ thấp buộc mô mỡ dưới da tách mỡ đưa về gan.</li>
+<li><strong>Bước 2 — Gan biến mỡ thừa thành nhiên liệu não:</strong> Thiếu insulin nên gan không thể tích trữ mà phải đốt mỡ liên tục, tạo ra ketone cấp nguồn nuôi đều đặn cho não và tim.</li>
+<li><strong>Bước 3 — Lắng nghe nửa sau chu kỳ nữ:</strong> Sau rụng trứng nội tiết tố tăng 1.000 lần gây đói nên nữ cần nới bữa, còn Bartlett bấm máu thấy ketone lên 0,9 (chuyện đầy đủ ở Mạch 2).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Ngưng ăn từ 18 giờ tối đến 10 giờ sáng hôm sau để đủ 16 giờ cho gan tự đốt mỡ tạo ketone.</li>
+<li>Pha 1 bình trà lá không đường khoảng 10.000 đồng nhấp buổi sáng thay cho bữa sáng nhiều bột đường (gợi ý áp dụng).</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (<a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=C7LL7VwP8Nc</a>) · 2026-01-08</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q3">
+  <h3 class="dialogue-prompt">❓ Câu #03 — Tại sao ăn vặt hay uống rượu tối lại gây mất ngủ, tích mỡ?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Ăn ngọt và uống rượu đêm bật hệ thần kinh căng thẳng, phá giấc ngủ rồi gây kháng insulin sáng hôm sau.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Đường đêm làm tim đập nhanh:</strong> Ăn vặt đồ ngọt tối làm vọt đường huyết, bật hệ thần kinh báo động khiến tim đập mạnh và nóng bức lúc lên giường.</li>
+<li><strong>Bước 2 — Rượu phá giấc ngủ sâu:</strong> Rượu chỉ gây buồn ngủ giả lúc đầu nhưng làm chập chờn cả đêm, khiến sáng dậy mệt mỏi, tăng cortisol và dễ tích mỡ.</li>
+<li><strong>Bước 3 — Ngoại lệ cấm cắt tinh bột:</strong> Người mắc u tuyến tụy tiết insulin (insulinoma) buộc phải ăn tinh bột, như ca chồng khán giả bất tỉnh sau 8 giờ (chuyện đầy đủ ở Mạch 3).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Khóa sổ bữa tối cùng gia đình trước 18 giờ và dẹp sạch bánh kẹo, bia rượu sau 19 giờ mỗi đêm.</li>
+<li>Dán 1 máy đo đường huyết liên tục 14 ngày giá 500.000 đến 750.000 đồng để tự thấy món làm vọt đường đêm (gợi ý áp dụng).</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (<a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=C7LL7VwP8Nc</a>) · 2026-01-08</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q4">
+  <h3 class="dialogue-prompt">❓ Câu #04 — Tiêm thuốc giảm cân GLP-1 hay ăn đồ đóng gói có rủi ro gì?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Chỉ khi dùng GLP-1 liều thấp 90 ngày kèm học bớt tinh bột, bạn mới cai thèm ngọt mà giữ được cơ.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Dạng 1 — Lạm dụng bút tiêm gây hao cơ xương:</strong> Tiêm GLP-1 giữ thức ăn ở dạ dày 24 giờ; sau 2 năm có 70% người bỏ thuốc, tái thèm ngọt và mất 40% khối nạc.</li>
+<li><strong>Dạng 2 — Đồ đóng gói thừa vitamin B:</strong> Bột mì đóng gói độn vitamin B gấp 2 đến 4 lần làm tế bào cất mỡ quá nhạy, giống trại vỗ béo gia súc (chuyện đầy đủ ở Mạch 3).</li>
+<li><strong>Dạng 3 — Tăng tiết tự nhiên dưới ruột:</strong> Đường hiếm allulose và đạm collagen xuống ruột kích thích tự tiết GLP-1 êm ái mà không gây ứ thức ăn hay buồn nôn.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Giảm mua bánh mì gói, ngũ cốc hộp độn vitamin B gấp 2 đến 4 lần và đổi sang thịt, trứng tươi khoảng 70.000 đồng mỗi ngày (gợi ý áp dụng).</li>
+<li>Hòa 1 đến 2 thìa đạm collagen hoặc đường hiếm allulose vào trà sáng để bớt thèm ngọt tự nhiên trước khi nghĩ tới thuốc tiêm.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (<a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=C7LL7VwP8Nc</a>) · 2026-01-08</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q5">
+  <h3 class="dialogue-prompt">❓ Câu #05 — Thiếu ngủ hay lo giảm trí nhớ thì uống creatine liều bao nhiêu?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Uống 5 gam creatine mỗi sáng chỉ đủ cho cơ, còn muốn thấm vào não bộ phải dùng 10 đến 15 gam.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Tái tạo nhanh năng lượng tế bào:</strong> Creatine bù gốc năng lượng giúp rút ngắn quãng nghỉ giữa các hiệp tập và giữ đầu óc nhạy bén những hôm thiếu ngủ.</li>
+<li><strong>Bước 2 — Bảo vệ não nữ không lo thô cơ:</strong> Phụ nữ bị suy giảm trí nhớ tuổi già gấp 2 đến 3 lần nam nên cần liều cao, và nữ thiếu nội tiết tố làm to cơ.</li>
+<li><strong>Bước 3 — Hiểu đúng chất thải qua thận:</strong> Mức creatinine cao khi xét nghiệm máu như trường hợp của Bartlett chỉ là chất thải vô hại sau khi uống creatine (chuyện đầy đủ ở Mạch 4).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Pha 10 gam bột creatine nguyên chất không đường độn vào nước lọc uống mỗi sáng, chi phí khoảng 10.000 đến 15.000 đồng (gợi ý áp dụng).</li>
+<li>Đặt xét nghiệm chỉ số insulin máu lúc đói khoảng 100.000 đến 150.000 đồng tại phòng khám để kiểm tra ngưỡng an toàn từ 7 trở xuống (gợi ý áp dụng).</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Benjamin Bikman (<a href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=C7LL7VwP8Nc</a>) · 2026-01-08</li></ul></div></details></div>
+  </div>
+</div>
+    </section>
+    
+    <hr style="margin: 3rem 0 1.5rem; border: none; border-top: 2px solid var(--ink-border);"/>
+    <details class="ink-provenance" id="nguon-boi-canh">
+      <summary class="ink-prov-summary">
+        <span class="ink-prov-context">📌 <strong>Hồ sơ nguồn &amp; Truy vết bối cảnh (Logic #420)</strong> — The Diary Of A CEO — Insulin Expert: How To &#x27;Drain&#x27; Your Liver of Fat (Do This!) · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener">Xem trên YouTube ↗</a></span>
+        <span class="ink-prov-toggle">Chi tiết nguồn <span class="ink-prov-arrow">▾</span></span>
+      </summary>
+      <div class="ink-prov-extra">
+        <ul>
+          <li>🎙️ <strong>Nguồn Podcast / Video gốc:</strong> The Diary Of A CEO — Insulin Expert: How To &#x27;Drain&#x27; Your Liver of Fat (Do This!) · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=C7LL7VwP8Nc" target="_blank" rel="noopener">Xem trên YouTube ↗</a></li>
+          <li>💬 <strong>Bản giải phẫu hội thoại gốc:</strong> <a class="ink-ext-link" href="https://accounts.google.com/AccountChooser?Email=vietnd6%40gmail.com&amp;continue=https%3A%2F%2Fgemini.google.com%2Fapp%2Ffc5a4609783d94fb%3Fauthuser%3Dvietnd6%2540gmail.com" target="_blank" rel="noopener">Mở luồng Gemini gốc (vietnd6) ↗</a></li>
+          <li>🧭 <strong>Kho lưu trữ:</strong> <a class="ink-ext-link" href="https://kho.fedu.vn" target="_blank" rel="noopener">kho.fedu.vn</a> · <a class="ink-ext-link" href="https://fedu.vn/k/logic420.html">fedu.vn/k/logic420.html</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+</main>
+<script>
+  function filterTOC() {
+    var input = document.getElementById('inkSearch');
+    var filter = input.value.toLowerCase();
+    var ul = document.getElementById('inkTocList');
+    var li = ul.getElementsByTagName('li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].getElementsByTagName('a')[0];
+      if (a) {
+        var txtValue = a.textContent || a.innerText;
+        li[i].style.display = (txtValue.toLowerCase().indexOf(filter) > -1) ? '' : 'none';
+      }
+    }
+  }
+  function copyAll() {
+    var content = document.querySelector('.ink-content').innerText;
+    navigator.clipboard.writeText(content);
+  }
+  (function initMobileTOC() {
+    var details = document.getElementById('inkTocDetails');
+    if (!details) return;
+    if (window.innerWidth <= 860) {
+      details.removeAttribute('open');
+    }
+    var links = details.querySelectorAll('a.ink-toc-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        if (window.innerWidth <= 860) {
+          details.removeAttribute('open');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
