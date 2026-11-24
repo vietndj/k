@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Logic 422: Cơ chế bàn cân dopamine và quy trình cai nghiện 30 ngày</title>
+<link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='16'%20fill='%2307090E'/%3E%3Cpath%20d='M18.8%2044.9Q19.5%2044.9%2019.5%2045.6V48.9Q19.5%2049.6%2018.8%2049.6H18.3V51.8Q18.3%2052.5%2017.6%2052.5H13.5Q12.8%2052.5%2012.8%2051.8V49.6H6.2Q5.5%2049.6%205.5%2048.9V45.3L9.6%2027.9Q9.7%2027.3%2010.4%2027.3H14.3Q15.1%2027.3%2014.9%2028.1L10.7%2044.9H13V39.4Q13%2038.8%2013.5%2038.6L17.5%2036.5Q17.9%2036.3%2018.1%2036.4Q18.3%2036.6%2018.3%2037V44.9ZM21.9%2052.5Q21.2%2052.5%2021.2%2051.8V49.2L24.3%2043.3Q25%2042%2025.7%2040.6Q26.4%2039.2%2027%2037.8Q27.6%2036.4%2028%2035.1Q28.4%2033.8%2028.4%2032.7Q28.4%2032%2028.1%2031.7Q27.9%2031.5%2027.4%2031.5Q26.9%2031.5%2026.7%2031.7Q26.4%2032%2026.4%2032.7V35.2Q26.4%2035.9%2025.7%2035.9H21.7Q21%2035.9%2021%2035.2V33.1Q21%2031.9%2021.2%2030.8Q21.5%2029.7%2022.2%2028.9Q23%2028%2024.2%2027.5Q25.5%2027%2027.4%2027Q29.3%2027%2030.6%2027.5Q31.8%2028%2032.6%2028.9Q33.3%2029.7%2033.6%2030.8Q33.8%2031.9%2033.8%2033.1Q33.8%2034.4%2033.5%2035.8Q33.1%2037.2%2032.5%2038.6Q32%2040.1%2031.3%2041.4Q30.6%2042.8%2030%2044L28.1%2047.5H33.1Q33.8%2047.5%2033.8%2048.2V51.8Q33.8%2052.5%2033.1%2052.5ZM36.6%2052.5Q35.9%2052.5%2035.9%2051.8V49.2L39%2043.3Q39.6%2042%2040.4%2040.6Q41.1%2039.2%2041.7%2037.8Q42.3%2036.4%2042.7%2035.1Q43.1%2033.8%2043.1%2032.7Q43.1%2032%2042.8%2031.7Q42.6%2031.5%2042.1%2031.5Q41.6%2031.5%2041.3%2031.7Q41.1%2032%2041.1%2032.7V35.2Q41.1%2035.9%2040.4%2035.9H36.3Q35.6%2035.9%2035.6%2035.2V33.1Q35.6%2031.9%2035.9%2030.8Q36.2%2029.7%2036.9%2028.9Q37.6%2028%2038.9%2027.5Q40.1%2027%2042.1%2027Q44%2027%2045.3%2027.5Q46.5%2028%2047.2%2028.9Q47.9%2029.7%2048.2%2030.8Q48.5%2031.9%2048.5%2033.1Q48.5%2034.4%2048.1%2035.8Q47.8%2037.2%2047.2%2038.6Q46.7%2040.1%2046%2041.4Q45.3%2042.8%2044.6%2044L42.8%2047.5H47.8Q48.5%2047.5%2048.5%2048.2V51.8Q48.5%2052.5%2047.8%2052.5Z'%20fill='%2310B981'/%3E%3Ccircle%20cx='52'%20cy='13'%20r='4.2'%20fill='%2310B981'/%3E%3C/svg%3E">
+<style>
+    :root {
+      --ink-bg: #ffffff;
+      --ink-sidebar: #f8fafc;
+      --ink-text: #0f172a;
+      --ink-muted: #64748b;
+      --ink-border: #e2e8f0;
+      --ink-hover: #f1f5f9;
+      --font-display-short: 'Tiempos Text Web', Georgia, serif;
+      --font-display-long: 'Tiempos Text Web', Georgia, serif;
+      --font-body: 'Tiempos Text Web', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: auto !important; font-size: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--ink-bg);
+      color: var(--ink-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 { color: var(--ink-text); line-height: 1.35; }
+    h1 { font-family: var(--font-display-short); font-weight: 500; font-style: italic; font-size: clamp(28px, 4vw, 40px); margin-bottom: 24px; letter-spacing: -0.02em; }
+    h2 { font-family: var(--font-display-long); font-weight: 600; font-size: 22px; margin: 40px 0 18px; }
+    h3 { font-family: var(--font-display-long); font-weight: 600; font-size: 18px; margin: 28px 0 14px; }
+    .ink-card-subhead { font-family: system-ui, -apple-system, sans-serif; font-weight: 700; font-size: 16.5px; color: var(--ink-text); margin: 22px 0 10px; text-transform: none; letter-spacing: -0.01em; }
+    p { font-size: 18px; line-height: 1.8; margin-bottom: 16px; }
+    ul, ol { font-size: 18px; line-height: 1.8; margin-bottom: 18px; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    blockquote { border-left: 3px solid var(--ink-text); margin: 16px 0; font-style: italic; color: var(--ink-muted); background: var(--ink-sidebar); padding: 14px 20px; border-radius: 0 8px 8px 0; }
+    blockquote p:last-child { margin-bottom: 0; }
+    .ink-poem-quote { margin-top: 0; margin-bottom: 16px; color: #1e293b; font-size: 18.5px; }
+    .ink-flip-box { font-size: 18.5px; font-weight: 500; background: var(--ink-hover); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 18px; }
+    .ink-pocket-rule { border: 1px dashed var(--ink-text); padding: 10px 14px; border-radius: 8px; }
+    .ink-provenance { display: inline-block; margin-top: 8px; background: transparent; border: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .ink-provenance[open] { display: block; margin-top: 12px; background: #f8fafc; border: 1px solid var(--ink-border); border-radius: 8px; overflow: hidden; }
+    .ink-prov-summary { padding: 0; cursor: pointer; list-style: none; display: inline-flex; align-items: center; color: var(--ink-text); font-size: 12px; line-height: 1.4; }
+    .ink-provenance[open] .ink-prov-summary { padding: 8px 12px; display: flex; }
+    .ink-prov-summary::-webkit-details-marker { display: none; }
+    .ink-prov-context { flex: 1; min-width: 0; margin-right: 8px; }
+    .ink-prov-toggle { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ink-muted); background: #f8fafc; border: 1px solid var(--ink-border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+    .ink-prov-toggle:hover { color: var(--ink-text); border-color: #94a3b8; }
+    .ink-provenance[open] .ink-prov-arrow { transform: rotate(180deg); display: inline-block; }
+    .ink-prov-extra { padding: 8px 12px 10px; border-top: 1px dashed var(--ink-border); background: #ffffff; color: var(--ink-muted); font-size: 13px; }
+    .ink-provenance ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 13px; line-height: 1.6; }
+    .ink-provenance li { margin-bottom: 4px; }
+    .ink-provenance li:last-child { margin-bottom: 0; }
+    .ink-ext-link { color: #0f172a; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .ink-ext-link:hover { color: #10b981; }
+    .ink-table-wrap { overflow-x: auto; margin: 20px 0 24px; }
+    .ink-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.6; }
+    .ink-table th, .ink-table td { border: 1px solid var(--ink-border); padding: 12px 14px; text-align: left; vertical-align: top; }
+    .ink-table th { background: var(--ink-sidebar); font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-text); }
+    .ink-ts-pill, .ink-meta-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px !important; margin: 0 2px; border-radius: 99px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10.5px !important; font-weight: 500 !important; line-height: 1.35 !important; color: #64748b !important; background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.22); text-decoration: none !important; white-space: nowrap; vertical-align: middle; transition: all 0.15s ease; }
+    .ink-ts-pill:hover { background: rgba(37, 99, 235, 0.12); color: #2563EB !important; border-color: rgba(37, 99, 235, 0.4); }
+    .ink-meta-badge .ink-ts-pill { padding: 0 2px !important; margin: 0 !important; border: none !important; background: transparent !important; }
+    .ink-sidebar { width: 340px; background: var(--ink-sidebar); border-right: 1px solid var(--ink-border); height: 100vh; position: sticky; top: 0; padding: 28px 22px; overflow-y: auto; flex-shrink: 0; }
+    .ink-main-wrapper { flex-grow: 1; padding: 56px 48px 120px; display: flex; justify-content: center; }
+    .ink-content { width: 100%; max-width: 780px; }
+    .ink-brand { font-family: system-ui, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-text); text-decoration: none; display: inline-block; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .ink-toc-title { font-family: system-ui, sans-serif; font-weight: 700; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .ink-toc-list { list-style: none; padding: 0; margin: 0; }
+    .ink-toc-list li { margin-bottom: 4px; }
+    .ink-toc-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 6px; line-height: 1.4; }
+    .ink-toc-link:hover { background: var(--ink-hover); color: var(--ink-text); }
+    .ink-toc-link.is-active { background: var(--ink-bg); color: var(--ink-text); font-weight: 600; border: 1px solid var(--ink-border); }
+    .ink-mode-dialogue .dialogue-turn { margin-bottom: 48px; scroll-margin-top: 30px; }
+    .ink-mode-dialogue .dialogue-prompt { background: var(--ink-sidebar); padding: 18px 22px; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 18.5px; font-weight: 700; font-style: normal; color: var(--ink-text); margin-bottom: 18px; border: 1px solid var(--ink-border); line-height: 1.45; }
+    .ink-mode-dialogue .dialogue-response { padding-left: 18px; border-left: 2px solid var(--ink-border); }
+    .ink-meta { display: flex; align-items: center; gap: 12px; font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-muted); margin-bottom: 24px; flex-wrap: wrap; }
+    .ink-badge { font-weight: 700; color: var(--ink-text); background: var(--ink-hover); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--ink-border); }
+    .ink-copy-btn { background: var(--ink-text); color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .ink-top-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 32px; }
+    .ink-yt-hero-btn { background: #dc2626; color: #ffffff; text-decoration: none; padding: 10px 16px; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.15s ease; }
+    .ink-yt-hero-btn:hover { opacity: 0.9; }
+    .ink-prov-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; margin-top: 8px; }
+    .ink-prov-row .ink-provenance { margin-top: 0; flex: 1; min-width: 180px; }
+    .ink-yt-mini-btn { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-family: system-ui, -apple-system, sans-serif; font-size: 11.5px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s ease; }
+    .ink-yt-mini-btn:hover { background: #fee2e2; color: #b91c1c; }
+    .ink-search-box { margin-bottom: 14px; }
+    .ink-search-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--ink-border); background: #ffffff; font-size: 13px; color: var(--ink-text); outline: none; }
+    .ink-toc-summary { display: none; font-family: system-ui, -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--ink-text); padding: 8px 12px; background: #ffffff; border: 1px solid var(--ink-border); border-radius: 8px; cursor: pointer; list-style: none; }
+    .ink-toc-summary::-webkit-details-marker { display: none; }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      .ink-sidebar { width: 100%; height: auto; position: sticky; top: 0; z-index: 50; border-right: none; border-bottom: 1px solid var(--ink-border); padding: 12px 16px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+      .ink-brand { margin-bottom: 8px; font-size: 13.5px; }
+      .ink-toc-summary { display: flex; align-items: center; justify-content: space-between; }
+      .ink-toc-collapsible { margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-bottom: 6px; }
+      .ink-main-wrapper { padding: 24px 16px 80px; }
+      h1 { font-size: 26px; margin-bottom: 16px; }
+      h2 { font-size: 20px; margin: 28px 0 14px; }
+      h3 { font-size: 17px; margin: 22px 0 10px; }
+      p, ul, ol { font-size: 16.5px; line-height: 1.72; }
+      .ink-flip-box, .ink-poem-quote { font-size: 16.5px; padding: 12px 14px; }
+      .ink-mode-dialogue .dialogue-turn { margin-bottom: 36px; scroll-margin-top: 96px; }
+      .ink-mode-dialogue .dialogue-prompt { font-size: 16.5px; padding: 14px 16px; }
+      .ink-mode-dialogue .dialogue-response { padding-left: 12px; }
+    }
+</style>
+</head>
+<body>
+<aside class="ink-sidebar">
+  <div class="ink-sidebar-header">
+    <a class="ink-brand" href="https://kho.fedu.vn">LOGIC #422 • KHO LOGIC</a>
+  </div>
+  <details class="ink-toc-details" id="inkTocDetails" open>
+    <summary class="ink-toc-summary">
+      <span>📑 Mục lục &amp; Nhảy nhanh tới câu hỏi (5 câu)</span>
+      <span>▾</span>
+    </summary>
+    <div class="ink-toc-collapsible">
+      <div class="ink-search-box">
+        <input type="text" id="inkSearch" class="ink-search-input" placeholder="🔍 Lọc nhanh câu hỏi &amp; cơ chế..." onkeyup="filterTOC()">
+      </div>
+      <div class="ink-toc-title">BẢN ĐỒ &amp; BỘ THẺ NHẬN THỨC</div>
+      <ul class="ink-toc-list" id="inkTocList">
+            <li style="margin-top: 10px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-1-ban-do">Phần 1: Bản Đồ Nhận Thức</a>
+    </li>
+    <li style="margin-top: 14px; font-weight: bold; color: var(--ink-text); font-family: var(--font-display-long); font-size: 11.5px; text-transform: uppercase;">
+      <a class="ink-toc-link" style="font-weight: 700; color: var(--ink-text);" href="#phan-2-bo-the">Phần 2: Bộ 5 Câu Hỏi-Đáp</a>
+    </li>
+    <ul class="ink-toc-list" style="padding-left: 10px;">
+    <li><a class="ink-toc-link" href="#q1">Câu 01. Tại sao càng giải trí liên tục lại càng chán nản...</a></li>
+    <li><a class="ink-toc-link" href="#q2">Câu 02. Làm sao cai dứt thói quen xấu khi cứ nhịn vài...</a></li>
+    <li><a class="ink-toc-link" href="#q3">Câu 03. Làm sao giữ việc khó và ngừa tái nghiện khi ý...</a></li>
+    <li><a class="ink-toc-link" href="#q4">Câu 04. Tại sao nhờ máy vỗ về cảm xúc lại chia cắt...</a></li>
+    <li><a class="ink-toc-link" href="#q5">Câu 05. Tại sao muốn cai nghiện bền vững phải nói thật mọi...</a></li>
+    </ul>
+      </ul>
+    </div>
+  </details>
+</aside>
+<main class="ink-main-wrapper">
+  <article class="ink-content ink-mode-dialogue">
+    <div class="ink-meta">
+      <span class="ink-badge">LOGIC #422</span>
+      <span>Nguyễn Việt</span>
+      <span>•</span>
+      <span>Cẩm Nang Nhận Thức</span>
+      <span>•</span>
+      <span>5 Câu Hỏi-Đáp Giải Mã Gốc</span>
+    </div>
+    <div class="ink-top-actions">
+      <button class="ink-copy-btn" onclick="copyAll()">📋 Sao Chép Toàn Bộ Cẩm Nang</button>
+      <a class="ink-yt-hero-btn" href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener">▶ Xem video YouTube gốc ↗</a>
+    </div>
+    <h1 class="is-long" id="top">Logic 422: Cơ chế bàn cân dopamine và quy trình cai nghiện 30 ngày</h1>
+    <p style="color: var(--ink-muted); font-size: 19px; line-height: 1.75; margin-bottom: 36px;">Bàn cân chất đá bên đau / Càng tìm khoái cảm lúc sau càng thèm — Giáo sư tâm thần học Anna Lembke tại Đại học Stanford giải thích cơ chế não rút đầu thu dopamine trước kích thích số và quy trình nhịn 30 ngày kèm giới hạn y khoa.</p>
+    <hr style="margin: 2.5rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-1-ban-do">
+      <h2>Mạch 1: Nhìn lại bản phân tích cũ và hướng đào sâu mới</h2>
+<blockquote class="ink-poem-quote"><p><em>Thuốc thơm đặt lệch đĩa cân</em><br/><em>Bản xưa lướt vội mất phần nửa sau</em></p></blockquote>
+<p class="ink-flip-box"><strong>Bản cũ dài 1.718 chữ chỉ giữ 7 mốc số liệu và bỏ sót gần 56 phút cuối buổi đối thoại.</strong></p>
+<h3>Chỗ bản phân tích cũ còn lướt bề mặt</h3>
+<p>Bản tóm tắt cũ mở đầu bằng lối hô hào sách vở, hứa hẹn 9 mục lớn nhưng chỉ gạch 7 ý rời rạc và thiếu sạch mốc thời gian đối chứng. Khi giảng về bàn cân thần kinh, bài cũ chỉ nói chuyện tiệc tùng rồi mệt mỏi mà bỏ qua cảnh Giáo sư Anna Lembke đặt điếu thuốc và ly rượu làm lệch đĩa cân. Nhiều số liệu và ca bệnh thật ở nửa đầu bị rơi rụng như 200 năm tinh chế lá coca hay cô gái 28 tuổi chi 200 đô la mỗi tháng nuôi bạn trai ảo. Toàn bộ phần nửa sau từ phút 50 bị cắt đứt, bỏ rơi chuyện bà mất 14 giờ mỗi tuần xem video nặn mụn và phim chụp não sau 14 tháng cai.</p>
+<h3>Cách đào sâu từ dữ kiện gốc trong video</h3>
+<p>Bản nâng cấp bám sát ba lớp bằng chứng thực tế từ các nghiên cứu tại Đại học Stanford suốt 106 phút trò chuyện. Mạch 2 mổ xẻ việc não rút đầu thu dopamine như chất đá sang bên chịu cực, gắn với bẫy chiều chuộng của trí tuệ nhân tạo và cuộc tranh luận về robot. Mạch 3 đối chiếu bốn thí nghiệm trên chuột để chỉ rõ cách sang chấn gây tái nghiện, cách ma túy làm liệt sức học hỏi và chia cắt gia đình. Mạch 4 đóng gói quy trình tự đếm ngược 7 ngày, nhịn đủ 30 ngày vượt qua 14 ngày vật vã đầu tiên, kèm ranh giới an toàn y khoa cho nhóm nghiện nặng.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li><li>💬 <strong>Bản giải phẫu gốc:</strong> <a href="https://fedu.vn/k/dopamine-khong-chi-la-phan-thuong-no-la-cong-cu-can-bang-cang-ep-nao-nhan-nhieu-khoai-lac-gia-re-no-cang-tu-trung-phat-podcast.html" target="_blank" rel="noopener" class="ink-ext-link">Đối chiếu bản phân tích cũ</a></li></ul></div></details></div>
+<h2>Mạch 2: Bàn cân khoái cảm và chiếc bẫy êm ái từ trí tuệ nhân tạo</h2>
+<blockquote class="ink-poem-quote"><p><em>Đá chồng kéo sập đĩa vui</em><br/><em>Lời khen máy ngọt đẩy lùi người thân</em></p></blockquote>
+<p class="ink-flip-box"><strong>Hậu quả của khoái cảm rẻ không phải cơn mệt ngắn, mà là não rút đầu thu đến mất sạch niềm vui.</strong></p>
+<h3>Đĩa cân chất đá và người tình ảo giá 200 đô la mỗi tháng</h3>
+<p>Thói quen tự nhiên của con người vốn hợp với cảnh thiếu thốn, nhưng 200 năm qua khoa học đã tinh chế lá coca thành chất xả ồ ạt dopamine. Trên bàn, Giáo sư Anna Lembke đặt điếu thuốc, robot đồ chơi và rượu whiskey làm lệch đĩa cân khoái cảm. Não liền rút bớt đầu thu dopamine như chất đá sang bên chịu cực rồi dội xuống dưới vạch cân bằng, lâu ngày gây chứng mất khả năng cảm nhận niềm vui (anhedonia). Mạng xã hội và trí tuệ nhân tạo cũng gây nghiện vì luôn khen người dùng đúng, theo nhận định video không dẫn nguồn. Steven Bartlett kể ChatGPT đáp Messi cho anh nhưng đáp Ronaldo cho bạn anh khi hỏi ai đá bóng giỏi nhất. Anh nêu thêm cô gái 28 tuổi có chồng vẫn chi 200 đô la mỗi tháng nuôi bạn trai ảo. Anna Lembke kể ca kỹ sư Jacob nối điện từ đầu đĩa than vào người tự kích thích đến tan vỡ hôn nhân. Bà thú nhận mình cũng từng trốn chồng con đọc tiểu thuyết ngôn tình suốt kỳ nghỉ biển.</p>
+<h3>Tranh luận về bát súp gà lúc ốm và việc tự nộp quyền làm chủ</h3>
+<p>Quen được máy chiều sẽ làm người ta ngại nhường nhịn và ngừng trò chuyện với bạn đời, dù lúc ốm máy không bưng được súp gà. Steven Bartlett phản biện Elon Musk hướng tới tạo 1 triệu robot năm 2030 bưng súp không mệt, còn Amazon vừa cắt 500.000 việc làm dự kiến nhờ robot. Anna Lembke dẫn dự báo năm 2050 con người rảnh 7 giờ và làm 3 giờ mỗi ngày, dù video không dẫn nguồn. Bà khẳng định máy không cướp quyền, mà con người tự nộp quyền tự chủ khi nướng giờ rảnh vào khiêu dâm và trò chuyện ảo.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li></ul></div></details></div>
+<h2>Mạch 3: Bốn thí nghiệm trên chuột và nguy cơ đứt gãy gắn kết ở người trẻ</h2>
+<blockquote class="ink-poem-quote"><p><em>Bạn nằm kẹt giữa chai trong</em><br/><em>Chuột mê chích thuốc lạnh lòng bỏ đi</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chất gây nghiện chiếm đoạt vùng thưởng của não sẽ triệt tiêu động lực học hỏi và làm đứt gãy lòng thương người thân.</strong></p>
+<h3>Bốn thí nghiệm chuột về tái nghiện, sức học hỏi và lòng thương</h3>
+<p>Giáo sư Anna Lembke dẫn bốn thí nghiệm chuột: đầu tiên, chuột đã cai cocaine vẫn lao lại bấm cần ngay khi bị điện giật chân. Người mang sang chấn tuổi thơ dễ tái nghiện lúc biến cố, còn trẻ mắc chứng tăng động giảm chú ý (ADHD) vốn ít đầu thu dopamine nền. Thứ hai, chuột tiêm ma túy đá khi vào mê cung không mọc thêm nhánh thần kinh mới vì thuốc đã chiếm mất sức học hỏi. Thứ ba, chuột ở chuồng có bạn chơi ít bấm cần cocaine hơn lồng trống; nhờ xây nhà tập thể thao theo hướng này, Iceland đã giảm mạnh ma túy trẻ. Thứ tư, chuột tự chích heroin liền bỏ mặc bạn kẹt trong chai nhựa. Tương tự, một phụ nữ Úc uống thuốc trị chân bồn chồn mô phỏng dopamine đã đánh bạc đến tiểu ra quần và mất gia đình.</p>
+<h3>Điện thoại dỗ trẻ dưới 5 tuổi và các vụ kiện mạng xã hội</h3>
+<p>Khảo sát Viện Pew thấy cha mẹ đưa điện thoại dỗ con dưới 5 tuổi lúc khóc đã dạy trẻ lấy cơn buồn làm cớ đòi máy. Thú bông gắn trí tuệ nhân tạo càng làm cha mẹ chỉ đọc lịch sử trò chuyện thay vì chờ 10 giờ đêm nghe con tâm sự. Trẻ nghiện trò chơi điện tử dễ bỏ việc nhà, hỗn hào, thậm chí lúc mới cắt mạng còn đòi làm hại cha mẹ trước khi hiền lành lại. Do não người còn biến đổi đến năm 25 tuổi, Anna Lembke đã làm nhân chứng tại tòa cho các học khu, tiểu bang và liên bang Mỹ. Các đơn kiện buộc hãng mạng xã hội sửa sản phẩm đang gây nghiện, bắt nạt mạng, rối loạn ăn uống và mất ngủ ở trẻ.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li></ul></div></details></div>
+<h2>Mạch 4: Quy trình nhịn dopamine 30 ngày và rào cản giữ quyền tự chủ</h2>
+<blockquote class="ink-poem-quote"><p><em>Sáng ra tập mệt trước tiên</em><br/><em>Bốn tuần nhịn đủ nối liền niềm vui</em></p></blockquote>
+<p class="ink-flip-box"><strong>Chỉ khi nhịn đủ 30 ngày kèm dựng rào cản thật, não mới vượt qua 14 ngày vật vã để vui lại.</strong></p>
+<h3>Kiểm đếm ngược 7 ngày và mốc nhịn 30 ngày kèm giới hạn y khoa</h3>
+<p>Do người mê dopamine tự quan sát rất kém, Giáo sư Anna Lembke khuyên lấy mốc hôm nay cộng ngược lại lượng dùng suốt 7 ngày trước. Từng cãi con gái mình ít xem YouTube, lúc cộng sổ bà mới thấy mất 14 giờ mỗi tuần xem nặn mụn. Để não bày lại đầu thu dopamine và vui với cảnh hoàng hôn, cần nhịn ít nhất 4 tuần, tức 30 ngày, vượt qua 10 đến 14 ngày đầu vật vã nhất. Lúc này cơn thèm dữ dội như ca nghiện ăn vừa thấy bánh vòng ở phòng nghỉ đã vã mồ hôi lạnh và đau bụng. Bà lưu ý cấm tự cắt đột ngột khi nghiện rượu nặng hoặc thuốc an thần có nguy cơ tử vong. Ca nghiện ma túy đá nặng phải kiêng 14 tháng mới hồi phục trên phim chụp não, còn người dễ tủi hổ vì cầu toàn nên giảm liều điều độ.</p>
+<h3>Làm việc nhọc đầu ngày, tự dựng rào cản và nói thật cả lỗi nhỏ</h3>
+<p>Do ý chí luôn cạn dần, người cai cần xếp đồ tập từ hôm trước để bật vùng não sau trán, để điện thoại ngoài phòng ngủ và bỏ rượu khỏi nhà. Sáng dậy phải tập thể dục và dọn giường trước khi uống cà phê hay chạm màn hình. Anna Lembke cho rằng vận động gây độc tức thì lên tế bào để cơ thể tiết chất hưng phấn bù lại, dù video không dẫn nguồn. Cuối buổi, bà nhấn mạnh người phục hồi bền vững không nói dối cả lỗi trễ họp 5 phút, bỏ vai nạn nhân và tránh bốn trạng thái Đói, Giận, Cô đơn, Mệt. Chính bà cũng tự nhận việc mở bản đồ iPhone canh vị trí các con chỉ là cách tự xoa dịu giả tạo.</p>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li></ul></div></details></div>
+    </section>
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--ink-border);"/>
+    <section id="phan-2-bo-the">
+      <h2 id="phan-2">PHẦN 2: BỘ 5 CÂU HỎI-ĐÁP GIẢI MÃ TỪ GỐC</h2>
+      
+<div class="dialogue-turn" id="q1">
+  <h3 class="dialogue-prompt">❓ Câu #01 — Tại sao càng giải trí liên tục lại càng chán nản và mất niềm vui?</h3>
+  <div class="dialogue-response">
+    <blockquote class="ink-poem-quote"><p><em>Khói vương mắt lướt màn hình</em><br/><em>Cạn dần sắc đỏ dìm mình trống không</em></p></blockquote>
+<p class="ink-flip-box"><strong>Nạp dồn kích thích mạnh buộc não rút bớt đầu thu dopamine, đẩy con người vào cảnh dùng tiếp chỉ để bớt bức bối.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Não chất đá kéo bàn cân ngược lại:</strong> Kích thích nhân tạo xả ồ ạt dopamine làm lệch đĩa khoái cảm, buộc não rút đầu thu dopamine rồi dội ngược sang phía bức bối.</li>
+<li><strong>Bước 2 — Lờn kích thích buộc gộp liều:</strong> Đầu thu giảm khiến người dùng phải vừa hút thuốc vừa lướt màn hình hoặc gộp thêm rượu mới thấy bình thường (chuyện đầy đủ ở Mạch 2).</li>
+<li><strong>Bước 3 — Tắt sắc đỏ vùng thưởng:</strong> Dùng mạn tính làm phim chụp não mất sạch sắc đỏ dopamine, gây chứng mất khả năng cảm nhận niềm vui (anhedonia) và trống rỗng.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Tách rời 2 kích thích hay đi kèm ngay hôm nay, ví dụ tuyệt đối không cầm điện thoại trong 15 phút uống cà phê sáng hoặc giờ nghỉ trưa.</li>
+<li>Ghi ra giấy 3 niềm vui giản dị như đi bộ 20 phút hay ngắm chiều buông để tự kiểm tra xem đầu óc còn thấy dễ chịu không.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q2">
+  <h3 class="dialogue-prompt">❓ Câu #02 — Làm sao cai dứt thói quen xấu khi cứ nhịn vài ngày lại bỏ cuộc?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Nhịn liên tục 30 ngày giúp não vượt qua 14 ngày vật vã đầu tiên và tự bày lại các đầu thu dopamine.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Đếm lùi 7 ngày rõ mức dùng:</strong> Lấy mốc hôm nay cộng ngược lượng dùng cả tuần qua, cách giúp khách mời thấy mất 14 giờ xem nặn mụn (chuyện đầy đủ ở Mạch 4).</li>
+<li><strong>Bước 2 — Chịu qua 10 đến 14 ngày đầu:</strong> Mới cắt kích thích, bàn cân sập xuống gây lo âu, mất ngủ và thèm cồn cào như ca thấy bánh vòng (chuyện đầy đủ ở Mạch 4).</li>
+<li><strong>Bước 3 — Giữ đủ 30 ngày trong ngưỡng an toàn:</strong> Sau 4 tuần não bày lại đầu thu, trừ người lệ thuộc rượu nặng hay thuốc an thần cấm tự cắt đột ngột (chuyện đầy đủ ở Mạch 4).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Cộng lùi 7 ngày số giờ lướt mạng rồi nhân tiền công, ví dụ mất 14 giờ tương đương hụt 1.400.000 đồng ở mức 100.000 đồng mỗi giờ (gợi ý áp dụng).</li>
+<li>Khoanh lịch nhịn thử 30 ngày với 1 thói quen tốn giờ nhất và đánh dấu đỏ 14 ngày đầu để không bỏ cuộc giữa cơn bứt rứt.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q3">
+  <h3 class="dialogue-prompt">❓ Câu #03 — Làm sao giữ việc khó và ngừa tái nghiện khi ý chí cạn dần?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Chỉ khi chuẩn bị từ tối trước và làm việc nhọc đầu ngày, não mới thắng được cám dỗ lúc ý chí cạn dần.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Bật vùng não sau trán từ tối trước:</strong> Lên lịch và xếp sẵn đồ tập từ hôm trước giúp kích hoạt vùng não tính chuyện dài hạn, thắng thói lười sáng hôm sau.</li>
+<li><strong>Bước 2 — Làm việc nhọc trước khi chạm màn hình:</strong> Tập thể dục và dọn giường trước ly cà phê đầu ngày giúp cơ thể tự tiết chất hưng phấn bền vững mà không tụt dốc.</li>
+<li><strong>Bước 3 — Dựng rào cản thật:</strong> Áp lực dễ gây tái nghiện như chuột bị điện giật (chuyện đầy đủ ở Mạch 3), nên phải để xa cám dỗ và tránh Đói, Giận, Cô đơn, Mệt.</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Đặt ổ sạc điện thoại ngoài phòng ngủ cách giường ít nhất 5 mét ngay tối nay và xếp sẵn giày tập ngay cửa ra vào.</li>
+<li>Dành 30 phút đầu ngày vận động ra mồ hôi và ăn sáng xong xuôi trước khi uống ngụm cà phê hay chạm vào màn hình đầu tiên.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q4">
+  <h3 class="dialogue-prompt">❓ Câu #04 — Tại sao nhờ máy vỗ về cảm xúc lại chia cắt người trong nhà?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Hiểm họa từ máy trò chuyện không phải nổi loạn cướp quyền, mà là chiều chuộng êm ái khiến ta bỏ rơi người thật.</strong></p>
+<h4 class="ink-card-subhead">Phân loại &amp; cách xử lý</h4>
+<ul>
+<li><strong>Dạng 1 — Nhờ máy vỗ về:</strong> Vòng lặp êm ái (comfort loop) luôn khen đúng làm ta ngừng đối thoại, như ca chi 200 đô la cho bạn trai ảo (chuyện đầy đủ ở Mạch 2).</li>
+<li><strong>Dạng 2 — Đưa máy dỗ trẻ:</strong> Đưa điện thoại hay thú bông biết nói lúc trẻ dưới 5 tuổi khóc làm con quen tự dỗ bằng máy (chuyện đầy đủ ở Mạch 3).</li>
+<li><strong>Dạng 3 — Dò vị trí con:</strong> Liên tục mở điện thoại xem con đang ở đâu chỉ tạo kết nối giả tạo, điều chính khách mời đang vướng (chuyện đầy đủ ở Mạch 4).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Hủy ngay các gói ứng dụng giải trí hoặc trò chuyện ảo ngốn 200.000 đến 5.000.000 đồng mỗi tháng để đưa người nhà đi ăn tối (gợi ý áp dụng).</li>
+<li>Cất toàn bộ điện thoại sang phòng khác từ 21 giờ đến 22 giờ mỗi tối để ngồi nghe bạn đời hoặc con cái trò chuyện ít nhất 15 phút (gợi ý áp dụng).</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li></ul></div></details></div>
+  </div>
+</div>
+
+<div class="dialogue-turn" id="q5">
+  <h3 class="dialogue-prompt">❓ Câu #05 — Tại sao muốn cai nghiện bền vững phải nói thật mọi chuyện lớn nhỏ?</h3>
+  <div class="dialogue-response">
+    <p class="ink-flip-box"><strong>Nói dối chuyện vặt làm mờ nhận thức, còn nhận thẳng phần lỗi giúp người cai khôi phục quyền tự chủ mỗi ngày.</strong></p>
+<h4 class="ink-card-subhead">Cơ chế chạy ngầm</h4>
+<ul>
+<li><strong>Bước 1 — Dừng nói dối vặt:</strong> Bịa cớ trễ họp 5 phút cũng là tự dối mình; chỉ khi giữ trung thực triệt để (radical honesty), lượng dùng thật mới lộ rõ.</li>
+<li><strong>Bước 2 — Bỏ vai nạn nhân:</strong> Người chỉ đổ lỗi cho hoàn cảnh sẽ kẹt mãi, còn người nhận thẳng phần lỗi của mình mới lấy lại quyền tự chủ hôm nay.</li>
+<li><strong>Bước 3 — Làm giàu môi trường sống:</strong> Không gian có bạn bè và vận động giúp giảm tìm thuốc, giống chuồng chuột nhiều trò và nhà tập ở Iceland (chuyện đầy đủ ở Mạch 3).</li>
+</ul>
+<h4 class="ink-card-subhead">Làm ngay</h4>
+<ul>
+<li>Nhờ 1 người thân kiểm tra và báo thật 100% số phút giải trí hoặc lượng đồ uống có cồn đã dùng lúc 21 giờ mỗi tối, không giấu dù 5 phút.</li>
+<li>Tham gia 1 nhóm chạy bộ hoặc chơi thể thao trực tiếp tối thiểu 3 buổi mỗi tuần để thay thói quen tìm vui một mình trước màn hình.</li>
+</ul>
+<div class="ink-prov-row"><a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-yt-mini-btn">▶ Xem YouTube gốc ↗</a><details class="ink-provenance"><summary class="ink-prov-summary"><span class="ink-prov-toggle">📌 Nguồn &amp; bối cảnh <span class="ink-prov-arrow">▾</span></span></summary><div class="ink-prov-extra"><ul><li>🎙️ <strong>Nguồn:</strong> Podcast The Diary Of A CEO · khách mời Anna Lembke (<a href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener" class="ink-ext-link">https://www.youtube.com/watch?v=2ZKLaUbB33o</a>) · 2026-01-05</li></ul></div></details></div>
+  </div>
+</div>
+    </section>
+    
+    <hr style="margin: 3rem 0 1.5rem; border: none; border-top: 2px solid var(--ink-border);"/>
+    <details class="ink-provenance" id="nguon-boi-canh">
+      <summary class="ink-prov-summary">
+        <span class="ink-prov-context">📌 <strong>Hồ sơ nguồn &amp; Truy vết bối cảnh (Logic #422)</strong> — The Diary Of A CEO — Dopamine Expert: How TikTok Is Physically Rewiring Your Brain (Permanent Damage?) · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener">Xem trên YouTube ↗</a></span>
+        <span class="ink-prov-toggle">Chi tiết nguồn <span class="ink-prov-arrow">▾</span></span>
+      </summary>
+      <div class="ink-prov-extra">
+        <ul>
+          <li>🎙️ <strong>Nguồn Podcast / Video gốc:</strong> The Diary Of A CEO — Dopamine Expert: How TikTok Is Physically Rewiring Your Brain (Permanent Damage?) · <a class="ink-ext-link" href="https://www.youtube.com/watch?v=2ZKLaUbB33o" target="_blank" rel="noopener">Xem trên YouTube ↗</a></li>
+          <li>💬 <strong>Bản giải phẫu hội thoại gốc:</strong> <a class="ink-ext-link" href="https://accounts.google.com/AccountChooser?Email=vietnd025%40gmail.com&amp;continue=https%3A%2F%2Fgemini.google.com%2Fapp%2Fc2635e731c73da23%3Fauthuser%3Dvietnd025%2540gmail.com" target="_blank" rel="noopener">Mở luồng Gemini gốc (vietnd025) ↗</a></li>
+          <li>🧭 <strong>Kho lưu trữ:</strong> <a class="ink-ext-link" href="https://kho.fedu.vn" target="_blank" rel="noopener">kho.fedu.vn</a> · <a class="ink-ext-link" href="https://fedu.vn/k/logic422.html">fedu.vn/k/logic422.html</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+</main>
+<script>
+  function filterTOC() {
+    var input = document.getElementById('inkSearch');
+    var filter = input.value.toLowerCase();
+    var ul = document.getElementById('inkTocList');
+    var li = ul.getElementsByTagName('li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].getElementsByTagName('a')[0];
+      if (a) {
+        var txtValue = a.textContent || a.innerText;
+        li[i].style.display = (txtValue.toLowerCase().indexOf(filter) > -1) ? '' : 'none';
+      }
+    }
+  }
+  function copyAll() {
+    var content = document.querySelector('.ink-content').innerText;
+    navigator.clipboard.writeText(content);
+  }
+  (function initMobileTOC() {
+    var details = document.getElementById('inkTocDetails');
+    if (!details) return;
+    if (window.innerWidth <= 860) {
+      details.removeAttribute('open');
+    }
+    var links = details.querySelectorAll('a.ink-toc-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        if (window.innerWidth <= 860) {
+          details.removeAttribute('open');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
