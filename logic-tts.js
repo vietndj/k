@@ -53,7 +53,8 @@
     t = t.replace(/https?:\/\/\S+/g, ' ');
     t = t.replace(/\[?\b\d{1,2}:\d{2}(?::\d{2})?\b\]?/g, ' ');
     t = t.replace(/[❓🎯🔬⚡💡📜📌🧭🔄▶↗▾★☆📋🔍📑💬🎙️📍🗺️🔥]+/g, ' ');
-    t = t.replace(/\bv\.v\.?/gi, 'vân vân').replace(/\bTP\./g, 'thành phố ').replace(/\bK4\b/g, 'ca bốn').replace(/\bBĐS\b/g, 'bất động sản');
+    t = t.replace(/#(?=\d)/g, '');
+    t = t.replace(/\bv\.v\.?/gi, 'vân vân').replace(/\bTP\./g, 'thành phố ').replace(/\bVD\b[:.]?/gi, 'ví dụ').replace(/\bK4\b/g, 'ca bốn').replace(/\bBĐS\b/g, 'bất động sản').replace(/\bCTA\b/g, 'kêu gọi hành động');
     t = t.replace(/[ \t\r]+/g, ' ');
     var lines = t.split('\n').map(function (ln) {
       return ln.replace(/^[ \t•-]+|[ \t•-]+$/g, '');
@@ -218,6 +219,7 @@
       chunkIdx: 0,
       rate: savedRate,
       usingSpeech: false,
+      playingAi: false,
       manifestLoaded: false
     };
 
@@ -272,10 +274,11 @@
       var cur = sections[state.secIdx];
       bar.hidden = !state.active;
       if (state.active && cur) {
+        var showAi = state.playingAi || (!state.playing && Boolean(cur.aiAudioUrl));
         elPos.textContent = 'Phần ' + (state.secIdx + 1) + '/' + sections.length;
         elTitle.textContent = cur.title || ('Phần ' + (state.secIdx + 1));
-        elBadge.textContent = cur.aiAudioUrl ? 'AI Studio' : (state.usingSpeech ? 'Giọng máy' : 'Đọc tự động');
-        elBadge.className = 'logic-tts-badge' + (cur.aiAudioUrl ? '' : ' is-gtx');
+        elBadge.textContent = showAi ? 'AI Studio' : (state.usingSpeech ? 'Giọng máy' : 'Đọc tự động');
+        elBadge.className = 'logic-tts-badge' + (showAi ? '' : ' is-gtx');
         btnToggle.textContent = state.playing ? '⏸' : '▶';
       }
       if (heroBtn) {
@@ -365,13 +368,14 @@
         tocLinks[t].classList.toggle('is-active', href === '#' + sec.id);
       }
 
-      var targetSrc = sec.aiAudioUrl ? sec.aiAudioUrl : (sec.gtxUrls[state.chunkIdx] || '');
+      state.playingAi = Boolean(sec.aiAudioUrl);
+      var targetSrc = state.playingAi ? sec.aiAudioUrl : (sec.gtxUrls[state.chunkIdx] || '');
       if (!targetSrc) return stepSection(1);
       audio.src = targetSrc;
       audio.playbackRate = state.rate;
       var p = audio.play();
       if (p && p.catch) {
-        p.catch(function () { speakFallbackChunk(secIdx, state.chunkIdx); });
+        p.catch(function () { state.playingAi = false; speakFallbackChunk(secIdx, state.chunkIdx); });
       }
       prefetchNext(secIdx, state.chunkIdx);
       updateUi();
@@ -381,7 +385,7 @@
     function advanceFrom(secIdx, chunkIdx) {
       var cur = sections[secIdx];
       if (!cur) return stopAll();
-      if (!cur.aiAudioUrl && chunkIdx + 1 < cur.gtxUrls.length) {
+      if (!state.playingAi && chunkIdx + 1 < cur.gtxUrls.length) {
         playAt(secIdx, chunkIdx + 1, false);
       } else if (secIdx + 1 < sections.length) {
         playAt(secIdx + 1, 0, true);
@@ -435,6 +439,7 @@
     });
     audio.addEventListener('error', function () {
       if (!state.active || !state.playing) return;
+      state.playingAi = false;
       speakFallbackChunk(state.secIdx, state.chunkIdx);
     });
 
@@ -474,6 +479,11 @@
             if (info && info.url) sections[i].aiAudioUrl = info.url;
           }
           state.manifestLoaded = true;
+          var curSec = sections[state.secIdx];
+          if (state.active && state.playing && !state.playingAi && state.chunkIdx === 0 && audio.currentTime < 1.2 && curSec && curSec.aiAudioUrl) {
+            playAt(state.secIdx, 0, false);
+            return;
+          }
           updateUi();
         })
         .catch(function () {});
